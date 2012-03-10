@@ -3,11 +3,11 @@
 # ----------------------- #
 
 url: http://robdodson.github.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+title: Much creepier in person
+subtitle: 
+author: Rob Dodson
 simple_search: http://google.com/search
-description:
+description: Rob Dodson talks internets and stuffs. Online culture + nerd rage and coding.
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
@@ -58,13 +58,13 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/twitter.ht
 # ----------------------- #
 
 # Github repositories
-github_user:
+github_user: robdodson
 github_repo_count: 0
 github_show_profile_link: true
 github_skip_forks: true
 
 # Twitter
-twitter_user:
+twitter_user: mrdodson
 twitter_tweet_count: 4
 twitter_show_replies: false
 twitter_follow_button: true
@@ -81,7 +81,7 @@ googleplus_user:
 googleplus_hidden: false
 
 # Pinboard
-pinboard_user:
+pinboard_user: robdodson
 pinboard_count: 3
 
 # Delicious
@@ -89,11 +89,11 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
+disqus_short_name: robdodsonblog
 disqus_show_comment_count: false
 
 # Google Analytics
-google_analytics_tracking_id:
+google_analytics_tracking_id: UA-25869920-2
 
 # Facebook Like
-facebook_like: false
+facebook_like: true
