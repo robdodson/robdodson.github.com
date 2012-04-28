@@ -84,7 +84,7 @@ Chronic.parse('3 months ago this friday at 3:45pm')
 
 Active Support is a library extracted from Rails which adds a ton of sugar to the Ruby language. As the author's describe it:
 
->Active Support is a collection of various utility classes and standard library extensions that were found useful for Rails. All these additions have hence been collected in this bundle as way to gather all that sugar that makes Ruby sweeter.
+>Active Support is a collection of various utility classes and standard library extensions that were found useful for Rails. All these additions have hence been collected in this bundle as a way to gather all that sugar that makes Ruby sweeter.
 
 It's broken into several pieces so you can choose to load only the parts that you'll actually be using. *I'm going to write an upcoming article on Active Support. For now we'll just require it all.*
 
@@ -98,7 +98,7 @@ t.class
  => Date 
 ```
 
-You'll notice that Active Support has changed the way our date's to_s is formatted so it's more human readable. It also added shortcuts for creating Dates on either side of today.
+You'll notice that Active Support has changed the way our date's `to_s` is formatted so it's more human readable. It also added shortcuts for creating Dates on either side of today.
 
 ```
 yesterday = Date.yesterday
@@ -108,13 +108,13 @@ tomorrow = Date.tomorrow
  => Sun, 29 Apr 2012
 ```
 
-Included as well are some nice new convenience booleans: `past?`, `today?`, and `future?`
+Included as well are some nice convenience booleans: `past?`, `today?`, and `future?`
 ```
 tomorrow.future?
  => true
 ```
 
-If you've ever had to write a Calendar class that can support weeks, especially those that straddle two different months, you'll appreciate the simplicity of the helper methods that Active Support adds.
+If you've ever had to write a Calendar that can support weeks, especially those that straddle two different months, you'll appreciate the simplicity of the helpers Active Support adds.
 
 ```
 today = Date.today
@@ -138,7 +138,7 @@ today.years_ago(10)
  => Sun, 28 Apr 2002
 ```
 
-`FixNum` is also extended to support additional Date related methods which make certain operations much more readable.
+By extending `FixNum` to support additional Date methods certain operations become much more readable.
 
 ```
 today + 1.year
@@ -153,7 +153,7 @@ Which brings us back to one of our first examples of finding the date 7 days ago
  => 2012-04-21 08:44:02 -0700
 ```
 
-Pretty cool! Active Support adds *A LOT* more than just Date helpers and I'll try to cover it more in some future articles. Definitely [check out the documentation](http://guides.rubyonrails.org/active_support_core_extensions.html) (you can [skip to the Date section](http://guides.rubyonrails.org/active_support_core_extensions.html#extensions-to-date) since it's pretty immense)
+Pretty cool! Active Support adds *A LOT* more than just Date helpers and I'll try to cover it more in some future articles. Definitely [check out the documentation](http://guides.rubyonrails.org/active_support_core_extensions.html) (you can [skip to the Date section](http://guides.rubyonrails.org/active_support_core_extensions.html#extensions-to-date) since it's pretty immense).
 
 <small>Source:<br />
 [http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby](http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby)
