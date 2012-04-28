@@ -6,13 +6,14 @@ comments: true
 categories: 
 ---
 
-One of [my previous projects](https://vimeo.com/40633070) involved a ton of work using Flash's built in Date object. We ended up rolling our own Calendar library which was both tedious and time consuming to debug. Now that I'm digging into Ruby for my newest project, I wanted to see what benefits the language has to offer. So far I'm *really* impressed and that's after only a few hours of exploration. I'll detail some of the tricks I've learned along the way so hopefully other newcomers can benefit.
+One of [my previous projects](https://vimeo.com/40633070) involved a ton of work using Flash's built in Date object. We ended up rolling our own Calendar library which was both tedious and time consuming to debug. Now that I'm digging into Ruby for my newest project, I wanted to see what features the language has to offer. So far I'm *really* impressed and that's after only a few hours of exploration. I'll detail some of the tricks I've learned along the way so hopefully other newcomers can benefit.
 
 ###Ruby Date Object Basics
 We can start off by firing up IRB and requiring the `date` class. Let's do a really simple example first and just generate today.
 
 ```
 require 'date'
+
 today = Date.today
  => #<Date: 2012-04-28 ((2456046j,0s,0n),+0s,2299161j)>
 ```
@@ -36,8 +37,7 @@ today.next_day
  => #<Date: 2012-04-29 ((2456047j,0s,0n),+0s,2299161j)> 
 ```
 
-As [someone on StackOverflow pointed out](http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby):
-"`Date` objects are also `Comparable`, so you can construct a `Range`"
+As [someone on StackOverflow pointed out](http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby): `Date` objects are also `Comparable`, so you can construct a `Range`. If you wanted to collect every day from the previous week into an array you could do the following:
 ```
 last_week = today - 7
 every_day_last_week = (last_week..today).to_a
