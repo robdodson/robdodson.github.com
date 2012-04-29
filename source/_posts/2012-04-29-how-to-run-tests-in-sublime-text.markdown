@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "How to Run Tests in Sublime Text 2"
+title: "How to Run Tests in Sublime Text"
 date: 2012-04-29 09:26
 comments: true
 categories: 
