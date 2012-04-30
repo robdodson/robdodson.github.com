@@ -3,7 +3,7 @@ layout: post
 title: "How to Run Tests in Sublime Text"
 date: 2012-04-29 09:26
 comments: true
-categories: 
+categories: sublime tdd ruby rspec chain
 ---
 
 If you're lazy like me then you love to automate as much of your process as possible. Running tests from within your IDE is one of those tasks that screams for a keyboard shortcut. In full featured tools like RubyMine or Eclipse this is usually pretty straightforward. However many developers in the Ruby community seem to prefer more lightweight tools like TextMate, Vim and Sublime. Today we'll look at how to setup RubyTest in Sublime Text 2 so we can easily run tests with just a few hotkeys. The tests will be written in [Rspec](http://rspec.info/) which should be familiar to most Rubyists.

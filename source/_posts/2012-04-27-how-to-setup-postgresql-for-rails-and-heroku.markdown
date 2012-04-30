@@ -3,7 +3,7 @@ layout: post
 title: "How to setup PostgreSQL for Rails and Heroku"
 date: 2012-04-27 07:33
 comments: true
-categories: 
+categories: ruby rails rails3 postgresql heroku chain
 ---
 
 ###Install PostgreSQL Locally

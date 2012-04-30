@@ -3,7 +3,7 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://robdodson.github.com
+url: http://robdodson.me
 title: Rob Dodson talks internets
 subtitle: 
 author: Rob Dodson
@@ -78,7 +78,7 @@ google_plus_one_size: medium
 
 # Google Plus Profile
 # Hidden: No visible button, just add author information to search results
-googleplus_user: 118271135596408598424
+googleplus_user: 
 googleplus_hidden: false
 
 # Pinboard
