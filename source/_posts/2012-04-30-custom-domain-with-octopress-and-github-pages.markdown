@@ -125,5 +125,6 @@ If adding `www` to the beginning of your domain seems to break things then make 
 
 Make sure you spelled your domain name correctly in the CNAME record that you pushed to Github. I spent almost an hour wondering why `robodson.me` wasn't resolving :\
 
+If all else fails checkout the docs from [Github Pages](http://help.github.com/pages/) and [Octopress](http://octopress.org/docs/deploying/github/) on setting up a custom domain.
 
 
