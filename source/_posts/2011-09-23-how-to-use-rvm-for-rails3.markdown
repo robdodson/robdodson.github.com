@@ -3,7 +3,7 @@ layout: post
 title: "A Basic RVM Tutorial for Rails 3"
 date: 2011-09-23 07:33
 comments: true
-categories: rvm rails rails3 ruby chain
+categories: [RVM, Rails, Rails 3, Ruby]
 ---
 
 ###What is RVM?

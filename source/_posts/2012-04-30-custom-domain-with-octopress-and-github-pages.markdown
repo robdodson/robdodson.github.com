@@ -3,7 +3,7 @@ layout: post
 title: "Custom Domain with Octopress and Github Pages"
 date: 2012-04-30 06:52
 comments: true
-categories: octopress blogging chain
+categories: [Octopress, Writing, Chain]
 ---
 
 *I'm going to try to write this as a bit of a lightening post to see if I can bring down the time it takes me to produce something.*
