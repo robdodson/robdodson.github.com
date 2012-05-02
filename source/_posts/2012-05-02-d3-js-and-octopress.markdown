@@ -53,9 +53,9 @@ I'll have to save the basics for tomorrow since I've already spent way too much 
 
 ### What is D3.js?
 
-D3 (formerly Protovis) is a library written by [Mike Bostock](http://bost.ocks.org/mike/) ([@mbostock](https://twitter.com/#!/mbostock)) which allows you to easily manipulate a DOM using data sets. While the implications of that statement are somewhat vague, D3 is generally used for doing data visualizations primarily in SVG. While it's not limited to working with SVG—it can work with regular DOM nodes as well like `p` and `div`—that's often the best tool to use if you're trying to draw a graph of some kind.
+D3 (formerly Protovis) is a library written by [Mike Bostock](http://bost.ocks.org/mike/) ([@mbostock](https://twitter.com/#!/mbostock)) which allows you to easily manipulate a DOM using data sets. While the implications of that statement are somewhat vague, D3 is generally used for doing data visualizations primarily in SVG. D3 can also work with regular DOM nodes however SVG is often the best tool to use if you're trying to draw a graph of some kind.
 
-As a quick demo, here's an example graph which visualizes an `Array` of Fibonacci numbers: `[1, 1, 2, 3, 5, 8]`
+As a quick demo, here's a bar chart which visualizes an `Array` of Fibonacci numbers: `[1, 1, 2, 3, 5, 8]`
 
 <!-- D3.js Chart -->
 <div id='chart-1'></div>
@@ -144,7 +144,7 @@ I chose to put a copy of d3 into my Octopress `source/javascripts` so it would g
 
 #### Adding the CSS
 
-The next step is to add some CSS. Getting a `style` tag into the post ended up being trickier than I had first thought because Markdown strips out `style` tags. As a result every time I generate the site the CSS dissapears. The work around is to wrap the `style` tag in a `div` and put that at the top of your post.
+The next step is to add some CSS. Getting a `style` tag into the post ended up being trickier than I had first thought because Markdown strips out `style` tags. As a result every time I generate the site the CSS dissapears. The work around is to wrap the `style` tag in a `div` and put that at the top of the post.
 
 Here are the basic styles I'm using:
 
@@ -174,11 +174,9 @@ Here are the basic styles I'm using:
 
 #### Margins and Resizing
 
-Now that we have D3 included on the page and our CSS styles are being respected it's time to setup some useful defaults.
+Now that we have D3 included on the page and our CSS styles are being respected it's time to setup some useful defaults in another `script` tag. Typically I'll define the dimensions of my graph area as well as any margins that I might want to use.
 
-If I'm going to use the same data set throughout I might put that up there so I don't have to declare it over and over again. In our case the array of Fibonacci numbers is there.
-
-Typically I'll also define the dimensions of my graph area as well as any margins that I might want to use.
+If I'm going to use the same data set throughout I might put that in as well so I don't have to declare it over and over again. In our case the array of Fibonacci numbers is there.
 
 ```html
 <!-- Global Variables and Handlers: -->
@@ -273,7 +271,7 @@ Finally I create a `div` to contain our visualization. Beneath the `div` I've in
 })();
 </script>
 ```
-After we declare the self-executing function we include another function called `draw`. Using a separate function lets us later *redraw* the graph if the user resizes their browser. This also works on the iPhone when the user changes from portrait to landscape mode. Inside of `draw` we first make sure that the containing div is empty (otherwise we'd end up drawing graphs on top of one another). You can skip most of the D3 code—we'll cover that over the next couple of days—but take a look at the last few lines where we call `draw()` and add another handler for `window.resize`. Whenever the user changes their browser size first our global `width` value will be updated, then our graphs will redraw themselves using this new width.
+After we declare the self-executing function we include another function called `draw`. Using a separate function lets us later *redraw* the graph if the user resizes their browser. This also works on the iPhone when the user changes from portrait to landscape mode. Inside of `draw` we first make sure that the containing div is empty (otherwise we'd end up drawing graphs on top of one another). You can skip most of the D3 code—we'll cover that over the next couple of days—but take a look at the last few lines where we call `draw()` and add another handler for `window.resize`. Whenever the user changes their browser size our global `width` value will be updated, then our graphs will redraw themselves using this new width.
 
 At the moment you need to add this handler to each of your visualizations. Not terrible but not very DRY either. I think in a future iteration I'll add a queue which holds a reference to each `draw` instance and calls them in sync. For now this is the quick and dirty way to get a graph up on Octopress. [You can download the entire post template from Github.](https://github.com/robdodson/octopress-templates) Enjoy!
 
