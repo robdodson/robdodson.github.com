@@ -6,9 +6,6 @@ comments: true
 categories: [Chain, D3, Octopress, Writing, Data Viz]
 ---
 
-<!-- Make sure to include D3 first or else the IIFEs won't work. -->
-<script src="/javascripts/d3.v2.js"></script> 
-
 <!-- CSS Styles: -->
 <div>
   <style type="text/css">
@@ -16,7 +13,6 @@ categories: [Chain, D3, Octopress, Writing, Data Viz]
     .chart {
       font-family: Arial, sans-serif;
       font-size: 10px;
-      margin-top: -40px;
     }
 
     .bar {

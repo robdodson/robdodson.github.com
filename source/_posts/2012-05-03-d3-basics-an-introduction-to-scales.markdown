@@ -1,14 +1,10 @@
 ---
 layout: post
-title: "D3 Basics: Scales Pt. 1"
+title: "D3 Basics: An Introduction To Scales"
 date: 2012-05-03 10:04
 comments: true
 categories: [Chain, D3, Data Viz]
 ---
-
-<!-- Make sure to include D3 first or else the IIFEs won't work. -->
-<script src="javascripts/d3.v2.js"></script> 
-
 
 <!-- CSS Styles: -->
 <div>
@@ -17,7 +13,6 @@ categories: [Chain, D3, Data Viz]
     .chart {
       font-family: Arial, sans-serif;
       font-size: 10px;
-      margin-top: -40px;
     }
 
     .bar {
@@ -73,14 +68,14 @@ Now let's change the scale a bit. Let's say that `x` still has an input `domain`
 
 {% img center http://www.jeromecukier.net/wp-content/uploads/2011/08/d3scale1.png 'An example of how scales work' %}
 
-Jerome has [an excelent blog post](http://www.jeromecukier.net/blog/2011/08/11/d3-scales-and-color/) covering scales in D3 which inspired me to write my own post. Definitely check it out :) I feel like a great way to learn something is to not only read about it a bunch but to write about it. Hearing different views on the same topic often helps me solidify a concept.
+Jerome has [an excelent blog post](http://www.jeromecukier.net/blog/2011/08/11/d3-scales-and-color/) covering scales in D3 which inspired me to write my own post. Definitely read his as well! I feel like a great way to learn something is to not only read about it a bunch but to write about it. Hearing different views on the same topic often helps me solidify a concept.
 
 ### Class Work Time
 
 <!-- D3.js -->
 <script type='text/javascript'>
 
-x = d3.scale.linear()
+var x = d3.scale.linear()
     .domain([0, 100])
     .range([0, 10]);
 
@@ -107,4 +102,4 @@ Our scale's range used to be 0 - 10. Now that we've changed it to 0 - 1000, what
 
 ### To Be Continued...
 
-Scales are a huge topic so we'll stop here for now. In the next post we'll talk about `linear`, `time` and `ordinal` scales. In my experience these are the big three, once you've mastered them everything else becomes a lot easier. Stay tuned :)
+Scales are a huge topic so we'll stop here for now. In the next post we'll talk about `linear`, `time` and `ordinal` scales; once you've mastered them everything else becomes a lot easier. Stay tuned :)
