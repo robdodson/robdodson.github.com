@@ -92,7 +92,8 @@ With just this information alone we have enough to build our first graph.
           .data(data)
         .enter().append('rect')
           .attr('class', 'bar')
-          .attr('y', function(d, i) { return i * 20 })
+          //.attr('y', function(d, i) { return i * 20 })
+          .attr('y', function(d, i) { return i * 20; })
           .attr('width', function(d) { return x(d); })
           .attr('height', 15);
 
@@ -154,7 +155,7 @@ var svg = d3.select('body').append('svg')
         .attr('class', 'chart');
 ```
 
-In the next section we're declaring our `SVG` element. We use a D3 selection to grab the `body` tag and we append an `svg` tag onto it. Since D3 uses method-chaining we can then start assigning attributes to our SVG element. We declare the width and the height to match the explicit values we defined earlier and finally we give it a class name of `chart`.
+In the next section we're declaring our `SVG` element. We use a D3 selection to grab the `body` tag and we append an `svg` tag onto it. Since D3 uses method-chaining we can keep assigning attributes to our SVG element. We declare the width and the height to match the explicit values set earlier and finally we give it a class name of `chart`.
 
 ```js
 svg.selectAll('.chart')
@@ -166,10 +167,26 @@ svg.selectAll('.chart')
         .attr('height', 15);
 ```
 
-This last section is where it all ties together. Since we stored our SVG element in a variable called `svg` we're able to easily reference it again. We then instruct D3 to create a `join` by calling the `data` method and passing in our `Array` of values. When D3 performs a join it steps through each element in the array and attempts to match it to a figure that already exists on the page. If nothing exists it will call the `enter` function. At this point it steps through the array again, passing the values to us so we can define new shapes. [For a much more in-depth explanation of joins refer back to this article.](http://bost.ocks.org/mike/join/)
+This last section is where it all ties together. Since we stored our SVG element in a variable called `svg` we're able to easily reference it again. We instruct D3 to create a `join` by calling the `data` method and passing in our `Array` of values. When D3 performs a join it steps through each element in the array and attempts to match it to a figure that already exists on the page. If nothing exists it will call the `enter` function. At this point it steps through the array again, passing the values to us so we can define new shapes. [For a much more in-depth explanation of joins refer back to this article.](http://bost.ocks.org/mike/join/)
 
-In our case we're appending SVG `Rects` but it could just as easily be circles or other shapes. We give each rect a class of `bar` so we can style it with CSS. When we declare the `y` attribute instead of using an explicit value we create an `accessor`, a little helper function which takes a piece of data and an optional index as its arguments. In this case `d` will equal subsequent elements in our data array and `i` will equal their indices. You can change that line to read like this:
+In our case we're appending SVG `Rects` but it could just as easily be circles or other shapes. We give each rect a class of `bar` so we can style it with CSS. When we declare the `y` attribute instead of using an explicit value we create an `accessor`, a little helper function which takes a piece of data and an optional index as its arguments. In this case `d` will equal subsequent elements in our data array and `i` will equal their indices. For a much clearer picture of what's happening you can change it to read:
 ```js
-.attr('y', function(d, i) { console.log(d, i); return i * 20 })
+.attr('y', function(d, i) { console.log('d = data[' + i + '] = ', d); return i * 20 })
 ```
-for a much clearer picture of what's going on. Since we're just trying to space out our bars along the y-axis we don't really care about the value of `d`. Instead we want to know about the order of the bars, so we can say that data[0] should have a y of 0, data[1] should have a y of 20 (remember it's i * 20), data[2] should have a y of 40, etc.
+which will give you the following output.
+```js
+d = data[0] = 1
+d = data[1] = 1
+d = data[2] = 2
+d = data[3] = 3
+d = data[4] = 5
+d = data[5] = 8
+```
+
+Since we're just trying to space out our bars along the y-axis we don't really care about the value of `d` instead we'll use the index (i) to offset each bar by a value of i * 20.
+
+In the last two lines we're going to finally use our linear scale to define our bar's width. Here they are again so you can see what's going on.
+```js
+.attr('width', function(d) { return x(d); })
+.attr('height', 15);
+```
