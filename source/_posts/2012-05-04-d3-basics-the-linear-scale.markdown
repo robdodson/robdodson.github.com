@@ -183,10 +183,16 @@ d = data[4] = 5
 d = data[5] = 8
 ```
 
-Since we're just trying to space out our bars along the y-axis we don't really care about the value of `d` instead we'll use the index (i) to offset each bar by a value of i * 20.
+Since we're just trying to space out our bars along the y-axis we don't really care about the value of `d`. Instead we'll use the index, `i`, to offset each bar by a value of i * 20.
 
-In the last two lines we're going to finally use our linear scale to define our bar's width. Here they are again so you can see what's going on.
+In the last two lines we're going to finally use our linear scale to define our bar's width. Here they are again as a refresher.
 ```js
 .attr('width', function(d) { return x(d); })
 .attr('height', 15);
 ```
+As each element of the array is passed to our width accessor it's run through the scale and the output returned. Since 8 is our maximum value it should extend all the way to the end of our range.
+
+The final call is just an explicit height for each bar. Depending on the scale this bit can be automated but for simplicity sake we'll just use a hard coded value so we can get something on screen.
+
+### Conclusion
+Now that we've got one scale under our belt the others should be pretty easy to digest. Over the next couple of posts we'll focus on ordinal scales followed by time scales. Stay tuned and ping me if you have any questions. Thanks!
