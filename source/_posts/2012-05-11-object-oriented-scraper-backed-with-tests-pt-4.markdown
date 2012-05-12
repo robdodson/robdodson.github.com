@@ -180,10 +180,6 @@ Next I'm going to write the test to verify that we've received a group of words,
 I actually wrote the test first and did everything else to make it pass. But at this point it should all be passing and we can verify that given a request with the appropriate selector we should be able to build a basic word frequency list. Yay!
 
 
-    
-
-
-
 - Time: 7:35 am
 - Mood: Calm, Awake, Curious
 - Sleep: 7
