@@ -3,7 +3,7 @@ layout: post
 title: "Object Oriented Scraper Backed With Tests Pt. 3"
 date: 2012-05-08 21:03
 comments: true
-categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec]
+categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, FakeWeb]
 ---
 
 I did some cleanup this morning on the `Options` class and the `options_spec`, mainly to remove items that seemed like they shouldn't be tested. Here's where I'm currently at:
