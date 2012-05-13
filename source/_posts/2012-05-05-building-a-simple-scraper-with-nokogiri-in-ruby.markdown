@@ -93,10 +93,8 @@ the: 382
 ```
 It looks like our regex could use a bit of work so it doesn't grab singular letters like 's' or numbers, but it's definitely a good start. Tomorrow we'll put everything into a `Module` and back it with tests.
 
-<ul>
-  <li>Time: 9:16 pm</li>
-  <li>Mood: Relaxed, Tired</li>
-  <li>Sleep: 6.5</li>
-  <li>Hunger: 5</li>
-  <li>Coffee: 1</li>
-</ul>
+- Time: 9:16 pm
+- Mood: Relaxed, Tired
+- Sleep: 6.5
+- Hunger: 5
+- Coffee: 1

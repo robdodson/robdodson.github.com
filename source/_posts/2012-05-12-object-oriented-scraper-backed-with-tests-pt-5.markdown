@@ -6,9 +6,7 @@ comments: true
 categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, FakeWeb, BDD, Exceptions]
 ---
 
-Last night I got the `Crawler` passing its test for `#get_words_by_selector`. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...
-
-I'm glad I spent the time to do that since I managed to learn some pretty interesting stuff along the way. Ruby has both `throw`/`catch` and `raise`/`rescue` so what's the difference between throw/catch and raise/rescue in Ruby?
+Last night I got the `Crawler` passing its test for `#get_words_by_selector`. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both `throw`/`catch` and `raise`/`rescue` so what's the difference between throw/catch and raise/rescue in Ruby?
 
 ### Throwing exceptions for control flow
 
