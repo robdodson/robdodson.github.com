@@ -186,4 +186,4 @@ With all that in place our test should pass. Nice!!!!!! We're well on our way to
 - Mood: Awake, Alert, Focused
 - Sleep: 6
 - Hunger: 0
-- Coffee: 0
+- Coffee: 1
