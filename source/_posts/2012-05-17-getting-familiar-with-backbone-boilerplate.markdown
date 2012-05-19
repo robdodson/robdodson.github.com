@@ -3,7 +3,7 @@ layout: post
 title: "Getting Familiar with Backbone Boilerplate"
 date: 2012-05-17 07:47
 comments: true
-categories: [Chain, Backbone, Backbone Boilerplate, Grunt, Node]
+categories: [Chain, Backbone, Backbone Boilerplate, Grunt, Node, Require.js]
 ---
 
 I have an upcoming project which uses [Backbone](http://documentcloud.github.com/backbone/) and [Node.js](http://nodejs.org/) so I thought it would be good to blog about the topics (particularly Backbone) for a while to make sure I'm well up to speed.
