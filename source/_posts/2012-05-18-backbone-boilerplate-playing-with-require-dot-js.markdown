@@ -9,7 +9,7 @@ categories: [Chain, Backbone, Backbone Boilerplate, Require.js]
 I want to keep playing with require.js and AMD modules today so I can really internalize the concepts around them. I'm going to go through the examples in [the require documentation](http://requirejs.org/docs/api.html#jsfiles) starting with loading regular scripts and then defining modules and loading those. Here's our boilerplate HTML:
 
 Here is our boilerplate HTML. It's a standard HTML5 file which just includes require.js at the bottom of the page.
-```html
+``` html
 <!doctype html>
 <html lang="en">
 <head>
@@ -34,10 +34,11 @@ Here is our boilerplate HTML. It's a standard HTML5 file which just includes req
 ```
 I'm also going to define a file called foo.js which will just console log "Hello World!". To update our HTML we'll add the following script tag after the call to include require.js
 
-```html
+``` html
 <script>
     require(["foo"]);
 </script>
+```
 
 And as expected the console outputs 'Hello World!'. Let's step it up a notch and define a module. Our first module will just return an object literal [like in this example.](http://requirejs.org/docs/api.html#defsimple) It will be a `Person` module with our name and city. We'll place it in an `app` folder in the root of our project. So our stucture looks like this:
 
@@ -58,7 +59,7 @@ index.html
 ```
 
 The `Person` module just needs to implement a define function which takes an object as an argument. It looks like this:
-```js app/person.js
+``` js app/person.js
 define({
     name: "Rob Dodson",
     city: "San Francisco"
@@ -66,7 +67,7 @@ define({
 ```
 And in our updated index.html we're going to require that module.
 
-```html
+``` html
 <!doctype html>
 <html lang="en">
 <head>
@@ -106,7 +107,7 @@ If you're coming from more of a design background and you're used to having one 
 
 Ok let's write a module that's a bit more realistic. We'll use a function to return our object so it's kind of like a constructor.
 
-```js app/monster.js
+``` js app/monster.js
 "use strict";
 
 define(function () {
@@ -127,7 +128,7 @@ This is a simple monster object. Notice that we build a variable called `estimat
 
 Next up is a module with dependencies. We'll make the monster depend on his coffin.
 
-```js app/coffin.js
+``` js app/coffin.js
 "use strict";
 
 define(function () {
@@ -142,7 +143,7 @@ define(function () {
 });
 ```
 
-```js app/monster.js
+``` js app/monster.js
 "use strict";
 
 define(['./coffin'], function (coffin) {
@@ -164,7 +165,7 @@ define(['./coffin'], function (coffin) {
 });
 ```
 
-```html index.html
+``` html index.html
 <script data-main="" src="/assets/js/libs/require.js"></script>
 <script>
   require(['app/monster'], function(monster) {
@@ -176,7 +177,7 @@ define(['./coffin'], function (coffin) {
 You can see that we've created a dependency for our monster, it has to load the coffin module before it's ready to be loaded itself. Otherwise it won't be able to run `goToSleep()` properly. Require.js will sort all of this out so long as we declare our dependencies as the first argument to the `define` function.
 
 We aren't limited to objects though, we can also return functions (which are objects in their own right). For instance if we wanted to define a helper module that greets people we could do something like this:
-```js app/greet.js
+``` js app/greet.js
 "use strict";
 
 define(function () {
@@ -187,7 +188,7 @@ define(function () {
 ```
 then in our index we'll just use the `greet` function as if it were globally available.
 
-```js index.html
+``` js index.html
 require(['app/greet'], function(greet) {
   console.log(greet('Rob'));
 });
