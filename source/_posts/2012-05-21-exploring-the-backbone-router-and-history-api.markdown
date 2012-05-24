@@ -15,7 +15,7 @@ var Router = Backbone.Router.extend({
     "search": "search"
   },
 
-  index: function(hash) {
+  index: function() {
     var tutorial = new Example.Views.Tutorial();
 
     // Attach the tutorial page to the DOM
@@ -62,7 +62,7 @@ If you're using the Backbone Boilerplate you won't need to tell the Router to up
 ```
 
 In short this is an application wide handler for any relative anchor that doesn't have a `data-bypass` attribute. So something like `<a href="search">Search</a>` would get passed through here.
-The last few bits prevent the link from completely refreshing the page—`evt.preventDefault()`—and pipe the href through the router. Actually the href gets piped through `Backbone.history.navigate` which `Router.navigate proxies`. When you call Router.navigate('foobar') you're supposed to pash a hash of `{trigger: true}` if you'd like the router to run the corresponding `foobar` method. If you dig into the source you can see that just passing true will also have the same effect and that's what's done here by the Boilerplate.
+The last few bits prevent the link from completely refreshing the page—`evt.preventDefault()`—and pipe the href through the router. Actually the href gets piped through `Backbone.history.navigate` which `Router.navigate` proxies. When you call `Router.navigate('foobar')` you're supposed to pash a hash of `{trigger: true}` if you'd like the router to run the corresponding `foobar` method. If you dig into the source you can see that just passing true will also have the same effect and that's what's done here by the Boilerplate.
 
 Originally I had written my View like this because I thought I had to use the Router explicitly.
 
@@ -71,29 +71,20 @@ Originally I had written my View like this because I thought I had to use the Ro
 Example.Views.Tutorial = Backbone.View.extend({
   template: "app/templates/example.html",
 
+  // Listen for when the user clicks our anchor tag
   events: {
     'click .search': 'search'
   },
 
+  // Note: I'm stopping the event and explicitly telling the Router to
+  // update the history and trigger the corresponding search method.
   search: function(e) {
     e.preventDefault();
     namespace.app.router.navigate('search', {trigger: true});
   },
 
-  render: function(done) {
-    var view = this;
+  ...
 
-    // Fetch the template, render it to the View element and call done.
-    namespace.fetchTemplate(this.template, function(tmpl) {
-      view.el.innerHTML = tmpl();
-
-      // If a done function is passed, call it with the element
-      if (_.isFunction(done)) {
-        done(view.el);
-      }
-    });
-  }
-});
 ```
 Notice that I've defined a `search` method which listens for a click on my anchor of class `.search`. This is inline with the vanilla Backbone.js documentation but since the Boilerplate has added that application wide handler for us, we don't need this function unless there's some additional work that search needs to do. By just letting that global handler do its thing our route will still be called and we can save a fair bit of boilerplate in our templates.
 
@@ -126,7 +117,7 @@ Something else to keep in mind is that the boilerplate comes with `History pushS
 Backbone.history.start({ pushState: true });
 ```
 
-This lets you create routes that look like this: `mysite.com/search/foobar` instead of using a hash `mysite.com/#search/foobar`. The only problem is that for HTML5 History pushState to work your server has to keep resolving to index.html. The boilerplate tutorial says to use `node build/server` to run your project server, even though elsewhere it says to use `bbb server`. Neither works so I've [logged an issue on Github.](https://github.com/backbone-boilerplate/grunt-bbb/issues/21) Very possible I'm doing it wrong but we'll see. For now I'll use the hash approach.
+This lets you create routes that look like this: `mysite.com/search/foobar` instead of using a hash `mysite.com/#search/foobar`. The only problem is that for HTML5 History pushState to work your server has to keep resolving to index.html. The boilerplate tutorial says to use `node build/server` to run your project server, even though elsewhere it says to use `bbb server`. Neither works so I've [logged an issue on Github.](https://github.com/backbone-boilerplate/grunt-bbb/issues/21) Very possible I'm doing it wrong but we'll see. For now I'm not use pushState so I changed the line in main.js to read `Backbone.history.start()` and instead I'm using the hash approach.
 
 
 
