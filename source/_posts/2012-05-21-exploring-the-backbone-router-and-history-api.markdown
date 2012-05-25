@@ -117,35 +117,9 @@ Something else to keep in mind is that the boilerplate comes with `History pushS
 Backbone.history.start({ pushState: true });
 ```
 
-This lets you create routes that look like this: `mysite.com/search/foobar` instead of using a hash `mysite.com/#search/foobar`. The only problem is that for HTML5 History pushState to work your server has to keep resolving to index.html. The boilerplate tutorial says to use `node build/server` to run your project server, even though elsewhere it says to use `bbb server`. Neither works so I've [logged an issue on Github.](https://github.com/backbone-boilerplate/grunt-bbb/issues/21) Very possible I'm doing it wrong but we'll see. For now I'm not use pushState so I changed the line in main.js to read `Backbone.history.start()` and instead I'm using the hash approach.
+<s>This lets you create routes that look like this: `mysite.com/search/foobar` instead of using a hash `mysite.com/#search/foobar`. The only problem is that for HTML5 History pushState to work your server has to keep resolving to index.html. The boilerplate tutorial says to use `node build/server` to run your project server, even though elsewhere it says to use `bbb server`. Neither works so I've [logged an issue on Github.](https://github.com/backbone-boilerplate/grunt-bbb/issues/21) Very possible I'm doing it wrong but we'll see. For now I'm not using pushState so I changed the line in main.js to read `Backbone.history.start()` and instead I'm using the hash approach.</s>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*UPDATE: Turns out there was a bug in the Backbone Boilerplate, make sure in your index.html file that the data-main attribute starts from the root of the site, like so: `data-main="/app/config"`. Also make sure to use bbb server as node build/server is deprecated.* 
 
 - Time: 7:59 am
 - Mood: Awake, Hurried, Focused

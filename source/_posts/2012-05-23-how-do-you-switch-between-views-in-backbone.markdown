@@ -37,6 +37,7 @@ Example.Views.Right = Backbone.View.extend({
   }
 });
 ```
+Or I could render a template. Again for our purposes we just want to move some colored blocks around so the first approach is sufficient.
 
 Here is our most basic `Router` showing how to add the views to stage. Since we aren't using a template we can just call the regular render function and append the returned element to the DOM.
 
@@ -170,7 +171,7 @@ events: {
 }
 ```
 
-In our handler, `onChildClicked`, we'll figure out which child was actually clicked and then animate ourselves accordingly. Don't recoil in horror when you see this handler, it's 11:25pm and I'm too lazy to make it properly dynamic. For now there's magic numbers. Tomorrow we will clean that up :)
+In our handler, `onChildClicked`, we'll figure out which child was actually clicked and then animate ourselves accordingly. Here's the entire object for your reference with the handler at the bottom.
 
 ``` js
 Example.Views.Sections = Backbone.View.extend({
@@ -200,23 +201,31 @@ Example.Views.Sections = Backbone.View.extend({
     this.$el.css({left: $(window).width() / 2 - this.$el.width() / 2 });
   },
 
+  // Whenever a child is clicked let's animate so it is
+  // centered on screen
   onChildClicked: function($e) {
-    var $target = $e.target;
-    switch($e.target.id) {
-      // TODO: Clean out magic numbers
-      case 'left-container':
-        this.$el.animate({left: $(window).width() / 2 - 300 / 2});
-        break;
+      var $target = $($e.target);
       
-      case 'middle-container':
-        this.$el.animate({left: $(window).width() / 2 - this.$el.width() / 2 });
-        break;
+      switch($e.target.id) {
+        case 'left-container':
+          this.$el.animate({
+            left: $(window).width() / 2 - $target.width() / 2
+          });
+          break;
+        
+        case 'middle-container':
+          this.$el.animate({
+            left: $(window).width() / 2 - this.$el.width() / 2
+          });
+          break;
 
-      case 'right-container':
-        this.$el.animate({left: $(window).width() / 2 - this.$el.width() + 300 / 2});
-        break;
+        case 'right-container':
+          this.$el.animate({
+            left: $(window).width() / 2 - this.$el.width() + $target.width() / 2
+          });
+          break;
+      }
     }
-  }
 });
 ```
 
