@@ -35,6 +35,10 @@ We'll try to do something simple at first to recreate an animation like the one 
       width: 20px;
       height: 20px;
       -webkit-transition: background-color 1s linear, left 1s, top 2s
+      -moz-transition: background-color 1s linear, left 1s, top 2s
+      -ms-transition: background-color 1s linear, left 1s, top 2s
+      -o-transition: background-color 1s linear, left 1s, top 2s
+      transition: background-color 1s linear, left 1s, top 2s
     }
   </style>
 </div>
@@ -69,6 +73,10 @@ The code to produce the above animation looks something like this:
   width: 20px;
   height: 20px;
   -webkit-transition: background-color 1s linear, left 1s, top 2s
+  -moz-transition: background-color 1s linear, left 1s, top 2s
+  -ms-transition: background-color 1s linear, left 1s, top 2s
+  -o-transition: background-color 1s linear, left 1s, top 2s
+  transition: background-color 1s linear, left 1s, top 2s
 }
 ```
 We definitely don't want all that logic in our CSS. Ideally we could trigger these kinds of things from JavaScript, which is where Gfx comes in.
@@ -81,7 +89,7 @@ $("#widget")
     .gfx({ translateX: '200px', translateY: '200px' }, { duration: '2000' });
 ```
 
-After tinking with Gfx for what seems like hours at this point I haven't figured out a way to pass two different times to simultaneous animations. From one animation to the next you have to specify the end points from the previous animations or else the styles will revert. That's why I'm passing `translateX: '200px'` in both places...although I'm not 100% if that's what I should be doing. I emailed the author of Gfx so we'll see what he says. 
+After tinkering with Gfx for what seems like hours at this point I haven't figured out a way to pass two different times to simultaneous animations. From one animation to the next you have to specify the end points from the previous animations or else the styles will revert. That's why I'm passing `translateX: '200px'` in both places...although I'm not 100% if that's what I should be doing. I emailed the author of Gfx so we'll see what he says :) 
 
 - Time: 8:07 am
 - Mood: Sedated, Upset-Stomach, Laggy

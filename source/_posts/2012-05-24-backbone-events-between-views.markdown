@@ -3,7 +3,7 @@ layout: post
 title: "Backbone Events: Adding Views to the DOM"
 date: 2012-05-24 07:23
 comments: true
-categories: [Chain, Backbone, Backbone Events]
+categories: [Chain, Backbone, Backbone Events, jQuery, jQuery Plugins]
 ---
 
 Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.
