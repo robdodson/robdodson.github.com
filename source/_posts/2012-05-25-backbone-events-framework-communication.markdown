@@ -23,7 +23,7 @@ When you use this approach it's trivial to tell the view to listen to the model'
 
 ### Communicating between Views in Backbone
 
-To facilitate this communication we're going to use the `app` object that Backbone Boilerplate creates for us. If you look in the `namespace.js` file that comes with the boilerplate you should see a line like this way down at the bottom:
+To facilitate this communication we're going to use the `app` object that [Backbone Boilerplate](https://github.com/tbranyen/backbone-boilerplate) creates for us. If you look in the `namespace.js` file that comes with the boilerplate you should see a line like this way down at the bottom:
 
 ``` js namespace.js
 app: _.extend({}, Backbone.Events)
