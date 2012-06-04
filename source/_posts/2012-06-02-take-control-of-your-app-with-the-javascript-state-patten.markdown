@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The State Design Pattern in JavaScript"
+title: "Take Control of your App with the JavaScript State Pattern"
 date: 2012-06-02 00:09
 comments: true
 categories: [Chain, JavaScript, Design Patterns, State Pattern]
@@ -224,9 +224,9 @@ player.play();
 // Quick call pause!
 player.pause();
 
-=> tearing down the playing state
-=> setting up the pausing state
-=> pausing!
+=> 'tearing down the playing state'
+=> 'setting up the pausing state'
+=> 'pausing!'
 
 // Um... call pause like 3 times cuz
 // I'm a button masher!!!
@@ -234,16 +234,16 @@ player.pause();
 player.pause();
 player.pause();
 
-=> already paused!
-=> already paused!
-=> already paused!
+=> 'already paused!'
+=> 'already paused!'
+=> 'already paused!'
 
 // OK call play again!
 player.play();
 
-=> tearing down the pausing state!
-=> setting up the playing state
-=> playing!
+=> 'tearing down the pausing state!'
+=> 'setting up the playing state'
+=> 'playing!'
 ```
 
 ### I like it, but...
