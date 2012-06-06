@@ -139,7 +139,9 @@ promise.done(function(message) {
     console.log(message);
 });
 ```
-There are more cool things you can do with `Deferreds` I highly recommend you [spend some time with the documentation](http://api.jquery.com/category/deferred-object/) and trying out some of the other methods like `pipe` or `resolveWith`. Let me know if this is helpful or if you have any questions. Till tomorrow! - Rob
+There are more cool things you can do with `Deferreds` I highly recommend you [spend some time with the documentation](http://api.jquery.com/category/deferred-object/) and trying out some of the other methods like `pipe` or `resolveWith`. Also as a side note [checkout this page](http://api.jquery.com/promise/) which shows how to extract a `promise` by type. It will actually let you do everything we've done in our animation example but with fewer lines of code.
+
+Let me know if this is helpful or if you have any questions. Till tomorrow! - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
