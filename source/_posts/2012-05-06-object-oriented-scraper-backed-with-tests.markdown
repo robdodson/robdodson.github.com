@@ -207,6 +207,8 @@ You'll also notice I added a test for an invalid yml file. Basically I created a
 
 With that all of our tests for `Tentacles::Runner` are passing. Yay! But now it's 10:37pm and I gotta call it a night. We'll continue tomorrow by writing tests for `Tentacles::Crawler`. See ya!     
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 6:30 pm
 - Mood: Wired, Lazy
 - Sleep: 7.5

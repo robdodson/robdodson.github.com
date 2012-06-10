@@ -248,11 +248,4 @@ outliers.set('author', 'Mickey Mouse');
 ```
 Instead of throwing your HTML into the render method as a String it's advised that you use some kind of templating library. Underscore templates seem like a good place to start but Backbone is designed to be template agnostic so you could easily switch to Mustache/Handelbars or HAML if you want. Tomorrow I'll look into displaying some content using an Underscore template linked up to a model. Till then.. :D
 
-
-
-
-
-
-
-
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

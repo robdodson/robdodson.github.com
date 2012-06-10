@@ -214,6 +214,8 @@ describe "when parsing the post selector" do
 ```
 Ugh, hate to cut it short but looks like I'm going down a rabbit hole with validation. I'll pickup tomorrow to see if we can iron a lot of this out.
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 7:11 pm
 - Mood: Calm, Hot, Tired
 - Sleep: 7

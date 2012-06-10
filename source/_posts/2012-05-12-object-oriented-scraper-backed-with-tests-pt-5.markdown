@@ -143,6 +143,8 @@ end
 
 All tests passing, we're good to go :)
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 7:00 am
 - Mood: Alert, Awake, Anxious
 - Sleep: 8

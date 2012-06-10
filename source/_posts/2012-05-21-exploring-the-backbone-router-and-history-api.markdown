@@ -121,6 +121,8 @@ Backbone.history.start({ pushState: true });
 
 *UPDATE: Turns out there was a bug in the Backbone Boilerplate, make sure in your index.html file that the data-main attribute starts from the root of the site, like so: `data-main="/app/config"`. Also make sure to use bbb server as node build/server is deprecated.* 
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 7:59 am
 - Mood: Awake, Hurried, Focused
 - Sleep: 8

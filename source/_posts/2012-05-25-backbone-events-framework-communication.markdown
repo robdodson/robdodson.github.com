@@ -121,6 +121,8 @@ function(namespace, $, Backbone, Chatty) {
 And there you have it. When we click on `Subject` it should replace the content in `Observer` like so:
 {% img center /images/subject_observer.png 'The Observer hears the Subject' %}
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 8:02 am
 - Mood: Excited, Rested
 - Sleep: 6

@@ -227,6 +227,7 @@ Unfortunately I'm realizing that if the `ul` for our metadata is part of the pos
 
 I could either tell my crawler to explicitly ignore that content or wrap my blog entry in an even more specific class and just select that. I guess that'll be an exercise for tomorrow :\
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
 - Time: 8:03 am
 - Mood: Happy, Drowsy, Peaceful

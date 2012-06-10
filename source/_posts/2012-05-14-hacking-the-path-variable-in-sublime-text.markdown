@@ -37,6 +37,8 @@ Now that I have my hacked path variable and my shell plugin I can check to see i
 
 I should point out if all you want to do is run Rake or Ant then there are already plugins for that sort of thing. My main effort in doing all this is to try to integrate the command line with Sublime a bit better. If *anyone* knows how to simply tell Sublime to use the path in my .bash_profile or .bashrc then I would gladly use that approach instead. But after crawling the forums for a while it looks like this is still a common problem with no good solution.  
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 8:26 pm
 - Mood: Happy, Peaceful, Hurried
 - Sleep: 7

@@ -159,3 +159,5 @@ Pretty cool! Active Support adds *A LOT* more than just Date helpers and I'll tr
 [http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby](http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby)
 [http://www.developer.com/open/article.php/3729206/Telling-Time-with-Ruby.htm](http://www.developer.com/open/article.php/3729206/Telling-Time-with-Ruby.htm)
 [http://guides.rubyonrails.org/active_support_core_extensions.html](http://guides.rubyonrails.org/active_support_core_extensions.html )</small>
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

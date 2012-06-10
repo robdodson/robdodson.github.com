@@ -165,3 +165,5 @@ Definitely keep that in mind if you're writing time sensitive code. In those sit
 [http://stackoverflow.com/questions/9356704/unable-to-use-dot-syntax-for-ruby-hash](http://stackoverflow.com/questions/9356704/unable-to-use-dot-syntax-for-ruby-hash)<br />
 [http://www.rubyist.net/~slagell/ruby/accessors.html](http://www.rubyist.net/~slagell/ruby/accessors.html)
 </small>
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

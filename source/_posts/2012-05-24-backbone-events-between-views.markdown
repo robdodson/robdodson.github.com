@@ -234,6 +234,8 @@ onRemovedFromDOM: function() {
 },
 ```
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 7:47 am
 - Mood: Awake, Hot
 - Sleep: 5

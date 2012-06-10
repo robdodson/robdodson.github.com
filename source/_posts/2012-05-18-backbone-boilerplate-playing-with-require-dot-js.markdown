@@ -198,7 +198,4 @@ bear in mind that each module requires an http request to load it so you don't w
 
 Ok that's it for today. I'll try to continue on Saturday!
 
-
-
-
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

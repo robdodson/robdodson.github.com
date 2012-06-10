@@ -136,6 +136,8 @@ Let's start at the bottom so we can see that underscore is defined and mapped to
 
 That covers the configuration file. I'll move on to main.js in the next post.
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 7:49 am
 - Mood: Awake, Tired, Lazy
 - Sleep: 7

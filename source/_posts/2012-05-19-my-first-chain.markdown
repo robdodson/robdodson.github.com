@@ -40,38 +40,4 @@ Finally, don't get too hung up on who is (or isn't) reading your blog. I know th
 
 Ok that's it for now. Goodnight!
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

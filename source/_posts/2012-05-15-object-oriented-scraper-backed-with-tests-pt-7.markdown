@@ -69,6 +69,8 @@ Coffee: [" 0"]
 
 Close... but still not perfect. I think the best thing to do would be to write some formatter objects or functions to handle the different kinds of metadata. We'll tackle that tomorrow.
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 9:34pm
 - Mood: Fat, Tired, Drunk
 - Sleep: 6

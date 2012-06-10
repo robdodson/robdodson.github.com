@@ -129,4 +129,4 @@ Make sure you spelled your domain name correctly in the CNAME record that you pu
 
 If all else fails checkout the docs from [Github Pages](http://help.github.com/pages/) and [Octopress](http://octopress.org/docs/deploying/github/) on setting up a custom domain.
 
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

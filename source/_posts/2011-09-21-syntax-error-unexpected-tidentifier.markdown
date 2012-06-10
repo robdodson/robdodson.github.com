@@ -91,3 +91,5 @@ All of the above code evaluates to the same thing (give it a shot in IRB). At th
 ### Resolution
 
 Check the syntax of your method call. Odds are you forgot a comma somewhere.
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

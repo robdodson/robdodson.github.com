@@ -82,10 +82,10 @@ app.configure('production', function() {
 // Heroku won't actually allow us to use WebSockets
 // so we have to setup polling instead.
 // https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
-// io.configure(function () { 
-//   io.set("transports", ["xhr-polling"]); 
-//   io.set("polling duration", 10); 
-// });
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
 
 // Routes
 
@@ -143,7 +143,7 @@ and an `index.ejs`.
 <button id="reset">Reset!</button>
 ```
 
-If you'd like you can open up `routes/index.js' and look around but you don't need to. It should render `layout.ejs` and `index.ejs` by default.
+If you'd like you can open up `routes/index.js` and look around but you don't need to. It should render `layout.ejs` and `index.ejs` by default.
 
 A few more items to go...We need to add a copy of [jQuery](http://jquery.com/) to our `public` folder and also a `main.js` file. I've renamed the structure to look like this:
 

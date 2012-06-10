@@ -182,6 +182,8 @@ end
 
 With all that in place our test should pass. Nice!!!!!! We're well on our way to processing the remaining metadata. Tomorrow I'll whip up our other formats and figure out how to pull the date out of a blog post so we can combine that with the time to get a proper DateTime.
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 7:42 am
 - Mood: Awake, Alert, Focused
 - Sleep: 6

@@ -111,10 +111,4 @@ widget = make('div')
 
 Unfortunately this is still a lot of code and my first solution to slim it down is to create a helper function. At that point we're basically back to design by configuration... I'm not entirely ready to give up on this approach because I feel like their *might* be something here, I'm just not sure what yet. I think the design by configuration problem falls right into that sweet spot between not needing to create a factory and obviously needing to create a factory. I'll try to explore this more in a later post. For now it's time for bed.
 
-
-
-
-
-
-
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

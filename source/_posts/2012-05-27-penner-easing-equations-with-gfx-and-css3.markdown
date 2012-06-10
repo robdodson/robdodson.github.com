@@ -27,6 +27,8 @@ this.$el.gfx({
 
 Give it a shot and consider donating to Matthew's project or buying Robert Penner like a million beers!
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 12:09 am
 - Mood: Tired, Tipsy
 - Sleep: 7

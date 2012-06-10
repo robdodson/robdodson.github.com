@@ -43,6 +43,13 @@ $('#reset').click(function() {
 });
 ```
 
+You'll also need to update your index.ejs file so it reads like this:
+
+``` html views/index.ejs
+<div id="counter"></div>
+<button id="reset">Reset!</button>
+```
+
 Every second we'll decrement our countdown variable and broadcast its new value. If a client sends us a `reset` event we'll restart the timer and immediately broadcast the update to anyone connected. I noticed that since I'm using `xhr-polling` it can sometimes take a while for the timer to show up in my browser so keep that in mind.
 
 While this implementation isn't pretty it does get us a little bit further down the road. Unfortunately I've been tripped up by a bunch of Node's module issues so I have to cut tonight's post short :\

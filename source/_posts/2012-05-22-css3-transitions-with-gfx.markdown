@@ -97,6 +97,8 @@ After tinkering with Gfx for what seems like hours at this point I haven't figur
 
 I've looked at other libraries including [jQuery Transit](http://ricostacruz.com/jquery.transit/) and [Move.js](http://visionmedia.github.com/move.js/), and they all seem to be set to the 'all' mode. If anyone knows of a good library that can handle simultaneous animations I would love to hear about it. I think otherwise you would just need to create two animation objects and run them at the same time... but I haven't tested that theory yet.
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 8:07 am
 - Mood: Sedated, Upset-Stomach, Laggy
 - Sleep: 5.5

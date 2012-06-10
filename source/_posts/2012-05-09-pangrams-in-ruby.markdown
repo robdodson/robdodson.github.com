@@ -52,3 +52,5 @@ bjkmqz
 defghijklmnopqrstuvwxyz
 ```
 Play around with this, throw some different sentence combinations at it to see what it spits out. Then try to write your own implementation. A good next step would be to modify the script so it can support empty lines in the text file.
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

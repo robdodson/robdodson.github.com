@@ -196,3 +196,5 @@ The final call is just an explicit height for each bar. Depending on the scale t
 
 ### Conclusion
 Now that we've got one scale under our belt the others should be pretty easy to digest. Over the next couple of posts we'll focus on ordinal scales followed by time scales. Stay tuned and ping me if you have any questions. Thanks!
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

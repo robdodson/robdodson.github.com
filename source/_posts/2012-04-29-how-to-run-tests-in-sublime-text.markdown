@@ -29,3 +29,5 @@ If you see test results then you know that rspec is good to go. Use `subl .` to 
 Don't worry if it doesn't work the first time. Sublime and RubyTest are *very* finicky. Close Sublime and try to open it again from the command line.It might help to close any other Sublime projects you already have open or even quit the program entirely using `cmd-q`. You'll have to experiment a bit to get it all working.
 
 Hopefully after all that you've got your tests showing up green. Now you can integrate RubyTest into your workflow and save all that alt-tabbing back and forth between the command line!
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

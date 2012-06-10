@@ -136,3 +136,5 @@ rvm gemset delete my-new-rails-setup
 And recreate it however we want :D
 
 That wraps it up for today. If you have any questions you can post a comment or hit me up on twitter [@rob_dodson](http://twitter.com/robdodson).
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

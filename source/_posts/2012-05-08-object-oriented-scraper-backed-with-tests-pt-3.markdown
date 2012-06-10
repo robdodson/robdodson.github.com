@@ -263,5 +263,4 @@ end
 ```
 While it's not the prettiest test ever written it does get the job done. 0.00359 seconds for 4 examples *down from 6 seconds!* That's going to wrap it up for tonight. Tomorrow we'll finish off the spec and the implementation and finally get some data coming down from the live site. Until then!
 
-
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

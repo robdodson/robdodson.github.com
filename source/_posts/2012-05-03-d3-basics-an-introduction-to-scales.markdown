@@ -103,3 +103,5 @@ Our scale's range used to be 0 - 10. Now that we've changed it to 0 - 1000, what
 ### To Be Continued...
 
 Scales are a huge topic so we'll stop here for now. In the next post we'll talk about `linear`, `time` and `ordinal` scales; once you've mastered them everything else becomes a lot easier. Stay tuned :)
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

@@ -271,4 +271,4 @@ After we declare the self-executing function we include another function called 
 
 At the moment you need to add this handler to each of your visualizations. Not terrible but not very DRY either. I think in a future iteration I'll add a queue which holds a reference to each `draw` instance and calls them in sync. For now this is the quick and dirty way to get a graph up on Octopress. [You can download the entire post template from Github.](https://github.com/robdodson/octopress-templates) Enjoy!
 
-
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

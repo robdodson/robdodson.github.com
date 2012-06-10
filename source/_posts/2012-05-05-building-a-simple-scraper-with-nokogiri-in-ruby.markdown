@@ -93,6 +93,8 @@ the: 382
 ```
 It looks like our regex could use a bit of work so it doesn't grab singular letters like 's' or numbers, but it's definitely a good start. Tomorrow we'll put everything into a `Module` and back it with tests.
 
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
+
 - Time: 9:16 pm
 - Mood: Relaxed, Tired
 - Sleep: 6.5
