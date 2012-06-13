@@ -270,7 +270,7 @@ and...*voila!* The `aside` disappears on small screens!
 
 {% img center https://s3.amazonaws.com/robdodson/images/responsive_hide_on_phones.png 'Hiding the aside' %}
 
-Nice and simple, yeah? I'll post the project so you can check it out on your phone and also grab the github repo. - Rob
+Nice and simple, yeah? If you'd like to checkout the project running live you can [follow this link](http://robdodson.s3-website-us-east-1.amazonaws.com/tutorials/building-a-responsive-grid-with-foundation/index.html). Resize your browser or hit it with an iPhone to see it do its magic. - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
