@@ -17,6 +17,8 @@ rvm use 1.9.3@r2
 
 Ugh after spending about an 2 hours fucking around with bundler I'm getting nowhere. I'll have to pick this up tomorrow. :\ #WorstPostEver
 
+{% img center https://s3.amazonaws.com/robdodson/images/sadness.jpg 'sadness' %}
+
 
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
