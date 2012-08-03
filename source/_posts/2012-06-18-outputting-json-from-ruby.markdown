@@ -3,7 +3,7 @@ layout: post
 title: "Outputting JSON from Ruby"
 date: 2012-06-18 08:19
 comments: true
-categories: [Chain, Ruby, JSON, Nokogiri]
+categories: [Chain, Ruby, JSON]
 ---
 
 [Last night](http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/) I got the scraper to write an output.txt file which listed all the contents of `words_by_selector`. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.
@@ -67,6 +67,40 @@ end
 ```
 
 Our new test should pass. Feel free to flip one of the numbers in the expected_hash to 99 or something to see it fail.
+
+Now let's make sure the runner takes the content out of the crawler and writes it to a JSON file.
+
+``` ruby spec/runner_spec.rb
+it "should create a directory for our output" do
+  @runner.run
+  Dir.exists?('../../output').should be_true
+end
+
+it "should output the correct JSON" do
+  @runner.run
+  File.open("../../output/word_count.json") do |file|
+    file.each_line do |line|
+      puts line
+    end
+  end
+end
+```
+And in runner.rb...
+
+``` ruby tentacles/lib/tentacles/runner.rb
+def run      
+  @crawler = Tentacles::Crawler.from_uri(@options.uri)
+  output = @crawler.words_by_selector(@options.post_selector, 'ul:last-child')
+
+  Dir.mkdir('../../output') unless Dir.exists?('../../output')
+  
+  File.open("../../output/word_count.json", "w") do |file|
+    file.puts JSON.pretty_generate(output)
+  end
+end
+```
+
+And there we go. Our first decent output from the crawler :D -Rob    
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
