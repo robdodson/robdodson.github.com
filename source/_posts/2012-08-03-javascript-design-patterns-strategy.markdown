@@ -6,6 +6,8 @@ comments: true
 categories: [Chain, Design Patterns, JavaScript, Strategy]
 ---
 
+#### [Table of Contents](http://robdodson.me/blog/2012/08/03/javascript-design-patterns/)
+
 The Strategy pattern is one of my personal favorites and you've probably seen or used it in some fashion without even knowing it. Its primary purpose is to help you separate the parts of an object which are subject to change from the rest of the static bits. Using Strategy objects versus subclasses can often result in much more flexible code since you're creating a suite of easily swappable algorithms.
 
 ## Formal Definition

@@ -14,7 +14,7 @@ categories: [Chain, Design Patterns, JavaScript]
 - Factory Method
 - Object Pool
 - Prototype
-- Singleton
+- [Singleton](http://robdodson.me/blog/2012/08/08/javascript-design-patterns-singleton/)
 
 ###Structural
 - Adapter
@@ -36,7 +36,7 @@ categories: [Chain, Design Patterns, JavaScript]
 - Null Object
 - Observer
 - State
-- Strategy
+- [Strategy](http://robdodson.me/blog/2012/08/03/javascript-design-patterns-strategy/)
 - Template Method
 - Visitor
 - Monad Pattern / Promises
