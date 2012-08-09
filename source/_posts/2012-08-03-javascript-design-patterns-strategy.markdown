@@ -111,18 +111,64 @@ When you have a part of your Class that's subject to change frequently or perhap
 
 Another benefit of the Strategy pattern is that it can hide complex logic or data that the client doesn't need to know about.
 
-## Real World Examples
+## The Painting App
 
-Let's say you're designing a website with all kinds of different, interesting button animations. Sometimes buttons should expand when rolled over, other times they should fade and maybe some will change colors. You could have several button classes or jQuery selections but you'd be repeating a ton of code just for the sake of a little animation algorithm. Let's see if we can write some strategy objects which solve this problem for us and give us a nice toolbox to work from.
+For a real world example of when to use Strategy objects consider your typical painting program. Often times you will offer a variety of different brush types to your user but you don’t want to have to change the fundamentals of how a mark shows up on screen every time the user decides to switch from a round to a square brush. Why not wrap those specific implementations in their own brush objects and later on when the user clicks to draw something to screen we’ll just defer to one of those brushes.
 
 ``` js
-var ButtonAnimation = function(context, animation) {
-	this.context = context;
-	this.animation = func;
-}
+// Grab a reference to the canvas and the drawing context
+$canvas = $('#painter');
+context = $canvas[0].getContext('2d');
+
+// Define our brush strategy objects
+brushes = {
+  outline: {
+      draw: function(e, context) {
+          context.strokeRect(e.pageX - offsetLeft, e.pageY - offsetTop, 10, 10);
+      }
+  },
+  square: {
+      draw: function(e, context) {
+          context.fillRect(e.pageX - offsetLeft, e.pageY - offsetTop, 10, 10);
+      }
+  },
+  circle: {
+      draw: function(e, context) {
+          context.arc(e.pageX - offsetLeft, e.pageY - offsetTop, 10, 0, Math.PI * 2);
+          context.fill();
+      }
+  }
+};
+
+... .
+
+brush = brushes.square;
 ```
 
-### Bocoup example
+Here we see that `brushes.outline`, `brushes.square`, and `brushes.circle` each implement a consistent interface for the `draw` call. However their exact implementation changes from one brush to the next. `brushes.outline` will only draw the stroke of a rectangle, whereas `brushes.square` and `brushes.circle` will fill their respective shapes in. Elsewhere in the program we set our initial brush to a default of brushes.square. When the users presses their mouse and moves it around screen we can defer to whichever Strategy the brush object is currently referencing:
+
+``` js
+// Listen for mouse events on the canvas
+$canvas
+  .on('mousedown', function() {
+      isDrawing = true;
+  })
+  .on('mouseup mouseleave', function() {
+      isDrawing = false;
+  })
+  .on('mousemove', function(e) {
+      if (isDrawing) {
+          // Defer drawing to a Strategy object
+          brush.draw(e, context);
+      }
+  });
+```
+
+Again notice that `.on('mousemove')` we first check to see if it’s ok to draw something and then defer to whichever Strategy is currently being referenced. Using this approach we can add limitless new brush types to the `brushes` object and easily change how our program performs at runtime. Be sure to check out the live example and the source for the full application.
+
+### [Live Example](http://robdodson.s3.amazonaws.com/javascript-design-patterns/strategy/painter/index.html)
+
+### [Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/strategy/painter)
 
 ## Related Patterns
 
