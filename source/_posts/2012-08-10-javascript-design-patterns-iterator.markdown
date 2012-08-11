@@ -164,6 +164,10 @@ For some further reading on the topic checkout the MDN article which covers [Ite
 <hr>
 <br>
 
+#### [Table of Contents](http://robdodson.me/blog/2012/08/03/javascript-design-patterns/)
+
+<br>
+
 Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

@@ -260,6 +260,10 @@ Many patterns can be implemented using the Singleton pattern. See Abstract Facto
 <hr>
 <br>
 
+#### [Table of Contents](http://robdodson.me/blog/2012/08/03/javascript-design-patterns/)
+
+<br>
+
 Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
