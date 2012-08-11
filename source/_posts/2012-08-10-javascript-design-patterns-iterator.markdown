@@ -59,9 +59,9 @@ Our iterator has a handful of useful operations including `next`, `hasNext`, `re
 
 `next` will return the next value and advance the index by 3.
 
-`hasNext` will check to see if calling `next` will actually return an item. Useful for indicating when we've reached the end of a collection.
+`hasNext` will check to see if calling `next` will actually return an item. Good for indicating when we've reached the end of a collection.
 
-`rewind` will return the index to the beginning so we can loop over the collection again.
+`rewind` will reset the index to zero so we can loop over the collection again.
 
 `current` will return the current item at the index without advancing the index.
 
@@ -133,7 +133,7 @@ Google Chrome will swap the order of the keys such that they appear like this:
 ``` js
 { '1': 'hello', '2': 'world', 'foo': 'foo', 'bar': 'bar' };
 ```
-There are some interesting discussions on StackOverflow which cover this topic but it's a bit outside the scope of this article so I'll just link to them here:
+There are some interesting discussions on StackOverflow which cover this topic but it's a bit outside the scope of this article. If you're interested you can find them here:
 
 - [How to keep an Javascript object/array ordered while also maintaining key lookups?](http://stackoverflow.com/questions/5773950/how-to-keep-an-javascript-object-array-ordered-while-also-maintaining-key-lookup)
 - [Javascript data structure for fast lookup and ordered looping?](http://stackoverflow.com/questions/3549894/javascript-data-structure-for-fast-lookup-and-ordered-looping)
@@ -151,3 +151,13 @@ Although not widely supported yet, JavaScript 1.7 includes a built in Iterator o
 The above script block will not work in Chrome but it should work in the latest version of Firefox. Note the `type` attribute of the script tag which instructs the interpreter to handle the code as JS 1.7.
 
 For some further reading on the topic checkout the MDN article which covers [Iterators in JavaScript 1.7](https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Iterators_and_Generators)
+
+## Related Patterns
+
+- Composite: Iterators are often applied to recursive structures such as Composites.
+- Factory Method: Polymorphic iterators rely on factory methods to instantiate the appropriate Iterator subclass.
+- Memento: Often used in conjunction with the Iterator pattern. An iterator can use a memento to capture the state of an iteration. The iterator stores the memento internally.
+
+Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

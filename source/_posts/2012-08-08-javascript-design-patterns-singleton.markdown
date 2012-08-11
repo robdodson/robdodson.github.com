@@ -249,3 +249,15 @@ As Addy is quick to point out:
 > They're often an indication that modules in a system are either tightly coupled or that logic is overly spread across multiple parts of a codebase. Singletons can be more difficult to test due to issues ranging from hidden dependencies, the difficulty in creating multiple instances, difficulty in stubbing dependencies and so on.
 
 Definitely read [his full article](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript) on the subject since it contains a handful of links to interesting side topics.
+
+## Related Patterns
+
+Many patterns can be implemented using the Singleton pattern. See Abstract Factory, Builder, and Prototype.
+
+<small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small>
+<hr>
+<br>
+
+Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

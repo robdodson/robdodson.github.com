@@ -30,7 +30,7 @@ categories: [Chain, Design Patterns, JavaScript]
 - Chain of Responsibility
 - Command
 - Interpreter
-- Iterator
+- [Iterator](http://robdodson.me/blog/2012/08/10/javascript-design-patterns-iterator/)
 - Mediator
 - Memento
 - Null Object
@@ -47,3 +47,5 @@ I know there are a lot of people out there who [aren't too](http://www.codinghor
 
 Patterns should be used with caution as not everything fits so neatly into their paradigms. It's often said that a beginner never met a pattern he didn't like. In my experiences I've been burned by pattern overuse and at other times they have legitimately saved my ass. It's also true that many patterns don't really work or aren't appropriate for particular languages. For instance, the GoF book was written *primarily for languages which shared features of C++ and SmallTalk*. I totally agree with this sentiment but I feel like along the way we'll discover what does and doesn't make sense in a dynamic language like JS and hopefully we can toss in some new patterns of our own. Already to the list I've added Promises which I use quite frequently and find to be a wonderful alternative to JavaScript's oft seen pyramid of callbacks. 
 Again, this is all about learning and experimenting. In my opinion a good understanding of design patterns is a threshold that needs to be crossed at some point in your career. I'm committed to doing this every single day for the next few weeks so hopefully by the end of it we'll have a useful resource that others can benefit from. Stay tuned!
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)

@@ -174,4 +174,8 @@ Again notice that `.on('mousemove')` we first check to see if it’s ok to draw 
 
 ## Related Patterns
 
-Flyweight: Strategy objects often make good flyweights.
+- Flyweight: Strategy objects often make good flyweights.
+
+Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
+
+You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
