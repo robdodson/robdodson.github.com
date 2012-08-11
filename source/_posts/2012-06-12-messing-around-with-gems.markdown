@@ -8,6 +8,8 @@ categories: [Ruby, Ruby Gems, Bundler]
 
 I want to work on a code generation tool, similar to the one offered up by Rails. However my Ruby-fu is a bit rusty at the moment so this might be an interesting struggle.
 
+<!--more-->
+
 The first thing I'm going to do is create a new gemset with rvm. Our gem is going to be called `r2` after the much beloved R2D2 so we'll also call our gemset `r2`.
 
 ```

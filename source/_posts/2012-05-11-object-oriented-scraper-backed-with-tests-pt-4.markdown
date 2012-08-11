@@ -8,6 +8,8 @@ categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, FakeWeb, BDD]
 
 Continuing from our [previous post](http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/) we're going to keep working on our `Crawler` and our specs to see if we can start pulling real data from our site.
 
+<!--more-->
+
 The first thing I did this morning was to run my tests:
 ```
 bundle exec rspec spec/

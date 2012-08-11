@@ -10,6 +10,8 @@ Coming from Actionscript 3 I’m pretty used to all of the different errors that
 
 For my own benefit, and hopefully for the benefit of others, I’m going to post the errors and solutions that I come up with. Hopefully since I’m a total newbie, explaining things from my perspective will help other people who are new to the language as well.
 
+<!--more-->
+
 To start of we have the `NoMethodError`.
 {% img center /images/no_method_error.jpg 'NoMethodError' %}
 

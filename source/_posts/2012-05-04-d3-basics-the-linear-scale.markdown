@@ -39,6 +39,8 @@ categories: [Chain, D3, Data Viz]
 </div>
 In [the last post](http://localhost:4000/blog/2012/05/03/d3-basics-an-introduction-to-scales/) we did a basic introduction to the concept of scales in [D3.js](http://d3js.org/). Today we'll look at our first scale and write some code to visualize it.
 
+<!--more-->
+
 ### Linear Scales
 
 The most basic scale in D3 is the `linear scale` which maps a continous `domain` to an output range. To define a linear domain we'll need to first come up with a data set. Fibonacci numbers work well, so let's declare a variable `data` like so:

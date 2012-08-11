@@ -6,7 +6,11 @@ comments: true
 categories: [Chain, jQuery, Deferred, Promises, Promise, Underscore, Templates]
 ---
 
-Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be. Since I'm using Backbone Boilerplate I've gotten used to having my template loading method already stubbed out for me. Here's the one they use:
+Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.
+
+<!--more-->
+
+Since I'm using Backbone Boilerplate I've gotten used to having my template loading method already stubbed out for me. Here's the one they use:
 
 ``` js
 fetchTemplate: function(path, done) {

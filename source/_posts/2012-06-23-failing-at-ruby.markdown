@@ -109,6 +109,8 @@ end
 
 Really ugly code that still doesn't work. My biggest problem with Ruby is that I don't have very good debugging tools and that frustrates the shit out of me. I'm so used to the visual debuggers in the Chrome Dev tools that doing everything with `p` or `puts` is just soul-crushing.
 
+<!--more-->
+
 Right now my biggest problem is that data isn't being returned from the spider for whatever reason. This is especially annoying because the operation takes a while to run... I should slim it down but my brain is too tired to re-write the code. I'm kind of hoping for a lucky break. Advice to anyone just starting out in programming, do not do exactly what I'm doing right now.
 
 Ok so after getting my ass totally handed to me by Ruby here's a working version of the spider that grabs the proper metadata.

@@ -8,6 +8,8 @@ categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, FakeWeb]
 
 I did some cleanup this morning on the `Options` class and the `options_spec`, mainly to remove items that seemed like they shouldn't be tested. Here's where I'm currently at:
 
+<!--more-->
+
 ```ruby tentacles/lib/tentacles/options.rb
 require 'yaml'
 

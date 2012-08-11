@@ -21,6 +21,8 @@ new DocumentRow({ // <-- View object with model reference
 
 When you use this approach it's trivial to tell the view to listen to the model's change event and then call `view.render()`. Essentially you are munging some of a Controller's responsibilities into the View. That's all well and good but let's say we want to dispatch an event from one view which will affect other views and actors. This event has nothing to do with a model, maybe it's just an animation of some kind that others need to know about. So how do we go about this?
 
+<!--more-->
+
 ### Communicating between Views in Backbone
 
 To facilitate this communication we're going to use the `app` object that [Backbone Boilerplate](https://github.com/tbranyen/backbone-boilerplate) creates for us. If you look in the `namespace.js` file that comes with the boilerplate you should see a line like this way down at the bottom:

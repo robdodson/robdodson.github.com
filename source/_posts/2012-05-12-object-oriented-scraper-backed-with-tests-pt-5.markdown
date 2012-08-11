@@ -8,6 +8,8 @@ categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, FakeWeb, BDD,
 
 Last night I got the `Crawler` passing its test for `#get_words_by_selector`. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both `throw`/`catch` and `raise`/`rescue` so what's the difference between throw/catch and raise/rescue in Ruby?
 
+<!--more-->
+
 ### Throwing exceptions for control flow
 
 There's a great guest post by Avdi Grimm on [RubyLearning](http://rubylearning.com/blog/2011/07/12/throw-catch-raise-rescue-im-so-confused/) which covers this topic in depth. To summarize `throw`/`catch` is mainly used when doing *exceptions as control flow*. In other words, if you need to break out of a deeply nested loop or some other expensive operation you can throw an exception symbol which can be caught someone high up the call stack. Initially this rubbed me the wrong way since I know that things like `goto` and `labels` are a bad practice. Someone else raised this point in the comments to which Avid responded:

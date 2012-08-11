@@ -8,6 +8,8 @@ categories: [Chain, BDD, Backbone, Backbone Boilerplate, Mocha, Chai, Sinon]
 
 Continuing from [yesterday's post](http://robdodson.me/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/) I'm going to start to incorporate Backbone into my BDD setup. I'm going to use the [Backbone Boilerplate](https://github.com/tbranyen/backbone-boilerplate) and [grunt-bbb](https://github.com/backbone-boilerplate/grunt-bbb) to setup a new project. If you're new to the boilerplate or grunt-bbb [checkout my previous post on getting started.](http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/)
 
+<!--more-->
+
 ### Shiny and new
 
 I've created a new directory called `amd-tests` and once I `cd` inside I run `bbb init` to template out a new project. By default the boilerplate uses Require.js and AMD modules and we have a little example one already created for us. It's called, well, Example :) We'll use this to create our model for testing since I know that everyone should be on the same page with this module.

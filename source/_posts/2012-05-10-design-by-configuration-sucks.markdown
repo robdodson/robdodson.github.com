@@ -8,7 +8,11 @@ categories: [Chain, Design Patterns]
 
 ### What is design by configuration?
 
-As an experienced developer if you find that you are performing the same actions over and over naturally your brain will start to think "Hey, this isn't very DRY". DRY, or the principle of "Don't Repeat Yourself" is pretty common dogma for most developers. How many times have you heard something like, "If you're doing it twice, you're doing it wrong." Typically when I do an action more than once I start looking for ways to wrap the work into functions or objects. This process can easily lead to what some refer to as "Design by Configuration," or breaking your work into configurable operations. To explore this concept a bit more, and why I think it's rather brittle, let's come up with a hypothetical. In our scenario we're working for a large company redesigning their web presence. On each page we have widgets of various shapes and sizes. Here's an example of some:
+As an experienced developer if you find that you are performing the same actions over and over naturally your brain will start to think "Hey, this isn't very DRY". DRY, or the principle of "Don't Repeat Yourself" is pretty common dogma for most developers. How many times have you heard something like, "If you're doing it twice, you're doing it wrong." Typically when I do an action more than once I start looking for ways to wrap the work into functions or objects. This process can easily lead to what some refer to as "Design by Configuration," or breaking your work into configurable operations.
+
+<!--more-->
+
+To explore this concept a bit more, and why I think it's rather brittle, let's come up with a hypothetical. In our scenario we're working for a large company redesigning their web presence. On each page we have widgets of various shapes and sizes. Here's an example of some:
 
 ```html
 <div class="widget-container grey-background rounded-corners">

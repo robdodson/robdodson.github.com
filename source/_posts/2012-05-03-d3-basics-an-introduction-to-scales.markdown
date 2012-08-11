@@ -46,6 +46,8 @@ categories: [Chain, D3, Data Viz]
 
 After selections, scales are probably the most frequently used element in D3 because they faciliate such great control over data and screen space. I want to spend several posts documenting how scales work to help out anyone who is struggling with the concept. We'll start with a high level overview of what a scale is in D3 and then explore the individual objects to learn their nuances.
 
+<!--more-->
+
 ### What Are D3 Scales?
 
 Essentially a scale is a convenience function for mapping input data to an output range, typically x/y positions or width/height. Scales can also be used to link data to arbitrary values like categories or days of the week, or to quantize data into "buckets". 

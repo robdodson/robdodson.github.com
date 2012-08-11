@@ -28,6 +28,8 @@ NoMethodError: undefined method `city' for {:name=>"Rob", :city=>"San Francisco"
 
 "Hmm, weird," I thought. I know I've seen dot syntax used in Ruby before..what gives?
 
+<!--more-->
+
 ### Dot Syntax and the Ruby Hash Object
 As it turns out Ruby does not support dot syntax for the `Hash` object. If I had wanted to access the `city` property from my previous example I should have done it using the symbol key like so:
 

@@ -10,6 +10,8 @@ categories: [Chain, Design Patterns, JavaScript, Strategy]
 
 The Strategy pattern is one of my personal favorites and you've probably seen or used it in some fashion without even knowing it. Its primary purpose is to help you separate the parts of an object which are subject to change from the rest of the static bits. Using Strategy objects versus subclasses can often result in much more flexible code since you're creating a suite of easily swappable algorithms.
 
+<!--more-->
+
 ## Formal Definition
 
 {% blockquote GoF, Design Patterns: Elements of Reusable Object-Oriented Software %}
@@ -175,6 +177,10 @@ Again notice that `.on('mousemove')` we first check to see if it’s ok to draw 
 ## Related Patterns
 
 - Flyweight: Strategy objects often make good flyweights.
+
+<small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small>
+<hr>
+<br>
 
 Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
 

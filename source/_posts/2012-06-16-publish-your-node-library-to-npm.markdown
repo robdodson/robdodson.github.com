@@ -8,6 +8,8 @@ categories: [Chain, Node, NPM, CLI]
 
 Alright, [contuing from yesterday](http://robdodson.me/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/) we want to take our little Node module and make it available to the world as a really awesome command line tool.
 
+<!--more-->
+
 The first thing we need to do is register an NPM account.
 
 `npm adduser`

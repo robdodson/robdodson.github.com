@@ -10,6 +10,8 @@ At my office we like to shoot each other from across the room with Nerf guns. In
 
 In an effort to keep track of things (and also because I need to write a blog post) I decided to start working on a little [Node.js](http://nodejs.org/) and [Socket.io](http://socket.io/) app. In this first post I'm just going to get things setup and deploy them to Heroku. Hopefully tomorrow we can work on implementing the actual timers. If you've never worked with Heroku before [you'll need to follow their getting started guide](https://devcenter.heroku.com/articles/quickstart) to make sure you have all the proper command line tools. Don't worry, it's really easy and their documentation is **awesome**.
 
+<!--more-->
+
 ### Express it!
 
 To start us off we'll use [Express](http://expressjs.com/) since it provides a nice, [Sinatra](http://www.sinatrarb.com/) like layer on top of Node. If you haven't installed Node yet you can do it from the [Node.js](http://nodejs.org/) site. The installer will also include `npm` which is Node's package manager. Following the instructions on the [Express](http://expressjs.com/) site you should be able to just type:

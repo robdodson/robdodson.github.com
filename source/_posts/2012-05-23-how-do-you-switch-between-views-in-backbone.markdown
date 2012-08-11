@@ -8,6 +8,8 @@ categories: [Chain, Backbone]
 
 I'm going to try to approach some of my future articles as more of a question/answer setup so they don't turn into these sprawling tutorials. Today I want to focus on moving between views in Backbone.js. I'm starting with some very simple templates and three views: LeftView, MiddleView, RightView. To do this quickly we'll make it so each view is essentially a big button which, when clicked on, should animate to the middle of the screen.
 
+<!--more-->
+
 Here's what one of my templates looks like:
 
 ``` html right.html

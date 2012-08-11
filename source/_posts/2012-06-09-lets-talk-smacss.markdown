@@ -8,6 +8,8 @@ categories: [Chain, CSS, SMACSS]
 
 In an effort to further my understanding of CSS best practices I've ended up with two sort of looming frameworks: [OOCSS](http://oocss.org/) and [SMACSS.](http://smacss.com/) After reading up on both I feel more drawn toward SMACSS, most likely because it features a lumberjack on its site. I want to give a quick summary of what SMACSS has to offer. In so doing I'm going to borrow liberally from the documentation and then explain my thinking as it relates to certain passages. Cool? OK.
 
+<!--more-->
+
 ## The Skinny
 
 The ideas behind SMACSS were fostered over time by its creator, Jonathan Snook, who has worked on tons of sites, most notably YAHOO! Mail's latest redesign. SMACSS is not a library of ready-made code that you can just download like [Twitter's Bootstrap](http://twitter.github.com/bootstrap/) or [ZURB's Foundation.](http://foundation.zurb.com/) Instead it is a collection of design ideas and suggestions codefied in an easy to read ebook. Think of it as a tool to help you decide *how* you're going to write your CSS, rather than something which will write your CSS for you.

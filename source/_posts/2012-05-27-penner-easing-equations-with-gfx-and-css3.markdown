@@ -10,6 +10,8 @@ This is going to be a bit of lightening post because it's rather late and I need
 
 I have something which will hopefully be useful for some folks who are getting into CSS3 animations with the Gfx plugin for jQuery. [I've blogged a bit about Gfx before](http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx/) and one of the first things I noticed was the lack of a built in easing library. Coming from the Flash world where [TweenLite is king](http://www.greensock.com/tweenlite/) I've grown very accustomed to using Robert Penner's easing equations for great effect. The same equations are used by the jQuery framework to do its animations. Thankfully [Matthew Lein was kind enough to convert those over to cubic-beziers](http://matthewlein.com/ceaser/) for those of us doing CSS3 animations. Since Gfx accepts cubic-beziers I moved the equations from Matthew's tool into an AMD compliant module and [put it up on Github.](https://github.com/robdodson/amd-css3-ease) It's very simple so if AMD isn't your thing you can just rip those parts out :D
 
+<!--more-->
+
 Example usage looks something like this:
 
 ``` js

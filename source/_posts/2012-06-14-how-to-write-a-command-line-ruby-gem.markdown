@@ -10,6 +10,8 @@ So [yesterday we saw how to setup and run ruby scripts as executables from the c
 
 Instead we're going to turn to Bundler to help us manage our files and turn our command line tool into a ruby gem. I'm going to start fresh and create a totally new tool, called `zerp`. I don't know what `zerp`'s purpose will be in the long run, but today we're going to make it print some text to verify everything is working.
 
+<!--more-->
+
 ## New RVM Gemset
 
 Before I do anything with gems I want to make sure I have a cleanroom of sorts. So if anything goes horribly wrong I can just throw everything away and start over. To do this we'll use RVM to create a new gemset.

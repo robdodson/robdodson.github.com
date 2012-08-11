@@ -1,12 +1,10 @@
 ---
 layout: post
-title: "JavaScript Design Patterns"
+title: "JavaScript Design Patterns: Table of Contents"
 date: 2012-08-03 09:39
 comments: true
 categories: [Chain, Design Patterns, JavaScript]
 ---
-
-## Table of Contents
 
 ###Creational
 - Abstract Factory
@@ -42,6 +40,8 @@ categories: [Chain, Design Patterns, JavaScript]
 - Monad Pattern / Promises
 
 I've been trying to think up [a new chain](http://robdodson.me/blog/2012/06/25/ending-my-first-chain/) since coming back from Europe but nothing was enticing me. Then a few days ago I had a conversation with one of my friends in which we discussed using Promises in JavaScript. And later on we discussed Builders. I was doing my best to explain the two but really wished that I had a resource where I could just show some simple code examples. It occurred to me that I've always wanted to go through the [Gang of Four book](http://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612/ref=sr_1_1?ie=UTF8&qid=1344014497&sr=8-1&keywords=design+patterns) and just write my own interpretation of each pattern. Since I'm currently working primarily in JavaScript I thought it might be an interesting challenge to convert their examples, often in strongly typed languages, to something as dynamic and loosey-goosey as JS.
+
+<!--more-->
 
 I know there are a lot of people out there who [aren't too](http://www.codinghorror.com/blog/2005/09/head-first-design-patterns.html) [keen on](http://thinkrelevance.com/blog/2007/05/17/design-patterns-are-code-smells) design patterns but that's not to say that they shouldn't be used or studied. There's a lot of code out there that starts with `jQuery.click()` or `addEventListener` or `.on()` and all of them are implementations of the Observer pattern. Finding this reusable approach is the main point of patterns and along with it comes a shared vocabulary that can be passed on to other developers. Rather than saying "Let's defer the methods of our object that are subject to change to well encapsulated algorithms." We can just say "A Strategy pattern might be nice here."
 

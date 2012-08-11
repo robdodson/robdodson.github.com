@@ -6,7 +6,11 @@ comments: true
 categories: [Chain, Backbone, History]
 ---
 
-I want to talk a bit more about the Backbone Router because I think it's one of the first pieces of the framework that people run up against that deviates from the standard MVC setup. If you've used Rails before you're used to the idea of `routes` which pick apart a url and figure out which controller to run. CodeIgniter uses the same paradigm but I'm not sure if they also call them routes or use a different term. Contrary to this, in Backbone the Router is like a controller for the entire application. This makes it similar to Sinatra. Creating two different routes which replace the content of the page each time would look like this:
+I want to talk a bit more about the Backbone Router because I think it's one of the first pieces of the framework that people run up against that deviates from the standard MVC setup. 
+
+<!--more-->
+
+If you've used Rails before you're used to the idea of `routes` which pick apart a url and figure out which controller to run. CodeIgniter uses the same paradigm but I'm not sure if they also call them routes or use a different term. Contrary to this, in Backbone the Router is like a controller for the entire application. This makes it similar to Sinatra. Creating two different routes which replace the content of the page each time would look like this:
 
 ``` js
 var Router = Backbone.Router.extend({

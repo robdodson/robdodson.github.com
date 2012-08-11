@@ -45,6 +45,8 @@ categories: [Chain, D3, Octopress, Writing, Data Viz]
 
 This morning I was hoping to cover some of the basics of using D3.js. Along the way I realized I really wanted people to be able to see the graphs on the blog itself. I *could* have used JSFiddle, but I didn't like all that chrome repeated across the page. So I came up with my own solution with a little bit of hacking :)
 
+<!--more-->
+
 I'll have to save the basics for tomorrow since I've already spent way too much time just getting this setup. But I will offer a brief explanation of D3 and how I got it working on Octopress.
 
 ### What is D3.js?

@@ -8,6 +8,8 @@ categories: [Chain, JavaScript, Design Patterns, State Pattern, Backbone, Backbo
 
 [Yesterday I wrote a post to illustrate the concepts behind the State pattern](http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/) (one of my all time favorite tools). If you're new to this pattern and haven't read my previous post I suggest you start there and read this one after you've had a chance to play around with the ideas.
 
+<!--more-->
+
 I wanted to write about this pattern in the context of a Backbone app because I think there's a lot of value in exploring different ways to manage our Views and Models. Here's an example Video Player in which several State objects inherit from a common ancestor, `BaseState`. I chose to make `BaseState` extend `Backbone.Model` because it seemed like the best fit for this kind of thing, although typically when I implement this pattern in other languages I just use generic Objects. I would have done that here but Backbone's `extend` functionality makes the code so much cleaner.
 
 ``` js

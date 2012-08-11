@@ -8,6 +8,7 @@ categories: [Sublime, TDD, Ruby, RSpec, Chain]
 
 If you're lazy like me then you love to automate as much of your process as possible. Running tests from within your IDE is one of those tasks that screams for a keyboard shortcut. In full featured tools like RubyMine or Eclipse this is usually pretty straightforward. However many developers in the Ruby community seem to prefer more lightweight tools like TextMate, Vim and Sublime. Today we'll look at how to setup RubyTest in Sublime Text 2 so we can easily run tests with just a few hotkeys. The tests will be written in [Rspec](http://rspec.info/) which should be familiar to most Rubyists.
 
+<!--more-->
 
 ###How to setup RubyTest in Sublime Text 2
 If you haven't installed the [Sublime Package Manager](http://wbond.net/sublime_packages/package_control) go ahead and do that now. The package manager is a wonderful tool that lets us install and update plugins from within Sublime. After you have that installed you can hit `cmd-shift-p` to open up the Command Palette. Type the following `Install Package` and press Enter. This will bring up a list of available packages that we can install. You can also type `Discover Packages` which will take you to a page listing each plugin with a brief description.

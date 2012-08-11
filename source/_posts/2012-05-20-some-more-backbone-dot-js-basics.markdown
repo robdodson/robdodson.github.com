@@ -8,6 +8,8 @@ categories: [Chain, Backbone]
 
 Here are some quick Backbone snippets to help visualize concepts. I'll move around fairly quickly so if you're interested in going more in-depth then checkout the documentation.
 
+<!--more-->
+
 ### Events
 
 Backbone events are pretty straightforward. To create a pub/sub relationship you use the `on` and `off` methods of `Backbone.Events`:

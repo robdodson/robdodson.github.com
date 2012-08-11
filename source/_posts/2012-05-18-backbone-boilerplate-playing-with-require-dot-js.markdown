@@ -6,7 +6,9 @@ comments: true
 categories: [Chain, Backbone, Backbone Boilerplate, Require.js]
 ---
 
-I want to keep playing with require.js and AMD modules today so I can really internalize the concepts around them. I'm going to go through the examples in [the require documentation](http://requirejs.org/docs/api.html#jsfiles) starting with loading regular scripts and then defining modules and loading those. Here's our boilerplate HTML:
+I want to keep playing with require.js and AMD modules today so I can really internalize the concepts around them. I'm going to go through the examples in [the require documentation](http://requirejs.org/docs/api.html#jsfiles) starting with loading regular scripts and then defining modules and loading those.
+
+<!--more-->
 
 Here is our boilerplate HTML. It's a standard HTML5 file which just includes require.js at the bottom of the page.
 ``` html

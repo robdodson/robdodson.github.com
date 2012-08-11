@@ -10,6 +10,8 @@ categories: [Chain, JavaScript, Design Patterns, Singleton]
 
 Ah yes the Singleton, a pattern whose name lives in infamy. For the uninitiated a little explanation is in order. A Singleton is an object which can only be instantiated one time. Repeated calls to its constructor return the same instance and in this way one can ensure that they don't accidentally create, say, two Users in a single User application. Doesn't sound too bad, right? Well, if you're responsible then it arguably *is* OK but there are many caveats. Before I get into those though, let's throw in the formal definition *a la* the Gang of Four.
 
+<!--more-->
+
 ## Formal Definition
 
 {% blockquote GoF, Design Patterns: Elements of Reusable Object-Oriented Software %}

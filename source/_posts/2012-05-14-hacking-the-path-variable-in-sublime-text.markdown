@@ -8,6 +8,8 @@ categories: [Chain, Sublime, Python, Sublime Plugins, Shell Turtlestein, Pathway
 
 This is going to be a bit of a lightning post but I wanted to quickly show off how to edit the PATH variable that Sublime text uses. I should warn you that that I am neither an expert in Python nor am I a very seasoned Sublime user. So having said that take all of this with a grain of salt and use at your own risk.
 
+<!--more-->
+
 ### Our first (crappy) plugin!
 
 Sublime has a great plugin architecture that makes it extremely easy to add to the platform. If you create a `.py` file in the `~/Library/Application Support/Sublime Text 2/Packages/User/` folder it will be loaded as soon as Sublime starts. Writing plugins seems to be actually quite easy based on their [documentation and examples.](http://www.sublimetext.com/docs/plugin-basics) We won't be following the typical plugin architecture since we're just trying to hack a system variable and that doesn't seem to necessitate the use of their built in modules.

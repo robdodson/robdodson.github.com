@@ -8,6 +8,8 @@ categories: [Chain, Ruby]
 
 Yeesh, I gotta stop writing so late at night... Last night I was trying to get my spider to follow all the links on the blog's archive page and then sum up all the words from every post. Unfortunately I was way too tired to get that to actually work. Tonight I finished that step of the process but it required some ugly code and refactoring our unit tests. Without further adieu...
 
+<!--more-->
+
 ```ruby tentacles/lib/tentacles/runner.b
 require 'yaml'
 require 'json'

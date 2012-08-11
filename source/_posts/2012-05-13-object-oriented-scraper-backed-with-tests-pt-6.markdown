@@ -8,6 +8,8 @@ categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, BDD, Exceptio
 
 Yesterday we verified that our `Crawler` was able to hit a document and, given the right selector, pull down a list of words and their frequency on the page. We also created a custom exception to be used whenever the selector fails to pull down the right content. I'm going to repeat this process today with the `get_metadata_by_selector`. If there's time we'll try to output another file with our data, otherwise that'll be tomorrow's homeworkd :D
 
+<!--more-->
+
 Let's take a moment to look at today's metadata to figure out what we'd like our output to reflect.
 
 ```

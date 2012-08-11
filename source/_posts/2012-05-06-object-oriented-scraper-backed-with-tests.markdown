@@ -12,6 +12,8 @@ Yesterday I managed to build a pretty naive scraper using Nokogiri which would c
 
 Today I want to convert it into a more OO library so it's a bit more modular and reusable. I also want to back everything with RSpec tests to get into the practice. While it won't be true TDD I'll try to write the tests for the library before putting the classes together.
 
+<!--more-->
+
 ### Design Decisions
 
 I'm calling the project `Tentacles` for now since it relates to my Octopress blog. I'm still trying to figure out exactly what the end product will be. So far I know that I want it to produce a page of statistics about my blog. I figure that for now it can be just one page with stats that cover the entire blog. In the future I might want to make it more granular so that each post can get special attention. For now it's easiest for me if I just think of the whole blog as a big data set and this page as the output.

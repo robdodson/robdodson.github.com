@@ -9,6 +9,8 @@ categories: [Ruby, Rails, Rails 3, PostgreSQL, Heroku, Chain]
 ###Install PostgreSQL Locally
 Ryan Bates has already put together a wonderful Railscast on this topic so feel free to [jump over there](http://railscasts.com/episodes/342-migrating-to-postgresql) to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.
 
+<!--more-->
+
 There are a few different options for installing PostgreSQL. The first one, which Ryan outlines, is to use [Homebrew](http://mxcl.github.com/homebrew/) and simply do a `brew install postgresql`. Some folks might not be comfortable with that process so I wanted to also recommend the new [PostgreSQL.app](http://postgresapp.com/) from the team at [Heroku](http://www.heroku.com/). If you're more used to tools like [MAMP](http://www.mamp.info/en/index.html) then the PostgreSQL.app might be a bit more your style.
 
 If you go the Homebrew route make sure you type in `initdb /usr/local/var/postgres` after the install finishes to init your first database. The installer will also mention some commands you can use to have PostgreSQL auto-start whenever you turn on your computer. I wasn't a big fan of this approach so instead I created two aliases in my .bash_profile.

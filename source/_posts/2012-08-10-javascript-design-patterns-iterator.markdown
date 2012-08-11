@@ -10,6 +10,8 @@ categories: [Chain, JavaScript, Design Patterns, Iterator]
 
 If you're coming from Ruby or Java you probably think of an Iterator as an object which gives you a consistent interface for traversing a collection of some kind. If you're coming from JavaScript or Actionscript you probably just think of an iterator as the `i` value in a `for` loop. The term has mixed meanings but in this case we're refering to the former, an object which gives us a consistent interface for iterating over a collection of some kind. If you've never used them before that might seem kind of silly. "If I need to loop over something I'm just going to loop over it!" For many use cases that's totally fine. Where Iterator objects are useful is in situations where you might need to loop in an async fashion (stopping and restarting) or if you want to preclude an object from knowing too much about the inner workings of a collection.
 
+<!--more-->
+
 ## Formal Definition
 
 {% blockquote GoF, Design Patterns: Elements of Reusable Object-Oriented Software %}
@@ -157,6 +159,10 @@ For some further reading on the topic checkout the MDN article which covers [Ite
 - Composite: Iterators are often applied to recursive structures such as Composites.
 - Factory Method: Polymorphic iterators rely on factory methods to instantiate the appropriate Iterator subclass.
 - Memento: Often used in conjunction with the Iterator pattern. An iterator can use a memento to capture the state of an iteration. The iterator stores the memento internally.
+
+<small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small>
+<hr>
+<br>
 
 Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
 

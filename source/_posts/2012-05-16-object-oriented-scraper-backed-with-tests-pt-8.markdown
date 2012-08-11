@@ -8,6 +8,8 @@ categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec, BDD]
 
 Yesterday's I refactored my specs and crawler to support ignoring selections. While I started parsing the metadata I quickly realized that certain bits were rather specific and needed to have custom parsing methods. Today I'm going to write some format objects to help with all that.
 
+<!--more-->
+
 Our metadata on the page looks like this:
 
 ```

@@ -9,6 +9,8 @@ categories: [RVM, Rails, Rails 3, Ruby]
 ###What is RVM?
 [RVM](https://rvm.io//) is a great Ruby and gem management tool that should probably be the first thing you install if you’re learning Rails (or Ruby for that matter). The main benefit of RVM is that it helps to keep your rubies and your gems organized into discrete folders which can easily be thrown away and recreated. If you’ve ever had a gem explode on you, then you know how great a feature like this is. I’ll cover the basics of using RVM in this post to quickly get you up and running. This tutorial is written for the OSX terminal, if you're on Windows...um...kill yourself.
 
+<!--more-->
+
 ###How to Install RVM
 First download and run the RVM installation script. Thankfully the authors have made this nice and easy for you. Just copy and paste the following into your command line:
 

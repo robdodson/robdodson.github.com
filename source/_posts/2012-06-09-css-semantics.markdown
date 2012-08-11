@@ -8,6 +8,8 @@ categories: [Chain, CSS, OOCSS, SMACSS]
 
 CSS is, for me, one of the most challenging and nerve wracking aspects of my job. With most programming languages there are frameworks and guides and heuristics that all make up a suite of best practices. CSS doesn't *really* have anything like this and as a result it's kind of a mish-mash of good rules to follow, definite don'ts, and lots and lots of grey area. Since I'm starting a new CSS heavy project, and because I want to further my own understanding in this realm, I'm going to spend a few posts exploring the topic of what makes good, maintainable CSS. Along the way I'm also going to point out a few frameworks that I've been looking at, in particular [OOCSS](http://oocss.org/) and [SMACSS.](http://smacss.com/) But lets kick things off with a discussion of what it means to write good, semantic CSS selectors and we'll follow up with frameworks in our next post.
 
+<!--more-->
+
 ## Define Semantic
 
 When I was trolling the interwebs for talks on writing large-scale maintainable CSS I somehow managed to come across [this article on css-tricks comparing the semantics of various css selectors.](http://css-tricks.com/semantic-class-names/) After reading it I had this weird feeling like maybe I haven't been putting as much thought into my css selectors as I should. My selectors need to be highly semantic, but what does that really *mean?*

@@ -8,6 +8,12 @@ categories: [Chain, Node, Socket.io, Express]
 
 [Continuing from yesterday's post](http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/) we started out with a rather crude timer and today I want to upgrade it to a full fledged model, `Stopwatch`, which dispatches events for the view to hook on to. 
 
+<!--more-->
+
+- [Getting Started](http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/)
+- [Click here for part 1.](http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/)
+- [Click here for part 3.](http://robdodson.me/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/)
+
 ### Extend Node's EventEmitter
 
 We want to extend Node's EventEmitter object in order for our Stopwatch to dispatch its tick events. [Following this great article by Jan Van Ryswyck](http://elegantcode.com/2011/02/21/taking-baby-steps-with-node-js-implementing-events/) I've arrived at something that looks like this:

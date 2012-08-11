@@ -8,6 +8,8 @@ categories: [Chain, Ruby, JSON]
 
 [Last night](http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/) I got the scraper to write an output.txt file which listed all the contents of `words_by_selector`. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.
 
+<!--more-->
+
 ## Updating our tests
 
 Our current test for `words_by_selector` looks like this:

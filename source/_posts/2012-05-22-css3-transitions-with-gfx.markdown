@@ -49,6 +49,8 @@ We'll try to do something simple at first to recreate an animation like the one 
   </div>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
 </div>
 
+<!--more-->
+
 The code to produce the above animation looks something like this:
 
 ``` css

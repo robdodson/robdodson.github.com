@@ -6,7 +6,11 @@ comments: true
 categories: [Chain, Sublime, Sublime Text 2]
 ---
 
-[Yesterday I covered some tips and tricks](http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/) I've learned over the past few months of using Sublime. Something I didn't touch on is Sublime's Snippet architecture. Essentially a snippet is a little piece of code that gets executed when you type some characters and hit the `tab` key. For instance I have a snippet that spits out `console.log()` whenever I type `lg` and press `tab`. One clever feature of snippets is that they can be bound to a keyboard shortcut if the key binding calls the `insert_snippet` command and passes the path to the snippet file as an argument. For example:
+[Yesterday I covered some tips and tricks](http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/) I've learned over the past few months of using Sublime. Something I didn't touch on is Sublime's Snippet architecture. 
+
+<!--more-->
+
+Essentially a snippet is a little piece of code that gets executed when you type some characters and hit the `tab` key. For instance I have a snippet that spits out `console.log()` whenever I type `lg` and press `tab`. One clever feature of snippets is that they can be bound to a keyboard shortcut if the key binding calls the `insert_snippet` command and passes the path to the snippet file as an argument. For example:
 
 ```json
 { 

@@ -8,6 +8,8 @@ categories: [Chain, Octopress, Rake]
 
 This is a quick post just to scratch one of my own itches. I've been using Octopress every single day for around two months now and the generation time for my blog is slowly starting to creep up. I'd heard that you could isolate a post and just preview/generate it instead of doing the whole blog every time but it wasn't until today that I finally decided to look into it.
 
+<!--more-->
+
 Turns out it's really simple. Let's say we are going through our usual steps of creating a new post:
 
 `rake new_post["Today is a Wonderful Day"]`

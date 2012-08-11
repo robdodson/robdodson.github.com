@@ -10,6 +10,8 @@ Short post tonight because I spent so much time figuring out the code. It's late
 
 The scraper that I'm building is supposed to work like a spider and crawl of the pages of my blog. I wasn't sure what the best way to do that was so I started Googling and came up with [Mechanize.](http://mechanize.rubyforge.org/) There are other tools built on top of Mechanize, like [Wombat](https://github.com/felipecsl/wombat), but since my task is so simple I figured I could just write everything I needed with Mechanize and Nokogiri. It's usually a better idea to work with simple tools when you're first grasping concepts so you don't get lost in the weeds of some high powered framework.
 
+<!--more-->
+
 Since it's late I'll let the code do the talking:
 
 ``` ruby crawler.rb

@@ -8,6 +8,8 @@ categories: [Chain, BDD, Mocha, Chai]
 
 Since I was previously doing so much RSpec I want to try to bring some of that over to my JavaScript work. Lately I've been working with the Backbone Boilerplate which is a wonderful jump-start for folks who want to get up and running with AMD and Backbone. Today I'm going to see if I can get a working BDD setup going which will run some very basic tests. In a future post I'll use this new setup to do some BDD with Backbone Boilerplate.
 
+<!--more-->
+
 ### Setting up Mocha and Chai
 
 I chose Mocha over Jasmine because I've already worked with Jasmine so there wasn't much mystery there and also because I've heard really good things about Mocha. I think it's cool that if I choose to do a Node.js project Mocha will be able to test both my server and client code.

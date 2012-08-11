@@ -8,6 +8,8 @@ categories: [Chain, Node, NPM, CLI]
 
 This post is going to be short and sweet because I have to help my lady pack for her big trip to Germany. Over the past few days I've been messing around with command line tools written in Ruby so today I decided to give it a shot in Node.
 
+<!--more-->
+
 We're going to start small in this first post and just get a little script running. After that we'll step it up so it can be distributed using NPM, [just like we did with our previous Ruby gem.](http://robdodson.me/blog/2012/06/14/how-to-write-a-command-line-ruby-gem/)
 
 ## First write some codez

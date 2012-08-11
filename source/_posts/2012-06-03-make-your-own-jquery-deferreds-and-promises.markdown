@@ -8,6 +8,8 @@ categories: [Chain, jQuery, Deferred, Promises, Promise]
 
 Last week [I did a post on how to load an Underscore template using jQuery's Deferred method](http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/). I got some great feedback from folks and decided I should do a follow up showing how to create your own Deferreds.
 
+<!--more-->
+
 ### What's a Deferred again...?
 
 So, quick summary time. jQuery has a neat little Object called a `Deferred` which is basically a wrapper around a function or a group of functions. Let's say that you want to load 3 different json files via ajax and when all that's done you want to let the rest of the world know. Using jQuery's `Deferred` Object we can actually put a wrapper around those 3 ajax functions and fire off a callback when they've all finished. [Refer back to my previous post (toward the bottom) where I explain some of these callbacks.](http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/)

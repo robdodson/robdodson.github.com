@@ -8,6 +8,8 @@ categories: [Chain, Object Oriented Design, Ruby, Nokogiri, RSpec]
 
 I'm picking up from where I left off last night. If you look back at the [previous post](/blog/2012/05/06/object-oriented-scraper-backed-with-tests/) we ended with a spec'd out `Runner` object. Now we need to build our `Crawler` which will slurp up all the content from our posts and return them as meaningful data.
 
+<!--more-->
+
 Our Crawler will have 2 main responsibilities. First it will iterate over a post and return a Hash of words and their usage count. Second, it will iterate over a post and pull out any metadata and associate that with a Date. These are rather simple goals and if you remember from our original scraper we were actually hitting every post on the main page. I think I'd like to nail down these simple functions and then refactor the Crawler to accept a corpus page full of links—[like our archives page](http://robdodson.me/blog/archives/)—which it will follow and parse. Right now I want to start small.
 
 Here's a list of what I *think* would be good tests for our `Crawler`.

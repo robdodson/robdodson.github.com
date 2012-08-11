@@ -8,6 +8,8 @@ categories: [Chain]
 
 On April 28th, [I vowed to write a blog post a day until I had to go to Europe.](http://www.facebook.com/photo.php?fbid=964312982287&set=a.616835240467.2181266.39601696&type=1) Of course the real threat was that if I failed to do so I would have to give 500 dollars to the Republican party, most likely to John Boehner. In my original post I said I would write till the 27th but I've moved that date up so I can spend tomorrow night packing and wrapping things up in the city before I head out on my trip. So tonight's post will mark the end of my first chain which means it's time for a little post-mortem.
 
+<!--more-->
+
 ## Why Did I Do It?
 
 Everything started because of a [blog post written by a fellow named Chris Strom.](http://japhr.blogspot.com/2012/04/366-or-how-i-tricked-myself-into-being.html) Chris wrote every single day, for a year, and in that time he managed to self publish 3 books. I think many people would be happy to publish a book in like a couple years. At Chris' rate he was cranking one out nearly every 3-4 months. Amazing.

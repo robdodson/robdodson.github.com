@@ -8,6 +8,8 @@ categories: [Chain, Mocha, Chai, BDD, Node, Express, Sinon, CORS]
 
 [After a bit of a rocky start yesterday](http://robdodson.me/blog/2012/05/27/testing-backbone-boilerplate-with-mocha-and-chai/) I've finally got Mocha and Chai running in the browser which is great. Today I'd like to test out some of the async functionality of Mocha. This seems to be the big selling point for most people so we'll kick the tires a bit.
 
+<!--more-->
+
 ### Basic Async Tests with Mocha and Chai
 
 I wrote a little Node service that we'll consume for testing purposes. This is my first [Node](http://nodejs.org/) and [Express](http://expressjs.com/) app so apologies if it's lamesauce. I used the `express` command to boilerplate a project called `pickles` with some very basic routes:

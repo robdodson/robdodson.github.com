@@ -8,6 +8,8 @@ categories: [Chain, Backbone, Backbone Events, jQuery, jQuery Plugins]
 
 Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.
 
+<!--more-->
+
 ### View Events and the DOM
 
 After looking around for a bit I've found this [list of the events that Backbone can dispatch.](http://documentcloud.github.com/backbone/#FAQ-events) Nothing in there about render or adding elements to the DOM :(

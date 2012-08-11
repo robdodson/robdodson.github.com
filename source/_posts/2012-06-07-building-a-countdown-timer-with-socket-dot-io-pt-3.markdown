@@ -8,6 +8,12 @@ categories: [Chain, Node, Socket.io, Express]
 
 Today's the day we wrap up our countdown timer and deploy it to Heroku. But before we launch this puppy we need to clean house a little and spice up the visual appeal.
 
+<!--more-->
+
+- [Getting Started](http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/)
+- [Click here for part 1.](http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/)
+- [Click here for part 2.](http://robdodson.me/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/)
+
 ### Refactoring the Stopwatch
 
 While the Stopwatch from our last post worked OK there are a spots that can be improved. For starters I'd like to separate the formatting of the time from the `onTick` method. Mainly because I want to be able to pull the current time out whenever someone hits reset or a new connection is made. Here's how I updated Stopwatch to accomodate these changes:

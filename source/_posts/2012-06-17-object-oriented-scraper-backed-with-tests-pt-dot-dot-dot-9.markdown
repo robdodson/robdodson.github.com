@@ -10,6 +10,8 @@ I just spent a few hours talking to my friend [Derek](http://derekbradley.com/)(
 
 The fact of the matter is I didn't know where to take the data. I didn't have a design or a layout that I could put it all into. I want to change all that. I want to turn this into something useful. But first I have to make sense of all the code that was written so many weeks ago.
 
+<!--more-->
+
 ## Tests as documentation...bullshit.
 
 Ok ok. I should say it's *total* bullshit to call your tests the documentation because they are helpful. But the fact of the matter is you can get so crafty with RSpec that it makes the tests difficult to read in a useful way. I'm not saying they're illegible, it's just that they leverage features which adds to their thought deficit. Before you go off saying that I wrote them wrong and tests should be all the documentation you need...shutup. They're helpful but I would love it if I had written a bit of Markdown Readme to go with all this...

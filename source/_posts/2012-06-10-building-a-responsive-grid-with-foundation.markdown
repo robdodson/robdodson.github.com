@@ -10,6 +10,8 @@ Yesterday I introduced [SMACSS](http://smacss.com/) and did my best to give a hi
 
 Today I want to talk about a CSS framework called [Foundation](http://foundation.zurb.com/), written by the team at [ZURB.](http://www.zurb.com/) Unlike SMACSS, Foundation is an actual library of modular code ready to help you quickly prototype your project. The two aren't mutually exclusive. You might think of Foundation as a shiny new toolbox but SMACSS is going to be your 'How To' manual, helping you implement all the new goodes that Foundation has to offer.
 
+<!--more-->
+
 I'm sure many of you have heard of [Bootstrap](http://twitter.github.com/bootstrap/) which is very similar and somewhat more popular than Foundation. I chose to use Foundation for this post because Bootstrap feels bloated to me, and I also didn't want to have to do everything in [LESS.](http://lesscss.org/) Don't get me wrong, I loves me some LESS and some [SASS](http://sass-lang.com/), but not everyone is comfortable with those tools and it's already a big ask to ramp up on a new CSS framework.
 
 Since it's a little late in the evening I'm just going to dip my toe into some of what Foundation has to offer by quickly mocking up a very simple layout using their responsive grids.

@@ -8,6 +8,8 @@ categories: [Rails, Rails 3, Errors, Ruby]
 
 Today we’re going to look at this little gem, which is really nothing more than a syntax error. If you’re not used to Ruby’s syntax, this can be a particularly easy stumbling block.
 
+<!--more-->
+
 For starters here’s the image you see in Rails 3 when things go South:
 
 {% img center /images/unexpected_tidentifier.jpg 'Syntax Error: Unexpected tIDENTIFIER' %}

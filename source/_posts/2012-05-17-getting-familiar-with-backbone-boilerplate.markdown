@@ -8,6 +8,8 @@ categories: [Chain, Backbone, Backbone Boilerplate, Grunt, Node, Require.js]
 
 I have an upcoming project which uses [Backbone](http://documentcloud.github.com/backbone/) and [Node.js](http://nodejs.org/) so I thought it would be good to blog about the topics (particularly Backbone) for a while to make sure I'm well up to speed.
 
+<!--more-->
+
 We're using the [Backbone Boilerplate](https://github.com/tbranyen/backbone-boilerplate) to get us started since it includes a bit of file structure and a build process. As they mention in the docs you have to install [Grunt](https://github.com/cowboy/grunt) if you want to use the build process they've stubbed out. Grunt is a javascript build tool which uses Node (think Rake in JS).
 
 As a refresher course I'm going to dig into the open-source [Backbone Fundamentals book](http://addyosmani.github.com/backbone-fundamentals/) by [Addy Osmani](http://addyosmani.github.com/backbone-fundamentals/).

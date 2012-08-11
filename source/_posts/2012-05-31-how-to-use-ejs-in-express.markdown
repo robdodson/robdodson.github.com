@@ -8,6 +8,8 @@ categories: [Chain, Node, Express, Templates, EJS]
 
 Here's a quick explanation of how to use EJS instead of Jade in your Express projects. This is super easy and covered well in the documentation but I wanted to put it here since that's what I worked on today :)
 
+<!--more-->
+
 To start I'll create a new project from the command line:
 
 ```

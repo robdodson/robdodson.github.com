@@ -8,6 +8,8 @@ categories: [Chain, Nokogiri, Ruby]
 
 Since I've been talking so much about [D3.js](http://d3js.org/) lately I thought it might be fun to start a little project which combines D3 and Ruby. The idea is to build a very simple page scraper that counts how often certain words are used in each post. I've also decided to start adding a little block of metadata at the end of each post so I can graph that over time as well.
 
+<!--more-->
+
 So how do we get started? Well first we'll need to build a page scraper of some kind. This program will have to consume the contents of an HTML page, find the node that contains our blog post and count up how often each word reoccurs. For right now that should be more than enough to get us started. We'll look at grabbing the metadata and drawing graphs in future posts. I should point out that this idea was inspired by the wonderful site [750words.com](http://smarterware.org/5359/taking-on-the-750-words-march-challenge) which creates [a beautiful exploration section](http://smarterware.org/5359/taking-on-the-750-words-march-challenge) any time you write a new journal entry. Definitely check out that site, it's amazing.
 
 ### Hello Noko
