@@ -167,33 +167,35 @@ But what if you're not using our `publisher` example? What if you're using a sli
 ``` js
 // Substitute `on` for `click` or `delegate` or `live` or
 // whatever else you're using :)
+
 $('.login-button').on('click', function() {
 	// tell the app the user is trying to log in!
 });
+```
 
 Well in this case we might have to use a different approach. As anyone who's used jQuery knows, the value of `this` in our handler function is going to refer to the DOM element that jQuery selected. Sometimes that's really useful but other times, like in this case, it isn't going to do us much good.
 
 ### Closures
 
-[closure definition]. Here's an example using our `publisher`:
-
 ``` js
-var foobar = {
-	name: 'foobar',
+
+var loginController = {
 	init: function() {
 		var self = this;
-		publisher.subscribe('do.something', function() {
-			console.log(self.name, 'did something!');
+
+		$('.login-button').on('click', function() {
+			self.handleLogin(); // use self as a stand in for `this` 
 		});
+	},
+	handleLogin: function() {
+		console.log('handling login!');
 	}
-};
+}
 
-foobar.init();
-publisher.publish('do.something');
 ```
-In the above example the var `self` exists in a kind of interesting limbo: it is part of `foobar's` `init` method and also part of the function passed to `publisher`. As a result, when the function is called `self` still refers to the `foobar` object and thus logs `foobar did something!`
+In the above example the var `self` exists in a kind of interesting limbo: it is part of `loginController's` `init` method and also part of the function registered as the `on('click')` handler. As a result, when the function is executed, `self` still refers to the `loginController` object and thus logs `handling login!`
 
-Awesome! We've solved the issue of preserving scope, right? Well, actually that's only half true... Because we've passed an anonymous function with no other reference to `publisher.subscribe` we have no way of ever *unsubscribing* it. Hmm. Let's try a different strategy then.
+Awesome! We've solved the issue of preserving scope, right? Well, yes but it's not our only option. Many people (myself included) find it annoying to sprinkle `var self = this;` all over their app. To mitigate this we also have Function.bind.
 
 ### Bindings
 
@@ -211,7 +213,7 @@ var nameFunc = widget.sayName.bind(widget);
 nameFunc(); // outputs: 'My Awesome Widget!'
 ```
 
-Calling `Function.bind` will actually create a closure preserving whatever scope we've passed in. In the above example it's bound to the `widget` object. While it's cleaner than our original closure example we're still in a dilemma because we can't *unsubscribe* from our `publisher` unless we store a reference to the new function. Kinda annoying. How about something like this instead: `widget.sayName = widget.sayName.bind(widget);` Hey, now we're talking! By overwriting our function and binding it to our `widget` object we've gotten very close to how classical languages like Java and Actionscript handle scope! This means it's easy to both subscribe and unsubscribe our method, safe in the knowledge that it will always use the proper scope. If you're lazy (like me) take some time to research Underscore.js (needs link!) which provides both bind (link) and bindAll (link) functions to ease the process of connecting your methods to their parent objects.
+Calling `Function.bind` will actually create a closure preserving whatever scope we've passed in. It returns a clone of our original function but this time it is bound to a particular context. In the above example it's bound to the `widget` object. While it's cleaner than our original closure example we're still in a dilemma because we want `sayName` to ALWAYS be called in the context of `widget`. How about something like this instead: `widget.sayName = widget.sayName.bind(widget);` Hey, now we're talking! By overwriting our function and binding it to our `widget` object we've gotten very close to how classical languages like Java and Actionscript handle scope! This means it's easy to both subscribe and unsubscribe our method, safe in the knowledge that it will always use the proper scope. If you're lazy (like me) take some time to research Underscore.js (needs link!) which provides both bind (link) and bindAll (link) functions to ease the process of connecting your methods to their parent objects.
 
 I'll save you the speech on treating JavaScript like other languages except to say anytime you're writing code to make one language act like another you should obviously research whether that's the best course of action or not. In my experience I've found that binding observers can make writing event listeners much cleaner but your mileage may vary and comments/feedback are always welcome :D
 
@@ -223,7 +225,7 @@ Typically when you create a Subject/Observer relationship you'll want the Subjec
 
 ## PubSub and Observer mixins
 
-If you want a quick, easy to use event dispatcher the PubSub (link!) library does a wonderful job of providing an easy to use event dispatcher. It also includes a jQuery plugin variant if that's more your style. If you're looking for something a little less global and a bit more OO checkout the section in JavaScript Patterns (link) which covers mixing in the `publisher` object or checkout the Backbone.js (link) implementation of `Backbone.Events` and `extend`.
+If you want a quick, easy to use event dispatcher the PubSub (link!) library does a wonderful job of providing an easy to use event dispatcher. It also includes a jQuery plugin variant if that's more your style. If you're looking for something a little less global and a bit more OO checkout the section in JavaScript Patterns (link) which covers mixing in the `publisher` object or checkout the port of Node's EventEmitter (link).
 
 ## Related Patterns
 
