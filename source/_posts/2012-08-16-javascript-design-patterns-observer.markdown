@@ -8,7 +8,7 @@ categories: [Chain, JavaScript, Design Patterns, Observer, PubSub, jQuery]
 
 #### [Table of Contents](http://robdodson.me/blog/2012/08/03/javascript-design-patterns/)
 
-Observer is one of the most popular design patterns and chances are you're probably already using it. If you've ever written an event listener with `addEventListener` or used one of jQuery's many versions: `on`, `delegate`, `live`, `click`, etc etc etc... then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a Subject to publish updates to a group of Observers. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn't care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.
+Observer is one of the most popular design patterns and chances are you're probably already using it. If you've ever written an event listener with `addEventListener` or used one of jQuery's many versions: `on`, `delegate`, `live`, `click`, etc... then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a **Subject** to publish updates to a group of **Observers**. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn't care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.
 
 <!--more-->
 
@@ -23,17 +23,33 @@ Define a one-to-many dependency between objects so that when one object changes 
 - Dependents
 - Publish-Subscribe
 
+## When to use it
+
+- When the state or actions of one object depends on the state or actions of another object.
+
+- When changing one object necessitates a change to an unknown number of *other* objects.
+
+- When an object should be able to notify other objects of changes without knowing anything about these other objects.
+
+## Pros and Cons
+
+- **Pro:** Very loose coupling between objects.
+
+- **Pro:** The ability to broadcast changes and updates.
+
+- **Con:** Potentially unexpected updates and sequencing issues.
+
 ## The Many Faces of Observer
 
-Because of its popularity the Observer pattern often goes by a few different names. The primary objects are the Subject and the Observers though sometimes they are referred to as Publisher and Subscribers or Event Dispatchers and Listeners. Although you can definitely split hairs regarding the actual implementation of this pattern, in essence we're usually talking about the same thing. When the Subject/Publisher's state changes it sends out notifications, unaware of who its Observers are. The Observers, in turn, perform some action in response to this update.
+Because of its popularity the Observer pattern often goes by a few different names. The primary objects are the **Subject** and the **Observers** though sometimes they are referred to as **Publisher**/**Subscribers** or **Event Dispatcher**/**Listeners**. Although you can definitely split hairs regarding the actual implementation of this pattern, in essence we're usually talking about the same thing. When the Subject's state changes it sends out notifications, unaware of who its Observers are. The Observers, in turn, perform some action in response to this update.
 
-I'm going to heavily paraphrase/plagiarize the wonderful JavaScript Patterns by Stoyan Stefanov to sum up all the parts of an Observer/Pub-Sub relationship:
+I'm going to heavily quote (\*cough\* *plagiarize* \*cough\*) the wonderful JavaScript Patterns by Stoyan Stefanov to sum up all the parts of an Observer/Pub-Sub relationship:
 
 *"The publisher object needs to have a property `subscribers` that is an array storing all subscribers. The act of subscription is merely adding to this array. When an event occurs, the publisher loops through the list of subscribers and notifies them. The notification means calling a method of the subscriber object. Therefore, when subscribing, the subscriber provides one of its methods to the publisher’s subscribe() method.*
 
 *The publisher can also provide unsubscribe(), which means removing from the array of subscribers. The last important method of the publisher is publish(), which will call the subscribers’ methods."*
 
-Here is my version of Stoyan's Pub/Sub implementation, slightly rearranged to make the API more consistent with libraries like jQuery and PubSub.
+Here is Stoyan's Pub/Sub implementation. Note that the `on` function accepts a `context` argument which allows you to set the handler's scope. We'll discuss this a bit more later.
 
 ``` js
 
@@ -41,32 +57,32 @@ var publisher = {
 	subscribers: {
 		any: [] // event type: subscribers
 	},
-	subscribe: function(type, fn) {
+	on: function(type, fn, context) {
 		type = type || 'any';
+		fn = typeof fn === 'function' ? fn : context[fn];
 		if (typeof this.subscribers[type] === "undefined") {
 			this.subscribers[type] = [];
 		}
-		this.subscribers[type].push(fn);
+		this.subscribers[type].push({ fn: fn, context: context || this });
 	},
-	unsubscribe: function(type, fn) {
-		this.visitSubscribers('unsubscribe', type, fn);
+	remove: function(type, fn, context) {
+		this.visitSubscribers('unsubscribe', type, fn, context);
 	},
-	publish: function(type, arg) {
-		this.visitSubscribers('publish', type, arg);
+	fire: function(type, publication) {
+		this.visitSubscribers('publish', type, publication);
 	},
-	visitSubscribers: function(action, type, arg) {
-		var pubtype = type || 'any';
-		console.log(pubtype);
-		var	subscribers = this.subscribers[pubtype],
+	visitSubscribers: function(action, type, arg, context) {
+		var pubtype = type || 'any',
+			subscribers = this.subscribers[pubtype],
 			i,
-			max = subscribers.length;
+			max = subscribers ? subscribers.length : 0;
 
 		for (i = 0; i < max; i += 1) {
 			if (action === 'publish') {
 				// Call our observers, passing along arguments
-				subscribers[i](type, arg);
+				 subscribers[i].fn.call(subscribers[i].context, arg);
 			} else {
-				if (subscribers[i] === arg) {
+				if (subscribers[i].fn === arg && subscribers[i].context === context) {
 					subscribers.splice(i, 1);
 				}
 			}
@@ -79,31 +95,17 @@ var publisher = {
 In practice using the `publisher` might look something like this:
 
 ``` js
-function doSometing() {
-	console.log('did something!');
-	publisher.unsubscribe('some.event', doSometing);
+function handleLogin() {
+	console.log('we haz a users!');
 }
 
-publisher.subscribe('some.event', doSometing);
-publisher.publish('some.event');
+publisher.subscribe('login.complete', handleLogin);
+
+// ... .
+// Elaborate user login process...
+
+publisher.publish('login.complete');
 ```
-
-## When to use it
-
-- When the state or actions of one object depends on the state or actions of another object.
-
-- When changing one object necessitates a change to an unknown number of *other* objects.
-
-- When an object should be able to notify other objects of changes without knowing anything about these other objects.
-
-## Pros and Cons
-
-**Pro:** Very loose coupling between objects.
-
-**Pro:** The ability to broadcast changes and updates.
-
-**Con:** Potentially unexpected updates and sequencing issues.
-
 ## Mind the Scope
 
 Since JavaScript employs lexical scoping the term `this` in a function will refer to the context in which the function was called. Here's a brief example to clarify:
@@ -134,11 +136,42 @@ In the third example we're stuffing `doWork` into an array, then referencing it 
 
 So why do I care?
 
-Well if you go back and look at the `publisher` example you'll notice that we pass a function reference to be called whenever the Subject sends out a notification. In our case it looks like this: `publisher.subscribe('some.event', doSometing);` If `doSomething` needs to use `this` we might be in a world of hurt because `publisher` is going to call `doSomething` from one of its `subscribers` arrays, just like our third context example. So how do we deal with this?
+Well if you go back and look at the `publisher` example you'll notice that we pass a function reference to be called whenever the Subject sends out a notification. In our case it looks like this: `publisher.subscribe('login.complete', handleLogin);` If `handleLogin` needs to use `this` we might be in a world of hurt because `publisher` is going to call `handleLogin` using itself as the value of `this`. Uh oh!
 
 ## Preserving Scope in Observer
 
-JavaScript's lexical scoping can be really bizarre if you've never had to manage function scopes before. To mitigate this problem we have two very useful strategies: closures and bindings.
+JavaScript's lexical scoping can be really bizarre if you've never had to manage function scopes before. To mitigate this problem we have a handful of useful strategies.
+
+The first one, which is demonstrated in the `publisher`, is to pass along a `context` whenever we subscribe a function. This is the third argument to our `publisher`'s `on` method.
+
+``` js
+on: function(type, fn, context) {
+		type = type || 'any';
+		fn = typeof fn === 'function' ? fn : context[fn];
+		if (typeof this.subscribers[type] === "undefined") {
+			this.subscribers[type] = [];
+		}
+		this.subscribers[type].push({ fn: fn, context: context || this });
+	},
+```
+By storing the `context` we ensure that when it's time to call our function, we can do so in the proper scope. We do this through the use of JavaScript's `call` method. `call` allows you to define in which scope a function should execute. 
+
+``` js
+subscribers[i].fn.call(subscribers[i].context, arg);
+```
+
+This can be a very powerful feature especially for utility functions. Checkout the MDN docs for a deeper understanding of [call](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/call) and its cousin [apply.](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/apply)
+
+But what if you're not using our `publisher` example? What if you're using a slightly more popular library like jQuery to manage your events? Maybe you have some code that looks like this:
+
+``` js
+// Substitute `on` for `click` or `delegate` or `live` or
+// whatever else you're using :)
+$('.login-button').on('click', function() {
+	// tell the app the user is trying to log in!
+});
+
+Well in this case we might have to use a different approach. As anyone who's used jQuery knows, the value of `this` in our handler function is going to refer to the DOM element that jQuery selected. Sometimes that's really useful but other times, like in this case, it isn't going to do us much good.
 
 ### Closures
 
