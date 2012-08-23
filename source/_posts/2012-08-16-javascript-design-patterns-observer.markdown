@@ -43,13 +43,13 @@ Define a one-to-many dependency between objects so that when one object changes 
 
 Because of its popularity the Observer pattern often goes by a few different names. The primary objects are the **Subject** and the **Observers** though sometimes they are referred to as **Publisher**/**Subscribers** or **Event Dispatcher**/**Listeners**. Although you can definitely split hairs regarding the actual implementation of this pattern, in essence we're usually talking about the same thing. When the Subject's state changes it sends out notifications, unaware of who its Observers are. The Observers, in turn, perform some action in response to this update.
 
-I'm going to heavily quote (\*cough\* *plagiarize* \*cough\*) the wonderful JavaScript Patterns by Stoyan Stefanov to sum up all the parts of an Observer/Pub-Sub relationship:
+I'm going to heavily quote (\*cough\* *plagiarize* \*cough\*) the wonderful [JavaScript Patterns by Stoyan Stefanov](http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752) to sum up all the parts of an Observer/Pub-Sub relationship:
 
 *"The publisher object needs to have a property `subscribers` that is an array storing all subscribers. The act of subscription is merely adding to this array. When an event occurs, the publisher loops through the list of subscribers and notifies them. The notification means calling a method of the subscriber object. Therefore, when subscribing, the subscriber provides one of its methods to the publisher’s subscribe() method.*
 
 *The publisher can also provide unsubscribe(), which means removing from the array of subscribers. The last important method of the publisher is publish(), which will call the subscribers’ methods."*
 
-Here is Stoyan's Pub/Sub implementation. Note that the `on` function accepts a `context` argument which allows you to set the handler's scope. We'll discuss this a bit more later.
+Here is Stoyan's Pub/Sub implementation. Note that the `on` function accepts a `context` argument which allows you to set the handler's context and in turn, the value of `this`. We'll discuss this a bit more later.
 
 ``` js
 
@@ -106,9 +106,9 @@ publisher.subscribe('login.complete', handleLogin);
 
 publisher.publish('login.complete');
 ```
-## Mind the Scope
+## Mind the Context
 
-Since JavaScript employs lexical scoping the term `this` in a function will refer to the context in which the function was called. Here's a brief example to clarify:
+In JavaScript the keyword `this` in a function will refer to the context in which the function was called. Sometimes functions are global and sometimes they're part of a larger Object. Here's a brief example to clarify:
 
 ``` js
 var foobar = {
@@ -125,22 +125,22 @@ doWorkClone(); // `this` will refer to window
 
 var workClones = [];
 workClones.push(foobar.doWork);
-workClones[0](); // `this` will refer to the doWork function itself
+workClones[0](); // `this` will refer to the workClones Array
 ```
 
 The first time we call `doWork` we do so in the *context* of the `foobar` object: `foobar.doWork()`. As a result the term `this` inside of the `doWork` method will refer to `foobar`.
 
 The second time we call `doWork` we do so by referencing the method through a variable. We're calling `doWork` using that variable's *context*. But the variable is a global variable, it's just hanging out on the page! As a result `this` will refer to `window`.
 
-In the third example we're stuffing `doWork` into an array, then referencing it by index, then calling it. In this *context* `doWork` is just scoped to itself so `this` refers to the actual `doWork` function. A little confusing I know.
+In the third example we're stuffing `doWork` into an array, then referencing it by index, then calling it. In this *context* `doWork` is scoped to the `workClones` Array, since it's also an Object. A little confusing I know.
 
 So why do I care?
 
 Well if you go back and look at the `publisher` example you'll notice that we pass a function reference to be called whenever the Subject sends out a notification. In our case it looks like this: `publisher.subscribe('login.complete', handleLogin);` If `handleLogin` needs to use `this` we might be in a world of hurt because `publisher` is going to call `handleLogin` using itself as the value of `this`. Uh oh!
 
-## Preserving Scope in Observer
+## Preserving Context in Observer
 
-JavaScript's lexical scoping can be really bizarre if you've never had to manage function scopes before. To mitigate this problem we have a handful of useful strategies.
+JavaScript's context switching can be really bizarre if you've never had to manage it before. To mitigate this problem we have a handful of useful strategies.
 
 The first one, which is demonstrated in the `publisher`, is to pass along a `context` whenever we subscribe a function. This is the third argument to our `publisher`'s `on` method.
 
@@ -154,7 +154,7 @@ on: function(type, fn, context) {
 		this.subscribers[type].push({ fn: fn, context: context || this });
 	},
 ```
-By storing the `context` we ensure that when it's time to call our function, we can do so in the proper scope. We do this through the use of JavaScript's `call` method. `call` allows you to define in which scope a function should execute. 
+By storing the `context` we ensure that when it's time to call our function, we can do so in the correct context with the correct value for `this`. We do this through the use of JavaScript's `call` method which allows us to define in which context a function should execute. 
 
 ``` js
 subscribers[i].fn.call(subscribers[i].context, arg);
@@ -177,6 +177,12 @@ Well in this case we might have to use a different approach. As anyone who's use
 
 ### Closures
 
+Closures are a powerful feature of ECMAScript and they're especially useful when passing around functions. The best definition I've found for a closure comes from [this article:](http://jibbering.com/faq/notes/closures/)
+
+> The simple explanation of a Closure is that ECMAScript allows inner functions; function definitions and function expressions that are inside the function bodies of other functions. And that those inner functions are allowed access to all of the local variables, parameters and declared inner functions within their outer function(s).
+
+So let's see that in action.
+
 ``` js
 
 var loginController = {
@@ -193,13 +199,13 @@ var loginController = {
 }
 
 ```
-In the above example the var `self` exists in a kind of interesting limbo: it is part of `loginController's` `init` method and also part of the function registered as the `on('click')` handler. As a result, when the function is executed, `self` still refers to the `loginController` object and thus logs `handling login!`
+In the above example the var `self` exists in a kind of interesting limbo: it is part of `loginController's` `init` method and also part of the function registered as the `on('click')` handler. As a result, when the function is executed, `self` is still in the context of the `loginController` object and thus logs `handling login!`
 
-Awesome! We've solved the issue of preserving scope, right? Well, yes but it's not our only option. Many people (myself included) find it annoying to sprinkle `var self = this;` all over their app. To mitigate this we also have Function.bind.
+Awesome! We've solved the issue of preserving scope, right? Well, yes but it's not our only option. Many people (myself included) find it annoying to sprinkle `var self = this` all over their app. To mitigate things we also have `Function.bind`.
 
 ### Bindings
 
-The addition of `Function.bind` in ECMAScript 5 (verify source?) allows us to specify in which context a function should be called, in other words, *binding* that function to a particular object. Let's see it in action:
+The addition of `Function.bind` in ECMAScript 5 allows us to specify in which context a function should be called, in other words, *binding* that function (and the value of `this`) to a particular context. Let's see it in action:
 
 ``` js
 var widget = {
@@ -213,9 +219,11 @@ var nameFunc = widget.sayName.bind(widget);
 nameFunc(); // outputs: 'My Awesome Widget!'
 ```
 
-Calling `Function.bind` will actually create a closure preserving whatever scope we've passed in. It returns a clone of our original function but this time it is bound to a particular context. In the above example it's bound to the `widget` object. While it's cleaner than our original closure example we're still in a dilemma because we want `sayName` to ALWAYS be called in the context of `widget`. How about something like this instead: `widget.sayName = widget.sayName.bind(widget);` Hey, now we're talking! By overwriting our function and binding it to our `widget` object we've gotten very close to how classical languages like Java and Actionscript handle scope! This means it's easy to both subscribe and unsubscribe our method, safe in the knowledge that it will always use the proper scope. If you're lazy (like me) take some time to research Underscore.js (needs link!) which provides both bind (link) and bindAll (link) functions to ease the process of connecting your methods to their parent objects.
+Calling `Function.bind` will actually create a closure preserving whatever scope we've passed in. It returns a clone of our original function but this time it is bound to a particular context. In the above example it's bound to the `widget` object. While it's cleaner than our original closure example we're still in a dilemma because we want `sayName` to ALWAYS be called in the context of `widget`. How about something like this instead: `widget.sayName = widget.sayName.bind(widget);` Hey, now we're talking! By overwriting our function and binding it to our `widget` object we've gotten very close to how classical languages like Java and Actionscript handle scope! This means it's easy to both subscribe and unsubscribe our method, safe in the knowledge that it will always use the proper scope. If you're lazy (like me) take some time to research [Underscore.js](http://underscorejs.org/) which provides both [bind](http://underscorejs.org/#bind) and [bindAll](http://underscorejs.org/#bindAll) functions to ease the process of connecting your methods to their parent objects.
 
 I'll save you the speech on treating JavaScript like other languages except to say anytime you're writing code to make one language act like another you should obviously research whether that's the best course of action or not. In my experience I've found that binding observers can make writing event listeners much cleaner but your mileage may vary and comments/feedback are always welcome :D
+
+Also if you want to read more on `Function.bind` you can do so [here on MDN.](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind)
 
 ## The Push and Pull Model
 
@@ -223,9 +231,25 @@ Typically when you create a Subject/Observer relationship you'll want the Subjec
 
 > The pull model emphasizes the subject’s ignorance of its observers, whereas the push model assumes subjects know something about their observers’ needs. The push model might make observers less reusable, because Subject classes make assumptions about Observer classes that might not always be true. On the other hand, the pull model may be inefficient, because Observer classes must ascertain what changed without help from the Subject.
 
+There's no right or wrong approach but it is good to understand the differences between the two.
+
 ## PubSub and Observer mixins
 
-If you want a quick, easy to use event dispatcher the PubSub (link!) library does a wonderful job of providing an easy to use event dispatcher. It also includes a jQuery plugin variant if that's more your style. If you're looking for something a little less global and a bit more OO checkout the section in JavaScript Patterns (link) which covers mixing in the `publisher` object or checkout the port of Node's EventEmitter (link).
+If you want a quick, easy to use event dispatcher the [PubSubJS](https://github.com/mroderick/PubSubJS) library does a wonderful job of providing an easy to use event dispatcher. It also includes a jQuery plugin variant if that's more your style. If you're looking for something a little less global and a bit more OO checkout this utility function from [JavaScript Patterns](http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752) which mixes-in the `publisher` to other objects.
+
+``` js
+function makePublisher(o) {
+	var i;   
+	for (i in publisher) {     
+		if (publisher.hasOwnProperty(i) && typeof publisher[i] === "function") {
+			o[i] = publisher[i];     
+		}   
+	}
+	o.subscribers = {
+		any: []
+	};
+}
+```
 
 ## Related Patterns
 
