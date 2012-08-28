@@ -32,7 +32,7 @@ categories: [Chain, Design Patterns, JavaScript]
 - Mediator
 - Memento
 - Null Object
-- Observer
+- [Observer](http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer/)
 - State
 - [Strategy](http://robdodson.me/blog/2012/08/03/javascript-design-patterns-strategy/)
 - Template Method

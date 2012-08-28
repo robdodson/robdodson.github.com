@@ -12,7 +12,7 @@ Yesterday I put together a very simple Node/Socket.io application and showed how
 <!--more-->
 
 - [Getting Started](http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/)
-- [Click here for part 2.](http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io-pt-2/)
+- [Click here for part 2.](http://robdodson.me/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/)
 - [Click here for part 3.](http://robdodson.me/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/)
 
 ### Countdown

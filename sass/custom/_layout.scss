@@ -19,3 +19,15 @@
 //$sidebar-pad-medium: 15px;
 //$sidebar-pad-wide: 20px;
 //$sidebar-width-wide: 300px;
+
+#content div.about {
+  background-color: white;
+  border-bottom: 1px solid #D0D0D0;
+  font-size: 80%;
+  line-height: 1.4em;
+  width: 100%;
+}
+
+#content div.about section {
+  padding: 2em 2em 1em 2em;
+}

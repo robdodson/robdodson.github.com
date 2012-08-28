@@ -3,6 +3,7 @@ layout: default
 ---
 
 <div class="blog-index">
+  {% include custom/about.html %}
   {% assign index = true %}
   {% for post in paginator.posts %}
   {% assign content = post.content %}
