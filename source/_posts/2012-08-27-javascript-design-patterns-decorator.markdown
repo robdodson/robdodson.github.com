@@ -206,7 +206,7 @@ console.log(validator.errors);
 
 ## Time to do things the hard way...
 
-I promised I would show you the more classical example of Decorator and since I am a man of my word I *guess* you can see it... I haven't used Decorators enough to say for certain if this is an unnecessarily complex approach—perhaps it has its benefits—but I don't think I'd recommend it over our previous examples. I'm taking this code almost verbatim from [JavaScript Patterns](http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752) so full credit goes to Stoyan for coming up with it.
+I promised I would show you the more classical example of Decorator and since I am a man of my word I *guess* you can see it... I would not recommend using this approach because it can require overwriting all of your methods to make sure you're always in the correct context. Still, as a kind of academic observation it's a cool example and demonstrates how JS can emulate other languages. I'm taking this code almost verbatim from [JavaScript Patterns](http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752) so full credit goes to Stoyan for coming up with it.
 
 In this example we're going to format a Sale price so that it can work for both U.S. and Canadian stores. This means applying different tax rates and outputting the text with different currency symbols.
 
@@ -289,7 +289,7 @@ sale = sale.decorate('fedtax');
 sale = sale.decorate('cdn');
 console.log(sale.getPrice()); // outputs $CDN52.50
 ```
-You'll notice that each time we call `decorate` we have to re-assign the sale variable to a new instance. Each new instance has a reference to the previous sale object. When we finally call `getPrice` it walks up this chain of instances and calls `getPrice` on each stop along the way. In the end we have something which is functionally identical to our first example but potentially a lot harder to understand. In other words, stick with the first approach :D
+You'll notice that each time we call `decorate` we have to re-assign the sale variable to a new instance. Each new instance has a reference to the previous sale object. When we finally call `getPrice` it walks up this chain of instances and calls `getPrice` on each stop along the way. In the end we have something which is functionally identical to our first example but potentially a lot harder to understand. In other words, stick with the first approach! Also be sure to [see my update](http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/) which discusses this example a bit more and points out a few more of its flaws. Again, it's a neat idea to mess around with but there are much easier ways.
 
 ## The Open-Closed Principle
 
@@ -332,6 +332,6 @@ So, where possible, try to avoid reopening classes and find ways to extend their
 
 <br>
 
-Thanks for reading! If you have questions or feedback please leave a comment below. - Rob
+Thanks for reading! If you have questions or feedback please leave a comment below. Also be sure to [checkout Part 2 which covers even more ways to do decorators!](http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/) - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
