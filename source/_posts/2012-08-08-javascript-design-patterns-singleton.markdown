@@ -237,8 +237,8 @@ var mySingleton = (function () {
 
 // Usage:
 
-var singleA = mySingleton;
-var singleB = mySingleton;
+var singleA = mySingleton.getInstance();
+var singleB = mySingleton.getInstance();
 console.log( singleA === singleB ); // true
 ```
 
@@ -251,6 +251,8 @@ As Addy is quick to point out:
 > They're often an indication that modules in a system are either tightly coupled or that logic is overly spread across multiple parts of a codebase. Singletons can be more difficult to test due to issues ranging from hidden dependencies, the difficulty in creating multiple instances, difficulty in stubbing dependencies and so on.
 
 Definitely read [his full article](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript) on the subject since it contains a handful of links to interesting side topics.
+
+## [Grab the Example Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/singleton/)
 
 ## Related Patterns
 

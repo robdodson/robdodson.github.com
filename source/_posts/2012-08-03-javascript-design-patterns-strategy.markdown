@@ -172,7 +172,7 @@ Again notice that `.on('mousemove')` we first check to see if it’s ok to draw 
 
 ### [Live Example](http://robdodson.s3.amazonaws.com/javascript-design-patterns/strategy/painter/index.html)
 
-### [Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/strategy/painter)
+## [Grab the Example Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/strategy/)
 
 ## Related Patterns
 

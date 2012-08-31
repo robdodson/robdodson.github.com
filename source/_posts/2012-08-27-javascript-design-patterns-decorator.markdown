@@ -8,7 +8,9 @@ categories: [Chain, JavaScript, Design Patterns, Decorator]
 
 #### [Table of Contents](http://robdodson.me/blog/2012/08/03/javascript-design-patterns/)
 
-A Decorator is an object which adds functionality to another object dynamically. It can be used to enhance the behavior of an object without requiring the author to reopen its class. While Decorators might feel a little weird to implement in static languages they're extremely simple in JavaScript due to the ease with with JS passes around functions and handles dynamic types.
+[Update: Part 2 has been posted!](http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/)
+
+A Decorator is an object which adds functionality to another object dynamically. It can be used to enhance the behavior of an object without requiring the author to reopen its class. While Decorators might feel a little weird to implement in static languages they're extremely simple in JavaScript due to the ease with which JS passes around functions and handles dynamic types.
 
 <!--more-->
 
@@ -311,6 +313,8 @@ You should be able to look at this snippet of code and say that it's almost cert
 Regardless of what we choose to do, if it involves opening up the class then there's a chance that we'll compromise our previous snippet of code. The more times we do this the more we increase the likelihood that we'll introduce a bug which might go uncaught for a long time. Eventually what started off as extremely simple, bug-free code, can turn into a rat's nest. 
 
 So, where possible, try to avoid reopening classes and find ways to extend their functionality. This can mean simply subclassing the parent, or using one of the many design patterns we'll be covering.
+
+## [Grab the Example Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/decorator/)
 
 ## Related Patterns
 

@@ -154,6 +154,8 @@ The above script block will not work in Chrome but it should work in the latest 
 
 For some further reading on the topic checkout the MDN article which covers [Iterators in JavaScript 1.7](https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Iterators_and_Generators)
 
+## [Grab the Example Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/iterator/)
+
 ## Related Patterns
 
 - Composite: Iterators are often applied to recursive structures such as Composites.

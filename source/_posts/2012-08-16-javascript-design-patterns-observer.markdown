@@ -250,6 +250,7 @@ function makePublisher(o) {
 	};
 }
 ```
+## [Grab the Example Source](https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/observer/)
 
 ## Related Patterns
 
