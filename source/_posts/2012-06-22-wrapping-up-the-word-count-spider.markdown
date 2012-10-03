@@ -231,8 +231,9 @@ We can use that JSON to start graphing which I'll hopefully have time to get int
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 12:31 am
-- Mood: Tired
-- Sleep: 6
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

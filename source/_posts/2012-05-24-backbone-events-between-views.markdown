@@ -238,8 +238,9 @@ onRemovedFromDOM: function() {
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:47 am
-- Mood: Awake, Hot
-- Sleep: 5
-- Hunger: 5
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Awake, Hot</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>

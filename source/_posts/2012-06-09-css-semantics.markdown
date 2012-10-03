@@ -83,8 +83,9 @@ As a bit of a homework assignment I would recommend looking into a few of the re
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:23 am
-- Mood: Awake, Annoyed
-- Sleep: 7
-- Hunger: 0
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Awake, Annoyed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>

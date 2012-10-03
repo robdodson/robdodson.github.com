@@ -231,8 +231,9 @@ I could either tell my crawler to explicitly ignore that content or wrap my blog
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:03 am
-- Mood: Happy, Drowsy, Peaceful
-- Sleep: 5.5
-- Hunger: 3
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Happy, Drowsy, Peaceful</li>
+    <li>Sleep: 5.5</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>

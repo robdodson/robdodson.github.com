@@ -132,8 +132,9 @@ And there ya go! Simple but hopefully useful if you're just getting started like
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 11:36 am
-- Mood: Eager, Alert
-- Sleep: 7
-- Hunger: 7
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Eager, Alert</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 7</li>
+    <li>Coffee: 0</li>
+</ul>

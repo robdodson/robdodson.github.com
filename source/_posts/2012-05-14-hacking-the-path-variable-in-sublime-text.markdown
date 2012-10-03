@@ -41,8 +41,9 @@ I should point out if all you want to do is run Rake or Ant then there are alrea
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:26 pm
-- Mood: Happy, Peaceful, Hurried
-- Sleep: 7
-- Hunger: 6
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Happy, Peaceful, Hurried</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 6</li>
+    <li>Coffee: 0</li>
+</ul>

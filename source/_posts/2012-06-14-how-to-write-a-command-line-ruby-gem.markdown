@@ -133,8 +133,9 @@ To install the Gem we'll use Rake's `install` task. Go ahead and run `rake insta
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:18 am
-- Mood: Awake, Antsy
-- Sleep: 6
-- Hunger: 2
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 0</li>
+</ul>

@@ -174,8 +174,9 @@ Hopefully that's helpful for you all and you can go back and clean up some of th
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:00 am
-- Mood: Reserved, Sedate
-- Sleep: 7
-- Hunger: 4
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Reserved, Sedate</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>

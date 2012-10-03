@@ -147,8 +147,9 @@ Let me know if this is helpful or if you have any questions. Till tomorrow! - Ro
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:35 pm
-- Mood: Silly, Lazy
-- Sleep: 7
-- Hunger: 5
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Silly, Lazy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>

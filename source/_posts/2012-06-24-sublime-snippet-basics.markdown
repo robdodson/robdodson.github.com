@@ -88,8 +88,9 @@ No need to bind this to a keyboard shortcut (unless you want to) because it defi
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 10:48 pm
-- Mood: Tired, Lazy
-- Sleep: 5
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

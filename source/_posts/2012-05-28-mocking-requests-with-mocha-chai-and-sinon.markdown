@@ -348,8 +348,9 @@ To make the test pass we change the 99 to `amount`. I originally wrote the add m
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 11:21 am
-- Mood: Irritated, Antsy
-- Sleep: 8
-- Hunger: 5
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Irritated, Antsy</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>

@@ -70,8 +70,9 @@ I'm looking forward to trying out Octopress 2.1 as it includes [a more streamlin
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:18 pm
-- Mood: Caffeinated
-- Sleep: 7
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Caffeinated</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

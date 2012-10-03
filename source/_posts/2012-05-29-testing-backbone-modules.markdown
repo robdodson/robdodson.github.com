@@ -194,9 +194,9 @@ At this point I'm exhausted and hopefully you have a decent head start on your t
 
 You should follow me on Twitter [here](http://twitter.com/rob_dodson)
 
-- Time: 8:04 am
-- Mood: Awake, Antsy
-- Sleep: 6
-- Hunger: 3
-- Coffee: 0
-
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>

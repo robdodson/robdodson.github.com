@@ -40,8 +40,9 @@ Well I've got two ideas kicking around. One is to keep following in Chris' steps
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 10:58 pm
-- Mood: Tired, Relaxed
-- Sleep: 6
-- Hunger: 8
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Relaxed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 8</li>
+    <li>Coffee: 1</li>
+</ul>

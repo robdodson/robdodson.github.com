@@ -97,8 +97,9 @@ It looks like our regex could use a bit of work so it doesn't grab singular lett
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 9:16 pm
-- Mood: Relaxed, Tired
-- Sleep: 6.5
-- Hunger: 5
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Relaxed, Tired</li>
+    <li>Sleep: 6.5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 1</li>
+</ul>

@@ -183,8 +183,9 @@ I actually wrote the test first and did everything else to make it pass. But at 
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:35 am
-- Mood: Calm, Awake, Curious
-- Sleep: 7
-- Hunger: 4
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Calm, Awake, Curious</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>

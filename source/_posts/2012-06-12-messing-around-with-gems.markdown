@@ -25,8 +25,9 @@ Ugh after spending about an 2 hours fucking around with bundler I'm getting nowh
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 10:28 pm
-- Mood: Tired, Cranky
-- Sleep: 6
-- Hunger: 8
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Tired, Cranky</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 8</li>
+    <li>Coffee: 0</li>
+</ul>

@@ -263,8 +263,9 @@ Tomorrow I might write some JS to give my brain a break. I'm thoroughly pissed o
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 1:08 am
-- Mood: Tired, Pissed
-- Sleep: 6
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Pissed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

@@ -218,8 +218,9 @@ Ugh, hate to cut it short but looks like I'm going down a rabbit hole with valid
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:11 pm
-- Mood: Calm, Hot, Tired
-- Sleep: 7
-- Hunger: 6.5
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Calm, Hot, Tired</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 6.5</li>
+    <li>Coffee: 0</li>
+</ul>

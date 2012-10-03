@@ -50,8 +50,9 @@ Final step: `npm publish`
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 11:06 pm
-- Mood: Hyper
-- Sleep: 5
-- Hunger: 1
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Hyper</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 1</li>
+</ul>

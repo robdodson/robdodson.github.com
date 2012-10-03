@@ -186,8 +186,9 @@ With all that in place our test should pass. Nice!!!!!! We're well on our way to
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:42 am
-- Mood: Awake, Alert, Focused
-- Sleep: 6
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Awake, Alert, Focused</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

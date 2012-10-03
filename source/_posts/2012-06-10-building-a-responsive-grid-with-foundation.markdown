@@ -272,12 +272,13 @@ and...*voila!* The `aside` disappears on small screens!
 
 {% img center https://s3.amazonaws.com/robdodson/images/responsive_hide_on_phones.png 'Hiding the aside' %}
 
-Nice and simple, yeah? If you'd like to checkout the project running live you can [follow this link](http://robdodson.s3-website-us-east-1.amazonaws.com/tutorials/building-a-responsive-grid-with-foundation/index.html). Resize your browser or hit it with an iPhone to see it do its magic. - Rob
+Nice and simple, yeah? If you'd like to checkout the project running live you can [follow this link](http://robdodson.s3-website-us-east-1.amazonaws.com/tutorials/building-a-responsive-grid-with-foundation/index.html). Resize your browser or hit it with an iPhone to see it do its magic. Also you can [grab the source code off of Github.](https://github.com/robdodson/foundation-grid-tutorial) Enjoy! - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 9:00 pm
-- Mood: Relaxed
-- Sleep: 7
-- Hunger: 0
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Relaxed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>

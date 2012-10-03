@@ -154,8 +154,9 @@ Hopefully this gives you some food for thought the next time you're trying to wr
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 9:48 pm
-- Mood: Focused, Hurried
-- Sleep: 5
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Focused, Hurried</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

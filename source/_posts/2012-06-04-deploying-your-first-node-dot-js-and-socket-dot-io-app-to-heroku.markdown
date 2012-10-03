@@ -279,8 +279,9 @@ Good Luck! - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 10:02 pm
-- Mood: Tired, Antsy
-- Sleep: 5
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Antsy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

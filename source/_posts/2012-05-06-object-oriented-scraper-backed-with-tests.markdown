@@ -211,8 +211,9 @@ With that all of our tests for `Tentacles::Runner` are passing. Yay! But now it'
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 6:30 pm
-- Mood: Wired, Lazy
-- Sleep: 7.5
-- Hunger: 0
-- Coffee: 2
+<ul class="personal-stats">
+    <li>Mood: Wired, Lazy</li>
+    <li>Sleep: 7.5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 2</li>
+</ul>

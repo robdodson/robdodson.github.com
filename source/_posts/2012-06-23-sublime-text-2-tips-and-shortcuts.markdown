@@ -158,8 +158,9 @@ We've only really scratched the surface of what Sublime is capable of. In the fu
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 10:34 pm
-- Mood: Tired, Lazy
-- Sleep: 5
-- Hunger: 5
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 1</li>
+</ul>

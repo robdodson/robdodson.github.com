@@ -125,8 +125,9 @@ And there you have it. When we click on `Subject` it should replace the content 
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:02 am
-- Mood: Excited, Rested
-- Sleep: 6
-- Hunger: 4
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Excited, Rested</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>

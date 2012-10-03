@@ -85,8 +85,9 @@ And there we go, our first command line Ruby tool. I'll pick it up tomorrow to t
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:31 am
-- Mood: Tired, Patient
-- Sleep: 6
-- Hunger: 1
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Tired, Patient</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 0</li>
+</ul>

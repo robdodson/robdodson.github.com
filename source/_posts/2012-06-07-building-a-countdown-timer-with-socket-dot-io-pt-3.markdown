@@ -280,8 +280,9 @@ SWEEEEEEET! I'll go ahead and host it on Heroku but first I have to find out wha
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:41 pm
-- Mood: Tired, Lazy
-- Sleep: 6
-- Hunger: 3
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 1</li>
+</ul>

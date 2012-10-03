@@ -239,8 +239,9 @@ Ok that's it for today. Tomorrow we'll connect all this goodness to a View. If y
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 7:50 am
-- Mood: Tired
-- Sleep: 6
-- Hunger: 4
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Tired</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>

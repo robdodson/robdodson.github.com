@@ -37,8 +37,9 @@ This code is hopefully easy enough to digest. After I get the page I find all of
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 12:10 am
-- Mood: Tired, Introspective
-- Sleep: 4.5
-- Hunger: 2
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Introspective</li>
+    <li>Sleep: 4.5</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 1</li>
+</ul>

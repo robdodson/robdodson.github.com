@@ -115,10 +115,9 @@ It looks like the copy from my most recent blog post, plus or minus a few words.
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 10:44 pm
-- Mood: Drunk, Sleepy
-- Sleep: 3
-- Hunger: 4
-- Coffee: 1
-
-
+<ul class="personal-stats">
+    <li>Mood: Drunk, Sleepy</li>
+    <li>Sleep: 3</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 1</li>
+</ul>

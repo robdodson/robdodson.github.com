@@ -254,8 +254,9 @@ Before you run for the hills due to the sheer volume of boilerplate code I want 
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 12:10 am
-- Mood: Tired, Drunk
-- Sleep: 7
-- Hunger: 0
-- Coffee: 1
+<ul class="personal-stats">
+    <li>Mood: Tired, Drunk</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>

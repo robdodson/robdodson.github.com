@@ -101,8 +101,9 @@ I've looked at other libraries including [jQuery Transit](http://ricostacruz.com
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:07 am
-- Mood: Sedated, Upset-Stomach, Laggy
-- Sleep: 5.5
-- Hunger: 0
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Sedated, Upset-Stomach, Laggy</li>
+    <li>Sleep: 5.5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>

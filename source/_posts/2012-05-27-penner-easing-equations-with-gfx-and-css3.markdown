@@ -31,8 +31,9 @@ Give it a shot and consider donating to Matthew's project or buying Robert Penne
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 12:09 am
-- Mood: Tired, Tipsy
-- Sleep: 7
-- Hunger: 0
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Tired, Tipsy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>

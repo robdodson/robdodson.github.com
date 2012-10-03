@@ -63,8 +63,9 @@ Hopefully better luck tomorrow. - Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:08 am
-- Mood: Sedate, Sleepy
-- Sleep: 5
-- Hunger: 4
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Sedate, Sleepy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>

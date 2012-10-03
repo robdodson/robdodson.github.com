@@ -106,8 +106,9 @@ And there we go. Our first decent output from the crawler :D -Rob
 
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
 
-- Time: 8:20 am
-- Mood: Awake
-- Sleep: 6
-- Hunger: 4
-- Coffee: 0
+<ul class="personal-stats">
+    <li>Mood: Awake</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
