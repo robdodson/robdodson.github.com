@@ -122,7 +122,7 @@ module.exports = {
       name: 'app/main-about',
       exclude: ['common', 'jquery']
     },
-    
+
     {
       name: 'app/main-contact',
       exclude: ['common', 'jquery']
@@ -183,7 +183,7 @@ require(['./js/common'], function (common) {
 </script>
 ```
 
-First we bring in our combined require.js/jquery script. Then we load `common.js` and only *after* `common.js` is loaded do we load the page specific code in `main-about`. If you stick to this structure you should be able to easily layer your code so it's easy to manage throughout your site.
+First we bring in our combined require.js/jquery script. Then we load `common.js` and only *after* `common.js` is loaded do we load the page specific code in `main-about`. If you stick to this structure you should be able to layer your code so it's easy to manage throughout your site.
 
 ## [Grab the Example Source](https://github.com/robdodson/requirejs-multipage-shim-tutorial)
 
