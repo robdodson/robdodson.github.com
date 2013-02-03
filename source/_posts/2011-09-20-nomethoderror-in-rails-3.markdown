@@ -25,8 +25,4 @@ The real reason this occurs is either because the Object itself is Nil (and you 
 
 2. If you see the correct class type in the error then you’ve just failed to declare that method or perhaps mistyped its name. Verify that the method exists in the class and that you don’t have any spelling errors :)
 
-### derp derp derp.
-
-Show me LOVE!!!
-
 You should follow me on Twitter [here.](http://twitter.com/rob_dodson)
