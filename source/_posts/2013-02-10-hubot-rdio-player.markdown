@@ -69,3 +69,5 @@ To test that everything is working open up your heroku app in Chrome and login. 
 * Dance
 
 Holy shit that's a lot of steps! Hopefully it all worked, if not *please* log an issue. kthnxbye
+
+You should follow me on Twitter [here](http://twitter.com/rob_dodson).
