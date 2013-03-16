@@ -89,19 +89,4 @@ Given that list of cons you might say "Well why would I ever bother with the `<t
 
 Think back to the story about Bootstrap that I told at the beginning of this post. If all the markup for a Bootstrap button lived inside a template tag then we'd be one step closer to having a nice encapsulated widget. The next step would be to isolate the styles associated with the button. But I'll save that for tomorrow's post :)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+You should follow me on Twitter [here](http://twitter.com/rob_dodson).
