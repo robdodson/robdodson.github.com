@@ -12,7 +12,7 @@ Yesterday I did a post on the HTML5 `<template>` tag which is part of the new [W
 
 ## So, what are Web Components?
 
-Web Components are actually a group of standards which fall under the umbrella term "Web Components." The W3C does a good job of giving a high level overview in their [Introduction to Web Components](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section) article. Here's a quote from the introduction (emphasis is mine):
+Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their [Introduction to Web Components](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section) article. Here's a quote from the introduction (emphasis is mine):
 
 <p style="text-align: center;">**</p>
 
@@ -38,11 +38,12 @@ In summary there are two kinds of "components": **custom elements** and **decora
 
 **Custom elements** let you define new [HTMLElements](https://developer.mozilla.org/en-US/docs/DOM/HTMLElement), kind of like creating new tags, and **decorators** let you augment existing tags by injecting additional markup and styles via CSS selectors. Both custom elements and decorators leverage **templates** and **shadow DOM** to encapsulate their markup and styles.
 
-Think about the iframe that holds a Facebook Like button. The Like button encapsulates all of its markup and styles inside the iframe so it doesn't mess up anything on your page. There are a ton of downsides to this approach though. For starters you have to make an http request to load the content of the iframe, so you would never want to build your entire site out of iframe'd components. Secondly, the Like button doesn't expose much of an API for you to change its appearance. While that's not a huge deal for a Facebook Like button, it is if you're using a more generic component like a slider or dropdown.
+To visualize this process think about the iframe that holds a Facebook Like button. The Like button encapsulates all of its markup and styles inside the iframe so it doesn't mess up anything on your page. Unfortunately there are a few downsides to this approach. For starters you have to make an http request to load the content of the iframe, so you would never want to build your entire site out of iframe'd components. Also, the Like button doesn't expose much of an API for you to change its appearance. While that's not a huge deal for a Facebook Like button, it is if you're using a more generic component like a slider or dropdown.
 
-In an ideal world you could have a UI Framework of components which hide their markup but expose an API to alter their appearance. Imagine if this:
+In an ideal world you could have a *framework* of components which hide their markup but expose an API to alter their appearance. Imagine if this:
 
 ``` html
+<!-- Bootstrap Dropdown -->
 <div class="dropdown">
   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
     <li><a tabindex="-1" href="#">Action</a></li>
@@ -61,13 +62,13 @@ and you're most of the way there.
 
 ## It's (probably) not for apps. It's for frameworks.
 
-Unless you're trying to write a UI Framework like the next Bootstrap, you can probably ignore the underpinnings of how this stuff gets produced. You probably don't care about the code going into the component, you just want the end product. At present we have the `<video>` tag which basically uses all of the technologies listed above but since it exposes an API you don't need to know what its shadow DOM or template looks like. You can just say:
+Unless you're trying to write a UI Framework like the next Bootstrap, you can probably ignore the underpinnings of how Web Components are produced. At present we have the `<video>` tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:
 
 ``` html
 <video autoplay="true" controls src="path/to/video">
 ```
 
-and you're on your way. Think of the cognitive load that you could unburden yourself of if all UI Frameworks had the same abilities as `<video>`.
+to spit out your awesome player. Think of the cognitive load that you could unburden yourself of if *all* UI Frameworks had the same abilities as `<video>`!
 
 A page might look like this:
 
