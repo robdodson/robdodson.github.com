@@ -12,7 +12,7 @@ Yesterday I did a post on the HTML5 `<template>` tag which is part of the new [W
 
 ## So, what are Web Components?
 
-Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their [Introduction to Web Components](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section) article. Here's a quote from the introduction (emphasis is mine):
+Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their [Introduction to Web Components](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html) article. Here's a quote from the introduction (emphasis is mine):
 
 <p style="text-align: center;">**</p>
 
