@@ -3,7 +3,7 @@ layout: post
 title: "Introduction to Custom Elements"
 date: 2013-03-19 01:21
 comments: true
-categories: [Web Components, Custom Elements, Shadow DOM]
+categories: [HTML5, Web Components, Custom Elements, Shadow DOM]
 ---
 
 [In yesterday's post](http://robdodson.me/blog/2013/03/17/why-web-components/) I made the case for Web Components so today let's dive back in and look at Custom Elements.
