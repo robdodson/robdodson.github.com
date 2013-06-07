@@ -133,9 +133,9 @@ module.exports = {
 
 You'll note that first we put together our common module, then we tell the subsequent modules to exclude it. When you tell r.js to exclude a module it will find all of the nested dependencies in that module and exclude those as well. This is why we don't need to tell about and contact to exclude bootstrap. It sees that bootstrap is already in common so it knows to exclude it.
 
-If you haven't already now is a good time to do an `npm install`. That should pull down all of the grunt dependencies. Speaking of grunt, you'll need to install that as well if you've never used it `npm install -g grunt`. You might noticed in our gruntfile, `grunt.js`, we are using a number of tasks from the [grunt-contrib](https://github.com/gruntjs/grunt-contrib) library. Grunt-contrib is a great resource for and I encourage you to spend some time looking through all of the tasks that fall under its umbrella.
+If you haven't already now is a good time to do an `npm install`. That should pull down all of the grunt dependencies. Speaking of grunt, you'll need to install that as well if you've never used it `npm install -g grunt-cli`. You might notice in our `Gruntfile.js`, we are using a number of tasks from the [grunt-contrib](https://github.com/gruntjs/grunt-contrib) library. Grunt-contrib is a great resource and I encourage you to spend some time looking through all of the tasks that fall under its umbrella.
 
-OK. Ready to rock. Just type `grunt` to build, or `grunt.cmd` if you're on Windows (thanks [@stevensacks](http://twitter.com/stevensacks)). When you're finished you should have a new folder called `www-release`. Take a look at the `build.txt` file to see where everything ended up.
+OK. Ready to rock. Just type `grunt` to build, or `grunt.cmd` if you're on Windows (thanks [@stevensacks](http://twitter.com/stevensacks)). When you're finished you should have a new folder called `www-release`. Checkout the `build.txt` file to see where everything ended up.
 
 ```
 css/bootstrap-responsive.css

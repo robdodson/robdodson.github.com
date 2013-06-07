@@ -6,6 +6,8 @@ comments: true
 categories: [Grunt]
 ---
 
+*Update: Thanks to [@waynemoir](https://twitter.com/waynemoir) for updating the example source to work with Grunt ~0.4.*
+
 After my last post [@stevensacks](https://twitter.com/stevensacks) tweeted at me that he was having issues getting node FileSystem commands to work in grunt. After a bit of poking around I noticed that there was no call to grunt's `async` method, which was probably preventing the process from finishing properly. So today's post is a primer on async grunt processes, and how to make sure your node and grunt syntax is setup correctly.
 
 <!--more-->

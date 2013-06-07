@@ -6,6 +6,8 @@ comments: true
 categories: [Chain, Node, Socket.io, Heroku]
 ---
 
+*Update: This page has been translated into <a href="http://www.webhostinghub.com/support/es/misc/implementando-tus-primeras-aplicaciones">Spanish</a> by Maria Ramos.*
+
 At my office we like to shoot each other from across the room with Nerf guns. In an effort to actually remain productive we've implemented a rule that whenever you get shot you're dead for 1 hour. But that hour can be a little tricky to keep track of between players. Who's dead and who isn't? Am I about to be shot right now??
 
 In an effort to keep track of things (and also because I need to write a blog post) I decided to start working on a little [Node.js](http://nodejs.org/) and [Socket.io](http://socket.io/) app. In this first post I'm just going to get things setup and deploy them to Heroku. Hopefully tomorrow we can work on implementing the actual timers. If you've never worked with Heroku before [you'll need to follow their getting started guide](https://devcenter.heroku.com/articles/quickstart) to make sure you have all the proper command line tools. Don't worry, it's really easy and their documentation is **awesome**.

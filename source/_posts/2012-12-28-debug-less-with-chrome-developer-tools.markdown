@@ -6,6 +6,8 @@ comments: true
 categories: [LESS, Chrome, CodeKit, Less-Middleware, LESS.js]
 ---
 
+*Update: Chrome 27+ now uses v3 sourcemaps which LESS 1.3.3/1.4-beta does not support. That means you won't be able to inspect the actual styles in the dev tools, however, if you click on the link to the CSS file in the inspector, the sourcemap will show you which LESS file is generating the output. This can still be really handy in a project with a ton of LESS files. Please see [Paul Irish's comments below for more details.](http://robdodson.me/blog/2012/12/28/debug-less-with-chrome-developer-tools/#comment-919144010)*
+
 If you've spent much time with preprocessors like LESS, SASS/SCSS or Stylus you've probably discovered their one rather crippling flaw: debugging. With thousands of lines of LESS code suddenly turning into even more thousands of lines of CSS it can become nearly impossible to tell where a particular style comes from. Inspecting CSS used to be the domain of the Chrome Developer Tools and Firebug but now that our CSS is machine generated there's no longer a link between the style at line 2137 and the LESS file that generated it. Thankfully the Chrome team is addressing this problem but their current focus is on SASS. Today I'll teach you how to rework your LESS processor so it plays nice with Chrome and reunites you with your old friend, the CSS inspector.
 
 <!--more-->
