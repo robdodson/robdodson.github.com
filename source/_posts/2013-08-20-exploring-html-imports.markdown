@@ -471,9 +471,13 @@ Which produces this:
 
 ## Conclusion
 
+If you've made it this far congrats and thanks for hanging in there! I know that last section was a little crazy but stop for a moment and think about what we just did.
 
+By using an HTML Import we were able to pull in a document which added a new tag to our application. Imagine if *all* of Chart.js was written in this manner. There would be no need for us to write any glue code to generate a chart ever again. Instead we could manipulate the attributes of a `<chart-pie>` tag using something like Angular or any other front-end framework. That would allow us to focus only on the code that matters to our application and leave all that other boilerplate tucked away inside of Custom Elements.
 
+Over the next few months I'll be blogging exclusively about this topic because I think it's really interesting so check back later for more!
 
+Till then make sure to [hit me up on Twitter](http://twitter.com/rob_dodson) if you have any questions or leave a note in the comments. Thanks!
 
 
 
