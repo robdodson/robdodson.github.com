@@ -3,7 +3,7 @@ layout: post
 title: "HTML5 Template Tag: Introduction"
 date: 2013-03-16 09:51
 comments: true
-categories: [HTML5, Template]
+categories: [HTML5, Template, Web Components]
 ---
 
 If you've been following the Google Chrome release announcements you may have noticed some interesting terms popping up as of late. Phrases like "Shadow DOM", "Custom Elements" and "Template". These are all part of a new standard referred to as Web Components and the latest versions of Chrome are starting to implement them. Basically a Web Component is an encapsulated bit of markup, styles and script that allow you to reuse widgets across your page without worrying about accidental collisions. For a practical example consider Twitter Bootstrap and its myriad of buttons, dropdowns and badges. Bootstrap comes with *a lot* of CSS which means, right out of the gate, there are a ton of class names which you probably shouldn't use for your own elements. Want to define a class of `.container`? Too bad, Bootstrap already uses that name. Want to upgrade Bootstrap in a few months? OK, but you need to double check that none of their new classes conflict with any of yours. Kind of a pain, right? Wouldn't it be awesome if you could use all the little widgets from Bootstrap and not worry at all about possible collisions? Well, that's what Web Components are trying to solve and so today I want to look at one part of the Web Components standard: The Template Tag.
