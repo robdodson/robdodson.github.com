@@ -6,7 +6,7 @@ comments: true
 categories: [HTML5, HTML Imports, Polymer, Template, Web Components]
 ---
 
-[Web Components](http://robdodson.me/blog/2013/03/17/why-web-components/) have come a long way in the past few months and one of the technologies that I'm most interested in is [HTML Imports](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html) (or "imports", for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for [custom elements](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html) where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.
+[Web Components](http://robdodson.me/blog/2013/03/17/why-web-components/) have come a long way in the past few months and one of the technologies that I'm most interested in is [HTML Imports](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html) (or "imports", for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for [Custom Elements](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html) where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.
 
 <!--more-->
 
@@ -14,21 +14,21 @@ categories: [HTML5, HTML Imports, Polymer, Template, Web Components]
 
 Imports are a new type of `link` tag which should be familiar to you since that's also how we load our stylesheets.
 
-```
+```html
 <link rel="stylesheet" href="/path/to/styles.css">
 ```
 
 For an import we just replace the `rel` with one of type `import`.
 
-```
+```html
 <link rel="import" href="/path/to/some/import.html">
 ```
 
-At the moment imports do not block like script tags, however, that may change in the future to help with [custom elements resolution.](http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html)
+At the moment imports do not block like script tags, however, that may change in the future to help with [Custom Elements resolution.](http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html)
 
 ## Support
 
-Native imports are only available in Chrome Canary v31 and Chrome Dev v30. Thankfully [Polymer](http://www.polymer-project.org/) [offers a polyfill](http://www.polymer-project.org/platform/html-imports.html) if you want to try them out in other modern/"evergreen" browsers.
+Native imports are only available in Chrome Canary v31 and Chrome Dev v30. Thankfully [Polymer](http://www.polymer-project.org/) [offers a polyfill](http://www.polymer-project.org/platform/html-imports.html) if you want to try them out in other modern / "evergreen" browsers.
 
 To use HTML Imports make sure you've enabled the following
 in Chrome's `about:flags`.
@@ -39,7 +39,13 @@ in Chrome's `about:flags`.
 
 *I'm not 100% certain if these are all necessary but they don't hurt ;)*
 
+## Codez!
+
+I've created a sketchbook for this post and future Web Components related stuff. [You can grab the sketchbook on GitHub.](https://github.com/robdodson/webcomponents-sketchbook) For each of the examples that I cover I'll link to the sketch so you can quickly try things out.
+
 ## A Basic Example
+
+### Sketch 0: [Basic](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/0-basic)
 
 OK so what's a very basic import look like?
 
@@ -97,6 +103,8 @@ Exciting, I know ;) But it demonstrates a no frills approach to loading content 
 
 ## A Basic Example with Polymer
 
+### Sketch 1: [Basic-Polymer](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/1-basic-polymer)
+
 If you want to try out the snippets above in a browser other than Chrome Canary you'll need to use Google's [Polymer Project](http://www.polymer-project.org/). Polymer is a collection of polyfills and additional sugars which seeks to enable the use of Web Components in all modern browsers. The hope is that devolopers will use Polymer to inform the W3C on which direction to take with Web Components; so rather than wait for a stinky spec we can guide the implementation process.
 
 Polymer attempts to keep parity with the the evolving specifications but obviously there are some places where the API must differ because of the limitations of current browsers. In the case of HTML Imports, Polymer waits for the `DOMContentLoaded` event before triggering the actual import process. This means we need to listen for the `HTMLImportsLoaded` event on either `window` or `document` to know when it is finished.
@@ -133,6 +141,8 @@ Using the above we should get the same results as before.
 You might notice that I used `polymer.min.js` instead of only including the [HTML Imports polyfill](http://www.polymer-project.org/platform/html-imports.html). That's mainly because I want to mess around with Custom Elements later and to do that requires an additional polyfill. Polymer is structured so you can take any of the polyfills &agrave; la carte but I find it's easier to just include all of Polymer when I'm experimenting, rather than worry if I have each individual polyfill loaded.
 
 ## Using CSS in our Imports
+
+### Sketch 2: [CSS](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/2-css)
 
 Let's put Polymer to the side for a bit and go back to our original, native example.
 
@@ -191,6 +201,7 @@ When we run this in Canary we should get the following:
 It's still not much to look at but the gears in my imagination are starting to turn now. We just imported a document, which has its own styles that are scoped specifically to it, and we stamped its contents onto our page. We're starting to get into Web Components territory and that's pretty exciting. Let's see what else we can do...
 
 ## Using Scripts in our Imports
+### Sketch 3: [Script](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/3-script)
 
 Next let's look using `<script>` tags inside of our import. We'll start by removing the `<script>` block from our `index.html`.
 
@@ -247,6 +258,7 @@ If we run this we should get the exact same outcome as before.
 You'll notice that the import has access to our `document` object which it uses to add itself to the page. In practice you probably wouldn't want imports adding themselves wherever but the important takeaway is that **anything imported can access the `document`**. This means an import could register itself as a Custom Element using our `document` object and we wouldn't need to write any additional code. We're almost to that point so let's keep going...
 
 ## Using Templates in our Imports
+### Sketch 4: [Template](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/4-template)
 
 I'm getting a little tired of our fake "blog post" so let's switch over to something more practical. We'll use [Chart.js](http://www.chartjs.org/) to create a very simple pie diagram and we'll use the new `<template>` tag to hold the contents of our import. If you haven't heard of the template tag before [checkout this introduction](http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/).
 
@@ -314,6 +326,7 @@ Running the above gives us this:
 Well this is interesting. We're importing an entire pie chart and our index page isn't cluttered with a bunch of code. Unfortunately we don't have much control over where the pie chart ends up. It would be nice if we could turn the contents of the import into a tag and place that wherever. Thankfully Custom Elements let us do just that!
 
 ## Using Custom Elements in our Imports
+### Sketch 5: [Custom Element](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/5-custom-element)
 
 I'll say in advance that you might need to read through this section a few times before you fully grok it. We're going to touch on a lot of new stuff and I fully admit that I don't understand it all just yet. Consider it the bonus round :)
 
@@ -478,10 +491,3 @@ By using an HTML Import we were able to pull in a document which added a new tag
 Over the next few months I'll be blogging exclusively about this topic because I think it's really interesting so check back later for more!
 
 Till then make sure to [hit me up on Twitter](http://twitter.com/rob_dodson) if you have any questions or leave a note in the comments. Thanks!
-
-
-
-
-
-
-
