@@ -115,7 +115,7 @@ Polymer attempts to keep parity with the the evolving specifications but obvious
   <head>
     <meta charset="utf-8">
     <title>Basic HTML Imports</title>
-    <link rel="import" href="/imports/blog-content.html">
+    <link rel="import" href="/imports/blog-post.html">
   </head>
   <body>
     <p>Hello World!</p>
@@ -262,7 +262,7 @@ If we run this we should get the exact same outcome as before.
 
 {% img center http://robdodson.s3.amazonaws.com/images/imports-screen2.jpg 'Imports with Scoped Styles' %}
 
-An important thing to take notice of is the relationship between `thisDoc` and `thatDoc`. `thisDoc` refers to the `blog-post.html` document while `thatDoc` refers to our index.html file. It's useful to distinguish between the two so we can `querySelector` for `#blog-post` and not worry that we may have grabbed something out of the importing document. *Thanks to [Dominic Cooney](https://twitter.com/coonsta) for the heads up on this.*
+An important thing to take notice of is the relationship between `thisDoc` and `thatDoc`. `thisDoc` refers to the `blog-post.html` document, while `thatDoc` refers to our index.html file. It's useful to distinguish between the two so we can `querySelector` for `#blog-post` and not worry that we may have grabbed something out of the importing document. *Thanks to [Dominic Cooney](https://twitter.com/coonsta) for the heads up on this.*
 
 You'll also notice that since the import has access to our `document` object it is able to add itself to the page. In practice you probably wouldn't want imports adding themselves wherever but the important takeaway is that **anything imported can access the `document`**. This means an import could register itself as a Custom Element using our `document` object and we wouldn't need to write any additional code. We're almost to that point so let's keep going...
 
@@ -271,7 +271,7 @@ You'll also notice that since the import has access to our `document` object it 
 
 I'm getting a little tired of our fake "blog post" so let's switch over to something more practical. We'll use [Chart.js](http://www.chartjs.org/) to create a very simple pie diagram and we'll use the new `<template>` tag to hold the contents of our import. If you haven't heard of the template tag before [checkout this introduction](http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/).
 
-To start, I've updated the `index.html` so it imports a new `chart.html` file.
+To start, I've updated the `index.html` so it includes Chart.js and imports a new `chart.html` file.
 
 ```html index.html
 <!DOCTYPE html>
@@ -279,6 +279,8 @@ To start, I've updated the `index.html` so it imports a new `chart.html` file.
   <head>
     <meta charset="utf-8">
     <title>Imports with Templates</title>
+    <!-- Include Chart.js so our import can use it -->
+    <script src="/lib/chart.min.js"></script>
     <!-- Make sure to import chart.html -->
     <link rel="import" href="/imports/chart.html">
   </head>
@@ -287,8 +289,9 @@ To start, I've updated the `index.html` so it imports a new `chart.html` file.
   </body>
 </html>
 ```
+Originally I had the Chart.js script include on line 7 inside of `chart.html`. I realize now that this is an antipattern because `chart.html` has no idea where you would store your 3rd party libraries. If your import depends on 3rd party code I think it's best to keep it in the primary document.
 
-And here's what `chart.html` actually looks like.
+Here's what `chart.html` looks like:
 
 ```html imports/chart.html
 <template id="chart-pie">
@@ -317,7 +320,6 @@ And here's what `chart.html` actually looks like.
   </script>
 </template>
 
-<script src="/lib/chart.min.js"></script>
 <script>
   // thisDoc refers to the "importee", which is chart.html
   var thisDoc = document.currentScript.ownerDocument;
@@ -333,9 +335,7 @@ And here's what `chart.html` actually looks like.
 ```
 We're creating a new `<template>` which contains a canvas tag and a script block to create our pie chart. The advantage of using a template tag is that any script blocks inside of it will not execute until we clone the contents and add them to the DOM.
 
-On line 27 we pull in the Charts.js library which I've stored in a folder called `lib`. When our index file fetches `chart.html` it will also fetch any `links` or `scripts` so we can include whatever we want.
-
-Lines 30-38 should look familiar. We're grabbing the template and stamping its content onto the document. Notice on line 38 we use `template.content` to access the innards.
+Lines 29-37 should look familiar. We're grabbing the template and stamping its content onto the document. Notice on line 37 we use `template.content` to access the innards.
 
 Running the above gives us this:
 
@@ -346,7 +346,7 @@ Well this is interesting. We're importing an entire pie chart and our index page
 ## Using Custom Elements in our Imports
 ### Sketch 5: [Custom Element](https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/5-custom-element)
 
-I'll say in advance that you might need to read through this section a few times before you fully grok it. We're going to touch on a lot of new stuff and I fully admit that I don't understand it all just yet. Consider it the bonus round :)
+I'll say in advance that you might need to read through this section a few times before you fully grok it. We're going to touch on a lot of new stuff and I fully admit that I don't understand it all just yet. Consider this the bonus round :)
 
 Having said that, the final markup for our `index.html` file is going to look like this:
 
@@ -356,6 +356,7 @@ Having said that, the final markup for our `index.html` file is going to look li
   <head>
     <meta charset="utf-8">
     <title>Imports with Custom Elements</title>
+    <script src="/lib/chart.min.js"></script>
     <link rel="import" href="/imports/chart.html">
   </head>
   <body>
@@ -366,7 +367,7 @@ Having said that, the final markup for our `index.html` file is going to look li
   </body>
 </html>
 ```
-On lines 10-12 we're going to use our new Custom Element, `chart-pie`, which will allow us to produce pie charts wherever we want. The result will look like this:
+On lines 11-13 we're going to use our new Custom Element, `chart-pie`, which will allow us to produce pie charts wherever we want. The result will look like this:
 
 {% img center http://robdodson.s3.amazonaws.com/images/imports-custom-elements.jpg 'Imports with Custom Elements' %}
 
@@ -381,7 +382,6 @@ Here's what our updated `chart.html` looks like.
   <canvas class="myChart" width="200" height="200"></canvas>
 </template>
 
-<script src="/lib/chart.min.js"></script>
 <script>
   // thisDoc refers to the "importee", which is chart.html
   var thisDoc = document.currentScript.ownerDocument;
@@ -448,22 +448,22 @@ On lines 1-3 we've shortened the `template` down so that it only contains our `c
 
     var template = thisDoc.querySelector('#chart-pie');
 
-Lines 7-13 should look familar from the last example. We're storing our two documents in variables and querying for the template tag.
+Lines 6-12 should look familar from the last example. We're storing our two documents in variables and querying for the template tag.
 <br>
     var ChartPieProto = Object.create(HTMLElement.prototype);
 
-On line 16 we define the prototype for our Custom Element called `ChartPieProto`. This prototype extends the `HTMLElement` prototype which is a requirement for creating a new element.
+On line 15 we define the prototype for our Custom Element called `ChartPieProto`. This prototype extends the `HTMLElement` prototype which is a requirement for creating a new element.
 <br>
     ChartPieProto.createdCallback = function() {
       ...
     };
 
-On line 21 we see the first lifecycle callback, `createdCallback`. The `createdCallback` is run every time the parser hits a new instance of our tag. Therefore we can use it as a kind of Constructor to kickoff the creation of our chart. We'll want to create a new chart instance for each tag so all of our Chart.js code has been moved inside of this callback.
+On line 20 we see the first lifecycle callback, `createdCallback`. The `createdCallback` is run every time the parser hits a new instance of our tag. Therefore we can use it as a kind of Constructor to kickoff the creation of our chart. We'll want to create a new chart instance for each tag so all of our Chart.js code has been moved inside of this callback.
 <br>
     var root = this.createShadowRoot();
     var clone = template.content.cloneNode(true);
 
-On lines 23-24 we create a [Shadow DOM](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/) to hold the markup for our chart.
+On lines 22-23 we create a [Shadow DOM](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/) to hold the markup for our chart.
 <br>
     var data = [
       {
@@ -484,13 +484,13 @@ On lines 23-24 we create a [Shadow DOM](http://www.html5rocks.com/en/tutorials/w
     var ctx = clone.querySelector('.myChart').getContext('2d');
     var myNewChart = new Chart(ctx).Pie(data);
 
-Lines 27-44 should look familiar. It's the same Chart.js code from before except now we use `querySelector` to find the contents of the template clone and we're using a class for `myChart` instead of an id.
+Lines 26-43 should look familiar. It's the same Chart.js code from before except now we use `querySelector` to find the contents of the template clone and we're using a class for `myChart` instead of an id.
 <br>
     root.appendChild(clone);
-On line 47 we add the new content to our Shadow DOM.
+On line 46 we add the new content to our Shadow DOM.
 <br>
     var ChartPie = document.register('chart-pie', {prototype: ChartPieProto});
-Line 50 is where we actually register our Custom Element and assign it to the name `chart-pie`. From here you can either place a `<chart-pie></chart-pie>` tag somewhere on your page, or use JavaScript to instantiate an instance and add it to the `document`. This is demonstrated in the comments on lines 51-52. If you refer back to our `index.html` example we just use the `<chart-pie>` tag.
+Line 49 is where we actually register our Custom Element and assign it to the name `chart-pie`. From here you can either place a `<chart-pie></chart-pie>` tag somewhere on your page, or use JavaScript to instantiate an instance and add it to the `document`. This is demonstrated in the comments on lines 50-51. If you refer back to our `index.html` example we just use the `<chart-pie>` tag.
 
 ```html index.html
 <!DOCTYPE html>
@@ -498,6 +498,7 @@ Line 50 is where we actually register our Custom Element and assign it to the na
   <head>
     <meta charset="utf-8">
     <title>Imports with Custom Elements</title>
+    <script src="/lib/chart.min.js"></script>
     <link rel="import" href="/imports/chart.html">
   </head>
   <body>
