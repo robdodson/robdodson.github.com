@@ -3,7 +3,7 @@ layout: post
 title: "Exploring HTML Imports"
 date: 2013-08-20 13:07
 comments: true
-categories: [HTML5, HTML Imports, Polymer, Template, Web Components]
+categories: [HTML5, HTML Imports, Polymer, Template, Web Components, Custom Elements]
 ---
 
 [Web Components](http://robdodson.me/blog/2013/03/17/why-web-components/) have come a long way in the past few months and one of the technologies that I'm most interested in is [HTML Imports](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html) (or "imports", for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for [Custom Elements](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html) where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.

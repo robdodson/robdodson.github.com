@@ -4,8 +4,23 @@ title: "Getting to Know the Shadow DOM"
 date: 2013-08-22 12:02
 comments: true
 published: false
-categories: 
+categories: [HTML5, Shadow DOM, Web Components]
 ---
+
+## Table of Contents
+
+- [Introduction](/blog/2013/08/26/shadow-dom-introduction/)
+- [The Basics](#)
+- [Styles](#)
+- [Styles (continued)](#)
+- [Advanced Insertions](#)
+- [Events & User Interaction](#)
+
+## Content vs Presentation
+
+light DOM, shadow DOM, composed DOM
+
+## Polymer example
 
 ## Shadow Trees https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#concepts
 document
@@ -33,6 +48,12 @@ The content element
 Matching Criteria
 
 [::content pseudo selector](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#content-pseudo-element)
+
+## Shadow Insertion Points
+
+http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/
+
+"Shadow insertion points" (<shadow>) are similar to normal insertion points (<content>) in that they're placeholders. However, instead of being placeholders for a host's content, they're hosts for other shadow trees. It's Shadow DOM Inception!
 
 ## Events
 
