@@ -11,7 +11,7 @@ categories: [HTML5, Shadow DOM, Web Components]
 
 - [Introduction](/blog/2013/08/26/shadow-dom-introduction/)
 - [The Basics](/blog/2013/08/27/shadow-dom-the-basics/)
-- [Styles](#)
-- [Styles (continued)](#)
-- [Advanced Insertions](#)
-- [Events & User Interaction](#)
+- Styles
+- Styles (continued)
+- Advanced Insertions
+- Events & User Interaction

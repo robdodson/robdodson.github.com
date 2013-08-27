@@ -35,6 +35,7 @@ The markup for this video is quite simple.
 Primarily there is a `<video>` tag with a few attributes and some nested `<source>` tags. But if you stop to think about it there's actually *way* more going on here. The video player itself has play/pause buttons, a progress slider, a time code, volume controls and (once it is playing) a full screen toggle. So where is the code for all that?
 
 ### The Shadows
+<a href="#" id="the-shadows"></a>
 
 As it turns out each browser vendor has already written the code to make our video player work. They've just hidden it from us using the **Shadow DOM**. If you open the Chrome Dev Tools and click the option to `Show Shadow DOM` you can then inspect the video player in more detail.
 
