@@ -3,7 +3,6 @@ layout: post
 title: "Shadow DOM: Introduction"
 date: 2013-08-26 16:06
 comments: true
-published: false
 categories: [HTML5, Shadow DOM, Web Components]
 ---
 

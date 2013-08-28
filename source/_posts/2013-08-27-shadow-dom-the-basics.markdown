@@ -3,11 +3,10 @@ layout: post
 title: "Shadow DOM: The Basics"
 date: 2013-08-27 08:52
 comments: true
-published: false
 categories: [HTML5, Shadow DOM, Web Components]
 ---
 
-In our [previous post](/blog/2013/08/26/shadow-dom-introduction/) we introduced the **Shadow DOM** and made the case for why it is important. Today we'll get our hands dirty with some code! By the end of this post you'll be able to create your own encapsulated widgets which pull in content from the outside world and rearrange their bits and pieces to produce something wholly different.
+In our [previous post](/blog/2013/08/26/shadow-dom-introduction/) we introduced the **Shadow DOM** and made the case for why it is important. Today we'll get our hands dirty with some code! By the end of this post you'll be able to create your own encapsulated widgets that pull in content from the outside world and rearrange their bits and pieces to produce something wholly different.
 
 Let's get started!
 
@@ -22,7 +21,7 @@ Also make sure you've enabled the following in Chrome's `about:flags`.
 √ Experimental Web Platform features<br>
 √ Experimental JavaScript<br>
 
-*I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies which require them. Better to just turn them on now I think :)*
+*I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)*
 
 ## Codez!
 
@@ -51,7 +50,7 @@ In HTML every element is considered to be a **node**. When you have a group of t
 
 {% img center http://robdodson.s3.amazonaws.com/images/tree-chart.svg 'A basic node tree!' %}
 
-What's unique about Shadow DOM is that it allows us to create our own node trees, known as **shadow trees**, which encapsulate their contents and render only what they choose. This means we can inject text, rearrange content, add styles, etc. Here's an example:
+What's unique about Shadow DOM is that it allows us to create our own node trees, known as **shadow trees**, that encapsulate their contents and render only what they choose. This means we can inject text, rearrange content, add styles, etc. Here's an example:
 
 ``` html
 <div class="widget">Hello, world!</div>
@@ -141,9 +140,9 @@ First thing's first, to use the content in our shadow host we're going to need t
 ```
 {% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-content1.jpg 'Mixing content and presentation' %}
 
-If you've been following along this should look familiar. Using the `<content>` tag we've created an **insertion point** which **projects** the text from the `.pokemon` div so it appears within our shadow `<h1>`. The ability to project content is very powerful. It allows us to change the order in which things render which has previously been difficult / impossible without physically reordering the source.
+If you've been following along this should look familiar. Using the `<content>` tag we've created an **insertion point** that **projects** the text from the `.pokemon` div so it appears within our shadow `<h1>`. Insertion points are very powerful because they allow us to change the order in which things render without physically altering the source. It also means that we can be selective about what gets rendered.
 
-You may have noticed that now we're using a [template tag](/blog/2013/03/16/html5-template-tag-introduction/) instead of building our Shadow DOM entirely in JavaScript. I've found that using `<template>` tags makes the process of working with the Shadow DOM much easier.
+You may have noticed that we're using a [template tag](/blog/2013/03/16/html5-template-tag-introduction/) instead of building our Shadow DOM entirely in JavaScript. I've found that using `<template>` tags makes the process of working with the Shadow DOM much easier.
 
 Let's look at a more advanced example to demonstrate how to work with multiple insertion points.
 
@@ -192,7 +191,9 @@ In this example we're building a very simple biography widget. Because each defi
 
 For instance, `<content select=".last-name">` looks inside the shadow host for any element with a matching class of `.last-name`. If it finds a match it will render its content inside of the Shadow DOM.
 
-As I mentioned before, insertion points allow us to change the rendering order of our presentation without needing to modify the structure of our content. Remember, the content is what lives in the shadow host and the presentation is what lives in the shadow root/shadow DOM. A good example would be to swap the rendering order of the first and last names.
+### Changing Order
+
+As I mentioned before, insertion points allow us to change the rendering order of our presentation without needing to modify the structure of our content. **Remember, the content is what lives in the shadow host and the presentation is what lives in the shadow root/shadow DOM.** A good example would be to swap the rendering order of the first and last names.
 
 ```html
 <template class="bio-template">
@@ -212,19 +213,21 @@ As I mentioned before, insertion points allow us to change the rendering order o
 
 {% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-selects2.jpg 'Changing the order of our selects' %}
 
-By simply changing the structure of our `template` we've altered the presentation but the order of the original content remains the same. To understand what I mean, take a look at the Chrome Dev Tools.
+By simply changing the structure of our `template` we've altered the presentation but the order of the content remains the same. To understand what I mean, take a look at the Chrome Dev Tools.
 
 {% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-selects-inspect.jpg 'Changing the order of our selects' %}
 
-As you can see, `.first-name` still appears first in the shadow host. We haven't done anything to alter that. What we've done instead is change the way that content is *projected* in the Shadow DOM. This is where a lot of the power of the Shadow DOM comes from. Through the use of multiple insertion points we're able to alter the presentation of the content, regardless of how it was originally structured. We can choose to exclude bits, make some entries appear before others, or inject our own content. It's completely up to us!
+As you can see, `.first-name` is still the first child in the shadow host. But we've made it appear as if it comes after `.last-name`. We did just just by changing the order of our insertion points. That's pretty powerful when you think about it.
 
-You may have noticed that at the end of the `.bio-template` we have a `<content>` tag with an empty string inside of its `select` attribute.
+### Greedy Insertion Points
+
+You may have noticed at the end of the `.bio-template` we have a `<content>` tag with an empty string inside of its `select` attribute.
 
 ```html
 <p><content select=""></content></p>
 ```
 
-This is considered a wildcard selection and it will grab any content in the shadow host which is left over. The following three selections are all equivalent:
+This is considered a wildcard selection and it will grab any content in the shadow host that is left over. The following three selections are all equivalent:
 
 ```html
 <content></content>
@@ -269,3 +272,4 @@ He also created this handy video explaining it :)
 ## Conclusion
 
 We still have a lot more to talk about but for today let's wrap things up. Tomorrow we'll dig into CSS style encapsulation and later JavaScript and user interaction. As always, if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
+
