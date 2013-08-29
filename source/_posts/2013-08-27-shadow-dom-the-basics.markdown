@@ -273,3 +273,4 @@ He also created this handy video explaining it :)
 
 We still have a lot more to talk about but for today let's wrap things up. Tomorrow we'll dig into CSS style encapsulation and later JavaScript and user interaction. As always, if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
 
+## [Continue to Shadow DOM: Styles &rarr;](/blog/2013/08/28/shadow-dom-styles/)
