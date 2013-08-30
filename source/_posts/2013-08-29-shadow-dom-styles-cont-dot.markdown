@@ -3,7 +3,6 @@ layout: post
 title: "Shadow Dom: Styles (cont.)"
 date: 2013-08-29 11:11
 comments: true
-published: false
 categories: [HTML5, Shadow DOM, Web Components]
 ---
 
@@ -261,13 +260,77 @@ Personally I'm not a fan of the CSS3 variable syntax but if you want to go prepr
  
 ## Inheriting and Resetting Styles
 
-.resetStyleInheritance
-false - Default. inheritable CSS properties continue to inherit.
-true - resets inheritable properties to initial at the boundary.
-
-.applyAuthorStyles
-false - Default. Author styles are not applied to the shadow tree.
-true - styles defined in the author's document are applied. Think of this as allowing styles to "bleed" across the boundary.
-
 ### Sketch 12: [inheriting-and-resetting-styles](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/12-inheriting-and-resetting-styles)
 
+### Applying Author Styles
+
+If your component contains text or other inheritable properties you may want it to match the page that's hosting it. This is where `applyAuthorStyles` comes in to play. By setting `applyAuthorStyles` to `true` you're telling the document that it's ok for the user's CSS to bleed through and affect your component. This is great for things like typography where you want your component to use the same font families and header sizes as the parent document.
+
+```html
+<head>
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    h2 {
+      text-decoration: underline;
+    }
+
+    p {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>This h2 is NOT in the shadow DOM</h2>
+  <p>Neither is this paragraph</p>
+
+  <div class="article">Some interesting article content</div>
+
+  <template class="article-template">
+    <h2>An Article Header</h2>
+    <p><content></content></p>
+  </template>
+
+  <script>
+    var host = document.querySelector('.article');
+    var root = host.createShadowRoot();
+    root.applyAuthorStyles = true;
+    // Note that you can also reset styles on a per <shadow> or
+    // per <content> basis
+    // http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-shadow-resetstyles
+    var template = document.querySelector('.article-template');
+    root.appendChild(template.content.cloneNode(true));
+    template.remove();
+  </script>
+</body>
+```
+{% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-author-styles.jpg 'Applying author styles' %}
+
+If we take a look at the CSS we can see that the user has directly styled all `h2`'s and `p`'s. Also everything on the page should inherit a `font-family` of Helvetica. By using `applyAuthorStyles` we've allowed the direct styles *and* the inherited `font-family` to bleed through.
+
+### Reseting Inheritance
+
+In some cases we may wish to only allow the direct styles while resetting anything that would be inherited. Using the example above that would mean excluding the `font-family` of Helvetica which is inherited from the `body` style. To reset style inheritance we use the aptly named `resetStyleInheritance` method.
+
+```html
+<script>
+  var host = document.querySelector('.article');
+  var root = host.createShadowRoot();
+  root.resetStyleInheritance = true; // <-- get rid of anything inherited
+  root.applyAuthorStyles = true;
+  var template = document.querySelector('.article-template');
+  root.appendChild(template.content.cloneNode(true));
+  template.remove();
+</script>
+```
+{% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-reset-inheritance.jpg 'Reset style inheritance' %}
+
+Now our component reverts to the default `font-family` of Times New Roman while still allowing direct author styles on `h2` and `p`. [Eric Bidelman's great post on Shadow DOM 201 has a handy cheat sheet](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#style-inherit-cheetsheet) so you can sort out when you want to use `applyAuthorStyles` and when you want to use `resetStyleInheritance`.
+
+## Conclusion
+
+If you've read over [the last post](/blog/2013/08/28/shadow-dom-styles/) and this one then you now know as much about styling the shadow DOM as I do. But we haven't even talk about JavaScript yet! We'll save that for tomorrow's post :) As always if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!

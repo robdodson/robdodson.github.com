@@ -269,3 +269,5 @@ Nothing fancy but hopefully it gets your imagination going a bit. What other sta
 ## Conclusion
 
 There's still a lot more to talk about when it comes to styling the Shadow DOM. Let's take a break for today and pick it up again tomorrow. As always if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
+
+## [Continue to Shadow DOM: Styles (cont.) &rarr;](/blog/2013/08/29/shadow-dom-styles-cont-dot/)
