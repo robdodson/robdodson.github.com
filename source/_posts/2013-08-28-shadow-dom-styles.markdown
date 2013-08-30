@@ -3,7 +3,6 @@ layout: post
 title: "Shadow DOM: Styles"
 date: 2013-08-28 10:56
 comments: true
-published: false
 categories: [HTML5, Shadow DOM, Web Components]
 ---
 
@@ -32,7 +31,7 @@ I've created a sketchbook for this post and future Web Components related stuff.
 
 ## Style Encapsulation
 
-### Sketch 4: [Encapsulation](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/04-style-encapsulation)
+### Sketch 4: [style-encapsulation](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/04-style-encapsulation)
 
 Astute readers probably noticed that I used a new term in the introduction for this post. That term is **shadow boundary** and it refers to the barrier that separates the regular DOM (the "light" DOM) from the shadow DOM. One of the primary benefits of the shadow boundary is that it prevents styles that are in the main document from leaking into the shadow DOM. This means that even though you might have a selector in your main document for all `<h3>` tags, that style will not be applied to your shadow DOM element unless you specifically allow it.
 
@@ -76,14 +75,20 @@ Keep in mind that the shadow boundary also protects the main document from the s
 
 This kind of **encapsulation** is pretty amazing. For years we've struggled with style sheets that always seem to get bigger and bigger. Over time it can be difficult to add new styles because you're worried you'll break something elsewhere on the page. The style boundaries provided to us by the shadow DOM means that we can finally start to think about our CSS in a more local, component specific way.
 
-## Styling @host
+## Styling :host
 
-### Sketch 5: [@host](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/05-styling-host)
+### Sketch 5: [styling-host](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/05-styling-host)
 
-I often think of the shadow host as if it's the exterior of a building. Inside there's all the inner workings of my widget and outside there should be a nice facade. In many cases you'll want to apply some style to this exterior and that's where the `@host` selector comes into play.
+I often think of the shadow host as if it's the exterior of a building. Inside there's all the inner workings of my widget and outside there should be a nice facade. In many cases you'll want to apply some style to this exterior and that's where the `:host` selector comes into play.
 
 ```html
 <body>
+  <style>
+    .widget {
+      text-align: center;
+    }
+  </style>
+
   <div class="widget">
     <p>Hello World!</p>
   </div>
@@ -92,12 +97,10 @@ I often think of the shadow host as if it's the exterior of a building. Inside t
     var host = document.querySelector('.widget');
     var root = host.createShadowRoot();
     root.innerHTML = '<style>' +
-                     '@host {' +
-                     '  .widget {' +
-                     '    border: 2px dashed red;' +
-                     '    text-align: center;' +
-                     '    font-size: 28px;' +
-                     '  } ' +
+                     ':host {' +
+                     '  border: 2px dashed red;' +
+                     '  text-align: left;' +
+                     '  font-size: 28px;' +
                      '} ' +
                      '</style>' +
                      '<content></content>';
@@ -107,13 +110,15 @@ I often think of the shadow host as if it's the exterior of a building. Inside t
 
 {% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-styles2.jpg 'Shadow DOM host styles' %}
 
-Adding a red border to our widget doesn't seem like much but there's actually a number of interesting things happening here. For starters, notice that styles applied to the `@host` are inherited by elements within the shadow DOM. So our `<p>` ends up with a `font-size` of 28px.
+Adding a red border to our widget doesn't seem like much but there's actually a number of interesting things happening here. For starters, notice that styles applied to the `:host` are inherited by elements within the shadow DOM. So our `<p>` ends up with a `font-size` of 28px.
 
-Also, note that we're allowed to specify a selector for the `@host` element. In this case we've told it to style any host which matches `.widget`, but we could also have used `div` or `*`. This allows us to change the presentation of our component based on the shadow host type. Let's do another example to demonstrate.
+Also notice that the page is able to set the `text-align` inside the `:host` to center. The `:host` selector has low specificity by design, so it's easier for the document to override it if it needs to. In this case the document style for `.widget` beats out the shadow style for `:host`.
 
-## Styling by @host Type
+## Styling by :host Type
 
-### Sketch 6: [@host Type](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/06-styling-by-host-type)
+### Sketch 6: [styling-host-by-host-type](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/06-styling-by-host-type)
+
+Because `:host` is a pseudo selector we can apply it to more than one tag to change the appearance of our component. Let's do another example to demonstrate.
 
 ```html
 <body>
@@ -124,22 +129,20 @@ Also, note that we're allowed to specify a selector for the `@host` element. In 
   <!-- Our template -->
   <template class="shadow-template">
     <style>
-      @host {
-        p {
-          color: blue;
-        }
+      p:host {
+        color: blue;
+      }
 
-        div {
-          color: green;
-        }
+      div:host {
+        color: green;
+      }
 
-        button {
-          color: red;
-        }
+      button:host {
+        color: red;
+      }
 
-        * {
-          font-size: 24px;
-        }
+      *:host {
+        font-size: 24px;
       }
     </style>
     <content select=""></content>
@@ -155,7 +158,7 @@ Also, note that we're allowed to specify a selector for the `@host` element. In 
     var template = document.querySelector('.shadow-template');
 
     // Stamp the template into each shadow root. Notice how
-    // the different @host styles affect the appearance
+    // the different :host styles affect the appearance
     root1.appendChild(template.content.cloneNode(true));
     root2.appendChild(template.content.cloneNode(true));
     root3.appendChild(template.content.cloneNode(true));
@@ -167,15 +170,73 @@ Also, note that we're allowed to specify a selector for the `@host` element. In 
 
 *I've switched to using a [template tag](/blog/2013/03/16/html5-template-tag-introduction/) for this example since it makes working with the Shadow DOM a lot easier.*
 
-As you can see from the example above, we're able to change the look of our component by matching the `@host` selector to a specific tag. We can also match against classes, IDs, attributes, etc. Really any valid CSS will do.
+As you can see from the example above, we're able to change the look of our component by matching the `:host` selector to a specific tag. We can also match against classes, IDs, attributes, etc. Really any valid CSS will do.
 
-For instance, you could have `.widget-fixed`, `.widget-flex` and `.widget-fluid` `@hosts` if you wanted to build a highly responsive component. Or `.valid` and `.error` `@hosts` for form elements.
+For instance, you could have `.widget-fixed`, `.widget-flex` and `.widget-fluid` `:hosts` if you wanted to build a highly responsive component. Or `.valid` and `.error` `:hosts` for form elements.
 
-By using the `*` selector we're able to create default styles which will apply to any `@host`, in this case setting all components to a `font-size` of 24px. This way you can construct the basic look for your component and then augment it with different `@host` types.
+By using the `*` selector we're able to create default styles which will apply to any `:host`, in this case setting all components to a `font-size` of 24px. This way you can construct the basic look for your component and then augment it with different `:host` types.
 
-## Styling Host States
+What about theming hosts based on their parent element? Well, there's a selector for that too!
 
-One of the best uses of the `@host` tag is for styling states like `:hover` or `:active`. For instance, let's say you want button to add a green border when the user rolls over it. Easy!
+## Theming
+### Sketch 7: [theming](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/07-theming)
+
+```html
+<body>
+  <div class="serious">
+    <p class="serious-widget">
+      I am super serious, guys.
+    </p>
+  </div>
+
+  <div class="playful">
+    <p class="playful-widget">
+      Pretty little clouds...
+    </p>
+  </div>
+
+  <template class="widget-template">
+    <style>
+      :host(.serious) {
+        width: 200px;
+        height: 50px;
+        padding: 50px;
+        font-family: monospace;
+        font-weight: bold;
+        font-size: 24px;
+        color: black;
+        background: tomato;
+      }
+
+      :host(.playful) {
+        width: 200px;
+        height: 50px;
+        padding: 50px;
+        font-family: cursive;
+        font-size: 24px;
+        color: white;
+        background: deepskyblue;
+      }
+    </style>
+    <content></content>
+  </template>
+  <script>
+    var root1 = document.querySelector('.serious-widget').createShadowRoot();
+    var root2 = document.querySelector('.playful-widget').createShadowRoot();
+    var template = document.querySelector('.widget-template');
+    root1.appendChild(template.content.cloneNode(true));
+    root2.appendChild(template.content.cloneNode(true));
+  </script>
+</body>
+```
+{% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-styles5.jpg 'Shadow DOM theming' %}
+
+Using `:host()` syntax we're able to completely change the look of our widget based on the containing element. This is pretty neat! I'm sure you've all used the child selector before, `.parent > .child`, but have you ever wished for a parent selector, `.parent < .child`? Now it's possible, but only with the shadow DOM. I wonder if we'll see this syntax tracked back to normal CSS someday?
+
+## Styling :host States
+### Sketch 8: [styling-host-states](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/08-styling-host-states)
+
+One of the best uses of the `:host` tag is for styling states like `:hover` or `:active`. For instance, let's say you want to add a green border to a button when the user rolls over it. Easy!
 
 ```html
 <body>
@@ -183,14 +244,12 @@ One of the best uses of the `@host` tag is for styling states like `:hover` or `
 
   <template class="button-template">
     <style>
-      @host {
-        * {
-          font-size: 18px;
-          cursor: pointer;
-        }
-        *:hover {
-          border: 2px solid green;
-        }
+      *:host {
+        font-size: 18px;
+        cursor: pointer;
+      }
+      *:host:hover {
+        border: 2px solid green;
       }
     </style>
     <content></content>

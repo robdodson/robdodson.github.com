@@ -29,7 +29,7 @@ I've created a sketchbook for this post and future Web Components related stuff.
 
 ## A Basic Example
 
-### Sketch 0: [Basic](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/00-basic)
+### Sketch 0: [basic](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/00-basic)
 
 Let's take a look at a very simple HTML document.
 
@@ -81,7 +81,7 @@ Let's do another example to help it all sink it.
 
 ## A Basic Example (cont)
 
-### Sketch 1: [Basic-Cont](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/01-basic-cont)
+### Sketch 1: [basic-cont](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/01-basic-cont)
 
 ```html
 <body>
@@ -114,7 +114,7 @@ Just like before, the content in the *shadow host*, `Hello, world!`, is not rend
 
 ## Content
 
-### Sketch 2: [Content](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/02-content)
+### Sketch 2: [content](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/02-content)
 
 In our last two examples we've completely replaced the content in our shadow hosts with whatever was inside our shadow root. While this is a neat trick, in practice, it's not very useful. What would be really great is if we could take the **content** from our shadow host and then use the structure of the shadow root for **presentation**. Separating the content from the presentation like this allows us to be much more flexible with how our page actually renders.
 
@@ -148,7 +148,7 @@ Let's look at a more advanced example to demonstrate how to work with multiple i
 
 ## Selects
 
-### Sketch 3: [Selects](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/03-selects)
+### Sketch 3: [selects](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/03-selects)
 
 ```html
 <body>
