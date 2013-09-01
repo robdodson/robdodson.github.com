@@ -3,35 +3,37 @@
 
 $indented-lists: true;
 
-// MailChimp styles
-
-#mc_embed_signup input:focus {border-color:#333;}
-#mc_embed_signup .button {clear:both; background-color: #aaa; border: 0 none; border-radius:4px; color: #FFFFFF; cursor: pointer; display: inline-block; font-size:15px; font-weight: bold; height: 32px; line-height: 32px; margin: 0 5px 10px 0; padding: 0 22px; text-align: center; text-decoration: none; vertical-align: top; white-space: nowrap; width: auto;}
-#mc_embed_signup .button:hover {background-color:#777;}
-#mc_embed_signup .small-meta {font-size: 11px;}
-#mc_embed_signup .nowrap {white-space:nowrap;}
-#mc_embed_signup .mc-field-group {clear:left; position:relative; width:96%; padding-bottom:3%; min-height:50px;}
-#mc_embed_signup .size1of2 {clear:none; float:left; display:inline-block; width:46%; margin-right:4%;}
-* html #mc_embed_signup .size1of2 {margin-right:2%; /* Fix for IE6 double margins. */}
-#mc_embed_signup .mc-field-group label {display:block; margin-bottom:3px;}
-#mc_embed_signup .mc-field-group input {display:block; width:100%; padding:8px 0; text-indent:2%;}
-#mc_embed_signup .clear {clear:both;}
-#mc_embed_signup div#mce-responses {float:left; top:-1.4em; padding:0em .5em 0em .5em; overflow:hidden; width:90%;margin: 0 5%; clear: both;}
-#mc_embed_signup div.response {margin:1em 0; padding:1em .5em .5em 0; font-weight:bold; float:left; top:-1.5em; z-index:1; width:80%;}
-#mc_embed_signup #mce-error-response {display:none;}
-#mc_embed_signup #mce-success-response {color:#529214; display:none;}
-#mc_embed_signup label.error {display:block; float:none; width:auto; margin-left:1.05em; text-align:left; padding:.5em 0;}
-#mc-embedded-subscribe {clear:both; width:auto; display:block; margin:1em 0 1em 5%;}
-
-// 480
-// 768
-// 992
+// Breakpoints are:
+// 480px
+// 768px
+// 992px
 
 .newsletter {
-  
+  width: 75%;
+  margin-bottom: 50px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,1);
+  background: #FEFEFE;
 }
 
-.newsletter input {
+.newsletter .stripes {
+  width: 100%;
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    white,
+    white 3px,
+    #4799C7 3px,
+    #4799C7 23px,
+    white 23px,
+    white 26px,
+    #dd5f5f 26px,
+    #dd5f5f 46px
+  );
+  background-size: 63px 25px;
+}
+
+.newsletter input[type="text"],
+.newsletter input[type="email"] {
   -webkit-appearance: none;
   box-shadow: inset 0 1px 3px rgba(0,0,0,.11);
   border: 1px solid #dfdfdf;
@@ -39,17 +41,69 @@ $indented-lists: true;
 }
 
 .newsletter-split {
-  width: 75%;
+  
 }
 
+// MailChimp Styles
+
 #mc_embed_signup {
-  box-shadow: 0 1px 5px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,1);
-  background: #FEFEFE;
-  padding: 0;
+  padding: 20px 3% 20px 4%;
+}
+
+#mc_embed_signup .button {
+  clear: both;
+  background-color: #93D4A1;
+  border: 0 none;
+  border-radius: 4px;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: bold;
+  height: 32px;
+  line-height: 32px;
+  margin: 0 5px 10px 0;
+  padding: 0 22px;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: top;
+  white-space: nowrap;
+  width: auto;
+}
+
+#mc_embed_signup .button:hover {
+  background-color: #7DB58A;
+}
+
+#mc_embed_signup .mc-field-group {
+  clear: left;
+  position: relative;
+  width: 96%;
+  padding-bottom: 3%;
+  min-height:50px;
+}
+
+#mc_embed_signup .mc-field-group label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+#mc_embed_signup .mc-field-group input {
+  display: block; width: 100%; padding: 8px 0; text-indent: 2%;
+}
+
+#mc_embed_signup .clear {
+  clear:both;
+}
+
+#mc-embedded-subscribe {
+  clear: both;
+  width: auto;
+  display: block;
+  margin: 1em 0 1em 5%;
 }
 
 .split-cols {
-  padding: 20px 3% 20px 4%;
   overflow: hidden;
 }
 
