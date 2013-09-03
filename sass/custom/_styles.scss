@@ -9,10 +9,16 @@ $indented-lists: true;
 // 992px
 
 .newsletter {
-  width: 75%;
-  margin-bottom: 50px;
+  width: 100%;
+  margin: 50px 0;
   box-shadow: 0 1px 5px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,1);
   background: #FEFEFE;
+}
+
+@media only screen and (min-width: 600px) {
+  .newsletter {
+    width: 75%;
+  }
 }
 
 .newsletter .stripes {
@@ -32,16 +38,16 @@ $indented-lists: true;
   background-size: 63px 25px;
 }
 
+.newsletter .description {
+  font-style: italic;
+}
+
 .newsletter input[type="text"],
 .newsletter input[type="email"] {
   -webkit-appearance: none;
   box-shadow: inset 0 1px 3px rgba(0,0,0,.11);
   border: 1px solid #dfdfdf;
   border-radius: 4px;
-}
-
-.newsletter-split {
-  
 }
 
 // MailChimp Styles
@@ -79,17 +85,26 @@ $indented-lists: true;
   clear: left;
   position: relative;
   width: 96%;
-  padding-bottom: 3%;
   min-height:50px;
+  padding-bottom: 3%;
 }
 
 #mc_embed_signup .mc-field-group label {
   display: block;
   margin-bottom: 3px;
+  font-size: 16px;
 }
 
 #mc_embed_signup .mc-field-group input {
-  display: block; width: 100%; padding: 8px 0; text-indent: 2%;
+  display: block;
+  width: 100%;
+  padding: 8px 0;
+  text-indent: 2%;
+}
+
+#mc_embed_signup .mc-field-group .helper {
+  font-style: italic;
+  color: #ADB1B5;
 }
 
 #mc_embed_signup .clear {
@@ -101,6 +116,10 @@ $indented-lists: true;
   width: auto;
   display: block;
   margin: 1em 0 1em 5%;
+}
+
+.newsletter-split {
+  
 }
 
 .split-cols {
