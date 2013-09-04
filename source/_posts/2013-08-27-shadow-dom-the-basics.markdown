@@ -14,7 +14,7 @@ Let's get started!
 
 ## Support
 
-In order to try our examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
+In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
 
 Also make sure you've enabled the following in Chrome's `about:flags`.
 

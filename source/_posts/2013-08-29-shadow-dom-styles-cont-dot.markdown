@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Shadow Dom: Styles (cont.)"
+title: "Shadow DOM: Styles (cont.)"
 date: 2013-08-29 11:11
 comments: true
 categories: [HTML5, Shadow DOM, Web Components]
@@ -14,7 +14,7 @@ In [yesterday's post](/blog/2013/08/28/shadow-dom-styles/) we covered the basics
 
 ## Support
 
-In order to try our examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
+In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
 
 Also make sure you've enabled the following in Chrome's `about:flags`.
 
@@ -27,7 +27,7 @@ Also make sure you've enabled the following in Chrome's `about:flags`.
 
 I've created a sketchbook for this post and future Web Components related stuff. [You can grab the sketchbook on GitHub.](https://github.com/robdodson/webcomponents-sketchbook) For each of the examples that I cover I'll link to the sketch so you can quickly try things out.
 
-## Distributed Nodes
+## Distributed Nodes <a href="#" id="distributed-nodes"></a>
 
 ### Sketch 9: [styling-distributed-nodes](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/09-styling-distributed-nodes)
 
@@ -333,4 +333,4 @@ Now our component reverts to the default `font-family` of Times New Roman while 
 
 ## Conclusion
 
-If you've read over [the last post](/blog/2013/08/28/shadow-dom-styles/) and this one then you now know as much about styling the shadow DOM as I do. But we haven't even talk about JavaScript yet! We'll save that for tomorrow's post :) As always if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
+If you've read over [the last post](/blog/2013/08/28/shadow-dom-styles/) and this one then you now know as much about styling the shadow DOM as I do. But we haven't even talked about JavaScript yet! We'll save that for tomorrow's post :) As always if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
