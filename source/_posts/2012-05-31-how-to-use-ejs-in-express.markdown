@@ -6,6 +6,8 @@ comments: true
 categories: [Chain, Node, Express, Templates, EJS]
 ---
 
+*Update: If you're starting a fresh project with Express it's much easier to just run `express --ejs`. That will scaffold out an Express app for you with EJS ready to go!*
+
 Here's a quick explanation of how to use EJS instead of Jade in your Express projects. This is super easy and covered well in the documentation but I wanted to put it here since that's what I worked on today :)
 
 <!--more-->
