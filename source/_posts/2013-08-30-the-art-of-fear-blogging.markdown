@@ -1,61 +1,55 @@
 ---
 layout: post
 title: "The Art of Fear Blogging"
-date: 2013-08-30 12:51
+date: 2013-09-16 12:51
 comments: true
-published: false
+published: true
 categories: [Blogging, Fear, Lifehacks]
 ---
 
-*I am a quitter.*
-
-When I couldn't hit the pitching machine in little league, I quit.<br>
-When my life drawings looked like Gumby, I quit.<br>
-And when I was terrible at playing guitar, I quit that too.<br>
-
-Deep down I worry that I will always be a quitter. **Which is scary.**
+Years ago [I heard a radio story about a woman hopelessly addicted to cigarettes.](http://www.radiolab.org/2011/mar/08/you-v-you/) Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.
 
 <!-- more -->
 
-## Running Scared
-
-When I played football I was convinced that the coaches hated me. I was a stringy little geek who had gone out for the team only because of peer pressure. They knew it. And they knew that I didn't care about the game or the guys I was playing with. I was just *there*. A bunch of molecules taking up space on their field.
-
-But every day I showed up. I ran laps until I puked on my uniform. I never quit. **I was scared.** I was scared that the coaches would make an example out of me in front of all of my classmates if I tried to back out. I was scared that *my reputation* would be destroyed. I had somehow gotten myself into a situation where even though every fiber in my body hated what I was doing, **I was just too afraid to stop.**
-
-## Bound by Fear
-
-It happens, from time to time, that we end up in situations like this, where we're scared or uncomfortable. And typically it's the case that even though we dislike what's happening in the moment, and we would have much rather avoided it, we're forced to see things through to the end. Stopping would only make it worse. We try not to end up in these predicaments because they're unpleasant.
-
-**But I think I've discovered how to use them to my advantage.**
-
-Years ago [I heard a radio story about a woman hopelessly addicted to cigarettes.](http://www.radiolab.org/2011/mar/08/you-v-you/) Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.
-
 There's a name for this. It's called a [Ulysses pact.](http://en.wikipedia.org/wiki/Ulysses_pact)
 
-As the story goes, Ulysses wanted to hear the song of the Sirens, but he knew that doing so would cause him to crash his ship into the rocks. The song was just too irresistible; it would drive any man mad with desire. He struck a deal with his men where they tied him to the mast and put beeswax in their own ears. As they approached the island Ulysses became transfixed, but try as he might he couldn't escape or convince his men to drive the boat to the shore.
+As the story goes, Ulysses wanted to hear the song of the Sirens, but he knew that doing so would cause him to crash his ship into the rocks. The song was just too irresistible; it would drive any man mad with desire. So Ulysses struck a deal with his men. They would tie him to the mast and put beeswax in their ears. By doing so they would be unable to hear Ulysses' commands. As they approached the island Ulysses became transfixed, but try as he might he couldn't escape or convince his men to drive the boat to the shore.
 
 **He made a decision in the present which (literally) bound his future self.**
 
 
 ## Know Your Sirens
 
-I wanted to elevate my career and push myself to be a better developer. I knew that one of the best ways to do this was to start writing. But the fact of the matter is, writing a blog post to explain a technical topic is just not fun. *It's a struggle.* You feel like an idiot most of the time. And at the end of it all you look at your work and realize that you sound like a robot.
+I wanted to elevate my career and push myself to be a better developer. I knew that one of the best ways to do this was to start writing. But the fact of the matter is, writing a blog post to explain a technical topic is just *not fun.* **It's a struggle!** You feel like an idiot most of the time. And at the end of it all you look at your work and realize that you sound like a robot.
 
-**It's a prime candidate for quitting.**
+**It's very easy to get bogged down and to not do it consistently. But consistency is key to forming any good habit.**
 
-So I made a deal. I publicly announced that I would give $500 to a politician I was not fond of unless I published a blog post every day for 60 days. I've come to refer to this as **Fear Blogging.**
+To overcome these obstacles I made a deal. I publicly announced that I would give $500 to a politician I was not fond of unless I published a blog post every day for 60 days. I've come to refer to this as **Fear Blogging.**
 
-I took the siren call to quit and I turned it into fear. Fear, that I might actually have to go through with the deal and send money to this sleazy glad-hander.
+**I made a decision in the present which (figuratively) bound my future self.**
 
-**Those 60 days were hard.** At the beginning it was exhilarating, but there were times when I would come home late, exhausted from work and I still had to put out a thoughtful blog post. [Some of them are not so good.](http://robdodson.me/blog/2012/06/23/failing-at-ruby/)
+I'll admit that those 60 days were hard. There were numerous times when I would come home late, exhausted from work, and I still had to put out a thoughtful blog post. [Some of them are not so good.](http://robdodson.me/blog/2012/06/23/failing-at-ruby/)
 
-But when it was all over, I emerged on the other side and the goal was completed. It felt amazing. I had judo-ed one of my biggest character flaws and turned it into a strength! What else could I use these new found powers on? Could I force myself to go to the gym or learn Mandarin? Maybe I could take up photography with the goal of taking 100 pictures every day. The possibilities are endless. It feels, in many ways, like I've finally found a loophole in my own lazy personality.
+But when it was all over, I emerged on the other side and the goal was completed! It felt amazing. I had judo-ed one of my biggest character flaws—my desire to quit—and turned it into a strength! What else could I use these new found powers on? Could I force myself to go to the gym or learn Mandarin? Maybe I could take up photography with the goal of taking 100 pictures every day. The possibilities are endless. It feels, in many ways, like I've finally found a loophole in my own lazy personality.
+
+## Tips
+
+**Choose one thing and stick to it.**
+
+I've tried doing pacts where I'm writing, going to the gym and learning a new language all at the same time. Typically those end up being too stressful. You're trying to form a habit so make it something that you really want to do and focus on just that one thing.
+
+**Find a buddy.**
+
+Making a public declaration that you're going to do something on Facebook and Twitter is a great start but in reality nobody on those sites is going to hold you to it. They read your post, Like it, and move on. It's better to find a friend you trust and make them act as your enforcer. When my buddy [P.J. Onori tried Fear Blogging](http://somerandomdude.com/2013/07/07/my-last-three-months-blogging-under-fear/) I promised him that if he didn't do his work I was going to force him to pay the penalty. Not only did this give me a ton of sadistic glee but it also made P.J.'s contract all the more binding and real.
+
+**Don't decorate the house.**
+
+I've noticed a lot of my friends say they want to blog but first they need to "update their site." Or, if they don't have a site, then they need to get one and it needs to be really spiffy. I like to say *that's like decorating a house before you've decided to live in it*. You're going to waste a ton of effort on fixing everything up and that's time that would be better spent accomplishing your goal. My advice is to write 10 or 15 posts, then worry about how things look. Get into the habit of jogging before you spend a bunch of time picking out the most perfect shoes. You get what I'm saying :)
 
 ## Whatever It Takes
 
-I realize that there's kind of an inglorious tone to all of this. That I'm like a horse afraid of the whip. What I've found is that once you complete a big goal, it gives you a little more self confidence and maybe next time you don't have to do the whole production of making a pact with harsh penalties.
+I've found that once you complete a big goal, it gives you a little more self confidence and next time you don't have to do the whole production of making a pact with harsh penalties. Today I don't need to Fear Blog because I've established the habit of writing. But the option's there if I ever need it to help me achieve a new goal.
 
-Today I'm starting a new chain where I write 1,000 words every day. I'm no longer Fear Blogging because I'm confident I can do this now. But the option's there if I ever need it and I'm thankful for that. I would much rather be a lazy person who uses fear to overcome their lack of discipline, than a quitter.
+Now, dear reader, it's your turn.
 
-**Because it's much scarier to always be a quitter.**
+**What are you going to accomplish?**
