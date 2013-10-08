@@ -13,4 +13,4 @@ vendor
 node_modules
 
 blog.sublime-project
-blog.sublime-workspace
+blog.sublime-workspace.preview-mode
