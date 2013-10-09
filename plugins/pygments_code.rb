@@ -30,12 +30,13 @@ module HighlightCode
     highlighted_code
   end
   def tableize_code (str, lang = '')
-    table = '<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers">'
-    code = ''
-    str.lines.each_with_index do |line,index|
-      table += "<span class='line-number'>#{index+1}</span>\n"
-      code  += "<span class='line'>#{line}</span>"
-    end
-    table += "</pre></td><td class='code'><pre><code class='#{lang}'>#{code}</code></pre></td></tr></table></div>"
+    # table = '<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers">'
+    # code = ''
+    # str.lines.each_with_index do |line,index|
+    #   table += "<span class='line-number'>#{index+1}</span>\n"
+    #   code  += "<span class='line'>#{line}</span>"
+    # end
+    # table += "</pre></td><td class='code'><pre><code class='#{lang}'>#{code}</code></pre></td></tr></table></div>"
+    table = "<pre><code>#{str}</code></pre>"
   end
 end
