@@ -44,10 +44,10 @@ Lastly we'll setup a test page for our element. I'm going to assume that the ele
     <title>Markdown Polymer Element</title>
     
     <!-- Include our Markdown lib -->
-    <script src="./bower_components/markdown/lib/markdown.js"></script>
+    <script src="./lib/markdown.js"></script>
 
     <!-- Include Polymer awesomesauce -->
-    <script src="./bower_components/polymer/polymer.min.js"></script>
+    <script src="./lib/polymer.min.js"></script>
 
     <!-- Import our polymer elements -->
     <link rel="import" href="./elements/mark-down.html">
