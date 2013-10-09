@@ -5,7 +5,7 @@
 
 url: http://robdodson.me
 title: Rob Dodson talks internets
-subtitle: 
+subtitle: Cuz internets have feelings too
 author: Rob Dodson
 simple_search: http://google.com/search
 description: "Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby."
@@ -37,7 +37,7 @@ category_dir: blog/categories
 markdown: rdiscount
 pygments: false # default python pygments have been replaced by pygments.rb
 
-paginate: 10          # Posts per page on the blog index
+paginate: 6          # Posts per page on the blog index
 pagination_dir: blog  # Directory base for pagination URLs eg. /blog/page/2/
 recent_posts: 5       # Posts in the sidebar Recent Posts section
 excerpt_link: "Read on &rarr;"  # "Continue reading" link text at the bottom of excerpted articles
