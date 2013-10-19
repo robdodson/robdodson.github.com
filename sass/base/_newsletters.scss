@@ -1,0 +1,120 @@
+.newsletter {
+  box-sizing: border-box;
+  position: absolute;
+  left: -200px;
+  width: 175px;
+  background: #F7FAD3;
+  padding: 10px 10px 12px;
+}
+
+.newsletter-heading {
+  font-family: "Open Sans", sans-serif;
+  margin: 0;
+  color: #3A4145;
+  line-height: normal;
+}
+
+.newsletter-primary {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.newsletter-sub {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.newsletter-email {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 3px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555555;
+  vertical-align: middle;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.newsletter-email:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.newsletter-submit {
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+  width: 100%;
+  padding: 3px 0;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.428571429;
+  text-align: center;
+  color: #ffffff;
+  background-color: #5bc0de;
+  border-color: #46b8da;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.newsletter-submit:hover {
+  color: #ffffff;
+  background-color: #39b3d7;
+  border-color: #269abc;
+}
+
+@media only screen and (max-width: 1140px) {
+  .newsletter {
+    position: static;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .newsletter-primary {
+    font-size: 18px;
+  }
+
+  .newsletter-sub {
+    font-size: 14px;
+  }
+
+  .newsletter-email {
+    display: inline-block;
+    vertical-align: top;
+    width: 65%;
+  }
+
+  .newsletter-submit {
+    display: inline-block;
+    vertical-align: top;
+    width: 30%;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .newsletter-primary {
+    font-size: 16px;
+  }
+
+  .newsletter-sub {
+    font-size: 14px;
+  }
+}

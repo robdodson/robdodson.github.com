@@ -1,4 +1,8 @@
 {% if index %}
+	{% if is_first_post %}
+		{% assign is_first_post = false %}
+		{% include newsletters/sidebar.html %}
+	{% endif %}
 	<header class="post-header">
 		<span class="post-meta">{{ post.date | date: "%d %b %Y" }}</span>
 		<h2 class="post-title">

@@ -3,7 +3,9 @@
 
 <body class="home-template">
   {% include header.html %}
-  <main class="content" role="main">{{ content | expand_urls: root_url }}</main>
+  <main class="content" role="main">
+    {{ content | expand_urls: root_url }}
+  </main>
   <footer class="site-footer">{% include footer.html %}</footer>
   {% include after_footer.html %}
 </body>

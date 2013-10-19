@@ -344,6 +344,16 @@ table.plain {
     vertical-align: middle;
 }
 
+/* Opt-out of anchor rollovers */
+.no-rollover {
+    color: #fff;
+    text-decoration: none;
+    transition: none;
+}
+
+.no-rollover:hover {
+    color: #fff;
+}
 
 /* ==========================================================================
    4. General - The main styles for the the theme
