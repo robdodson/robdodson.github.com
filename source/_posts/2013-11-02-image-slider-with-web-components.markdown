@@ -8,6 +8,8 @@ categories:
 
 Repetition is the key to building any habit, both good and bad. We do many repetative tasks as front-end developers and key amongst these is writing (or copying and pasting) the same blobs of HTML, over and over, to produce UI elements.
 
+[maybe talk about the extensible web...?]
+
 Think about how you currently implement an image slider, it might look something like this:
 
 ```
@@ -141,11 +143,13 @@ The document fragment returned by `createShadowRoot` is known as the <strong>Sha
 
 Any HTML and CSS inside of the shadow root is protected from the parent document by an invisible barrier called the <strong>Shadow Boundary.</strong> The shadow boundary prevents CSS in the parent document from bleeding into the shadow DOM and it also prevents external JavaScript from traversing into the shadow root.
 
-Translation: Let's say you have a style tag in the shadow DOM that specifies all h3's should have a `color` of red. Meanwhile, in the parent document, you have a style that specifies h3's should have a `color` of blue. In this instance, h3's appearing within the shadow DOM will be red, and h3's outside of the shadow DOM will be blue. The two styles will happily ignore each other thanks to our friend the shadow boundary.
+Translation: Let's say you have a style tag in the shadow DOM that specifies all h3's should have a `color` of red. Meanwhile, in the parent document, you have a style that specifies h3's should have a `color` of blue. In this instance, h3's appearing within the shadow DOM will be red, and h3's outside of the shadow DOM will be blue. The two styles will happily ignore each other thanks to our friend, the shadow boundary.
 
 And if, at some point, the parent document goes looking for h3's with `$('h3')`, the shadow boundary will prevent any exploration into the shadow root and the selection will only return h3's that are external to the shadow DOM.
 
-This level of privacy is something that we've dreamed about and worked around for years, and now, suddenly, it's here. To say that it will change the way we build web applications is truly understatment.
+This level of privacy is something that we've dreamed about and worked around for years, and now, suddenly, it's here! To say that it will change the way we build web applications is a total understatment.
+
+## A slider in the shadows
 
 To get our `img-slider` into the shadow DOM we'll need to create a shadow host and populate it with the contents of our template.
 
@@ -153,15 +157,17 @@ To get our `img-slider` into the shadow DOM we'll need to create a shadow host a
 <script async src="//codepen.io/assets/embed/ei.js"></script>
 <small>http://codepen.io/robdodson/pen/GusaF</small>
 
-We can access the internals of the template with the `content` keyword. Calling `cloneNode(true)` returns a deep copy of those internals which we then append to the shadow root.
+In this instance we've created a div and given it the class `img-slider` so it can act as our shadow host.
+
+We select the template and access the internals with the `content` keyword. Calling `cloneNode(true)` returns a deep copy of those internals which we then append to the shadow root.
 
 ### Insertion Points
 
-At this point our `img-slider` is inside the shadow DOM but we still need to add the actual images. We'd like the images to come from the user, so we'll have them over from the shadow host.
+At this point our `img-slider` is inside the shadow DOM but we still need to add the actual images. Just like the `<source>` tags nested inside of `<video>`, we'd like the images to come from the user, so we'll have to invite them over from the shadow host.
 
-To pull items into the shadow DOM we use the new `<content>` tag. The `<content>` tag uses CSS selectors to cherry-pick elements from the shadow host and project them into the shadow DOM. This is known as an <strong>insertion point.</strong>
+To pull items into the shadow DOM we use the new `<content>` tag. The `<content>` tag uses CSS selectors to cherry-pick elements from the shadow host and project them into the shadow DOM. These projections are known as <strong>insertion points.</strong>
 
-We'll make it easy on ourselves and assume that the slider always has 4 images, that way we can select with `nth-of-type`.
+We'll make it easy on ourselves and assume that the slider always has four images, that way we can create four insertion points using `nth-of-type`.
 
 ```
 <template>
@@ -194,7 +200,7 @@ Now we can populate our `img-slider`.
 </div>
 ```
 
-This is really cool, but we can actually take things a step further and turn our `img-slider` into its very own HTML element.
+This is really cool! We've cut the amount of markup that user sees way down, and created something akin to a jQuery plugin. But why stop here? We can actually take things a step further and turn our `img-slider` into its very own HTML element.
 
 ## Custom Elements
 
@@ -231,7 +237,7 @@ The `Object.create` method returns a new prototype which extends HTMLElement. Wh
 
 We pass the tag name and prototype to a new method on the `document` object called `register()` and after that we're good to go!
 
-Now that our element is registered there are a few different ways to use it. The first, and most straightforward, is to just use the new tag `<img-slider></img-slider>` in our HTML. We can also call `document.createElement("img-slider")` or we can use the constructor that was returned by `document.register` and stored in the `ImgSlider` variable. It's up to you which style you prefer.
+Now that our element is registered there are a few different ways to use it. The first, and most straightforward, is to just use the new tag `<img-slider></img-slider>`. But we can also call `document.createElement("img-slider")` or we can use the constructor that was returned by `document.register` and stored in the `ImgSlider` variable. It's up to you which style you prefer.
 
 ## Support
 
@@ -239,55 +245,73 @@ Support for the various standards that makeup Web Components is currently spotty
 
 <img src="./support.png" alt="Web Components Support Table">
 
-But don't let that discourage you from using them! The smarties at Mozilla and Google have been hard at work building polyfill libraries which sneak support for Web Components into all modern browsers! This means you can start playing with these technologies today and give feedback to the folks writing the specs so we don't end up with stinky, hard to use syntax. Let's look at how we could rewrite our `img-slider` using Google's polyfill library, Polymer.
+But don't let that discourage you from using them! The smarties at Mozilla and Google have been hard at work building polyfill libraries which sneak support for Web Components into all modern browsers! This means you can start playing with these technologies <em>today</em> and give feedback to the folks writing the specs. That feedback is important so we don't end up with stinky, hard to use syntax.
+
+Let's look at how we could rewrite our `img-slider` using Google's polyfill library, Polymer.
 
 ## Polymer to the Rescue!
 
-Polymer adds a new tag to the browser, `<polymer-element>`, which automagically turns templates into Shadow DOM and registers Custom Elements for us. All we need to do is to tell Polymer what name to use for the tag and to make sure we include our template markup.
+Polymer adds a new tag to the browser, `<polymer-element>`, which automagically turns templates into shadow DOM and registers custom elements for us. All we need to do is to tell Polymer what name to use for the tag and to make sure we include our template markup.
 
-```
-<polymer-element name="img-slider" noscript>
-  <template>
-    <!-- Full of image slider awesomeness -->
-  </template>
-</polymer-element>
-```
+<p data-height="268" data-theme-id="0" data-slug-hash="blfGh" data-user="robdodson" data-default-tab="html" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/blfGh'>Polymer Slider</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
 
-You can checkout the working `img-slider` as a Polymer element in this pen.
+<small>http://codepen.io/robdodson/pen/blfGh</small>
 
-// http://codepen.io/robdodson/pen/blfGh
-
-Polymer actually does *way* more than just turning templates into Shadow DOM and Custom Elements, but we'll have to save that for another post :)
+Polymer actually does *way* more than just turning templates into shadow DOM and custom elements, but we'll have to save that for another post :)
 
 ## Issues
 
-Any new standard can be contriversial and in the case of Web Components it seems that they are especially polarizing. 
+Any new standard can be contriversial and in the case of Web Components it seems that they are especially polarizing. Before we wrap up, I want to open up for discussion some of the feedback I've heard over the past few months and give my take on it.
 
 ### OMG it's XML!!!
 
-I think the thing that probably scares most developers when they first see Custom Elements is the notion that it will turn the document into one big pile of XML where everything on the page has some bespoke tag name and in this fashion we'll make the web pretty much unreadable. I think that's a valid argument so I decided to kick the bees' nest and [bring it up on the Polymer mailing list.](https://groups.google.com/forum/#!searchin/polymer-dev/xml/polymer-dev/lzvaDViB_Ow/VtbeIqX0Ap0J)
+I think the thing that probably scares most developers when they first see Custom Elements is the notion that it will turn the document into one big pile of XML, where everything on the page has some bespoke tag name and, in this fashion, we'll make the web pretty much unreadable. I think that's a valid argument so I decided to kick the bees' nest and [bring it up on the Polymer mailing list.](https://groups.google.com/forum/#!searchin/polymer-dev/xml/polymer-dev/lzvaDViB_Ow/VtbeIqX0Ap0J)
 
-The back and forth discussion is pretty interesting but I think the general consensus is that we're just going to have to experiment to see what works and what doesn't.
+The back and forth discussion is pretty interesting but I think the general consensus is that we're just going to have to experiment to see what works and what doesn't. Is it better and more semantic to see a tag name like `<img-slider>` or is our present "div soup" the only way it should be?
 
 ### SEO
 
 At this moment it's unclear (at least to me) how well crawlers support Custom Elements and Shadow DOM. The Polymer FAQ states:
 
->search engines have been dealing with heavy AJAX based application for some time now. Moving away from JS and being more declarative is a good thing and will generally make things better.
+> Search engines have been dealing with heavy AJAX based application for some time now. Moving away from JS and being more declarative is a good thing and will generally make things better.
 
 Others have pointed out that this explanation falls short and [there's a pretty interesting discussion on the topic over in the Polymer mailing list.](https://groups.google.com/forum/#!searchin/polymer-dev/seo/polymer-dev/TMBtl3_bDT0/VwR9-t6V--AJ)
 
+[need a little more here...]
+
 ### Accessibility
 
-Obviously when you're hiding markup in secret Shadow DOM sandboxes the issue of accessibility becomes pretty important. Steve Faulkner took a look at accessibility in Shadow DOM and seemed to be fairly satisfied with what he found.
+Obviously when you're hiding markup in secret Shadow DOM sandboxes the issue of accessibility becomes pretty important. Steve Faulkner took a look at accessibility in Shadow DOM and seemed to be satisfied with what he found.
 
 > Results from initial testing indicate that inclusion of ARIA roles, states and properties in content wholly inside the Shadow DOM works fine. The accessibility information is exposed correctly via the accessibility API. Screen readers can access content in the Shadow DOM without issue.
 
 [The full post is available here.](http://blog.paciellogroup.com/2012/07/notes-on-web-components-aria/)
 
+Surely there will be bumps along the way but that sounds like a pretty great start!
+
 ### Style and Script tags? Um, no thanks.
 
-Unfortunately it's a limitation of the HTML Import spec (which we haven't touched on) that external scripts and stylesheets are not currently supported in Web Components. In Polymer you can use @import to pull in external CSS but in native Web Components you're out of luck. While this isn't great, we have to keep in mind that the scripts and styles that we're talking about are relevant only to the component whereas we've previously been trained to favor external files because they often affect our entire application. So is it such a bad thing to put a <style> tag inside of an element, if all of those styles are scoped to that particular component?
+Unfortunately it's a limitation of the HTML Import spec (which we haven't touched on) that external scripts and stylesheets are not currently supported in Web Components. In Polymer you can use `@import` to pull in external CSS but in native Web Components you're out of luck.
+
+While this isn't great, we have to keep in mind that the scripts and styles that we're talking about are relevant only to the component whereas we've previously been trained to favor external files because they often affect our entire application. So is it such a bad thing to put a `<style>` tag inside of an element, if all of those styles are scoped just to that one element? Personally I think it's ok, but I think the option of external scripts would be very nice to have.
+
+## Now it's your turn
+
+It's up to us to figure out where these standards should go and what best practices will guide them. Give Polymer a shot, and also look at Mozilla's alternative to Polymer, X-tags (which has support all the way down to IE 9!)
+
+If you want to play with native Web Components I'd recommend using Chrome Canary, since it has the best support. Be sure to enable the following settings in `chrome://flags`.
+
+```
+Experimental JavaScript
+Experimental Web Platform Features
+HTML Imports
+```
+
+Lastly, make sure you reach out to [the developers at Google](https://groups.google.com/forum/#!forum/polymer-dev) and [Mozilla](https://bugzilla.mozilla.org/show_bug.cgi?id=889230) who are driving the bus on these standards. It'll take our feedback to properly mold these tools into something we all want to use. While there are still rough edges, I think Web Components will eventually usher in a new style of application development more akin to snapping together Legos and less like our current approach, which is often plagued by excess boilerplate. I'm pretty excited by where all of this is heading, and what the future might hold.
+
+
+
 
 
 
