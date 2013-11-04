@@ -3,6 +3,7 @@ layout: post
 title: "A Modular Future with Web Components"
 date: 2013-11-02 16:28
 comments: true
+published: false
 categories: 
 ---
 
@@ -282,7 +283,7 @@ Support for the various standards that makeup Web Components is currently spotty
 
 But don't let the table discourage you from using them! The smarties at Mozilla and Google have been hard at work building polyfill libraries which sneak support for Web Components into all modern browsers! This means you can start playing with these technologies <em>today</em> and give feedback to the folks writing the specs. That feedback is important so we don't end up with stinky, hard to use syntax.
 
-Let's look at how we could rewrite our `img-slider` using Google's polyfill library, Polymer.
+Let's look at how we could rewrite our `img-slider` using Google's polyfill library, <a href="http://www.polymer-project.org/">Polymer.</a>
 
 ## Polymer to the Rescue!
 
@@ -295,7 +296,7 @@ Polymer adds a new tag to the browser, `<polymer-element>`, which automagically 
 
 I find it's often easier to create elements using Polymer because of all the niceties built into the library. This includes two-way binding between elements and models, automatic node finding and support for other new standards like Web Animations and Pointer Events. Also, the developers on the [polymer-dev](https://groups.google.com/forum/#!forum/polymer-dev) mailing list are extremely active and helpful, which is great when you're first learning the ropes.
 
-This is just a tiny example of what Polymer can do, so be sure visit its project page and also checkout Mozilla's alternative, X-Tags.
+This is just a tiny example of what Polymer can do, so be sure <a href="http://www.polymer-project.org/">visit its project page</a> and also checkout Mozilla's alternative, <a href="http://www.x-tags.org/">X-Tags.</a>
 
 ## Issues
 
@@ -335,7 +336,7 @@ Keep in mind that the scripts and styles we're talking about are relevant only t
 
 ## Now it's your turn
 
-It's up to us to figure out where these standards should go and what best practices will guide them. Give Polymer a shot, and also look at Mozilla's alternative to Polymer, X-tags (which has support all the way down to Internet Explorer 9).
+It's up to us to figure out where these standards should go and what best practices will guide them. Give <a href="http://www.polymer-project.org/">Polymer</a> a shot, and also look at Mozilla's alternative to Polymer, <a href="http://www.x-tags.org/">X-tags</a> (which has support all the way down to Internet Explorer 9).
 
 Also, make sure you reach out to [the developers at Google](https://groups.google.com/forum/#!forum/polymer-dev) and [Mozilla](https://bugzilla.mozilla.org/show_bug.cgi?id=889230) who are driving the bus on these standards. It'll take our feedback to properly mold these tools into something we all want to use.
 
