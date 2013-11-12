@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "A Modular Future with Web Components"
+title: "Prepare for the Future with Web Components"
 date: 2013-11-02 16:28
 comments: true
 published: false
@@ -304,9 +304,9 @@ Any new standard can be controversial and in the case of Web Components it seems
 
 ### OMG it's XML!!!
 
-I think the thing that probably scares most developers when they first see Custom Elements is the notion that it will turn the document into one big pile of XML, where everything on the page has some bespoke tag name and, in this fashion, we'll make the web pretty much unreadable. I think that's a valid argument so I decided to kick the bees' nest and <a href="https://groups.google.com/forum/#!searchin/polymer-dev/xml/polymer-dev/lzvaDViB_Ow/VtbeIqX0Ap0J">bring it up on the Polymer mailing list.</a>
+I think the thing that probably scares most developers when they first see Custom Elements is the notion that it will turn the document into one big pile of XML, where everything on the page has some bespoke tag name and, in this fashion, we'll make the web pretty much unreadable. That's a valid argument so I decided to kick the bees' nest and <a href="https://groups.google.com/forum/#!searchin/polymer-dev/xml/polymer-dev/lzvaDViB_Ow/VtbeIqX0Ap0J">bring it up on the Polymer mailing list.</a>
 
-The back and forth discussion is pretty interesting but I think the general consensus is that we're just going to have to experiment to see what works and what doesn't. Is it better, and more semantic, to see a tag name like <code>&lt;img-slider&gt;</code> or is our present "div soup" the only way it should be?
+The back and forth discussion is pretty interesting but I think the general consensus is that we're just going to have to experiment to see what works and what doesn't. Is it better, and more semantic, to see a tag name like <code>&lt;img-slider&gt;</code> or is our present "div soup" the only way it should be? Alex Rusell composed <a href="http://infrequently.org/2013/11/long-term-web-semantics/">a very thoughtful post on this subject</a> and I'd recommend everyone take the time to read it before making up their mind.
 
 ### SEO
 
@@ -328,11 +328,11 @@ Obviously when you're hiding markup in secret shadow DOM sandboxes the issue of 
 
 Surely there will be bumps along the way but that sounds like a pretty great start!
 
-### Style and Script tags? Um, no thanks.
+### Style tags? Um, no thanks.
 
-Unfortunately it's a limitation of the HTML Import spec (which we haven't touched on) that external scripts and stylesheets are not currently supported in Web Components. In Polymer you can use <code>@import</code> to pull in external CSS but in native Web Components you're out of luck.
+Unfortunately <code>&lt;link&gt;</code> tags do not work inside of the Shadow DOM, which means the only way to pull in external CSS is through <code>@import</code>. In other words, <code>&lt;style&gt;</code> tags are—for the moment—unavoidable.
 
-Keep in mind that the scripts and styles we're talking about are relevant only to a component, whereas we've previously been trained to favor external files because they often affect our entire application. So is it such a bad thing to put a <code>&lt;style&gt;</code> tag inside of an element, if all of those styles are scoped just to that one entity? Personally I think it's OK, but the option of external scripts would be very nice to have.
+Keep in mind that the styles we're talking about are relevant only to a component, whereas we've previously been trained to favor external files because they often affect our entire application. So is it such a bad thing to put a <code>&lt;style&gt;</code> tag inside of an element, if all of those styles are scoped just to that one entity? Personally I think it's OK, but the option of external files would be very nice to have.
 
 ## Now it's your turn
 
