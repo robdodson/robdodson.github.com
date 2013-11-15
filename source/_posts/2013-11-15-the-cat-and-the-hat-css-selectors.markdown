@@ -27,7 +27,7 @@ The hat selector, a single caret ( ^ ), allows the parent document to pierce the
 
 The cat, a double caret ( ^^ ) is much more powerful. It allows you to pierce every layer of the shadow DOM, so if you have shadow DOM within shadow DOM (a common occurrence when you nest custom elements) you can style all of them at once.
 
-<p data-height="268" data-theme-id="0" data-slug-hash="wFqJg" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wFqJg'>Shadow DOM "Cat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+<p data-height="315" data-theme-id="0" data-slug-hash="wFqJg" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wFqJg'>Shadow DOM "Cat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 <script async src="//codepen.io/assets/embed/ei.js"></script>
 
 ## Styling Native Elements <a href="#" id="styling-native-elements"></a>
