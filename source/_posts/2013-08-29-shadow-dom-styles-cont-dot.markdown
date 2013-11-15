@@ -12,7 +12,7 @@ In [yesterday's post](/blog/2013/08/28/shadow-dom-styles/) we covered the basics
 
 *Before we get started I wanted to thank Eric Bidelman for his [amazing article on styling the Shadow DOM](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/). Most of this article is my interpretation of his post. Definitely go read [everything on HTML5 Rocks that pertains to Web Components](http://www.html5rocks.com/en/tutorials/#webcomponents) when you get a chance.*
 
-## Support
+## Support <a href="#" id="support"></a>
 
 In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
 
@@ -23,7 +23,7 @@ Also make sure you've enabled the following in Chrome's `about:flags`.
 
 *I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)*
 
-## Codez!
+## Codez! <a href="#" id="codez"></a>
 
 I've created a sketchbook for this post and future Web Components related stuff. [You can grab the sketchbook on GitHub.](https://github.com/robdodson/webcomponents-sketchbook) For each of the examples that I cover I'll link to the sketch so you can quickly try things out.
 
@@ -100,7 +100,7 @@ content::-webkit-distributed(<selector>)
 ```
 But this style is being deprecated. As of today (August 29, 2013) `::content` is the proper syntax.
 
-## Parts
+## Parts <a href="#" id="parts"></a>
 
 ### Sketch 10: [styling-parts](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/10-styling-parts)
 
@@ -198,7 +198,7 @@ In previous versions of Chrome the `part` attribute was known as `pseudo`. A `ps
 
 This syntax is now deprecated and you should use `part` and `::part` instead.
 
-## Variables
+## Variables <a href="#" id="variables"></a>
 
 ### Sketch 11: [styling-with-variables](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/11-styling-with-variables)
 
@@ -258,7 +258,7 @@ We should wind up with the exact same output but things are a bit cleaner now.
 
 Personally I'm not a fan of the CSS3 variable syntax but if you want to go preprocessor free I think it's your best bet.
  
-## Inheriting and Resetting Styles
+## Inheriting and Resetting Styles <a href="#" id="inheriting-and-resetting-styles"></a>
 
 ### Sketch 12: [inheriting-and-resetting-styles](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/12-inheriting-and-resetting-styles)
 
@@ -331,6 +331,6 @@ In some cases we may wish to only allow the direct styles while resetting anythi
 
 Now our component reverts to the default `font-family` of Times New Roman while still allowing direct author styles on `h2` and `p`. [Eric Bidelman's great post on Shadow DOM 201 has a handy cheat sheet](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#style-inherit-cheetsheet) so you can sort out when you want to use `applyAuthorStyles` and when you want to use `resetStyleInheritance`.
 
-## Conclusion
+## Conclusion <a href="#" id="conclusion"></a>
 
 If you've read over [the last post](/blog/2013/08/28/shadow-dom-styles/) and this one then you now know as much about styling the shadow DOM as I do. But we haven't even talked about JavaScript yet! We'll save that for tomorrow's post :) As always if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!

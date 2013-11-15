@@ -12,7 +12,7 @@ Let's get started!
 
 <!--more-->
 
-## Support
+## Support <a href="#" id="support"></a>
 
 In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
 
@@ -23,11 +23,11 @@ Also make sure you've enabled the following in Chrome's `about:flags`.
 
 *I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)*
 
-## Codez!
+## Codez! <a href="#" id="codez"></a>
 
 I've created a sketchbook for this post and future Web Components related stuff. [You can grab the sketchbook on GitHub.](https://github.com/robdodson/webcomponents-sketchbook) For each of the examples that I cover I'll link to the sketch so you can quickly try things out.
 
-## A Basic Example
+## A Basic Example <a href="#" id="basic-example"></a>
 
 ### Sketch 0: [basic](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/00-basic)
 
@@ -79,7 +79,7 @@ We can visualize this process in another graph:
 
 Let's do another example to help it all sink it.
 
-## A Basic Example (cont)
+## A Basic Example (cont) <a href="#" id="basic-example-cont"></a>
 
 ### Sketch 1: [basic-cont](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/01-basic-cont)
 
@@ -112,7 +112,7 @@ Just like before, the content in the *shadow host*, `Hello, world!`, is not rend
 
 "That's easy enough," you might say. "But what if I actually *want* the content in my shadow host to render?" Well dear reader, you'll be happy to know that's not only possible but it's actually one of the killer features of Shadow DOM. Let's keep going!
 
-## Content
+## Content <a href="#" id="content"></a>
 
 ### Sketch 2: [content](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/02-content)
 
@@ -146,7 +146,7 @@ You may have noticed that we're using a [template tag](/blog/2013/03/16/html5-te
 
 Let's look at a more advanced example to demonstrate how to work with multiple insertion points.
 
-## Selects
+## Selects <a href="#" id="selects"></a>
 
 ### Sketch 3: [selects](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/03-selects)
 
@@ -269,7 +269,7 @@ He also created this handy video explaining it :)
 
 <iframe width="420" height="315" src="//www.youtube.com/embed/qnJ_s58ubxg" frameborder="0" allowfullscreen></iframe>
 
-## Conclusion
+## Conclusion <a href="#" id="conclusion"></a>
 
 We still have a lot more to talk about but for today let's wrap things up. Tomorrow we'll dig into CSS style encapsulation and later JavaScript and user interaction. As always, if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
 

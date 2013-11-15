@@ -14,7 +14,7 @@ The use of CSS in Shadow DOM is an interesting and large topic. So large, in fac
 
 *Before we get started I wanted to thank Eric Bidelman for his [amazing article on styling the Shadow DOM](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/). Most of this article is my interpretation of his post. Definitely go read [everything on HTML5 Rocks that pertains to Web Components](http://www.html5rocks.com/en/tutorials/#webcomponents) when you get a chance.*
 
-## Support
+## Support <a href="#" id="support"></a>
 
 In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
 
@@ -25,11 +25,11 @@ Also make sure you've enabled the following in Chrome's `about:flags`.
 
 *I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)*
 
-## Codez!
+## Codez! <a href="#" id="codez"></a>
 
 I've created a sketchbook for this post and future Web Components related stuff. [You can grab the sketchbook on GitHub.](https://github.com/robdodson/webcomponents-sketchbook) For each of the examples that I cover I'll link to the sketch so you can quickly try things out.
 
-## Style Encapsulation
+## Style Encapsulation <a href="#" id="style-encapsulation"></a>
 
 ### Sketch 4: [style-encapsulation](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/04-style-encapsulation)
 
@@ -75,7 +75,7 @@ Keep in mind that the shadow boundary also protects the main document from the s
 
 This kind of **encapsulation** is pretty amazing. For years we've struggled with style sheets that always seem to get bigger and bigger. Over time it can be difficult to add new styles because you're worried you'll break something elsewhere on the page. The style boundaries provided to us by the shadow DOM means that we can finally start to think about our CSS in a more local, component specific way.
 
-## Styling :host
+## Styling :host <a href="#" id="styling-host"></a>
 
 ### Sketch 5: [styling-host](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/05-styling-host)
 
@@ -114,7 +114,7 @@ Adding a red border to our widget doesn't seem like much but there's actually a 
 
 Also notice that the page is able to set the `text-align` inside the `:host` to center. The `:host` selector has low specificity by design, so it's easier for the document to override it if it needs to. In this case the document style for `.widget` beats out the shadow style for `:host`.
 
-## Styling by :host Type
+## Styling by :host Type <a href="#" id="styling-by-host-type"></a>
 
 ### Sketch 6: [styling-host-by-host-type](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/06-styling-by-host-type)
 
@@ -178,7 +178,7 @@ By using the `*` selector we're able to create default styles which will apply t
 
 What about theming hosts based on their parent element? Well, there's a selector for that too!
 
-## Theming
+## Theming <a href="#" id="theming"></a>
 ### Sketch 7: [theming](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/07-theming)
 
 ```html
@@ -233,7 +233,7 @@ What about theming hosts based on their parent element? Well, there's a selector
 
 Using `:host()` syntax we're able to completely change the look of our widget based on the containing element. This is pretty neat! I'm sure you've all used the child selector before, `.parent > .child`, but have you ever wished for a parent selector, `.parent < .child`? Now it's possible, but only with the shadow DOM. I wonder if we'll see this syntax tracked back to normal CSS someday?
 
-## Styling :host States
+## Styling :host States <a href="#" id="styling-host-states"></a>
 ### Sketch 8: [styling-host-states](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/08-styling-host-states)
 
 One of the best uses of the `:host` tag is for styling states like `:hover` or `:active`. For instance, let's say you want to add a green border to a button when the user rolls over it. Easy!
@@ -266,7 +266,7 @@ One of the best uses of the `:host` tag is for styling states like `:hover` or `
 
 Nothing fancy but hopefully it gets your imagination going a bit. What other states do you think you could create?
 
-## Conclusion
+## Conclusion <a href="#" id="conclusion"></a>
 
 There's still a lot more to talk about when it comes to styling the Shadow DOM. Let's take a break for today and pick it up again tomorrow. As always if you have questions [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment. Thanks!
 

@@ -14,7 +14,7 @@ Let's get crackin'!
 
 *Before we get started I wanted to thank Eric Bidelman for his [amazing article on advanced Shadow DOM](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/). Most of this article is my interpretation of his post and I'm only covering a subset of what he presented. Definitely go read [everything on HTML5 Rocks that pertains to Web Components](http://www.html5rocks.com/en/tutorials/#webcomponents) when you get a chance.*
 
-## Support
+## Support <a href="#" id="support"></a>
 
 In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
 
@@ -25,11 +25,11 @@ Also make sure you've enabled the following in Chrome's `about:flags`.
 
 *I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)*
 
-## Codez!
+## Codez! <a href="#" id="codez"></a>
 
 I've created a sketchbook for this post and future Web Components related stuff. [You can grab the sketchbook on GitHub.](https://github.com/robdodson/webcomponents-sketchbook) For each of the examples that I cover I'll link to the sketch so you can quickly try things out.
 
-## JavaScript Scope
+## JavaScript Scope <a href="#" id="javascript-scope"></a>
 
 ### Sketch 13: [javascript-scope](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/13-javascript-scope)
 
@@ -74,7 +74,7 @@ Even though we're using a template tag and our script block is inside the Shadow
 
 That's more like it!
 
-## Event Retargeting
+## Event Retargeting <a href="#" id="event-retargeting"></a>
 
 As I mentioned previously, the one place where Shadow DOM JavaScript really differs is with respect to event dispatching. The thing to remember is that **events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.**
 
@@ -147,7 +147,7 @@ Heres' another example to demonstrate.
 
 Like before, as you click on each input field you'll see the id of the event's target element. Clicking on the "distributed text" field shows that its event target remains intact. That's because a distributed node comes from the parent document, so the user already has access to it. There's no need to retarget its events and, in fact, you probably wouldn't want to. If a user gives you a button to style with Shadow DOM they're going to want to be able to listen to click events on it at some point.
 
-## Blocked Events
+## Blocked Events <a href="#" id="blocked-events"></a>
 ### Sketch 16: [stopped-events](https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/16-stopped-events)
 
 In some instances events are killed off rather than retargeted. The following events are always stopped at the root node and cannot be observed by the parent document:
@@ -196,6 +196,6 @@ Here's an example to demonstrate what I mean.
 
 Here I'm listening for `select` events which are triggered whenever you click and drag to highlight some text. If you try highlighting the text inside of the "normal text" input it should log `normal-text text selected!`. The "distributed text" input reacts in a similar fashion. But if you try to highlight the text inside of the "shadow text" input, nothing appears in the console. The event has been killed at the shadow root so it can't bubble up to the document where our event listener lives. Keep this in mind if you think you need to use any of the above listed events in your Shadow DOM.
 
-## Conclusion
+## Conclusion <a href="#" id="conclusion"></a>
 
 So nothing *too* bad I hope. A few gotchas with JavaScript events but otherwise things work pretty much like what we're accustomed to. If you read through the previous posts then you're ready to move on to Custom Elements and [Polymer](http://www.polymer-project.org/)! Refer back to these articles if you feel lost and as always be sure to [hit me up on twitter](http://twitter.com/rob_dodson) or leave a comment if you have any questions. Thanks!

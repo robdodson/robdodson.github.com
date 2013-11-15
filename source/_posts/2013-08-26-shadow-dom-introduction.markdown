@@ -12,7 +12,7 @@ For now let's start with a general introduction: **What** is Shadow DOM and **wh
 
 <!--more-->
 
-## The What (Briefly)
+## The What (Briefly) <a href="#" id="the-what"></a>
 
 Perhaps Shadow DOM is best explained with an example, and no example is better than the new `<video>` tag. Consider the one below:
 
@@ -47,7 +47,7 @@ Notice the grayed out `#document-fragment`? That's where all of our video player
 ***So, what is the Shadow DOM?***
 In a nutshell Shadow DOM is a new part of the HTML spec which allows developers to encapsulate their HTML markup, CSS styles and JavaScript. Shadow DOM, along with a few other technologies which we'll cover later, gives developers the ability to build their own 1st class tags and APIs just like the `<video>` or `<audio>` tag. Collectively, these new tags and APIs are referred to as **Web Components**.
 
-## The Why
+## The Why <a href="#" id="the-why"></a>
 
 If you've been developing web sites for a while you've probably heard of [Bootstrap](http://getbootstrap.com/). Bootstrap is a collection of UI components which comes with a set of style sheets, scripts and documented HTML patterns to tie it all together. Here is an example of the markup required for a Bootstrap [navbar](http://getbootstrap.com/components/#navbar):
 
