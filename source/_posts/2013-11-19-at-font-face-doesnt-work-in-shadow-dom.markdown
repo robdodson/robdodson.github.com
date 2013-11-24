@@ -8,11 +8,12 @@ categories: [Web Components, Shadow DOM, Fonts, HTML5, Polymer]
 
 I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.
 
+<!-- more -->
+
 {% img center http://robdodson.s3.amazonaws.com/images/polymer-fonts-busted.png 'Busted Polymer Fonts' %}
 
 uh oh...
 
-<!-- more -->
 
 At first, I was pretty confused. Why was everything working fine in Chrome, but acting crazy in Canary? I did some digging and manged to turn up [this thread](https://groups.google.com/d/msg/polymer-dev/UUwew3x82EU/m9x2qWPi9ZoJ) on the Polymer mailing list.
 
