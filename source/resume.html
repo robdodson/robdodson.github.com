@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rob Dodson | Resume</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!--
+  ////////////////////////////////////
+
+    Original markup courtesy cvmkr.com
+    
+  ////////////////////////////////////
+  -->
+  <style>
+    body {
+      background: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      
+      font-family: 'Helvetica Neue', Helvetica, Arial;
+      line-height: 18px;
+      font-size: 13px;
+
+      color: #222;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0 0 15px 0;
+      padding: 0;
+    }
+    h1 {
+      font-size: 300%;
+    }
+    h2 {
+      font-size: 210%;
+    }
+    h3 {
+      font-size: 130%;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0 0 0 10px;
+      list-style-type: square;
+    }
+
+    /* ________________________________________________________ */
+
+    .clear {
+      clear: both;
+    }
+
+    #main {
+      background: #fff;
+      width: 780px;
+      padding: 35px;
+      margin: 0 auto 15px auto;
+      overflow: hidden;
+      
+      box-shadow: 0 0 6px #ccc;
+    }
+
+    #title {
+      line-height: 42px;
+      border-bottom: 3px solid #000;
+      padding-bottom: 30px;
+      margin: 0px 0 30px 0;
+      font-weight: bold;
+    }
+
+    #credit {
+      margin-bottom: 20px;
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+    }
+      #credit a {
+        color: #999;
+      }
+
+    p label {
+      font-weight: bold;
+      
+      font-size: 110%;
+      margin-right: 10px;
+    }
+      p label span.colon {
+        display: inline;
+      }
+
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .item {
+      margin: 0 0 20px 0;
+    }
+
+    /*  _____________________________ */
+
+    .basic-info .address {
+      width: 40%;
+      float: left;
+    }
+    .basic-info .r {
+      float: right;
+      width: 50%;
+      text-align: right;
+    }
+      .basic-info label {
+        font-weight: bold;
+      }
+      .basic-info label, .basic-info span  {
+        display: inline !important;
+      }
+    .basic-info p {
+      margin: 0;
+    }
+
+    .section .title {
+      background: #000;
+      float: left;
+      text-transform: uppercase;
+      font-size: 105%;
+      font-weight: bold;
+      word-wrap: break-word;
+      color: #fff;
+      padding: 4px 6px;
+      width: 16%;
+      margin-right: 30px;
+    }
+    .section .set {
+      float: left;
+      width: 78%;
+    }
+      .section .set h3 {
+        margin: 0;
+      }
+    .section span {
+      display: block;
+    }
+    .section h3 span.l, .section span.r {
+      width: 49%;
+      float: left;
+    }
+      .section span.r {
+        float: right;
+        text-align: right;
+      }
+      .section-education .school,
+      .section-work .job_title {
+        font-size: 100%;
+        display: block;
+        margin: 5px 0 5px 0;
+      }
+
+    /* ___ photo ___ */
+    #photo {
+      width: 160px;
+      height: 200px;
+      overflow: hidden;
+      float: left;
+      margin-top: 8px;
+      border-radius: 4px;
+    }
+    #photo img {
+      width: 100%;
+      height: auto;
+    }
+    .header.photo {
+      margin-left: 190px;
+    }
+    .header.photo #title {
+      text-align: left;
+    }
+    .header.photo .basic-info {
+      float: none;
+      padding: 0;
+    }
+
+    @media screen and (max-width: 950px) {
+      body {
+        background: #fff;
+      }
+      #main {
+        box-shadow: none;
+        padding: 0;
+        padding: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="main">
+  <h1 id="title">Rob Dodson</h1>
+
+  <!-- // BASIC INFO -->
+  <div class="basic-info section">
+    <h2 class="title">Contact</h2>
+    <div class="set">
+      <p class="address">
+        <span class="value">115 Haight St. #15<br />San Francisco, CA - 94102</span>
+      </p>
+      <div class="r">
+        <p class="phone"><label>Telephone<span class="colon">:</span></label> <span class="value">(912) 224 8412</span></p>
+
+        <p class="email"><label>E-mail<span class="colon">:</span></label> <span class="value">lets.email.rob@gmail.com</span></p>
+
+        <p class="website"><label>Website<span class="colon">:</span></label> <span class="value">http://robdodson.me</span></p>
+
+        <p class="github"><label>Github<span class="colon">:</span></label> <span class="value">http://github.com/robdodson</span></p>
+
+      </div>
+      <div class="clear"> </div>
+    </div>
+    <div class="clear"> </div>
+  </div>
+  <!-- // END BASIC INFO -->
+
+  <!-- // WORK EXPERIENCE -->
+  <div class="section section-work">
+    <h2 class="title">Work experience</h2>
+    <div class="set">
+      <div class="item">
+        <h3><span class="company l">General Electric</span>
+          <span class="date r">Sept. 2012 &mdash; Aug. 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title">Design Technologist</span>
+        <span class="info">Lead Developer for GE's Industrial, Healthcare and Marketing Design Systems. In charge of creating a scalable component architecture built on Bootstrap, LESS, Require.js, Grunt.js and Bower.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Hot Studio</span>
+          <span class="date r">May 2012 &mdash; Jul. 2012</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title">Design Technologist</span>
+        <span class="info">Design technologist in charge of creating prototype web applications and design systems. Integrating with client teams, and discussing UX and UI approaches. Predominantly working in HTML/CSS & jQuery with a touch of Backbone.js.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Inchworm Studio</span>
+          <span class="date r">Jun. 2008 &mdash; Jul. 2012</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title">Co-Founder / Developer</span>
+        <span class="info">Owner and lead developer, in charge of scoping projects with clients, walking through design and UX decisions and producing Web and Flash content. Projects include console game UIs, touch screens, Facebook Apps and online marketing campaigns.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Mekanism</span>
+          <span class="date r">Mar. 2010 &mdash; May 2011</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title">Senior Creative Developer</span>
+        <span class="info">Developer in charge of seeing products through from concept to launch. Frequent team leader and front-end architect. Tools include HTML/CSS & JavaScript, jQuery, Flash, RobotLegs, and Away3D.</span>
+        <span class="clear"></span>
+      </div>
+    </div>
+    <div class="clear"> </div>
+  </div>
+  <!-- // END WORK EXPERIENCE -->
+
+  <!-- // TEACHING &amp; SPEAKING -->
+  <div class="section section-education">
+    <h2 class="title">Teaching &amp; Speaking</h2>
+    <div class="set">
+      <div class="item">
+        <h3><span class="company l">Web Components and the Future of the Web</span>
+          <span class="date r">Nov. 14, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>Cascade SF</em></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">HTML5 Web Components</span>
+          <span class="date r">Oct. 30, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>Parisoma</em> &mdash; <a href="http://robdodson.me/webcomponents-parisoma">Slides</a></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Web Components are the Revolution</span>
+          <span class="date r">Oct. 22, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>HTML5 Developer Conference</em> &mdash; <a href="http://robdodson.me/webcomponents-revolution">Slides</a></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Earn Your Coder Stripes</span>
+          <span class="date r">Aug. 7th, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>Women Who Code</em> &mdash; <a href="http://robdodson.me/earn-your-stripes">Slides</a></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Embracing the Awesomeness of AMD Modules</span>
+          <span class="date r">Mar. 14th, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>General Electric</em> &mdash; ADD SLIDES!!!</span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Miami Ad School</span>
+          <span class="date r">Jun. 2010 &mdash; Jun. 2011</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title">Adjunct Professor</span>
+        <span class="info">Intro to UX and Intro to Flash. Mentoring students on how to create usable, interactive experiences. Beginning with concepting and paper prototypes and working up to full fledged web applications.</span>
+        <span class="clear"></span>
+      </div>
+    </div>
+    <div class="clear"> </div>
+  </div>
+  <!-- // END TEACHING &amp; SPEAKING -->
+
+  <!-- // OPEN SOURCE -->
+  <div class="section section-education">
+    <h2 class="title">Open Source</h2>
+    <div class="set">
+      <div class="item">
+        <h3><span class="company l">webcomponents.org</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">grunt-bower-requirejs</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">bluebutton.js</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">mark-down</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+    </div>
+    <div class="clear"> </div>
+  </div>
+  <!-- // END OPEN SOURCE -->
+
+  <!-- // WRITING -->
+  <div class="section section-education">
+    <h2 class="title">Writing</h2>
+    <div class="set">
+      <div class="item">
+        <h3><span class="company l">A Guide to Web Components</span>
+          <span class="date r">Nov. 11, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>CSS-Tricks</em> &mdash; <a href="http://css-tricks.com/modular-future-web-components/">Link</a></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Exploring HTML Imports</span>
+          <span class="date r">Aug. 20, 2013</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>robdodson.me</em> &mdash; <a href="http://robdodson.me/blog/2013/08/20/exploring-html-imports/">Link</a></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+      <div class="item">
+        <h3><span class="company l">Debug LESS with the Chrome Developer Tools</span>
+          <span class="date r">Dec. 28, 2012</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="job_title"><em>robdodson.me</em> &mdash; <a href="http://robdodson.me/blog/2012/12/28/debug-less-with-chrome-developer-tools/">Link</a></span>
+        <span class="info">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, culpa, ea impedit atque quae dolorum assumenda doloribus accusantium consequatur sint delectus illo ipsum cupiditate debitis dolorem minus error saepe libero.</span>
+        <span class="clear"></span>
+      </div>
+    </div>
+    <div class="clear"> </div>
+  </div>
+  <!-- // END WRITING -->
+
+  <!-- // EDUCATION -->
+  <div class="section section-education">
+    <h2 class="title">Education</h2>
+    <div class="set">
+      <div class="item">
+        <h3><span class="course l">BFA in Interaction Design</span>
+          <span class="date r">2002 &mdash; 2006</span>
+        </h3>
+        <span class="clear"></span>
+        <span class="school">Savannah College of Art and Design</span>
+        <span class="clear"></span>
+      </div>
+    </div>
+    <div class="clear"> </div>
+  </div>
+  <!-- // END EDUCATION -->
+
+</div>
+</body>
+</html>

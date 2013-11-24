@@ -24,7 +24,7 @@ For an import we just replace the `rel` with one of type `import`.
 <link rel="import" href="/path/to/some/import.html">
 ```
 
-At the moment imports do not block like script tags, however, that may change in the future to help with [Custom Elements resolution.](http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html)
+At the moment, imports do not block like script tags. However, that may change in the future to help with [Custom Element resolution.](http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html)
 
 ## Support
 
@@ -34,10 +34,7 @@ To use HTML Imports make sure you've enabled the following
 in Chrome's `about:flags`.
 
 √ Experimental Web Platform features<br>
-√ Experimental JavaScript<br>
 √ HTML Imports<br>
-
-*I'm not 100% certain if these are all necessary but they don't hurt ;)*
 
 ## Codez!
 

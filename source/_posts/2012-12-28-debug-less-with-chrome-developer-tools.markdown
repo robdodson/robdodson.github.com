@@ -6,85 +6,100 @@ comments: true
 categories: [LESS, Chrome, CodeKit, Less-Middleware, LESS.js]
 ---
 
-*Update 06/11/2013: Chrome 27+ now uses v3 sourcemaps which LESS 1.3.3/1.4-beta does not support. That means you won't be able to inspect the actual styles in the dev tools, however, if you click on the link to the CSS file in the inspector, the sourcemap will show you which LESS file is generating the output. This can still be really handy in a project with a ton of LESS files. Please see [Paul Irish's comments below for more details.](http://robdodson.me/blog/2012/12/28/debug-less-with-chrome-developer-tools/#comment-919144010)*
+*11/19/2013: Updated to work with LESS v1.5.1 which now has support for v3 source maps*
 
-*Update 07/10/2013: [It looks like this is in the works for LESS 1.5.0!](https://github.com/less/less.js/issues/1050)*
+If you've spent much time with preprocessors like LESS you've probably discovered their one rather crippling flaw: debugging. With thousands of lines of LESS code suddenly turning into even more thousands of lines of CSS, it can become nearly impossible to tell where a particular style originated. Thankfully the Chrome team is addressing this problem with their recent support for **CSS source maps.**
 
-If you've spent much time with preprocessors like LESS, SASS/SCSS or Stylus you've probably discovered their one rather crippling flaw: debugging. With thousands of lines of LESS code suddenly turning into even more thousands of lines of CSS it can become nearly impossible to tell where a particular style comes from. Inspecting CSS used to be the domain of the Chrome Developer Tools and Firebug but now that our CSS is machine generated there's no longer a link between the style at line 2137 and the LESS file that generated it. Thankfully the Chrome team is addressing this problem but their current focus is on SASS. Today I'll teach you how to rework your LESS processor so it plays nice with Chrome and reunites you with your old friend, the CSS inspector.
+Today I'll teach you how to rework your LESS preprocessor so it plays nice with Chrome and reunites you with your old friend: the CSS inspector.
 
 <!--more-->
 
-Just to whet your appetite here's a teaser shot of what we're going to accomplish.
+Just to whet your appetite here's a teaser of what we're going to accomplish.
 
 {% img center https://s3.amazonaws.com/robdodson/images/less-preview.png 'A preview of the Inspector showing LESS debugging' %}
 
-You'll notice over on the right instead of your typical `style.css: 7` it says `modules.less: 7`. That's right, the developer tools are looking at the generated CSS and source mapping it back to the LESS files.
+You'll notice, over on the right, instead of your typical `style.css: 7` it says `modules.less: 7`. That's right, the developer tools are looking at the generated CSS and source mapping it back to the LESS file!
+
+Clicking on the line number will dive into the LESS file itself.
 
 {% img center https://s3.amazonaws.com/robdodson/images/less-preview2.png 'The inspector revealing the actual LESS file' %}
 
-Clicking on the line number will actual dive into the LESS file where we can see the nesting, variables and mixins.
+To achieve this effect, we'll need to tell the LESS compiler to generate a source map file when it spits out our CSS. A source map tells the debugger how to find its way from generated output back to the source file.
 
-"Awesome!" you say, but how do we do it?
+*Important: If you use less.js to compile your LESS in the browser, the techniques we'll be covering will not work for you. Please see [this ticket](https://code.google.com/p/chromium/issues/detail?id=285786) for more information.*
 
-Well SASS has a debugging feature which will output media-queries above each style. It looks like this:
+## Setting Up Chrome <a href="#" id="setting-up-chrome"></a>
 
-``` css
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/Rob\/Desktop\/less-debug\/less\/base\.less}line{font-family:\000035}}
-h1 {
-  color: #999999;
-}
-```
-This is known as a **source map** and it basically tells a debugging tool how to find its way from the generated output back to the correct source file. Thankfully the current version of Chrome (26, as of this writing) supports source maps for SASS and the current version of LESS (1.3.3, as of this writing) outputs source maps that *look* like SASS source maps to take advantage of this.
-
-*Important: If you use less.js to compile your LESS in the browser the techniques we'll be covering will not work for you. Unfortunately less.js generates all its output in a big style block at the top of the page and that seems to confuse the dev tools. I wanted to point that out before you spend too much time setting things up.*
-
-## Setting Up Chrome
-
-Before we begin make sure you're running a version of Chrome that's 24 or above. **At present Chrome Canary 28 does not work with this technique so you need to use regular Chrome 24 - 26. I'm pinging the Chrome dev team to see what's up.**.
-
-In the address bar type `chrome://flags/` and hit enter. You should be transported to a magical place.
-
-{% img center https://s3.amazonaws.com/robdodson/images/chrome-flags.png 'The Chrome experiments section' %}
-
-Here we'll search for "Enable Developer Tools experiments". When you find it click "Enable". Then **restart Chrome**. Don't just close the window, actually quit the program and restart it. Once it's reopened fire up the developer tools and click the gear in the bottom right.
+Fire up the developer tools and click the gear in the bottom right.
 
 {% img center https://s3.amazonaws.com/robdodson/images/chrome-options.png 'Chrome Developer tools options' %}
 
-In the left hand sidebar click General. Scroll down to where it says Sources and click "Enable source maps". Again in the sidebar click Experiments, scroll down and enable "Support for Sass".
+In the left hand sidebar click `General`. Scroll down to where it says `Sources` and click `Enable CSS source maps`.
 
-Now if you're just working with SASS then all you have to do is make sure your SASS files generate the proper source maps and you're done. [Here's a great article to walk you through the last couple of steps.](http://bricss.net/post/33788072565/using-sass-source-maps-in-webkit-inspector) But if you're like me and your codebase is in LESS there is more work to be done. Onward!
+{% img center http://robdodson.s3.amazonaws.com/images/enable-css-source-maps.jpg 'Enable CSS source maps' %}
 
-## Processors
+## Processors <a href="#" id="processors"></a>
 
-There are a quite a few ways to convert your LESS into properly source mapped CSS code. You can use the lessc command line tool, a GUI such as [CodeKit](http://incident57.com/codekit/) or have the server do it with something like [less-middleware](https://github.com/emberfeather/less.js-middleware) for [connect](http://www.senchalabs.org/connect/)/[express.](http://expressjs.com/) As I mentioned previously, you can also compile less on the client-side using less.js but unfortunately our debugging technique does not seem to work with that approach so you'll need to use an alternative.
+There are a quite a few ways to convert your LESS into properly source mapped CSS code. You can use the `lessc` command line tool, or have the server do it with a tool like [less-middleware](https://github.com/emberfeather/less.js-middleware) for [connect](http://www.senchalabs.org/connect/). As I mentioned previously, you can also compile LESS on the client-side using `less.js`, but [the current implementation of source maps in Chrome does not support this.](https://code.google.com/p/chromium/issues/detail?id=285786)
 
-One quick warning, which I'll emphasize again later, **make sure you turn off all minification** otherwise it will break our source maps!
 
-### lessc
+### lessc <a href="#" id="lessc"></a>
 
-If you've installed LESS using npm check that you've got the latest version.
+If you've [installed LESS using npm](https://github.com/less/less.js/#getting-started), check that you've got the latest version. You'll need `1.5.0` or above.
 
 ``` bash
 $ lessc --version
-lessc 1.3.3 (LESS Compiler) [JavaScript]
+lessc 1.5.1 (LESS Compiler) [JavaScript]
 ```
-If your version is not 1.3.3 or greater you should run `npm install -g less` to update to the latest version.
+If your version is not `1.5.0` or greater, you should run `npm update -g less`.
 
-To compile your less with baked in source maps pass the `--line-numbers` flag a value of `mediaquery`. For example:
+### Outputting a source map
 
-``` bash
-lessc --line-numbers=mediaquery theme.less theme.css
+Let's imagine your project has a directory structure like this:
+
+```
+css/
+less/
+  index.less
+  modules.less
+  variables.less
+index.html
 ```
 
-Your generated LESS should now be inspectable in Chrome. Yay! Make sure you're not running any kind of minification step further along in your build or it will break the source maps.
+`index.less` imports all of the other LESS files, so that's the one we want to compile to CSS. Our goal is to have an `index.css` and `index.css.map` file inside of the `css/` folder when everything is finished.
 
-### CodeKit
+```
+css/
+  index.css
+  index.css.map
+less/
+  index.less
+  modules.less
+  variables.less
+index.html
+```
 
-In CodeKit use the **Debug Info in CSS** dropdown and set it to **Media Query at Top of CSS File**. Make sure you set **Output Style** to **Regular** otherwise the minification will break our source maps.
+To do this with `lessc` we'll run the following command from the root of the project:
 
-After that you should be good to go :)
+`lessc less/index.less > css/index.css --source-map=css/index.css.map --source-map-basepath=css`
 
-### less-middleware
+Kind of a mouthful, I know.
+
+The first bit is just compiling our LESS file to a CSS file in the `css/` dir.
+
+```
+lessc less/index.less > css/index.css
+```
+
+The `--source-map` flag tells `lessc` where to put the souce map file. In this case we want it inside the `css/` dir as well.
+
+```
+--source-map=css/index.css.map
+```
+
+The `--source-map-basepath` flag tells `lessc`
+
+### less-middleware <a href="#" id="less-middleware"></a>
 
 You might need to update your version of the middleware to whatever's the latest, which looks like 0.1.9 as of this writing.
 
@@ -99,14 +114,6 @@ app.use(lessMiddleware({
 ```
 
 After that you should be all set. Make sure any minification is turned off or it will screw up the source maps.
-
-## Warnings
-
-The above techniques work for regular Chrome 24 - 26 but **appear to be broken in Chrome Canary 28**.
-
-**Minification of any kind seems to screw up the source maps** so make sure your code is not minified or YUI compressed. Remember this is for debugging your code so it's ok if it's not minified.
-
-One more thing, make sure before you send your code into production that you remember to **turn off debugging** otherwise you'll be needlessly bloating your CSS files by quite a lot.
 
 ## Conclusion
 
