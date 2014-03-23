@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: PostgreSQL | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/postgresql/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/postgresql/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[How to setup PostgreSQL for Rails and Heroku]]></title>
-    <link href="http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
+    <link href="http://robdodson.me/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
     <updated>2012-04-27T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
+    <id>http://robdodson.me/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
     <content type="html"><![CDATA[<h3>Install PostgreSQL Locally</h3>
 
 <p>Ryan Bates has already put together a wonderful Railscast on this topic so feel free to <a href="http://railscasts.com/episodes/342-migrating-to-postgresql">jump over there</a> to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.</p>

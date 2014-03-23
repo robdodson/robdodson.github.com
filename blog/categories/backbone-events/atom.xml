@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Backbone Events | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/backbone-events/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/backbone-events/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Backbone Events: Framework Communication]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/25/backbone-events-framework-communication/"/>
+    <link href="http://robdodson.me/blog/2012/05/25/backbone-events-framework-communication/"/>
     <updated>2012-05-25T08:01:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/25/backbone-events-framework-communication</id>
+    <id>http://robdodson.me/blog/2012/05/25/backbone-events-framework-communication</id>
     <content type="html"><![CDATA[<p>I want to figure out how to communicate on a framework level within Backbone. Coming from Flash and <a href="http://www.robotlegs.org/">RobotLegs</a> I'm used to a few MVC conventions that work very well as far as event dispatching goes. In RobotLegs you typically have a framework wide eventDispatcher that anyone can tune into. In a nutshell your View will trigger an event, for instance a user clicking a button, and that will get dispatched to interested framework actors. These can be other Views or, more likely, they can be Commands. The Commands are like single use actions tied directly to events. Think of it like binding every public method of your controller to an event. The Commands will typically effect models, changing them in some way, and the Models will dispatch an event that the Views listen for to update themselves.</p>
 
 <p>Backbone works differently in that Views are often tied directly to their models like so:</p>
@@ -159,9 +159,9 @@ chatty: function() {
   
   <entry>
     <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <link href="http://robdodson.me/blog/2012/05/24/backbone-events-between-views/"/>
     <updated>2012-05-24T07:23:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <id>http://robdodson.me/blog/2012/05/24/backbone-events-between-views</id>
     <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
 
 <!--more-->

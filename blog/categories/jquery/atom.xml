@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: jQuery | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/jquery/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/jquery/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Observer]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/"/>
+    <link href="http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer/"/>
     <updated>2012-08-16T13:19:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer</id>
+    <id>http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>Observer is one of the most popular design patterns and chances are you're probably already using it. If you've ever written an event listener with <code>addEventListener</code> or used one of jQuery's many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc... then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn't care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>
@@ -322,9 +322,9 @@ o.subscribers = {
   
   <entry>
     <title type="html"><![CDATA[Make Your Own jQuery Deferreds and Promises]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/"/>
+    <link href="http://robdodson.me/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/"/>
     <updated>2012-06-03T20:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises</id>
+    <id>http://robdodson.me/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises</id>
     <content type="html"><![CDATA[<p>Last week <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">I did a post on how to load an Underscore template using jQuery's Deferred method</a>. I got some great feedback from folks and decided I should do a follow up showing how to create your own Deferreds.</p>
 
 <!--more-->
@@ -502,9 +502,9 @@ There are more cool things you can do with</code>Deferreds<code>I highly recomme
   
   <entry>
     <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <link href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
     <updated>2012-05-30T08:53:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <id>http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
     <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
 
 <!--more-->
@@ -703,9 +703,9 @@ function successFunc() {
   
   <entry>
     <title type="html"><![CDATA[Penner easing equations with GFX and CSS3]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3/"/>
+    <link href="http://robdodson.me/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3/"/>
     <updated>2012-05-27T00:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3</id>
+    <id>http://robdodson.me/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3</id>
     <content type="html"><![CDATA[<p>This is going to be a bit of lightening post because it's rather late and I need to get to bed. I spent most of the day either eating dim sum or hanging out at the <a href="http://www.meetup.com/San-Francisco-Creative-Coders/">SF Creative Coders BBQ</a> so I've neglected my blogging duties a bit.</p>
 
 <p>I have something which will hopefully be useful for some folks who are getting into CSS3 animations with the Gfx plugin for jQuery. <a href="http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx/">I've blogged a bit about Gfx before</a> and one of the first things I noticed was the lack of a built in easing library. Coming from the Flash world where <a href="http://www.greensock.com/tweenlite/">TweenLite is king</a> I've grown very accustomed to using Robert Penner's easing equations for great effect. The same equations are used by the jQuery framework to do its animations. Thankfully <a href="http://matthewlein.com/ceaser/">Matthew Lein was kind enough to convert those over to cubic-beziers</a> for those of us doing CSS3 animations. Since Gfx accepts cubic-beziers I moved the equations from Matthew's tool into an AMD compliant module and <a href="https://github.com/robdodson/amd-css3-ease">put it up on Github.</a> It's very simple so if AMD isn't your thing you can just rip those parts out :D</p>
@@ -750,9 +750,9 @@ easing: Ease.easeInExpo
   
   <entry>
     <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <link href="http://robdodson.me/blog/2012/05/24/backbone-events-between-views/"/>
     <updated>2012-05-24T07:23:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <id>http://robdodson.me/blog/2012/05/24/backbone-events-between-views</id>
     <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
 
 <!--more-->

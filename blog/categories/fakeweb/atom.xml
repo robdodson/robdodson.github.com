@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: FakeWeb | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/fakeweb/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/fakeweb/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 5]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
+    <link href="http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
     <updated>2012-05-12T07:02:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
+    <id>http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
     <content type="html"><![CDATA[<p>Last night I got the <code>Crawler</code> passing its test for <code>#get_words_by_selector</code>. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both <code>throw</code>/<code>catch</code> and <code>raise</code>/<code>rescue</code> so what's the difference between throw/catch and raise/rescue in Ruby?</p>
 
 <!--more-->
@@ -190,9 +190,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 4]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4/"/>
+    <link href="http://robdodson.me/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4/"/>
     <updated>2012-05-11T07:20:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4</id>
+    <id>http://robdodson.me/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4</id>
     <content type="html"><![CDATA[<p>Continuing from our <a href="http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/">previous post</a> we're going to keep working on our <code>Crawler</code> and our specs to see if we can start pulling real data from our site.</p>
 
 <!--more-->
@@ -421,9 +421,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed With Tests Pt. 3]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/"/>
+    <link href="http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/"/>
     <updated>2012-05-08T21:03:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3</id>
+    <id>http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3</id>
     <content type="html"><![CDATA[<p>I did some cleanup this morning on the <code>Options</code> class and the <code>options_spec</code>, mainly to remove items that seemed like they shouldn't be tested. Here's where I'm currently at:</p>
 
 <!--more-->

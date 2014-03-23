@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: JSON | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/json/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/json/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Outputting JSON from Ruby]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby/"/>
+    <link href="http://robdodson.me/blog/2012/06/18/outputting-json-from-ruby/"/>
     <updated>2012-06-18T08:19:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby</id>
+    <id>http://robdodson.me/blog/2012/06/18/outputting-json-from-ruby</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/">Last night</a> I got the scraper to write an output.txt file which listed all the contents of <code>words_by_selector</code>. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.</p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
+    <link href="http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
     <updated>2013-11-19T09:27:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
+    <id>http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
     <content type="html"><![CDATA[<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
 
 <!-- more -->
@@ -61,10 +61,10 @@
   
   <entry>
     <title type="html"><![CDATA[The Cat and the Hat CSS Selectors]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
+    <link href="http://robdodson.me/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
     <updated>2013-11-15T11:08:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
-    <content type="html"><![CDATA[<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
+    <id>http://robdodson.me/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
+    <content type="html"><![CDATA[<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
 
 <!-- more -->
 
@@ -82,7 +82,7 @@
 <p data-height="268" data-theme-id="0" data-slug-hash="EhIax" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/EhIax'>Shadow DOM &#8220;Hat&#8221; CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <h2>The Cat <a href="#" id="the-cat"></a></h2>
@@ -92,7 +92,7 @@
 <p data-height="315" data-theme-id="0" data-slug-hash="wFqJg" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wFqJg'>Shadow DOM &#8220;Cat&#8221; CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <h2>Styling Native Elements <a href="#" id="styling-native-elements"></a></h2>
@@ -102,16 +102,16 @@
 <p data-height="268" data-theme-id="0" data-slug-hash="iaJHd" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/iaJHd'>Shadow DOM &#8220;Cat&#8221; and &#8220;Hat&#8221; CSS selectors</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Repeating Templates in Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer/"/>
     <updated>2013-11-12T15:14:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer</id>
+    <id>http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer</id>
     <content type="html"><![CDATA[<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
 
 <!-- more -->
@@ -173,7 +173,7 @@
 <p data-height="268" data-theme-id="0" data-slug-hash="wxrqf" data-user="robdodson" data-default-tab="html" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wxrqf'>Polymer Template Bindings</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <p>I mentioned this to Eric Bidelman and he opened <a href="https://github.com/Polymer/docs/issues/191">a ticket to improve the docs</a>, so keep an eye out for that. Hope this helps some of you that may have been stuck :)</p>
@@ -182,9 +182,9 @@
   
   <entry>
     <title type="html"><![CDATA[Web Components Revolution]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/24/web-components-revolution/"/>
+    <link href="http://robdodson.me/blog/2013/10/24/web-components-revolution/"/>
     <updated>2013-10-24T12:18:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/24/web-components-revolution</id>
+    <id>http://robdodson.me/blog/2013/10/24/web-components-revolution</id>
     <content type="html"><![CDATA[<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
 
 <br>
@@ -196,9 +196,9 @@
   
   <entry>
     <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
     <updated>2013-10-02T08:05:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <id>http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
     <content type="html"><![CDATA[<p>Ah Markdown&#8230; Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress&#8217; HTML mode, too limiting. Markdown changed all of that for me and I think it&#8217;s high time we make it a full fledged member of our developer toolbox.</p>
 
 <p>So today I&#8217;m going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
@@ -280,7 +280,7 @@
 </code></pre></figure>
 
 
-<p>This is our template which Polymer will convert to <a href="http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
+<p>This is our template which Polymer will convert to <a href="http://robdodson.me/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;script&gt;</span>
   <span class="nx">Polymer</span><span class="p">(</span><span class="s2">&quot;mark-down&quot;</span><span class="p">);</span>
@@ -366,9 +366,9 @@
   
   <entry>
     <title type="html"><![CDATA[The Art of Fear Blogging]]></title>
-    <link href="http://robdodson.github.com/blog/2013/09/16/the-art-of-fear-blogging/"/>
+    <link href="http://robdodson.me/blog/2013/09/16/the-art-of-fear-blogging/"/>
     <updated>2013-09-16T12:51:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/09/16/the-art-of-fear-blogging</id>
+    <id>http://robdodson.me/blog/2013/09/16/the-art-of-fear-blogging</id>
     <content type="html"><![CDATA[<p>Years ago <a href="http://www.radiolab.org/2011/mar/08/you-v-you/">I heard a radio story about a woman hopelessly addicted to cigarettes.</a> Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.</p>
 
 <!-- more -->
@@ -420,10 +420,10 @@
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: JavaScript]]></title>
-    <link href="http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/"/>
+    <link href="http://robdodson.me/blog/2013/09/02/shadow-dom-javascript/"/>
     <updated>2013-09-02T20:46:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript</id>
-    <content type="html"><![CDATA[<p>We&#8217;re getting to a point where we&#8217;ve covered most of what there is to know about <a href="http://robdodson.github.com/blog/2013/03/16/html5-template-tag-introduction/">templates</a>, <a href="http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/">imports</a> and shadow DOM (<a href="http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/">1</a>, <a href="http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/">2</a>, <a href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/">3</a>, <a href="http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/">4</a>). The end goal for all of these technologies is <strong>custom elements</strong>, but we&#8217;re not <em>quite</em> there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I&#8217;m going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you&#8217;ll be in a good place to start creating your own custom elements.</p>
+    <id>http://robdodson.me/blog/2013/09/02/shadow-dom-javascript</id>
+    <content type="html"><![CDATA[<p>We&#8217;re getting to a point where we&#8217;ve covered most of what there is to know about <a href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/">templates</a>, <a href="http://robdodson.me/blog/2013/08/20/exploring-html-imports/">imports</a> and shadow DOM (<a href="http://robdodson.me/blog/2013/08/26/shadow-dom-introduction/">1</a>, <a href="http://robdodson.me/blog/2013/08/27/shadow-dom-the-basics/">2</a>, <a href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/">3</a>, <a href="http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot/">4</a>). The end goal for all of these technologies is <strong>custom elements</strong>, but we&#8217;re not <em>quite</em> there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I&#8217;m going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you&#8217;ll be in a good place to start creating your own custom elements.</p>
 
 <p>Let&#8217;s get crackin&#8217;!</p>
 
@@ -451,7 +451,7 @@
 
 <h3>Sketch 13: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/13-javascript-scope">javascript-scope</a></h3>
 
-<p>Remember when I spent all of that time <a href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/">explaining how Shadow DOM CSS was encapsulated and protected from the parent document</a> and how awesome that all was? You might also think that JavaScript works the same way—<em>I did at first</em>—but that&#8217;s actually not the case. With a few exceptions, which I&#8217;ll discuss later, JavaScript in the Shadow DOM works pretty much exactly as it always has. That means all the best practices you&#8217;ve learned over the years still apply.</p>
+<p>Remember when I spent all of that time <a href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/">explaining how Shadow DOM CSS was encapsulated and protected from the parent document</a> and how awesome that all was? You might also think that JavaScript works the same way—<em>I did at first</em>—but that&#8217;s actually not the case. With a few exceptions, which I&#8217;ll discuss later, JavaScript in the Shadow DOM works pretty much exactly as it always has. That means all the best practices you&#8217;ve learned over the years still apply.</p>
 
 <p>Here&#8217;s an example of what I&#8217;m talking about.</p>
 
@@ -530,7 +530,7 @@
 
 <h3>Distributed Nodes</h3>
 
-<p>If you recall from the last post we talked about <a href="http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot#distributed-nodes">distributed nodes</a>, which are bits of content taken from the shadow host and projected into the Shadow DOM. You might think that since these nodes appear in the Shadow DOM that their events would be retargeted as well. But that&#8217;s not the case.</p>
+<p>If you recall from the last post we talked about <a href="http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot#distributed-nodes">distributed nodes</a>, which are bits of content taken from the shadow host and projected into the Shadow DOM. You might think that since these nodes appear in the Shadow DOM that their events would be retargeted as well. But that&#8217;s not the case.</p>
 
 <p>Heres&#8217; another example to demonstrate.</p>
 
@@ -632,10 +632,10 @@
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: Styles (cont.)]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/"/>
+    <link href="http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot/"/>
     <updated>2013-08-29T11:11:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot</id>
-    <content type="html"><![CDATA[<p>In <a href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/">yesterday&#8217;s post</a> we covered the basics of working with styles in Shadow DOM. But we&#8217;ve only just scratched the surface! Today we&#8217;ll continue from where we left off and explore how to work with <strong>distributed nodes</strong> and how to poke holes in our components so the outside world can reach in and customize &#8216;em.</p>
+    <id>http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot</id>
+    <content type="html"><![CDATA[<p>In <a href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/">yesterday&#8217;s post</a> we covered the basics of working with styles in Shadow DOM. But we&#8217;ve only just scratched the surface! Today we&#8217;ll continue from where we left off and explore how to work with <strong>distributed nodes</strong> and how to poke holes in our components so the outside world can reach in and customize &#8216;em.</p>
 
 <!--more-->
 
@@ -968,16 +968,16 @@
 
 <h2>Conclusion <a href="#" id="conclusion"></a></h2>
 
-<p>If you&#8217;ve read over <a href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/">the last post</a> and this one then you now know as much about styling the shadow DOM as I do. But we haven&#8217;t even talked about JavaScript yet! We&#8217;ll save that for tomorrow&#8217;s post :) As always if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
+<p>If you&#8217;ve read over <a href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/">the last post</a> and this one then you now know as much about styling the shadow DOM as I do. But we haven&#8217;t even talked about JavaScript yet! We&#8217;ll save that for tomorrow&#8217;s post :) As always if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: Styles]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/"/>
+    <link href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/"/>
     <updated>2013-08-28T10:56:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles</id>
-    <content type="html"><![CDATA[<p><a href="http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/">Yesterday&#8217;s post</a> was all about coding and structuring your first Shadow DOM elements. But I&#8217;m sure most of you were wondering, how do we style these things?!</p>
+    <id>http://robdodson.me/blog/2013/08/28/shadow-dom-styles</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2013/08/27/shadow-dom-the-basics/">Yesterday&#8217;s post</a> was all about coding and structuring your first Shadow DOM elements. But I&#8217;m sure most of you were wondering, how do we style these things?!</p>
 
 <p>The use of CSS in Shadow DOM is an interesting and large topic. So large, in fact, that I&#8217;m going to split it up over the next couple of posts. Today we&#8217;ll learn the basics of using CSS within the <strong>shadow boundary</strong>, and also how to style our <strong>shadow hosts</strong>.</p>
 
@@ -1141,7 +1141,7 @@
 
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-styles3.jpg" title="'Shadow DOM styling by host type'" ></p>
 
-<p><em>I&#8217;ve switched to using a <a href="http://robdodson.github.com/blog/2013/03/16/html5-template-tag-introduction/">template tag</a> for this example since it makes working with the Shadow DOM a lot easier.</em></p>
+<p><em>I&#8217;ve switched to using a <a href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/">template tag</a> for this example since it makes working with the Shadow DOM a lot easier.</em></p>
 
 <p>As you can see from the example above, we&#8217;re able to change the look of our component by matching the <code>:host</code> selector to a specific tag. We can also match against classes, IDs, attributes, etc. Really any valid CSS will do.</p>
 
@@ -1247,16 +1247,16 @@
 
 <p>There&#8217;s still a lot more to talk about when it comes to styling the Shadow DOM. Let&#8217;s take a break for today and pick it up again tomorrow. As always if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
 
-<h2><a href="http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/">Continue to Shadow DOM: Styles (cont.) &rarr;</a></h2>
+<h2><a href="http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot/">Continue to Shadow DOM: Styles (cont.) &rarr;</a></h2>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: The Basics]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/"/>
+    <link href="http://robdodson.me/blog/2013/08/27/shadow-dom-the-basics/"/>
     <updated>2013-08-27T08:52:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics</id>
-    <content type="html"><![CDATA[<p>In my <a href="http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/">previous post</a>, I introduced the <strong>Shadow DOM</strong> and made the case for why it is important. Today, we&#8217;ll get our hands dirty with some code! By the end of this post, you&#8217;ll be able to create your own encapsulated widgets that pull in content from the outside world and rearrange their bits and pieces to produce something wholly different.</p>
+    <id>http://robdodson.me/blog/2013/08/27/shadow-dom-the-basics</id>
+    <content type="html"><![CDATA[<p>In my <a href="http://robdodson.me/blog/2013/08/26/shadow-dom-introduction/">previous post</a>, I introduced the <strong>Shadow DOM</strong> and made the case for why it is important. Today, we&#8217;ll get our hands dirty with some code! By the end of this post, you&#8217;ll be able to create your own encapsulated widgets that pull in content from the outside world and rearrange their bits and pieces to produce something wholly different.</p>
 
 <p>Let&#8217;s get started!</p>
 
@@ -1314,7 +1314,7 @@
 
 <p>Using the code above, we&#8217;ve replaced the text content of our <code>.widget</code> div using a shadow tree. To create a shadow tree, we first specify that a node should act as a <strong>shadow host</strong>. In this case, we use <code>.widget</code> as our shadow host. Then we add a new node to our shadow host, known as a <strong>shadow root</strong>. The shadow root acts as the first node in your shadow tree and all other nodes descend from it.</p>
 
-<p>If you were to inspect this element in the Chrome Dev Tools (and you had <a href="http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction#the-shadows">Show Shadow DOM</a> turned on), it would look something like this:</p>
+<p>If you were to inspect this element in the Chrome Dev Tools (and you had <a href="http://robdodson.me/blog/2013/08/26/shadow-dom-introduction#the-shadows">Show Shadow DOM</a> turned on), it would look something like this:</p>
 
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-basic-inspect.jpg" title="'Inspecting our first shadow dom'" ></p>
 
@@ -1394,7 +1394,7 @@
 
 <p>If you&#8217;ve been following along, this should look familiar. Using the <code>&lt;content&gt;</code> tag, we&#8217;ve created an <strong>insertion point</strong> that <strong>projects</strong> the text from the <code>.pokemon</code> div, so it appears within our shadow <code>&lt;h1&gt;</code>. Insertion points are very powerful because they allow us to change the order in which things render without physically altering the source. It also means that we can be selective about what gets rendered.</p>
 
-<p>You may have noticed that we&#8217;re using a <a href="http://robdodson.github.com/blog/2013/03/16/html5-template-tag-introduction/">template tag</a> instead of building our shadow DOM entirely in JavaScript. I&#8217;ve found that using <code>&lt;template&gt;</code> tags makes the process of working with the shadow DOM much easier.</p>
+<p>You may have noticed that we&#8217;re using a <a href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/">template tag</a> instead of building our shadow DOM entirely in JavaScript. I&#8217;ve found that using <code>&lt;template&gt;</code> tags makes the process of working with the shadow DOM much easier.</p>
 
 <p>Let&#8217;s look at a more advanced example to demonstrate how to work with multiple insertion points.</p>
 
@@ -1518,22 +1518,22 @@
 
 <p>He also created this handy video explaining it :)</p>
 
-<iframe width="420" height="315" src="http://robdodson.github.com//www.youtube.com/embed/qnJ_s58ubxg" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://robdodson.me//www.youtube.com/embed/qnJ_s58ubxg" frameborder="0" allowfullscreen></iframe>
 
 
 <h2>Conclusion <a href="#" id="conclusion"></a></h2>
 
 <p>We still have a lot more to talk about, but for today, let&#8217;s wrap things up. Tomorrow, we&#8217;ll dig into CSS style encapsulation and later JavaScript and user interaction. As always, if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
 
-<h2><a href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/">Continue to Shadow DOM: Styles &rarr;</a></h2>
+<h2><a href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/">Continue to Shadow DOM: Styles &rarr;</a></h2>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: Introduction]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/"/>
+    <link href="http://robdodson.me/blog/2013/08/26/shadow-dom-introduction/"/>
     <updated>2013-08-26T16:06:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction</id>
+    <id>http://robdodson.me/blog/2013/08/26/shadow-dom-introduction</id>
     <content type="html"><![CDATA[<p>The topic we&#8217;ll be covering today, Shadow DOM, is big and at times rather confusing. It is also, potentially, one of the most transformative things to happen to web development in at least the last 5-10 years. Rather than attempt to cover it all in one post I&#8217;m going to split it up into a series of articles spread out over the coming weeks.</p>
 
 <p>For now let&#8217;s start with a general introduction: <strong>What</strong> is Shadow DOM and <strong>why</strong> is it important?</p>
@@ -1627,24 +1627,24 @@ In a nutshell Shadow DOM is a new part of the HTML spec which allows developers 
 
 <p>I&#8217;m sure by now you&#8217;re tired of listening to me prattle on and you&#8217;re ready for some code! Follow me on to our next post where we&#8217;ll dive into Shadow DOM and walk through the basics.</p>
 
-<h2><a href="http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/">Continue to Shadow DOM: Basics &rarr;</a></h2>
+<h2><a href="http://robdodson.me/blog/2013/08/27/shadow-dom-the-basics/">Continue to Shadow DOM: Basics &rarr;</a></h2>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Web Components Resources]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/22/web-components-resources/"/>
+    <link href="http://robdodson.me/blog/2013/08/22/web-components-resources/"/>
     <updated>2013-08-22T17:47:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/22/web-components-resources</id>
+    <id>http://robdodson.me/blog/2013/08/22/web-components-resources</id>
     <content type="html"><![CDATA[<p>Eric Bidelman (<a href="http://twitter.com/ebidel">@ebidel</a>) put together <a href="https://gist.github.com/ebidel/6314025">a great list of Web Components Resources</a>. It&#8217;s nice to have it all in one place because it sure can get confusing hoping around from spec to article to slideshow, etc. If you have more resources make sure to do a PR and add them to the list!</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Exploring HTML Imports]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/"/>
+    <link href="http://robdodson.me/blog/2013/08/20/exploring-html-imports/"/>
     <updated>2013-08-20T13:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/20/exploring-html-imports</id>
+    <id>http://robdodson.me/blog/2013/08/20/exploring-html-imports</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2013/03/17/why-web-components/">Web Components</a> have come a long way in the past few months and one of the technologies that I&#8217;m most interested in is <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html">HTML Imports</a> (or &#8220;imports&#8221;, for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Elements</a> where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.</p>
 
 <!--more-->
@@ -2210,9 +2210,9 @@ var myNewChart = new Chart(ctx).Pie(data);
   
   <entry>
     <title type="html"><![CDATA[nth-child is weird]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/04/nth-child-is-weird/"/>
+    <link href="http://robdodson.me/blog/2013/08/04/nth-child-is-weird/"/>
     <updated>2013-08-04T10:55:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/04/nth-child-is-weird</id>
+    <id>http://robdodson.me/blog/2013/08/04/nth-child-is-weird</id>
     <content type="html"><![CDATA[<p>I ran into a CSS bug today and it brought up an interesting (and important) question: What&#8217;s the difference between <code>nth-child</code> and <code>nth-of-type</code>?</p>
 
 <!--more-->
@@ -2277,9 +2277,9 @@ var myNewChart = new Chart(ctx).Pie(data);
   
   <entry>
     <title type="html"><![CDATA[Chrome/Blink devs discuss setImmediate]]></title>
-    <link href="http://robdodson.github.com/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate/"/>
+    <link href="http://robdodson.me/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate/"/>
     <updated>2013-07-29T09:05:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate</id>
+    <id>http://robdodson.me/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate</id>
     <content type="html"><![CDATA[<p>Really interesting discussion of the pros and cons of the <code>setImmediate</code> function. For a little backstory checkout <a href="http://www.nczonline.net/blog/2013/07/09/the-case-for-setimmediate/">this post</a> by <a href="http://www.nczonline.net/blog/">Nicholas Zakas</a> (<a href="http://twitter.com/slicknet">@slicknet</a>)</p>
 
 <p>Here&#8217;s a nice tidbit from one of the Chrome devs:</p>
@@ -2293,12 +2293,12 @@ var myNewChart = new Chart(ctx).Pie(data);
   
   <entry>
     <title type="html"><![CDATA[Scared Shitless]]></title>
-    <link href="http://robdodson.github.com/blog/2013/07/29/scared-shitless/"/>
+    <link href="http://robdodson.me/blog/2013/07/29/scared-shitless/"/>
     <updated>2013-07-29T08:51:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/07/29/scared-shitless</id>
+    <id>http://robdodson.me/blog/2013/07/29/scared-shitless</id>
     <content type="html"><![CDATA[<p>I just saw this awesome talk by <a href="http://www.43folders.com/">Merlin Mann</a> (<a href="https://twitter.com/hotdogsladies">@hotdogsladies</a>) titled <strong>Scared Shitless</strong>.</p>
 
-<iframe width="560" height="315" src="http://robdodson.github.com//www.youtube.com/embed/Lk0hSeQ5s_k" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="http://robdodson.me//www.youtube.com/embed/Lk0hSeQ5s_k" frameborder="0" allowfullscreen></iframe>
 
 
 <p>If there&#8217;s something you want to do but you&#8217;ve been too scared to do it maybe you should watch this. Get a little courage. Get some gumption! And do the damn thing! ROOOOOAAAAR!</p>
@@ -2307,9 +2307,9 @@ var myNewChart = new Chart(ctx).Pie(data);
   
   <entry>
     <title type="html"><![CDATA[RequireJS -- Embracing the Awesomness of AMD Modules]]></title>
-    <link href="http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules/"/>
+    <link href="http://robdodson.me/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules/"/>
     <updated>2013-03-21T21:57:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules</id>
+    <id>http://robdodson.me/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules</id>
     <content type="html"><![CDATA[<p>Over the past few weeks I put together this talk for my team at GE to help get everyone on the same page with AMD modules. I figured it&#8217;d be cool if I removed any GE specific stuff and open sourced the presentation, so here it is!</p>
 
 <p>The video is around 35 minutes long and there&#8217;s a slide deck available on Github that has clickable links and whatnot. Enjoy!</p>
@@ -2323,9 +2323,9 @@ var myNewChart = new Chart(ctx).Pie(data);
   
   <entry>
     <title type="html"><![CDATA[Introduction to Custom Elements]]></title>
-    <link href="http://robdodson.github.com/blog/2013/03/19/custom-elements-intro/"/>
+    <link href="http://robdodson.me/blog/2013/03/19/custom-elements-intro/"/>
     <updated>2013-03-19T01:21:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/03/19/custom-elements-intro</id>
+    <id>http://robdodson.me/blog/2013/03/19/custom-elements-intro</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2013/03/17/why-web-components/">In yesterday&#8217;s post</a> I made the case for Web Components so today let&#8217;s dive back in and look at Custom Elements.</p>
 
 <!--more-->
@@ -2509,9 +2509,9 @@ document.body.appendChild(b);
   
   <entry>
     <title type="html"><![CDATA[Why Web Components?]]></title>
-    <link href="http://robdodson.github.com/blog/2013/03/17/why-web-components/"/>
+    <link href="http://robdodson.me/blog/2013/03/17/why-web-components/"/>
     <updated>2013-03-17T17:48:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/03/17/why-web-components</id>
+    <id>http://robdodson.me/blog/2013/03/17/why-web-components</id>
     <content type="html"><![CDATA[<p>Yesterday I did a post on the HTML5 <code>&lt;template&gt;</code> tag which is part of the new <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section">Web Components standard.</a> I didn&#8217;t go into a ton of explanation as to why I&#8217;m so interested with this spec and I think jumping right to the <code>&lt;template&gt;</code> tag was probably pretty confusing for folks who don&#8217;t have the same needs as me. I want to back up a bit and present a high level overview of Web Components and then illustrate why this is such an important concept.</p>
 
 <!--more-->
@@ -2603,9 +2603,9 @@ document.body.appendChild(b);
   
   <entry>
     <title type="html"><![CDATA[HTML5 Template Tag: Introduction]]></title>
-    <link href="http://robdodson.github.com/blog/2013/03/16/html5-template-tag-introduction/"/>
+    <link href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/"/>
     <updated>2013-03-16T09:51:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/03/16/html5-template-tag-introduction</id>
+    <id>http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction</id>
     <content type="html"><![CDATA[<p>If you&#8217;ve been following the Google Chrome release announcements you may have noticed some interesting terms popping up as of late. Phrases like &#8220;Shadow DOM&#8221;, &#8220;Custom Elements&#8221; and &#8220;Template&#8221;. These are all part of a new standard referred to as Web Components and the latest versions of Chrome are starting to implement them. Basically a Web Component is an encapsulated bit of markup, styles and script that allow you to reuse widgets across your page without worrying about accidental collisions. For a practical example consider Twitter Bootstrap and its myriad of buttons, dropdowns and badges. Bootstrap comes with <em>a lot</em> of CSS which means, right out of the gate, there are a ton of class names which you probably shouldn&#8217;t use for your own elements. Want to define a class of <code>.container</code>? Too bad, Bootstrap already uses that name. Want to upgrade Bootstrap in a few months? OK, but you need to double check that none of their new classes conflict with any of yours. Kind of a pain, right? Wouldn&#8217;t it be awesome if you could use all the little widgets from Bootstrap and not worry at all about possible collisions? Well, that&#8217;s what Web Components are trying to solve and so today I want to look at one part of the Web Components standard: The Template Tag.</p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Object Oriented Design | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/object-oriented-design/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/object-oriented-design/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed With Tests Pt...9?]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/"/>
+    <link href="http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/"/>
     <updated>2012-06-17T22:43:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9</id>
+    <id>http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9</id>
     <content type="html"><![CDATA[<p>I just spent a few hours talking to my friend <a href="http://derekbradley.com/">Derek</a>(<a href="https://twitter.com/#!/derekebradley">@derekebradley</a>) about Ruby and it occured to me that I never finished this scraper project. We got awfully far with it but then it kind of died on the vine. <a href="http://robdodson.me/blog/2012/05/06/object-oriented-scraper-backed-with-tests/">Thankfully,</a> <a href="http://robdodson.me/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/">I</a> <a href="http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/">wrote</a> <a href="http://robdodson.me/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4/">it</a> <a href="http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/">all</a> <a href="http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/">down.</a> <a href="http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/">down.</a> <a href="http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/">down.</a></p>
 
 <p>The fact of the matter is I didn't know where to take the data. I didn't have a design or a layout that I could put it all into. I want to change all that. I want to turn this into something useful. But first I have to make sense of all the code that was written so many weeks ago.</p>
@@ -139,9 +139,9 @@ version: 2
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 8]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/"/>
+    <link href="http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/"/>
     <updated>2012-05-16T07:42:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8</id>
+    <id>http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8</id>
     <content type="html"><![CDATA[<p>Yesterday's I refactored my specs and crawler to support ignoring selections. While I started parsing the metadata I quickly realized that certain bits were rather specific and needed to have custom parsing methods. Today I'm going to write some format objects to help with all that.</p>
 
 <!--more-->
@@ -356,9 +356,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 7]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/"/>
+    <link href="http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/"/>
     <updated>2012-05-15T21:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7</id>
+    <id>http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7</id>
     <content type="html"><![CDATA[<p>During my last post I realized that including my metadata in the blog post as only a ul meant that all the words were being scraped as part of the keyword frequency search. After thinking about it for a while I think I'm going to give the keyword search method an optional value which it can use to ignore or delete certain nodes.</p>
 
 <!--more-->
@@ -445,9 +445,9 @@ Coffee: [" 0"]
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 6]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/"/>
+    <link href="http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/"/>
     <updated>2012-05-13T07:52:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6</id>
+    <id>http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6</id>
     <content type="html"><![CDATA[<p>Yesterday we verified that our <code>Crawler</code> was able to hit a document and, given the right selector, pull down a list of words and their frequency on the page. We also created a custom exception to be used whenever the selector fails to pull down the right content. I'm going to repeat this process today with the <code>get_metadata_by_selector</code>. If there's time we'll try to output another file with our data, otherwise that'll be tomorrow's homeworkd :D</p>
 
 <!--more-->
@@ -713,9 +713,9 @@ post-construct
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 5]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
+    <link href="http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
     <updated>2012-05-12T07:02:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
+    <id>http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
     <content type="html"><![CDATA[<p>Last night I got the <code>Crawler</code> passing its test for <code>#get_words_by_selector</code>. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both <code>throw</code>/<code>catch</code> and <code>raise</code>/<code>rescue</code> so what's the difference between throw/catch and raise/rescue in Ruby?</p>
 
 <!--more-->

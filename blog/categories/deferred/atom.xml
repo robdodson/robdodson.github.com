@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Deferred | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/deferred/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/deferred/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Make Your Own jQuery Deferreds and Promises]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/"/>
+    <link href="http://robdodson.me/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/"/>
     <updated>2012-06-03T20:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises</id>
+    <id>http://robdodson.me/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises</id>
     <content type="html"><![CDATA[<p>Last week <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">I did a post on how to load an Underscore template using jQuery's Deferred method</a>. I got some great feedback from folks and decided I should do a follow up showing how to create your own Deferreds.</p>
 
 <!--more-->
@@ -195,9 +195,9 @@ There are more cool things you can do with</code>Deferreds<code>I highly recomme
   
   <entry>
     <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <link href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
     <updated>2012-05-30T08:53:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <id>http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
     <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Singleton | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/singleton/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/singleton/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Singleton]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/08/javascript-design-patterns-singleton/"/>
+    <link href="http://robdodson.me/blog/2012/08/08/javascript-design-patterns-singleton/"/>
     <updated>2012-08-08T19:52:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/08/javascript-design-patterns-singleton</id>
+    <id>http://robdodson.me/blog/2012/08/08/javascript-design-patterns-singleton</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>Ah yes the Singleton, a pattern whose name lives in infamy. For the uninitiated a little explanation is in order. A Singleton is an object which can only be instantiated one time. Repeated calls to its constructor return the same instance and in this way one can ensure that they don't accidentally create, say, two Users in a single User application. Doesn't sound too bad, right? Well, if you're responsible then it arguably <em>is</em> OK but there are many caveats. Before I get into those though, let's throw in the formal definition <em>a la</em> the Gang of Four.</p>

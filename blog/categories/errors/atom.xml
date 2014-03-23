@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Errors | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/errors/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/errors/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Syntax Error: Unexpected tIDENTIFIER in Rails 3]]></title>
-    <link href="http://robdodson.github.com/blog/2011/09/21/syntax-error-unexpected-tidentifier/"/>
+    <link href="http://robdodson.me/blog/2011/09/21/syntax-error-unexpected-tidentifier/"/>
     <updated>2011-09-21T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2011/09/21/syntax-error-unexpected-tidentifier</id>
+    <id>http://robdodson.me/blog/2011/09/21/syntax-error-unexpected-tidentifier</id>
     <content type="html"><![CDATA[<p>Today we’re going to look at this little gem, which is really nothing more than a syntax error. If you’re not used to Ruby’s syntax, this can be a particularly easy stumbling block.</p>
 
 <!--more-->
@@ -120,9 +120,9 @@ say_hello({:name => 'Rob', :age => 27})
   
   <entry>
     <title type="html"><![CDATA[NoMethodError in Rails 3]]></title>
-    <link href="http://robdodson.github.com/blog/2011/09/20/nomethoderror-in-rails-3/"/>
+    <link href="http://robdodson.me/blog/2011/09/20/nomethoderror-in-rails-3/"/>
     <updated>2011-09-20T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2011/09/20/nomethoderror-in-rails-3</id>
+    <id>http://robdodson.me/blog/2011/09/20/nomethoderror-in-rails-3</id>
     <content type="html"><![CDATA[<p>Coming from Actionscript 3 I’m pretty used to all of the different errors that the Flash compiler and runtime typically throw at me. But now that I’ve started teaching myself Ruby on Rails 3 I’m having to learn a whole new lexicon of messages which generally amount to “Something blow’d up...”</p>
 
 <p>For my own benefit, and hopefully for the benefit of others, I’m going to post the errors and solutions that I come up with. Hopefully since I’m a total newbie, explaining things from my perspective will help other people who are new to the language as well.</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Data Viz | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/data-viz/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/data-viz/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[D3 Basics: The Linear Scale]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/"/>
+    <link href="http://robdodson.me/blog/2012/05/04/d3-basics-the-linear-scale/"/>
     <updated>2012-05-04T07:21:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale</id>
+    <id>http://robdodson.me/blog/2012/05/04/d3-basics-the-linear-scale</id>
     <content type="html"><![CDATA[<!-- CSS Styles: -->
 
 
@@ -257,9 +257,9 @@ As each element of the array is passed to our width accessor it's run through th
   
   <entry>
     <title type="html"><![CDATA[D3 Basics: An Introduction To Scales]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/03/d3-basics-an-introduction-to-scales/"/>
+    <link href="http://robdodson.me/blog/2012/05/03/d3-basics-an-introduction-to-scales/"/>
     <updated>2012-05-03T10:04:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/03/d3-basics-an-introduction-to-scales</id>
+    <id>http://robdodson.me/blog/2012/05/03/d3-basics-an-introduction-to-scales</id>
     <content type="html"><![CDATA[<!-- CSS Styles: -->
 
 
@@ -379,9 +379,9 @@ x.range([0, 1000]);
   
   <entry>
     <title type="html"><![CDATA[D3.js and Octopress]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/"/>
+    <link href="http://robdodson.me/blog/2012/05/02/d3-js-and-octopress/"/>
     <updated>2012-05-02T07:20:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress</id>
+    <id>http://robdodson.me/blog/2012/05/02/d3-js-and-octopress</id>
     <content type="html"><![CDATA[<!-- CSS Styles: -->
 
 

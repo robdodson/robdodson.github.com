@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Observer | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/observer/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/observer/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Observer]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/"/>
+    <link href="http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer/"/>
     <updated>2012-08-16T13:19:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer</id>
+    <id>http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>Observer is one of the most popular design patterns and chances are you're probably already using it. If you've ever written an event listener with <code>addEventListener</code> or used one of jQuery's many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc... then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn't care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>

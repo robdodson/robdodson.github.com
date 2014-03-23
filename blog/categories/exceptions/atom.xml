@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Exceptions | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/exceptions/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/exceptions/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 6]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/"/>
+    <link href="http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/"/>
     <updated>2012-05-13T07:52:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6</id>
+    <id>http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6</id>
     <content type="html"><![CDATA[<p>Yesterday we verified that our <code>Crawler</code> was able to hit a document and, given the right selector, pull down a list of words and their frequency on the page. We also created a custom exception to be used whenever the selector fails to pull down the right content. I'm going to repeat this process today with the <code>get_metadata_by_selector</code>. If there's time we'll try to output another file with our data, otherwise that'll be tomorrow's homeworkd :D</p>
 
 <!--more-->
@@ -283,9 +283,9 @@ post-construct
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 5]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
+    <link href="http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
     <updated>2012-05-12T07:02:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
+    <id>http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
     <content type="html"><![CDATA[<p>Last night I got the <code>Crawler</code> passing its test for <code>#get_words_by_selector</code>. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both <code>throw</code>/<code>catch</code> and <code>raise</code>/<code>rescue</code> so what's the difference between throw/catch and raise/rescue in Ruby?</p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Markdown | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/markdown/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/markdown/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
     <updated>2013-10-02T08:05:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <id>http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
     <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
 
 <p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>

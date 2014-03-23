@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Require.js | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/require-js/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/require-js/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[A Require.js multi-page shimmed site: How-To]]></title>
-    <link href="http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to/"/>
+    <link href="http://robdodson.me/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to/"/>
     <updated>2012-11-18T13:05:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to</id>
+    <id>http://robdodson.me/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to</id>
     <content type="html"><![CDATA[<p>I've been working with RequireJS a lot lately and found it really improves the way I manage my code. I had previous experience with Require in the context of some of my Backbone posts, but I'd never used it on a more traditional multi-page site before. The process of setting up Require on a multi-page site can be pretty confusing, so I thought I would put together this tutorial to help out others who might be stuck.</p>
 
 <!--more-->
@@ -214,9 +214,9 @@ require(['./js/common'], function (common) {
   
   <entry>
     <title type="html"><![CDATA[Backbone Boilerplate: Playing with Require.js]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/18/backbone-boilerplate-playing-with-require-dot-js/"/>
+    <link href="http://robdodson.me/blog/2012/05/18/backbone-boilerplate-playing-with-require-dot-js/"/>
     <updated>2012-05-18T08:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/18/backbone-boilerplate-playing-with-require-dot-js</id>
+    <id>http://robdodson.me/blog/2012/05/18/backbone-boilerplate-playing-with-require-dot-js</id>
     <content type="html"><![CDATA[<p>I want to keep playing with require.js and AMD modules today so I can really internalize the concepts around them. I'm going to go through the examples in <a href="http://requirejs.org/docs/api.html#jsfiles">the require documentation</a> starting with loading regular scripts and then defining modules and loading those.</p>
 
 <!--more-->
@@ -234,7 +234,7 @@ require(['./js/common'], function (common) {
 <p>  <title>Require.js Sandbox</title></p>
 
 <p>  <!-- Application styles -->
-  <link rel="stylesheet" href="http://robdodson.github.com/assets/css/index.css">
+  <link rel="stylesheet" href="http://robdodson.me/assets/css/index.css">
 </head></p>
 
 <p><body>
@@ -242,7 +242,7 @@ require(['./js/common'], function (common) {
   <div role="main" id="main"></div></p>
 
 <p>  <!-- Application source -->
-  <script src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+  <script src="http://robdodson.me/assets/js/libs/require.js"></script>
 </body>
 </html>
 ```
@@ -301,7 +301,7 @@ And in our updated index.html we're going to require that module.</p>
 <p>  <title>Require.js Sandbox</title></p>
 
 <p>  <!-- Application styles -->
-  <link rel="stylesheet" href="http://robdodson.github.com/assets/css/index.css">
+  <link rel="stylesheet" href="http://robdodson.me/assets/css/index.css">
 </head></p>
 
 <p><body>
@@ -309,7 +309,7 @@ And in our updated index.html we're going to require that module.</p>
   <div role="main" id="main"></div></p>
 
 <p>  <!-- Application source -->
-  <script src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+  <script src="http://robdodson.me/assets/js/libs/require.js"></script>
   <script></p>
 
 <pre><code>require(["app/person"], function(person) {
@@ -402,7 +402,7 @@ goToSleep: function() {
 
 <p>``` html index.html</p>
 
-<script data-main="" src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+<script data-main="" src="http://robdodson.me/assets/js/libs/require.js"></script>
 
 
 <script>
@@ -447,9 +447,9 @@ bear in mind that each module requires an http request to load it so you don't w
   
   <entry>
     <title type="html"><![CDATA[Getting Familiar with Backbone Boilerplate]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/"/>
+    <link href="http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/"/>
     <updated>2012-05-17T07:47:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/17/getting-familiar-with-backbone-boilerplate</id>
+    <id>http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate</id>
     <content type="html"><![CDATA[<p>I have an upcoming project which uses <a href="http://documentcloud.github.com/backbone/">Backbone</a> and <a href="http://nodejs.org/">Node.js</a> so I thought it would be good to blog about the topics (particularly Backbone) for a while to make sure I'm well up to speed.</p>
 
 <!--more-->
@@ -478,7 +478,7 @@ bear in mind that each module requires an http request to load it so you don't w
 <p>  <title>Backbone Boilerplate</title></p>
 
 <p>  <!-- Application styles -->
-  <link rel="stylesheet" href="http://robdodson.github.com/assets/css/index.css">
+  <link rel="stylesheet" href="http://robdodson.me/assets/css/index.css">
 </head></p>
 
 <p><body>
@@ -486,7 +486,7 @@ bear in mind that each module requires an http request to load it so you don't w
   <div role="main" id="main"></div></p>
 
 <p>  <!-- Application source -->
-  <script data-main="app/config" src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+  <script data-main="app/config" src="http://robdodson.me/assets/js/libs/require.js"></script>
 </body>
 </html>
 ```
@@ -498,7 +498,7 @@ Require.js is a module and file loader which will help us manage our AMD modules
 <!-- Application source -->
 
 
-<p>  <script data-main="app/config" src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+<p>  <script data-main="app/config" src="http://robdodson.me/assets/js/libs/require.js"></script>
 <code>``
 the</code>data-main<code>attribute in the script tag is telling require.js what to load first. In this case it's the</code>app/config.js<code>file. If you omit the</code>js<code>require will add it for you. If you add the</code>.js` require will respect the path exactly as it was given. This distinction seems kind of trivial here but later on when you start configuring require with baseUrls and whatnot, it becomes more important.</p>
 

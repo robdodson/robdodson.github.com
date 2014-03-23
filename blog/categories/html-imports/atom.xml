@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: HTML Imports | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/html-imports/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/html-imports/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
     <updated>2013-10-02T08:05:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <id>http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
     <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
 
 <p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
@@ -202,18 +202,18 @@ created: function() {
   
   <entry>
     <title type="html"><![CDATA[Web Components Resources]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/22/web-components-resources/"/>
+    <link href="http://robdodson.me/blog/2013/08/22/web-components-resources/"/>
     <updated>2013-08-22T17:47:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/22/web-components-resources</id>
+    <id>http://robdodson.me/blog/2013/08/22/web-components-resources</id>
     <content type="html"><![CDATA[<p>Eric Bidelman (<a href="http://twitter.com/ebidel">@ebidel</a>) put together <a href="https://gist.github.com/ebidel/6314025">a great list of Web Components Resources</a>. It's nice to have it all in one place because it sure can get confusing hoping around from spec to article to slideshow, etc. If you have more resources make sure to do a PR and add them to the list!</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Exploring HTML Imports]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/"/>
+    <link href="http://robdodson.me/blog/2013/08/20/exploring-html-imports/"/>
     <updated>2013-08-20T13:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/20/exploring-html-imports</id>
+    <id>http://robdodson.me/blog/2013/08/20/exploring-html-imports</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2013/03/17/why-web-components/">Web Components</a> have come a long way in the past few months and one of the technologies that I'm most interested in is <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html">HTML Imports</a> (or "imports", for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Elements</a> where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.</p>
 
 <!--more-->
@@ -224,13 +224,13 @@ created: function() {
 <p>Imports are a new type of <code>link</code> tag which should be familiar to you since that's also how we load our stylesheets.</p>
 
 <p><code>html
-&lt;link rel="stylesheet" href="http://robdodson.github.com/path/to/styles.css"&gt;
+&lt;link rel="stylesheet" href="http://robdodson.me/path/to/styles.css"&gt;
 </code></p>
 
 <p>For an import we just replace the <code>rel</code> with one of type <code>import</code>.</p>
 
 <p><code>html
-&lt;link rel="import" href="http://robdodson.github.com/path/to/some/import.html"&gt;
+&lt;link rel="import" href="http://robdodson.me/path/to/some/import.html"&gt;
 </code></p>
 
 <p>At the moment, imports do not block like script tags. However, that may change in the future to help with <a href="http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html">Custom Element resolution.</a></p>
@@ -263,7 +263,7 @@ in Chrome's <code>about:flags</code>.</p>
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Basic HTML Imports&lt;/title&gt;
 &lt;!-- Pull in our blog post example --&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/blog-post.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -334,7 +334,7 @@ First we query the</code>link<code>tag which loaded our import. Then we extract 
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Basic HTML Imports&lt;/title&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/blog-post.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -343,7 +343,7 @@ First we query the</code>link<code>tag which loaded our import. Then we extract 
 <pre><code>&lt;p&gt;Hello World!&lt;/p&gt;
 
 &lt;!-- Include polymer.js --&gt;
-&lt;script src="http://robdodson.github.com/bower_components/polymer/polymer.min.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/bower_components/polymer/polymer.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Listen for the HTMLImportsLoaded event --&gt;
 &lt;script&gt;
@@ -379,7 +379,7 @@ Using the above we should get the same results as before.</p>
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Imports with CSS&lt;/title&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/blog-post.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -446,7 +446,7 @@ When we run this in Canary we should get the following:</p>
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Basic HTML Imports&lt;/title&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/blog-post.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -528,9 +528,9 @@ If we run this we should get the exact same outcome as before.</p>
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Imports with Templates&lt;/title&gt;
 &lt;!-- Include Chart.js so our import can use it --&gt;
-&lt;script src="http://robdodson.github.com/lib/chart.min.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/lib/chart.min.js"&gt;&lt;/script&gt;
 &lt;!-- Make sure to import chart.html --&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/chart.html"&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/chart.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -616,8 +616,8 @@ We're creating a new</code><template>` which contains a canvas tag and a script 
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Imports with Custom Elements&lt;/title&gt;
-&lt;script src="http://robdodson.github.com/lib/chart.min.js"&gt;&lt;/script&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/chart.html"&gt;
+&lt;script src="http://robdodson.me/lib/chart.min.js"&gt;&lt;/script&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/chart.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -796,8 +796,8 @@ var myNewChart = new Chart(ctx).Pie(data);
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Imports with Custom Elements&lt;/title&gt;
-&lt;script src="http://robdodson.github.com/lib/chart.min.js"&gt;&lt;/script&gt;
-&lt;link rel="import" href="http://robdodson.github.com/imports/chart.html"&gt;
+&lt;script src="http://robdodson.me/lib/chart.min.js"&gt;&lt;/script&gt;
+&lt;link rel="import" href="http://robdodson.me/imports/chart.html"&gt;
 </code></pre>
 
 <p>  </head>

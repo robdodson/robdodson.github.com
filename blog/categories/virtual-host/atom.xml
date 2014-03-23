@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Virtual Host | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/virtual-host/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/virtual-host/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Virtual Host in Mountain Lion with Apache]]></title>
-    <link href="http://robdodson.github.com/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache/"/>
+    <link href="http://robdodson.me/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache/"/>
     <updated>2012-10-02T23:16:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache</id>
+    <id>http://robdodson.me/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache</id>
     <content type="html"><![CDATA[<p>If you're using Mountain Lion and have the need to setup a vhost it can be a little tricky to get the ball rolling. I'm going to do my best to detail the process that I use to set everything up. Hopefully you can use these same steps to square aware your system.</p>
 
 <!--more-->

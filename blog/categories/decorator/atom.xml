@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Decorator | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/decorator/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/decorator/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Decorator Update]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/"/>
+    <link href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/"/>
     <updated>2012-08-30T18:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/30/javascript-design-patterns-decorator-pt-2</id>
+    <id>http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">Yesterday's post</a> drew a lot of traffic from Reddit and with it came some really good feedback. If you haven't read the <a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">previous post</a> please do so first and then come back here.</p>
 
 <p>I want to go through some of what was said so I can refine my examples and also clear up any confusion.</p>
@@ -144,9 +144,9 @@ Since we're kind of mixing OO and functional style here the one caveat is that y
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Decorator]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/27/javascript-design-patterns-decorator/"/>
+    <link href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/"/>
     <updated>2012-08-27T09:59:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/27/javascript-design-patterns-decorator</id>
+    <id>http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p><a href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">Update: Part 2 has been posted!</a></p>

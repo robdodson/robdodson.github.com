@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: AMD | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/amd/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/amd/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[RequireJS -- Embracing the Awesomness of AMD Modules]]></title>
-    <link href="http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules/"/>
+    <link href="http://robdodson.me/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules/"/>
     <updated>2013-03-21T21:57:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules</id>
+    <id>http://robdodson.me/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules</id>
     <content type="html"><![CDATA[<p>Over the past few weeks I put together this talk for my team at GE to help get everyone on the same page with AMD modules. I figured it'd be cool if I removed any GE specific stuff and open sourced the presentation, so here it is!</p>
 
 <p>The video is around 35 minutes long and there's a slide deck available on Github that has clickable links and whatnot. Enjoy!</p>

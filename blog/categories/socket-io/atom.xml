@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Socket.io | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/socket-io/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/socket-io/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Building a Countdown Timer with Socket.io pt. 3]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/"/>
+    <link href="http://robdodson.me/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/"/>
     <updated>2012-06-07T19:41:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3</id>
+    <id>http://robdodson.me/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3</id>
     <content type="html"><![CDATA[<p>Today's the day we wrap up our countdown timer and deploy it to Heroku. But before we launch this puppy we need to clean house a little and spice up the visual appeal.</p>
 
 <!--more-->
@@ -360,9 +360,9 @@ Finally I chose to use some funky buttons from [Chad Mazzola's CSS3 Buttons proj
   
   <entry>
     <title type="html"><![CDATA[Building a Countdown Timer with Socket.io pt. 2]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/"/>
+    <link href="http://robdodson.me/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/"/>
     <updated>2012-06-06T07:47:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2</id>
+    <id>http://robdodson.me/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/">Continuing from yesterday's post</a> we started out with a rather crude timer and today I want to upgrade it to a full fledged model, <code>Stopwatch</code>, which dispatches events for the view to hook on to.</p>
 
 <!--more-->
@@ -650,9 +650,9 @@ tick: 00:59:57
   
   <entry>
     <title type="html"><![CDATA[Building a Countdown Timer with Socket.io]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/"/>
+    <link href="http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/"/>
     <updated>2012-06-05T08:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io</id>
+    <id>http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io</id>
     <content type="html"><![CDATA[<p>Yesterday I put together a very simple Node/Socket.io application and showed how to deploy it to Heroku. Today I'm going to keep going with that app to see if I can get the functionality that I want. The app is a basic stopwatch so that shouldn't be too hard. If you want to catch up <a href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/">checkout yesterday's article</a> which explains setting everything up.</p>
 
 <!--more-->
@@ -737,9 +737,9 @@ var socket = io.connect(window.location.hostname);</p>
   
   <entry>
     <title type="html"><![CDATA[Deploying Your First Node.js and Socket.io App to Heroku]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/"/>
+    <link href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/"/>
     <updated>2012-06-04T22:01:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku</id>
+    <id>http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku</id>
     <content type="html"><![CDATA[<p><em>Update: This page has been translated into <a href="http://www.webhostinghub.com/support/es/misc/implementando-tus-primeras-aplicaciones">Spanish</a> by Maria Ramos.</em></p>
 
 <p>At my office we like to shoot each other from across the room with Nerf guns. In an effort to actually remain productive we've implemented a rule that whenever you get shot you're dead for 1 hour. But that hour can be a little tricky to keep track of between players. Who's dead and who isn't? Am I about to be shot right now??</p>
@@ -875,16 +875,16 @@ io.sockets.emit('status', { status: status });
 &lt;![endif]--&gt;
 
 &lt;!-- styles --&gt;
-&lt;link href="http://robdodson.github.com/css/main.css" rel="stylesheet"&gt;
+&lt;link href="http://robdodson.me/css/main.css" rel="stylesheet"&gt;
 </code></pre>
 
 <p>  </head>
   <body></p>
 
 <pre><code>&lt;%- body %&gt;
-&lt;script src="http://robdodson.github.com/socket.io/socket.io.js"&gt;&lt;/script&gt;
-&lt;script src="http://robdodson.github.com/js/libs/jquery.js"&gt;&lt;/script&gt;
-&lt;script src="http://robdodson.github.com/js/main.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/socket.io/socket.io.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/js/libs/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/js/main.js"&gt;&lt;/script&gt;
 </code></pre>
 
 <p>  </body>

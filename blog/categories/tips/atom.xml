@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Tips | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/tips/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/tips/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Sublime Text 2 Tips and Shortcuts]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/"/>
+    <link href="http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/"/>
     <updated>2012-06-23T22:28:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts</id>
+    <id>http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts</id>
     <content type="html"><![CDATA[<p>I've been using Sublime Text 2 for probably two months now and in that time I've discovered tons of useful tricks. I figured I should start writing them down for anyone who might be interested. I'll try to explain the bits that seem esoteric because there are a lot of cool commands which only work in certain contexts.</p>
 
 <!--more-->

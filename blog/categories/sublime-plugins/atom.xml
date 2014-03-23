@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Sublime Plugins | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/sublime-plugins/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/sublime-plugins/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hacking the PATH variable in Sublime Text]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/14/hacking-the-path-variable-in-sublime-text/"/>
+    <link href="http://robdodson.me/blog/2012/05/14/hacking-the-path-variable-in-sublime-text/"/>
     <updated>2012-05-14T20:26:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/14/hacking-the-path-variable-in-sublime-text</id>
+    <id>http://robdodson.me/blog/2012/05/14/hacking-the-path-variable-in-sublime-text</id>
     <content type="html"><![CDATA[<p>This is going to be a bit of a lightning post but I wanted to quickly show off how to edit the PATH variable that Sublime text uses. I should warn you that that I am neither an expert in Python nor am I a very seasoned Sublime user. So having said that take all of this with a grain of salt and use at your own risk.</p>
 
 <!--more-->

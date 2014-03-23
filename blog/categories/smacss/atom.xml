@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: SMACSS | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/smacss/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/smacss/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Let's Talk SMACSS, Man]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/"/>
+    <link href="http://robdodson.me/blog/2012/06/09/lets-talk-smacss/"/>
     <updated>2012-06-09T21:03:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss</id>
+    <id>http://robdodson.me/blog/2012/06/09/lets-talk-smacss</id>
     <content type="html"><![CDATA[<p>In an effort to further my understanding of CSS best practices I've ended up with two sort of looming frameworks: <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> After reading up on both I feel more drawn toward SMACSS, most likely because it features a lumberjack on its site. I want to give a quick summary of what SMACSS has to offer. In so doing I'm going to borrow liberally from the documentation and then explain my thinking as it relates to certain passages. Cool? OK.</p>
 
 <!--more-->
@@ -303,9 +303,9 @@ Likewise if you need to switch to a different font or size, here is where you wo
   
   <entry>
     <title type="html"><![CDATA[CSS Semantics: Best Practices]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/09/css-semantics/"/>
+    <link href="http://robdodson.me/blog/2012/06/09/css-semantics/"/>
     <updated>2012-06-09T07:19:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/09/css-semantics</id>
+    <id>http://robdodson.me/blog/2012/06/09/css-semantics</id>
     <content type="html"><![CDATA[<p>CSS is, for me, one of the most challenging and nerve wracking aspects of my job. With most programming languages there are frameworks and guides and heuristics that all make up a suite of best practices. CSS doesn't <em>really</em> have anything like this and as a result it's kind of a mish-mash of good rules to follow, definite don'ts, and lots and lots of grey area. Since I'm starting a new CSS heavy project, and because I want to further my own understanding in this realm, I'm going to spend a few posts exploring the topic of what makes good, maintainable CSS. Along the way I'm also going to point out a few frameworks that I've been looking at, in particular <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> But lets kick things off with a discussion of what it means to write good, semantic CSS selectors and we'll follow up with frameworks in our next post.</p>
 
 <!--more-->

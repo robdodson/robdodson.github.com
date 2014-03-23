@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Polymer | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/polymer/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/polymer/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
+    <link href="http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
     <updated>2013-11-19T09:27:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
+    <id>http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
     <content type="html"><![CDATA[<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
 
 <!-- more -->
@@ -68,9 +68,9 @@ font-style: normal;
   
   <entry>
     <title type="html"><![CDATA[The Cat and the Hat CSS Selectors]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
+    <link href="http://robdodson.me/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
     <updated>2013-11-15T11:08:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
+    <id>http://robdodson.me/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
     <content type="html"><![CDATA[<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM's author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That's where the new "cat" and "hat" CSS selectors come in.</p>
 
 <!-- more -->
@@ -89,7 +89,7 @@ font-style: normal;
 <p data-height="268" data-theme-id="0" data-slug-hash="EhIax" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/EhIax'>Shadow DOM "Hat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <h2>The Cat <a href="#" id="the-cat"></a></h2>
@@ -99,7 +99,7 @@ font-style: normal;
 <p data-height="315" data-theme-id="0" data-slug-hash="wFqJg" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wFqJg'>Shadow DOM "Cat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <h2>Styling Native Elements <a href="#" id="styling-native-elements"></a></h2>
@@ -109,16 +109,16 @@ font-style: normal;
 <p data-height="268" data-theme-id="0" data-slug-hash="iaJHd" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/iaJHd'>Shadow DOM "Cat" and "Hat" CSS selectors</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Repeating Templates in Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer/"/>
     <updated>2013-11-12T15:14:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer</id>
+    <id>http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer</id>
     <content type="html"><![CDATA[<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
 
 <!-- more -->
@@ -195,7 +195,7 @@ font-style: normal;
 <p data-height="268" data-theme-id="0" data-slug-hash="wxrqf" data-user="robdodson" data-default-tab="html" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wxrqf'>Polymer Template Bindings</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <p>I mentioned this to Eric Bidelman and he opened <a href="https://github.com/Polymer/docs/issues/191">a ticket to improve the docs</a>, so keep an eye out for that. Hope this helps some of you that may have been stuck :)</p>
@@ -204,9 +204,9 @@ font-style: normal;
   
   <entry>
     <title type="html"><![CDATA[Web Components Revolution]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/24/web-components-revolution/"/>
+    <link href="http://robdodson.me/blog/2013/10/24/web-components-revolution/"/>
     <updated>2013-10-24T12:18:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/24/web-components-revolution</id>
+    <id>http://robdodson.me/blog/2013/10/24/web-components-revolution</id>
     <content type="html"><![CDATA[<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
 
 <br>
@@ -218,9 +218,9 @@ font-style: normal;
   
   <entry>
     <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
     <updated>2013-10-02T08:05:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <id>http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
     <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
 
 <p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>

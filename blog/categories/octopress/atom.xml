@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Octopress | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/octopress/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Some Octopress Rake Tips]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/11/some-octopress-rake-tips/"/>
+    <link href="http://robdodson.me/blog/2012/06/11/some-octopress-rake-tips/"/>
     <updated>2012-06-11T19:04:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/11/some-octopress-rake-tips</id>
+    <id>http://robdodson.me/blog/2012/06/11/some-octopress-rake-tips</id>
     <content type="html"><![CDATA[<p>This is a quick post just to scratch one of my own itches. I've been using Octopress every single day for around two months now and the generation time for my blog is slowly starting to creep up. I'd heard that you could isolate a post and just preview/generate it instead of doing the whole blog every time but it wasn't until today that I finally decided to look into it.</p>
 
 <!--more-->
@@ -98,9 +98,9 @@ rake watch                     # Watch the site and regenerate when it changes
   
   <entry>
     <title type="html"><![CDATA[D3.js and Octopress]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/"/>
+    <link href="http://robdodson.me/blog/2012/05/02/d3-js-and-octopress/"/>
     <updated>2012-05-02T07:20:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress</id>
+    <id>http://robdodson.me/blog/2012/05/02/d3-js-and-octopress</id>
     <content type="html"><![CDATA[<!-- CSS Styles: -->
 
 
@@ -406,9 +406,9 @@ After we declare the self-executing function we include another function called<
   
   <entry>
     <title type="html"><![CDATA[Custom Domain with Octopress and Github Pages]]></title>
-    <link href="http://robdodson.github.com/blog/2012/04/30/custom-domain-with-octopress-and-github-pages/"/>
+    <link href="http://robdodson.me/blog/2012/04/30/custom-domain-with-octopress-and-github-pages/"/>
     <updated>2012-04-30T06:52:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/04/30/custom-domain-with-octopress-and-github-pages</id>
+    <id>http://robdodson.me/blog/2012/04/30/custom-domain-with-octopress-and-github-pages</id>
     <content type="html"><![CDATA[<p><em>I'm going to try to write this as a bit of a lightening post to see if I can bring down the time it takes me to produce something.</em></p>
 
 <p><a href="http://octopress.org/">Octopress</a> is a blogging framework written by <a href="http://brandonmathis.com/">Brandon Mathis</a> (<a href="https://twitter.com/#!/imathis">@imathis</a>) which sits on top of <a href="https://github.com/mojombo/jekyll">Jekyll</a>. Jekyll is a static site generator, meaning there's no database associated with your blog. Instead of writing everything in a WSYWIG linked to MySQL (like Wordpress or Blogger) you produce text files using Markdown which are then converted to static HTML. There are 3 huge benefits to this approach. First, writing in Markdown is awesome. Once you learn the syntax it's incredibly fast and you don't have to spend time playing with a tiny little editor window just to <s>add</s> <em>some</em> <strong>style</strong> to your posts. Second, writing in your favorite text editor is also awesome. I produce everything in <a href="http://www.sublimetext.com/2">Sublime Text 2</a> and every day I discover new tricks to make the process better. If you've ever had to write a blog post using one of those horrible little TinyMCE editors you will appreciate this feature. And lastly, static HTML is <em>fast</em>.</p>

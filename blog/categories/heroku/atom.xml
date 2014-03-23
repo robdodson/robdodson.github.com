@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Heroku | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/heroku/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/heroku/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Deploying Your First Node.js and Socket.io App to Heroku]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/"/>
+    <link href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/"/>
     <updated>2012-06-04T22:01:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku</id>
+    <id>http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku</id>
     <content type="html"><![CDATA[<p><em>Update: This page has been translated into <a href="http://www.webhostinghub.com/support/es/misc/implementando-tus-primeras-aplicaciones">Spanish</a> by Maria Ramos.</em></p>
 
 <p>At my office we like to shoot each other from across the room with Nerf guns. In an effort to actually remain productive we've implemented a rule that whenever you get shot you're dead for 1 hour. But that hour can be a little tricky to keep track of between players. Who's dead and who isn't? Am I about to be shot right now??</p>
@@ -153,16 +153,16 @@ io.sockets.emit('status', { status: status });
 &lt;![endif]--&gt;
 
 &lt;!-- styles --&gt;
-&lt;link href="http://robdodson.github.com/css/main.css" rel="stylesheet"&gt;
+&lt;link href="http://robdodson.me/css/main.css" rel="stylesheet"&gt;
 </code></pre>
 
 <p>  </head>
   <body></p>
 
 <pre><code>&lt;%- body %&gt;
-&lt;script src="http://robdodson.github.com/socket.io/socket.io.js"&gt;&lt;/script&gt;
-&lt;script src="http://robdodson.github.com/js/libs/jquery.js"&gt;&lt;/script&gt;
-&lt;script src="http://robdodson.github.com/js/main.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/socket.io/socket.io.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/js/libs/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.me/js/main.js"&gt;&lt;/script&gt;
 </code></pre>
 
 <p>  </body>
@@ -335,9 +335,9 @@ $ heroku ps:scale web=0
   
   <entry>
     <title type="html"><![CDATA[How to setup PostgreSQL for Rails and Heroku]]></title>
-    <link href="http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
+    <link href="http://robdodson.me/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
     <updated>2012-04-27T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
+    <id>http://robdodson.me/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
     <content type="html"><![CDATA[<h3>Install PostgreSQL Locally</h3>
 
 <p>Ryan Bates has already put together a wonderful Railscast on this topic so feel free to <a href="http://railscasts.com/episodes/342-migrating-to-postgresql">jump over there</a> to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: jQuery Plugins | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/jquery-plugins/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/jquery-plugins/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <link href="http://robdodson.me/blog/2012/05/24/backbone-events-between-views/"/>
     <updated>2012-05-24T07:23:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <id>http://robdodson.me/blog/2012/05/24/backbone-events-between-views</id>
     <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
 
 <!--more-->

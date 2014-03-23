@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Sublime | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/sublime/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/sublime/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Sublime Snippet Basics]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/24/sublime-snippet-basics/"/>
+    <link href="http://robdodson.me/blog/2012/06/24/sublime-snippet-basics/"/>
     <updated>2012-06-24T22:48:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/24/sublime-snippet-basics</id>
+    <id>http://robdodson.me/blog/2012/06/24/sublime-snippet-basics</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/">Yesterday I covered some tips and tricks</a> I've learned over the past few months of using Sublime. Something I didn't touch on is Sublime's Snippet architecture.</p>
 
 <!--more-->
@@ -125,9 +125,9 @@ That will tell Sublime that when I press</code>cmd+shift+r<code>it should act as
   
   <entry>
     <title type="html"><![CDATA[Sublime Text 2 Tips and Shortcuts]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/"/>
+    <link href="http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/"/>
     <updated>2012-06-23T22:28:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts</id>
+    <id>http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts</id>
     <content type="html"><![CDATA[<p>I've been using Sublime Text 2 for probably two months now and in that time I've discovered tons of useful tricks. I figured I should start writing them down for anyone who might be interested. I'll try to explain the bits that seem esoteric because there are a lot of cool commands which only work in certain contexts.</p>
 
 <!--more-->
@@ -303,9 +303,9 @@ You'll notice that instead of just using a</code>wrap_in_tag<code>command name t
   
   <entry>
     <title type="html"><![CDATA[Hacking the PATH variable in Sublime Text]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/14/hacking-the-path-variable-in-sublime-text/"/>
+    <link href="http://robdodson.me/blog/2012/05/14/hacking-the-path-variable-in-sublime-text/"/>
     <updated>2012-05-14T20:26:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/14/hacking-the-path-variable-in-sublime-text</id>
+    <id>http://robdodson.me/blog/2012/05/14/hacking-the-path-variable-in-sublime-text</id>
     <content type="html"><![CDATA[<p>This is going to be a bit of a lightning post but I wanted to quickly show off how to edit the PATH variable that Sublime text uses. I should warn you that that I am neither an expert in Python nor am I a very seasoned Sublime user. So having said that take all of this with a grain of salt and use at your own risk.</p>
 
 <!--more-->

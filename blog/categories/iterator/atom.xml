@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Iterator | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/iterator/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/iterator/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Iterator]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/"/>
+    <link href="http://robdodson.me/blog/2012/08/10/javascript-design-patterns-iterator/"/>
     <updated>2012-08-10T15:45:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator</id>
+    <id>http://robdodson.me/blog/2012/08/10/javascript-design-patterns-iterator</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>If you're coming from Ruby or Java you probably think of an Iterator as an object which gives you a consistent interface for traversing a collection of some kind. If you're coming from JavaScript or Actionscript you probably just think of an iterator as the <code>i</code> value in a <code>for</code> loop. The term has mixed meanings but in this case we're refering to the former, an object which gives us a consistent interface for iterating over a collection of some kind. If you've never used them before that might seem kind of silly. "If I need to loop over something I'm just going to loop over it!" For many use cases that's totally fine. Where Iterator objects are useful is in situations where you might need to loop in an async fashion (stopping and restarting) or if you want to preclude an object from knowing too much about the inner workings of a collection.</p>

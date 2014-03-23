@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Nokogiri | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/nokogiri/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/nokogiri/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Failing at Ruby]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/"/>
+    <link href="http://robdodson.me/blog/2012/06/23/failing-at-ruby/"/>
     <updated>2012-06-23T01:08:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/23/failing-at-ruby</id>
+    <id>http://robdodson.me/blog/2012/06/23/failing-at-ruby</id>
     <content type="html"><![CDATA[<p>I'm just getting my ass kicked by Ruby tonight so I don't have much to show. Trying to just get my metadata scraping to output something currently looks like this:</p>
 
 <p>``` ruby
@@ -297,9 +297,9 @@ I'm pretty certain I could have done this with Node in a fraction of the time if
   
   <entry>
     <title type="html"><![CDATA[Quick Spider Example]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/21/quick-spider-example/"/>
+    <link href="http://robdodson.me/blog/2012/06/21/quick-spider-example/"/>
     <updated>2012-06-21T01:27:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/21/quick-spider-example</id>
+    <id>http://robdodson.me/blog/2012/06/21/quick-spider-example</id>
     <content type="html"><![CDATA[<p>``` ruby
 require 'mechanize'</p>
 
@@ -344,9 +344,9 @@ Having a horrible time getting anything to run tonight. The code from above is a
   
   <entry>
     <title type="html"><![CDATA[Crawling pages with Mechanize and Nokogiri]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/"/>
+    <link href="http://robdodson.me/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/"/>
     <updated>2012-06-20T00:09:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri</id>
+    <id>http://robdodson.me/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri</id>
     <content type="html"><![CDATA[<p>Short post tonight because I spent so much time figuring out the code. It's late and my brain is firing on about 1 cylinder so it took longer than I expected to get everything working.</p>
 
 <p>The scraper that I'm building is supposed to work like a spider and crawl of the pages of my blog. I wasn't sure what the best way to do that was so I started Googling and came up with <a href="http://mechanize.rubyforge.org/">Mechanize.</a> There are other tools built on top of Mechanize, like <a href="https://github.com/felipecsl/wombat">Wombat</a>, but since my task is so simple I figured I could just write everything I needed with Mechanize and Nokogiri. It's usually a better idea to work with simple tools when you're first grasping concepts so you don't get lost in the weeds of some high powered framework.</p>
@@ -395,9 +395,9 @@ p doc
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 8]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/"/>
+    <link href="http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/"/>
     <updated>2012-05-16T07:42:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8</id>
+    <id>http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8</id>
     <content type="html"><![CDATA[<p>Yesterday's I refactored my specs and crawler to support ignoring selections. While I started parsing the metadata I quickly realized that certain bits were rather specific and needed to have custom parsing methods. Today I'm going to write some format objects to help with all that.</p>
 
 <!--more-->
@@ -612,9 +612,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 7]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/"/>
+    <link href="http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/"/>
     <updated>2012-05-15T21:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7</id>
+    <id>http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7</id>
     <content type="html"><![CDATA[<p>During my last post I realized that including my metadata in the blog post as only a ul meant that all the words were being scraped as part of the keyword frequency search. After thinking about it for a while I think I'm going to give the keyword search method an optional value which it can use to ignore or delete certain nodes.</p>
 
 <!--more-->

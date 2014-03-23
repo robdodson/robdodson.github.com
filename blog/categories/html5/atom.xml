@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: HTML5 | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/html5/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/html5/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
+    <link href="http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
     <updated>2013-11-19T09:27:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
+    <id>http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
     <content type="html"><![CDATA[<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
 
 <!-- more -->
@@ -68,9 +68,9 @@ font-style: normal;
   
   <entry>
     <title type="html"><![CDATA[Repeating Templates in Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer/"/>
     <updated>2013-11-12T15:14:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer</id>
+    <id>http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer</id>
     <content type="html"><![CDATA[<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
 
 <!-- more -->
@@ -147,7 +147,7 @@ font-style: normal;
 <p data-height="268" data-theme-id="0" data-slug-hash="wxrqf" data-user="robdodson" data-default-tab="html" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wxrqf'>Polymer Template Bindings</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
 
 
-<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
 
 <p>I mentioned this to Eric Bidelman and he opened <a href="https://github.com/Polymer/docs/issues/191">a ticket to improve the docs</a>, so keep an eye out for that. Hope this helps some of you that may have been stuck :)</p>
@@ -156,9 +156,9 @@ font-style: normal;
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: JavaScript]]></title>
-    <link href="http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/"/>
+    <link href="http://robdodson.me/blog/2013/09/02/shadow-dom-javascript/"/>
     <updated>2013-09-02T20:46:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript</id>
+    <id>http://robdodson.me/blog/2013/09/02/shadow-dom-javascript</id>
     <content type="html"><![CDATA[<p>We're getting to a point where we've covered most of what there is to know about <a href="/blog/2013/03/16/html5-template-tag-introduction/">templates</a>, <a href="/blog/2013/08/20/exploring-html-imports/">imports</a> and shadow DOM (<a href="/blog/2013/08/26/shadow-dom-introduction/">1</a>, <a href="/blog/2013/08/27/shadow-dom-the-basics/">2</a>, <a href="/blog/2013/08/28/shadow-dom-styles/">3</a>, <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot/">4</a>). The end goal for all of these technologies is <strong>custom elements</strong>, but we're not <em>quite</em> there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I'm going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you'll be in a good place to start creating your own custom elements.</p>
 
 <p>Let's get crackin'!</p>
@@ -397,9 +397,9 @@ document.addEventListener('select', function(e) {
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: Styles (cont.)]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/"/>
+    <link href="http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot/"/>
     <updated>2013-08-29T11:11:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot</id>
+    <id>http://robdodson.me/blog/2013/08/29/shadow-dom-styles-cont-dot</id>
     <content type="html"><![CDATA[<p>In <a href="/blog/2013/08/28/shadow-dom-styles/">yesterday's post</a> we covered the basics of working with styles in Shadow DOM. But we've only just scratched the surface! Today we'll continue from where we left off and explore how to work with <strong>distributed nodes</strong> and how to poke holes in our components so the outside world can reach in and customize 'em.</p>
 
 <!--more-->
@@ -767,9 +767,9 @@ template.remove();
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM: Styles]]></title>
-    <link href="http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/"/>
+    <link href="http://robdodson.me/blog/2013/08/28/shadow-dom-styles/"/>
     <updated>2013-08-28T10:56:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles</id>
+    <id>http://robdodson.me/blog/2013/08/28/shadow-dom-styles</id>
     <content type="html"><![CDATA[<p><a href="/blog/2013/08/27/shadow-dom-the-basics/">Yesterday's post</a> was all about coding and structuring your first Shadow DOM elements. But I'm sure most of you were wondering, how do we style these things?!</p>
 
 <p>The use of CSS in Shadow DOM is an interesting and large topic. So large, in fact, that I'm going to split it up over the next couple of posts. Today we'll learn the basics of using CSS within the <strong>shadow boundary</strong>, and also how to style our <strong>shadow hosts</strong>.</p>

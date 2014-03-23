@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Templates | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/templates/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/templates/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
-    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <link href="http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
     <updated>2013-10-02T08:05:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <id>http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
     <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
 
 <p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
@@ -202,9 +202,9 @@ created: function() {
   
   <entry>
     <title type="html"><![CDATA[How to use EJS in Express]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/31/how-to-use-ejs-in-express/"/>
+    <link href="http://robdodson.me/blog/2012/05/31/how-to-use-ejs-in-express/"/>
     <updated>2012-05-31T11:34:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/31/how-to-use-ejs-in-express</id>
+    <id>http://robdodson.me/blog/2012/05/31/how-to-use-ejs-in-express</id>
     <content type="html"><![CDATA[<p><em>Update: If you're starting a fresh project with Express it's much easier to just run <code>express --ejs</code>. That will scaffold out an Express app for you with EJS ready to go!</em></p>
 
 <p>Here's a quick explanation of how to use EJS instead of Jade in your Express projects. This is super easy and covered well in the documentation but I wanted to put it here since that's what I worked on today :)</p>
@@ -368,9 +368,9 @@ app.get('/', function(req, res) {
   
   <entry>
     <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <link href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
     <updated>2012-05-30T08:53:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <id>http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
     <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
 
 <!--more-->

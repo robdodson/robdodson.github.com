@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: R.js | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/r-js/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/r-js/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[A Require.js multi-page shimmed site: How-To]]></title>
-    <link href="http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to/"/>
+    <link href="http://robdodson.me/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to/"/>
     <updated>2012-11-18T13:05:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to</id>
+    <id>http://robdodson.me/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to</id>
     <content type="html"><![CDATA[<p>I've been working with RequireJS a lot lately and found it really improves the way I manage my code. I had previous experience with Require in the context of some of my Backbone posts, but I'd never used it on a more traditional multi-page site before. The process of setting up Require on a multi-page site can be pretty confusing, so I thought I would put together this tutorial to help out others who might be stuck.</p>
 
 <!--more-->

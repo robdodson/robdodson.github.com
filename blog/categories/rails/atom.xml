@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Rails | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/rails/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[How to setup PostgreSQL for Rails and Heroku]]></title>
-    <link href="http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
+    <link href="http://robdodson.me/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
     <updated>2012-04-27T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
+    <id>http://robdodson.me/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
     <content type="html"><![CDATA[<h3>Install PostgreSQL Locally</h3>
 
 <p>Ryan Bates has already put together a wonderful Railscast on this topic so feel free to <a href="http://railscasts.com/episodes/342-migrating-to-postgresql">jump over there</a> to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.</p>
@@ -112,9 +112,9 @@ You might see some deprecation warnings about vendor plugins. For now you can (p
   
   <entry>
     <title type="html"><![CDATA[A Basic RVM Tutorial for Rails 3]]></title>
-    <link href="http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/"/>
+    <link href="http://robdodson.me/blog/2011/09/23/how-to-use-rvm-for-rails3/"/>
     <updated>2011-09-23T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3</id>
+    <id>http://robdodson.me/blog/2011/09/23/how-to-use-rvm-for-rails3</id>
     <content type="html"><![CDATA[<h3>What is RVM?</h3>
 
 <p><a href="https://rvm.io//">RVM</a> is a great Ruby and gem management tool that should probably be the first thing you install if you’re learning Rails (or Ruby for that matter). The main benefit of RVM is that it helps to keep your rubies and your gems organized into discrete folders which can easily be thrown away and recreated. If you’ve ever had a gem explode on you, then you know how great a feature like this is. I’ll cover the basics of using RVM in this post to quickly get you up and running. This tutorial is written for the OSX terminal, if you're on Windows...um...kill yourself.</p>
@@ -266,9 +266,9 @@ rvm gemset delete my-new-rails-setup
   
   <entry>
     <title type="html"><![CDATA[Syntax Error: Unexpected tIDENTIFIER in Rails 3]]></title>
-    <link href="http://robdodson.github.com/blog/2011/09/21/syntax-error-unexpected-tidentifier/"/>
+    <link href="http://robdodson.me/blog/2011/09/21/syntax-error-unexpected-tidentifier/"/>
     <updated>2011-09-21T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2011/09/21/syntax-error-unexpected-tidentifier</id>
+    <id>http://robdodson.me/blog/2011/09/21/syntax-error-unexpected-tidentifier</id>
     <content type="html"><![CDATA[<p>Today we’re going to look at this little gem, which is really nothing more than a syntax error. If you’re not used to Ruby’s syntax, this can be a particularly easy stumbling block.</p>
 
 <!--more-->
@@ -371,9 +371,9 @@ say_hello({:name => 'Rob', :age => 27})
   
   <entry>
     <title type="html"><![CDATA[NoMethodError in Rails 3]]></title>
-    <link href="http://robdodson.github.com/blog/2011/09/20/nomethoderror-in-rails-3/"/>
+    <link href="http://robdodson.me/blog/2011/09/20/nomethoderror-in-rails-3/"/>
     <updated>2011-09-20T07:33:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2011/09/20/nomethoderror-in-rails-3</id>
+    <id>http://robdodson.me/blog/2011/09/20/nomethoderror-in-rails-3</id>
     <content type="html"><![CDATA[<p>Coming from Actionscript 3 I’m pretty used to all of the different errors that the Flash compiler and runtime typically throw at me. But now that I’ve started teaching myself Ruby on Rails 3 I’m having to learn a whole new lexicon of messages which generally amount to “Something blow’d up...”</p>
 
 <p>For my own benefit, and hopefully for the benefit of others, I’m going to post the errors and solutions that I come up with. Hopefully since I’m a total newbie, explaining things from my perspective will help other people who are new to the language as well.</p>

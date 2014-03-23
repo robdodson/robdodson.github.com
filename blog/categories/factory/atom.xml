@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Factory | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/factory/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/factory/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Factory]]></title>
-    <link href="http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/"/>
+    <link href="http://robdodson.me/blog/2012/09/03/javascript-design-patterns-factory/"/>
     <updated>2012-09-03T12:40:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory</id>
+    <id>http://robdodson.me/blog/2012/09/03/javascript-design-patterns-factory</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>Factories encapsulate and separate object creation from the rest of your code. In situations where the creation of an object can be complex or subject to change a factory can act as a nice buffer to help keep things tidy. Without proper planning Factories can lead to class explosions; as a result the pattern can be both a blessing and a curse depending on how it's used.</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: GFX | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/gfx/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/gfx/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Penner easing equations with GFX and CSS3]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3/"/>
+    <link href="http://robdodson.me/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3/"/>
     <updated>2012-05-27T00:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3</id>
+    <id>http://robdodson.me/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3</id>
     <content type="html"><![CDATA[<p>This is going to be a bit of lightening post because it's rather late and I need to get to bed. I spent most of the day either eating dim sum or hanging out at the <a href="http://www.meetup.com/San-Francisco-Creative-Coders/">SF Creative Coders BBQ</a> so I've neglected my blogging duties a bit.</p>
 
 <p>I have something which will hopefully be useful for some folks who are getting into CSS3 animations with the Gfx plugin for jQuery. <a href="http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx/">I've blogged a bit about Gfx before</a> and one of the first things I noticed was the lack of a built in easing library. Coming from the Flash world where <a href="http://www.greensock.com/tweenlite/">TweenLite is king</a> I've grown very accustomed to using Robert Penner's easing equations for great effect. The same equations are used by the jQuery framework to do its animations. Thankfully <a href="http://matthewlein.com/ceaser/">Matthew Lein was kind enough to convert those over to cubic-beziers</a> for those of us doing CSS3 animations. Since Gfx accepts cubic-beziers I moved the equations from Matthew's tool into an AMD compliant module and <a href="https://github.com/robdodson/amd-css3-ease">put it up on Github.</a> It's very simple so if AMD isn't your thing you can just rip those parts out :D</p>
@@ -62,9 +62,9 @@ easing: Ease.easeInExpo
   
   <entry>
     <title type="html"><![CDATA[CSS3 Transitions with GFX]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/22/css3-transitions-with-gfx/"/>
+    <link href="http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx/"/>
     <updated>2012-05-22T08:06:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/22/css3-transitions-with-gfx</id>
+    <id>http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx</id>
     <content type="html"><![CDATA[<p>CSS3 is a rather verbose tool especially when it comes to transitions and animations. I want to see if there's a way to clean a lot of that up with either a SASS mixin or a jQuery library like <a href="http://maccman.github.com/gfx/">gfx.</a></p>
 
 <p>We'll try to do something simple at first to recreate an animation like the one we have below.</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Foundation | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/foundation/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/foundation/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Building a Responsive Grid with Foundation]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/"/>
+    <link href="http://robdodson.me/blog/2012/06/10/building-a-responsive-grid-with-foundation/"/>
     <updated>2012-06-10T20:24:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation</id>
+    <id>http://robdodson.me/blog/2012/06/10/building-a-responsive-grid-with-foundation</id>
     <content type="html"><![CDATA[<p>Yesterday I introduced <a href="http://smacss.com/">SMACSS</a> and did my best to give a high level overview of its main ideas. I'm using it on my current project and I'm really enjoying it so far. There's just something about having things codified by someone with more experience that gives me immense comfort. When I feel confused I can refer back to those docs and sort out what would be the best path. Standing on the shoulders of giants and all that jazz ;)</p>
 
 <p>Today I want to talk about a CSS framework called <a href="http://foundation.zurb.com/">Foundation</a>, written by the team at <a href="http://www.zurb.com/">ZURB.</a> Unlike SMACSS, Foundation is an actual library of modular code ready to help you quickly prototype your project. The two aren't mutually exclusive. You might think of Foundation as a shiny new toolbox but SMACSS is going to be your 'How To' manual, helping you implement all the new goodes that Foundation has to offer.</p>

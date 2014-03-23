@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Ruby | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/ruby/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Failing at Ruby]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/"/>
+    <link href="http://robdodson.me/blog/2012/06/23/failing-at-ruby/"/>
     <updated>2012-06-23T01:08:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/23/failing-at-ruby</id>
+    <id>http://robdodson.me/blog/2012/06/23/failing-at-ruby</id>
     <content type="html"><![CDATA[<p>I'm just getting my ass kicked by Ruby tonight so I don't have much to show. Trying to just get my metadata scraping to output something currently looks like this:</p>
 
 <p>``` ruby
@@ -297,9 +297,9 @@ I'm pretty certain I could have done this with Node in a fraction of the time if
   
   <entry>
     <title type="html"><![CDATA[Wrapping up the Word Count Spider]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/22/wrapping-up-the-word-count-spider/"/>
+    <link href="http://robdodson.me/blog/2012/06/22/wrapping-up-the-word-count-spider/"/>
     <updated>2012-06-22T00:31:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/22/wrapping-up-the-word-count-spider</id>
+    <id>http://robdodson.me/blog/2012/06/22/wrapping-up-the-word-count-spider</id>
     <content type="html"><![CDATA[<p>Yeesh, I gotta stop writing so late at night... Last night I was trying to get my spider to follow all the links on the blog's archive page and then sum up all the words from every post. Unfortunately I was way too tired to get that to actually work. Tonight I finished that step of the process but it required some ugly code and refactoring our unit tests. Without further adieu...</p>
 
 <!--more-->
@@ -552,9 +552,9 @@ We can use that JSON to start graphing which I'll hopefully have time to get int
   
   <entry>
     <title type="html"><![CDATA[Quick Spider Example]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/21/quick-spider-example/"/>
+    <link href="http://robdodson.me/blog/2012/06/21/quick-spider-example/"/>
     <updated>2012-06-21T01:27:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/21/quick-spider-example</id>
+    <id>http://robdodson.me/blog/2012/06/21/quick-spider-example</id>
     <content type="html"><![CDATA[<p>``` ruby
 require 'mechanize'</p>
 
@@ -599,9 +599,9 @@ Having a horrible time getting anything to run tonight. The code from above is a
   
   <entry>
     <title type="html"><![CDATA[Crawling pages with Mechanize and Nokogiri]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/"/>
+    <link href="http://robdodson.me/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/"/>
     <updated>2012-06-20T00:09:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri</id>
+    <id>http://robdodson.me/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri</id>
     <content type="html"><![CDATA[<p>Short post tonight because I spent so much time figuring out the code. It's late and my brain is firing on about 1 cylinder so it took longer than I expected to get everything working.</p>
 
 <p>The scraper that I'm building is supposed to work like a spider and crawl of the pages of my blog. I wasn't sure what the best way to do that was so I started Googling and came up with <a href="http://mechanize.rubyforge.org/">Mechanize.</a> There are other tools built on top of Mechanize, like <a href="https://github.com/felipecsl/wombat">Wombat</a>, but since my task is so simple I figured I could just write everything I needed with Mechanize and Nokogiri. It's usually a better idea to work with simple tools when you're first grasping concepts so you don't get lost in the weeds of some high powered framework.</p>
@@ -650,9 +650,9 @@ p doc
   
   <entry>
     <title type="html"><![CDATA[Outputting JSON from Ruby]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby/"/>
+    <link href="http://robdodson.me/blog/2012/06/18/outputting-json-from-ruby/"/>
     <updated>2012-06-18T08:19:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby</id>
+    <id>http://robdodson.me/blog/2012/06/18/outputting-json-from-ruby</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/">Last night</a> I got the scraper to write an output.txt file which listed all the contents of <code>words_by_selector</code>. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.</p>
 
 <!--more-->

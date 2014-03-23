@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Backbone | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/backbone/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/backbone/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Managing Your Backbone Views with the State Pattern]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/"/>
+    <link href="http://robdodson.me/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/"/>
     <updated>2012-06-02T18:22:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern</id>
+    <id>http://robdodson.me/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/">Yesterday I wrote a post to illustrate the concepts behind the State pattern</a> (one of my all time favorite tools). If you're new to this pattern and haven't read my previous post I suggest you start there and read this one after you've had a chance to play around with the ideas.</p>
 
 <!--more-->
@@ -243,9 +243,9 @@ var videoPlayer = new VideoPlayer();</p>
   
   <entry>
     <title type="html"><![CDATA[Testing AMD Backbone Modules]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/29/testing-backbone-modules/"/>
+    <link href="http://robdodson.me/blog/2012/05/29/testing-backbone-modules/"/>
     <updated>2012-05-29T08:03:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/29/testing-backbone-modules</id>
+    <id>http://robdodson.me/blog/2012/05/29/testing-backbone-modules</id>
     <content type="html"><![CDATA[<p>Continuing from <a href="http://robdodson.me/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/">yesterday's post</a> I'm going to start to incorporate Backbone into my BDD setup. I'm going to use the <a href="https://github.com/tbranyen/backbone-boilerplate">Backbone Boilerplate</a> and <a href="https://github.com/backbone-boilerplate/grunt-bbb">grunt-bbb</a> to setup a new project. If you're new to the boilerplate or grunt-bbb <a href="http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/">checkout my previous post on getting started.</a></p>
 
 <!--more-->
@@ -474,9 +474,9 @@ define(function(require) {
   
   <entry>
     <title type="html"><![CDATA[Backbone Events: Framework Communication]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/25/backbone-events-framework-communication/"/>
+    <link href="http://robdodson.me/blog/2012/05/25/backbone-events-framework-communication/"/>
     <updated>2012-05-25T08:01:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/25/backbone-events-framework-communication</id>
+    <id>http://robdodson.me/blog/2012/05/25/backbone-events-framework-communication</id>
     <content type="html"><![CDATA[<p>I want to figure out how to communicate on a framework level within Backbone. Coming from Flash and <a href="http://www.robotlegs.org/">RobotLegs</a> I'm used to a few MVC conventions that work very well as far as event dispatching goes. In RobotLegs you typically have a framework wide eventDispatcher that anyone can tune into. In a nutshell your View will trigger an event, for instance a user clicking a button, and that will get dispatched to interested framework actors. These can be other Views or, more likely, they can be Commands. The Commands are like single use actions tied directly to events. Think of it like binding every public method of your controller to an event. The Commands will typically effect models, changing them in some way, and the Models will dispatch an event that the Views listen for to update themselves.</p>
 
 <p>Backbone works differently in that Views are often tied directly to their models like so:</p>
@@ -618,9 +618,9 @@ chatty: function() {
   
   <entry>
     <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <link href="http://robdodson.me/blog/2012/05/24/backbone-events-between-views/"/>
     <updated>2012-05-24T07:23:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <id>http://robdodson.me/blog/2012/05/24/backbone-events-between-views</id>
     <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
 
 <!--more-->
@@ -893,9 +893,9 @@ initialize: function() {
   
   <entry>
     <title type="html"><![CDATA[How do you switch between views in Backbone]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/"/>
+    <link href="http://robdodson.me/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/"/>
     <updated>2012-05-23T07:56:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone</id>
+    <id>http://robdodson.me/blog/2012/05/23/how-do-you-switch-between-views-in-backbone</id>
     <content type="html"><![CDATA[<p>I'm going to try to approach some of my future articles as more of a question/answer setup so they don't turn into these sprawling tutorials. Today I want to focus on moving between views in Backbone.js. I'm starting with some very simple templates and three views: LeftView, MiddleView, RightView. To do this quickly we'll make it so each view is essentially a big button which, when clicked on, should animate to the middle of the screen.</p>
 
 <!--more-->

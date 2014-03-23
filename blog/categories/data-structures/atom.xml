@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Data Structures | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/data-structures/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/data-structures/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ruby Objects and Dot Syntax]]></title>
-    <link href="http://robdodson.github.com/blog/2012/05/01/ruby-objects-and-dot-syntax/"/>
+    <link href="http://robdodson.me/blog/2012/05/01/ruby-objects-and-dot-syntax/"/>
     <updated>2012-05-01T07:37:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/05/01/ruby-objects-and-dot-syntax</id>
+    <id>http://robdodson.me/blog/2012/05/01/ruby-objects-and-dot-syntax</id>
     <content type="html"><![CDATA[<p>Coming from JavaScript I'm very accustomed to doing something like this:</p>
 
 <p>``` javascript Javascript

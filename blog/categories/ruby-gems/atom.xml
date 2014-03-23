@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Ruby Gems | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/ruby-gems/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/ruby-gems/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Messing around with Gems]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/12/messing-around-with-gems/"/>
+    <link href="http://robdodson.me/blog/2012/06/12/messing-around-with-gems/"/>
     <updated>2012-06-12T22:22:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/12/messing-around-with-gems</id>
+    <id>http://robdodson.me/blog/2012/06/12/messing-around-with-gems</id>
     <content type="html"><![CDATA[<p>I want to work on a code generation tool, similar to the one offered up by Rails. However my Ruby-fu is a bit rusty at the moment so this might be an interesting struggle.</p>
 
 <!--more-->

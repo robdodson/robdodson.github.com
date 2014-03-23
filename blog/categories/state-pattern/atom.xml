@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: State Pattern | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/state-pattern/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/state-pattern/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Managing Your Backbone Views with the State Pattern]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/"/>
+    <link href="http://robdodson.me/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/"/>
     <updated>2012-06-02T18:22:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern</id>
+    <id>http://robdodson.me/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/">Yesterday I wrote a post to illustrate the concepts behind the State pattern</a> (one of my all time favorite tools). If you're new to this pattern and haven't read my previous post I suggest you start there and read this one after you've had a chance to play around with the ideas.</p>
 
 <!--more-->
@@ -243,9 +243,9 @@ var videoPlayer = new VideoPlayer();</p>
   
   <entry>
     <title type="html"><![CDATA[Take Control of your App with the JavaScript State Pattern]]></title>
-    <link href="http://robdodson.github.com/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/"/>
+    <link href="http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/"/>
     <updated>2012-06-02T00:09:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten</id>
+    <id>http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten</id>
     <content type="html"><![CDATA[<p>Last week I wrote a post about <a href="http://robdodson.me/blog/2012/05/25/backbone-events-framework-communication/">communicating between views in Backbone.js</a> and since then it has easily become my most popular article. The comments have forced me to think about the ways in which I typically manage state in very large Flash applications and how that might translate to JavaScript and Backbone. Today I want to present my all time favorite design pattern, the State pattern, and illustrate how it can help you maintain control of your application. I want to warn you that I'm going to show a rather large block of what looks like repetitive code because I want the pattern to be obvious. In tomorrow's post we'll clean it up and try it out with a Backbone Model and View.</p>
 
 <!--more-->

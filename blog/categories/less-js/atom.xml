@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: LESS.js | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/less-js/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/less-js/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Debug LESS with Chrome Developer Tools]]></title>
-    <link href="http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/"/>
+    <link href="http://robdodson.me/blog/2012/12/28/debug-less-with-chrome-developer-tools/"/>
     <updated>2012-12-28T08:32:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools</id>
+    <id>http://robdodson.me/blog/2012/12/28/debug-less-with-chrome-developer-tools</id>
     <content type="html"><![CDATA[<p><em>11/19/2013: Updated to work with LESS v1.5.1 which now has support for v3 source maps</em></p>
 
 <p>If you've spent much time with preprocessors like LESS you've probably discovered their one rather crippling flaw: debugging. With thousands of lines of LESS code suddenly turning into even more thousands of lines of CSS, it can become nearly impossible to tell where a particular style originated. Thankfully the Chrome team is addressing this problem with their recent support for <strong>CSS source maps.</strong></p>

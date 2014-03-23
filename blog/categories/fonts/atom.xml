@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Fonts | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/fonts/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/fonts/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
-    <link href="http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
+    <link href="http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
     <updated>2013-11-19T09:27:00-08:00</updated>
-    <id>http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
+    <id>http://robdodson.me/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
     <content type="html"><![CDATA[<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
 
 <!-- more -->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Design Patterns | Rob Dodson talks internets]]></title>
-  <link href="http://robdodson.github.com/blog/categories/design-patterns/atom.xml" rel="self"/>
-  <link href="http://robdodson.github.com/"/>
-  <updated>2014-03-23T08:26:29-07:00</updated>
-  <id>http://robdodson.github.com/</id>
+  <link href="http://robdodson.me/blog/categories/design-patterns/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-23T08:29:42-07:00</updated>
+  <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Factory]]></title>
-    <link href="http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/"/>
+    <link href="http://robdodson.me/blog/2012/09/03/javascript-design-patterns-factory/"/>
     <updated>2012-09-03T12:40:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory</id>
+    <id>http://robdodson.me/blog/2012/09/03/javascript-design-patterns-factory</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>Factories encapsulate and separate object creation from the rest of your code. In situations where the creation of an object can be complex or subject to change a factory can act as a nice buffer to help keep things tidy. Without proper planning Factories can lead to class explosions; as a result the pattern can be both a blessing and a curse depending on how it's used.</p>
@@ -317,9 +317,9 @@ The object that is returned by the call <code>createCaliforniaStyle</code> is th
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Decorator Update]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/"/>
+    <link href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/"/>
     <updated>2012-08-30T18:07:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/30/javascript-design-patterns-decorator-pt-2</id>
+    <id>http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2</id>
     <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">Yesterday's post</a> drew a lot of traffic from Reddit and with it came some really good feedback. If you haven't read the <a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">previous post</a> please do so first and then come back here.</p>
 
 <p>I want to go through some of what was said so I can refine my examples and also clear up any confusion.</p>
@@ -446,9 +446,9 @@ Since we're kind of mixing OO and functional style here the one caveat is that y
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Decorator]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/27/javascript-design-patterns-decorator/"/>
+    <link href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/"/>
     <updated>2012-08-27T09:59:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/27/javascript-design-patterns-decorator</id>
+    <id>http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p><a href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">Update: Part 2 has been posted!</a></p>
@@ -855,9 +855,9 @@ You should be able to look at this snippet of code and say that it's almost cert
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Observer]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/"/>
+    <link href="http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer/"/>
     <updated>2012-08-16T13:19:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer</id>
+    <id>http://robdodson.me/blog/2012/08/16/javascript-design-patterns-observer</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>Observer is one of the most popular design patterns and chances are you're probably already using it. If you've ever written an event listener with <code>addEventListener</code> or used one of jQuery's many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc... then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn't care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>
@@ -1162,9 +1162,9 @@ o.subscribers = {
   
   <entry>
     <title type="html"><![CDATA[JavaScript Design Patterns: Iterator]]></title>
-    <link href="http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/"/>
+    <link href="http://robdodson.me/blog/2012/08/10/javascript-design-patterns-iterator/"/>
     <updated>2012-08-10T15:45:00-07:00</updated>
-    <id>http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator</id>
+    <id>http://robdodson.me/blog/2012/08/10/javascript-design-patterns-iterator</id>
     <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
 <p>If you're coming from Ruby or Java you probably think of an Iterator as an object which gives you a consistent interface for traversing a collection of some kind. If you're coming from JavaScript or Actionscript you probably just think of an iterator as the <code>i</code> value in a <code>for</code> loop. The term has mixed meanings but in this case we're refering to the former, an object which gives us a consistent interface for iterating over a collection of some kind. If you've never used them before that might seem kind of silly. "If I need to loop over something I'm just going to loop over it!" For many use cases that's totally fine. Where Iterator objects are useful is in situations where you might need to loop in an async fashion (stopping and restarting) or if you want to preclude an object from knowing too much about the inner workings of a collection.</p>
