@@ -1,0 +1,407 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Shadow DOM: Styles | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">28 Aug 2013</span>
+	<h1 class="post-title">Shadow DOM: Styles</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><a href="/blog/2013/08/27/shadow-dom-the-basics/">Yesterday&#8217;s post</a> was all about coding and structuring your first Shadow DOM elements. But I&#8217;m sure most of you were wondering, how do we style these things?!</p>
+
+<p>The use of CSS in Shadow DOM is an interesting and large topic. So large, in fact, that I&#8217;m going to split it up over the next couple of posts. Today we&#8217;ll learn the basics of using CSS within the <strong>shadow boundary</strong>, and also how to style our <strong>shadow hosts</strong>.</p>
+
+<!--more-->
+
+
+<p><em>Before we get started I wanted to thank Eric Bidelman for his <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/">amazing article on styling the Shadow DOM</a>. Most of this article is my interpretation of his post. Definitely go read <a href="http://www.html5rocks.com/en/tutorials/#webcomponents">everything on HTML5 Rocks that pertains to Web Components</a> when you get a chance.</em></p>
+
+<h2>Support <a href="#" id="support"></a></h2>
+
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v31 or greater.</p>
+
+<p>Also make sure you&#8217;ve enabled the following in Chrome&#8217;s <code>about:flags</code>.</p>
+
+<p>√ Experimental Web Platform features<br>
+√ Experimental JavaScript<br></p>
+
+<p><em>I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)</em></p>
+
+<h2>Codez! <a href="#" id="codez"></a></h2>
+
+<p>I&#8217;ve created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I&#8217;ll link to the sketch so you can quickly try things out.</p>
+
+<h2>Style Encapsulation <a href="#" id="style-encapsulation"></a></h2>
+
+<h3>Sketch 4: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/04-style-encapsulation">style-encapsulation</a></h3>
+
+<p>Astute readers probably noticed that I used a new term in the introduction for this post. That term is <strong>shadow boundary</strong> and it refers to the barrier that separates the regular DOM (the &#8220;light&#8221; DOM) from the shadow DOM. One of the primary benefits of the shadow boundary is that it prevents styles that are in the main document from leaking into the shadow DOM. This means that even though you might have a selector in your main document for all <code>&lt;h3&gt;</code> tags, that style will not be applied to your shadow DOM element unless you specifically allow it.</p>
+
+<p>Examples? Yes, let&#8217;s.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="nt">button</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+        <span class="k">font-family</span><span class="o">:</span> <span class="k">cursive</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;button&gt;</span>I&#39;m a regular button<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;div&gt;&lt;/div&gt;</span>
+
+    <span class="nt">&lt;script&gt;</span>
+      <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+      <span class="nx">root</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;style&gt;button { font-size: 24px; color: blue; } &lt;/style&gt;&#39;</span> <span class="o">+</span>
+                       <span class="s1">&#39;&lt;button&gt;I\&#39;m a shadow button&lt;/button&gt;&#39;</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-styles1.jpg" title="'Shadow DOM style encapsulation'" ></p>
+
+<p>Here we have two buttons. One is in the regular DOM, and the other is in the shadow DOM. You&#8217;ll notice that the style tag at the top of the page instructs all buttons to use a cursive font and to have a <code>font-size</code> of 18px.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;style&gt;</span>
+  <span class="nt">button</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+    <span class="k">font-family</span><span class="o">:</span> <span class="k">cursive</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+</code></pre></figure>
+
+
+<p>Because of the shadow boundary, the second button ignores this style tag and instead implements its own look. We never specifically override the <code>font-family</code> to change it back to sans serif, it just uses the typical browser defaults.</p>
+
+<p>Keep in mind that the shadow boundary also protects the main document from the shadow DOM. You&#8217;ll notice that our shadow button has a <code>color</code> of blue. But the button in the original document maintains its default appearance.</p>
+
+<p>This kind of <strong>encapsulation</strong> is pretty amazing. For years we&#8217;ve struggled with style sheets that always seem to get bigger and bigger. Over time it can be difficult to add new styles because you&#8217;re worried you&#8217;ll break something elsewhere on the page. The style boundaries provided to us by the shadow DOM means that we can finally start to think about our CSS in a more local, component specific way.</p>
+
+<h2>Styling :host <a href="#" id="styling-host"></a></h2>
+
+<h3>Sketch 5: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/05-styling-host">styling-host</a></h3>
+
+<p>I often think of the shadow host as if it&#8217;s the exterior of a building. Inside there&#8217;s all the inner workings of my widget and outside there should be a nice facade. In many cases you&#8217;ll want to apply some style to this exterior and that&#8217;s where the <code>:host</code> selector comes into play.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;style&gt;</span>
+    <span class="nc">.widget</span> <span class="p">{</span>
+      <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;widget&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.widget&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;style&gt;&#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;:host {&#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;  border: 2px dashed red;&#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;  text-align: left;&#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;  font-size: 28px;&#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;} &#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;&lt;/style&gt;&#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;&lt;content&gt;&lt;/content&gt;&#39;</span><span class="p">;</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-styles2.jpg" title="'Shadow DOM host styles'" ></p>
+
+<p>Adding a red border to our widget doesn&#8217;t seem like much but there&#8217;s actually a number of interesting things happening here. For starters, notice that styles applied to the <code>:host</code> are inherited by elements within the shadow DOM. So our <code>&lt;p&gt;</code> ends up with a <code>font-size</code> of 28px.</p>
+
+<p>Also notice that the page is able to set the <code>text-align</code> inside the <code>:host</code> to center. The <code>:host</code> selector has low specificity by design, so it&#8217;s easier for the document to override it if it needs to. In this case the document style for <code>.widget</code> beats out the shadow style for <code>:host</code>.</p>
+
+<h2>Styling by :host Type <a href="#" id="styling-by-host-type"></a></h2>
+
+<h3>Sketch 6: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/06-styling-by-host-type">styling-host-by-host-type</a></h3>
+
+<p>Because <code>:host</code> is a pseudo selector we can apply it to more than one tag to change the appearance of our component. Let&#8217;s do another example to demonstrate.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;p&gt;</span>My Paragraph<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;div&gt;</span>My Div<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;button&gt;</span>My Button<span class="nt">&lt;/button&gt;</span>
+
+  <span class="c">&lt;!-- Our template --&gt;</span>
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;shadow-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="nt">p</span><span class="nd">:host</span> <span class="p">{</span>
+        <span class="k">color</span><span class="o">:</span> <span class="nb">blue</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nt">div</span><span class="nd">:host</span> <span class="p">{</span>
+        <span class="k">color</span><span class="o">:</span> <span class="nb">green</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nt">button</span><span class="nd">:host</span> <span class="p">{</span>
+        <span class="k">color</span><span class="o">:</span> <span class="nb">red</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="o">*</span><span class="nd">:host</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="c1">// Create a shadow root for each element</span>
+    <span class="kd">var</span> <span class="nx">root1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">).</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">root2</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">root3</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+
+    <span class="c1">// We&#39;ll use the same template for each shadow root</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.shadow-template&#39;</span><span class="p">);</span>
+
+    <span class="c1">// Stamp the template into each shadow root. Notice how</span>
+    <span class="c1">// the different :host styles affect the appearance</span>
+    <span class="nx">root1</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root2</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root3</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-styles3.jpg" title="'Shadow DOM styling by host type'" ></p>
+
+<p><em>I&#8217;ve switched to using a <a href="/blog/2013/03/16/html5-template-tag-introduction/">template tag</a> for this example since it makes working with the Shadow DOM a lot easier.</em></p>
+
+<p>As you can see from the example above, we&#8217;re able to change the look of our component by matching the <code>:host</code> selector to a specific tag. We can also match against classes, IDs, attributes, etc. Really any valid CSS will do.</p>
+
+<p>For instance, you could have <code>.widget-fixed</code>, <code>.widget-flex</code> and <code>.widget-fluid</code> <code>:hosts</code> if you wanted to build a highly responsive component. Or <code>.valid</code> and <code>.error</code> <code>:hosts</code> for form elements.</p>
+
+<p>By using the <code>*</code> selector we&#8217;re able to create default styles which will apply to any <code>:host</code>, in this case setting all components to a <code>font-size</code> of 24px. This way you can construct the basic look for your component and then augment it with different <code>:host</code> types.</p>
+
+<p>What about theming hosts based on their parent element? Well, there&#8217;s a selector for that too!</p>
+
+<h2>Theming <a href="#" id="theming"></a></h2>
+
+<h3>Sketch 7: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/07-theming">theming</a></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;serious&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;serious-widget&quot;</span><span class="nt">&gt;</span>
+      I am super serious, guys.
+    <span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;playful&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;playful-widget&quot;</span><span class="nt">&gt;</span>
+      Pretty little clouds...
+    <span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;widget-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="nd">:host</span><span class="o">(</span><span class="nc">.serious</span><span class="o">)</span> <span class="p">{</span>
+        <span class="k">width</span><span class="o">:</span> <span class="m">200px</span><span class="p">;</span>
+        <span class="k">height</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+        <span class="k">padding</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+        <span class="k">font-family</span><span class="o">:</span> <span class="k">monospace</span><span class="p">;</span>
+        <span class="k">font-weight</span><span class="o">:</span> <span class="k">bold</span><span class="p">;</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+        <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+        <span class="k">background</span><span class="o">:</span> <span class="nb">tomato</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nd">:host</span><span class="o">(</span><span class="nc">.playful</span><span class="o">)</span> <span class="p">{</span>
+        <span class="k">width</span><span class="o">:</span> <span class="m">200px</span><span class="p">;</span>
+        <span class="k">height</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+        <span class="k">padding</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+        <span class="k">font-family</span><span class="o">:</span> <span class="k">cursive</span><span class="p">;</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+        <span class="k">color</span><span class="o">:</span> <span class="nb">white</span><span class="p">;</span>
+        <span class="k">background</span><span class="o">:</span> <span class="nb">deepskyblue</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">root1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.serious-widget&#39;</span><span class="p">).</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">root2</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.playful-widget&#39;</span><span class="p">).</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.widget-template&#39;</span><span class="p">);</span>
+    <span class="nx">root1</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root2</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-styles5.jpg" title="'Shadow DOM theming'" ></p>
+
+<p>Using <code>:host()</code> syntax we&#8217;re able to completely change the look of our widget based on the containing element. This is pretty neat! I&#8217;m sure you&#8217;ve all used the child selector before, <code>.parent &gt; .child</code>, but have you ever wished for a parent selector, <code>.parent &lt; .child</code>? Now it&#8217;s possible, but only with the shadow DOM. I wonder if we&#8217;ll see this syntax tracked back to normal CSS someday?</p>
+
+<h2>Styling :host States <a href="#" id="styling-host-states"></a></h2>
+
+<h3>Sketch 8: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/08-styling-host-states">styling-host-states</a></h3>
+
+<p>One of the best uses of the <code>:host</code> tag is for styling states like <code>:hover</code> or <code>:active</code>. For instance, let&#8217;s say you want to add a green border to a button when the user rolls over it. Easy!</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;button&gt;</span>My Button<span class="nt">&lt;/button&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;button-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="o">*</span><span class="nd">:host</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+        <span class="k">cursor</span><span class="o">:</span> <span class="k">pointer</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="o">*</span><span class="nd">:host:hover</span> <span class="p">{</span>
+        <span class="k">border</span><span class="o">:</span> <span class="m">2px</span> <span class="k">solid</span> <span class="nb">green</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.button-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-styles4.jpg" title="'Shadow DOM host state'" ></p>
+
+<p>Nothing fancy but hopefully it gets your imagination going a bit. What other states do you think you could create?</p>
+
+<h2>Conclusion <a href="#" id="conclusion"></a></h2>
+
+<p>There&#8217;s still a lot more to talk about when it comes to styling the Shadow DOM. Let&#8217;s take a break for today and pick it up again tomorrow. As always if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
+
+<h2><a href="/blog/2013/08/29/shadow-dom-styles-cont-dot/">Continue to Shadow DOM: Styles (cont.) &rarr;</a></h2>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Shadow DOM: Styles&amp;url=http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/08/28/shadow-dom-styles/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

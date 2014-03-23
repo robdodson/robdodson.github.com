@@ -1,0 +1,1175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Backbone | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/backbone/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Managing Your Backbone Views with the State Pattern]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/"/>
+    <updated>2012-06-02T18:22:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/">Yesterday I wrote a post to illustrate the concepts behind the State pattern</a> (one of my all time favorite tools). If you're new to this pattern and haven't read my previous post I suggest you start there and read this one after you've had a chance to play around with the ideas.</p>
+
+<!--more-->
+
+
+<p>I wanted to write about this pattern in the context of a Backbone app because I think there's a lot of value in exploring different ways to manage our Views and Models. Here's an example Video Player in which several State objects inherit from a common ancestor, <code>BaseState</code>. I chose to make <code>BaseState</code> extend <code>Backbone.Model</code> because it seemed like the best fit for this kind of thing, although typically when I implement this pattern in other languages I just use generic Objects. I would have done that here but Backbone's <code>extend</code> functionality makes the code so much cleaner.</p>
+
+<p>``` js
+var BaseState = Backbone.Model.extend({
+  initialize: function(owner) {</p>
+
+<pre><code>this.owner = owner;
+</code></pre>
+
+<p>  },
+  enter: function() {</p>
+
+<pre><code>// Implement me in your state objects
+</code></pre>
+
+<p>  },
+  execute: function() {</p>
+
+<pre><code>// Implement me in your state objects
+</code></pre>
+
+<p>  },
+  play: function() {</p>
+
+<pre><code>console.log('changing to the playing state...');
+this.owner.changeState(this.owner.states.playing);
+</code></pre>
+
+<p>  },
+  stop: function() {</p>
+
+<pre><code>console.log('changing to the stopping state...')
+this.owner.changeState(this.owner.states.stopping);
+</code></pre>
+
+<p>  },
+  pause: function() {</p>
+
+<pre><code>console.log('changing to the pausing state...')
+this.owner.changeState(this.owner.states.pausing);
+</code></pre>
+
+<p>  },
+  exit: function() {</p>
+
+<pre><code>// Implement me in your state objects
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var PlayingState = BaseState.extend({
+  execute: function() {</p>
+
+<pre><code>console.log('playing the video!');
+</code></pre>
+
+<p>  },
+  play: function() {</p>
+
+<pre><code>console.log('already playing!');
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var StoppingState = BaseState.extend({
+  enter: function() {</p>
+
+<pre><code>console.log('we have entered the stopping state...');
+</code></pre>
+
+<p>  },
+  execute: function() {</p>
+
+<pre><code>console.log('stopping the video...');
+</code></pre>
+
+<p>  },
+  stop: function() {</p>
+
+<pre><code>console.log('already stopped!');
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var PausingState = BaseState.extend({
+  execute: function() {</p>
+
+<pre><code>console.log('pausing the video.');
+</code></pre>
+
+<p>  },
+  pause: function() {</p>
+
+<pre><code>console.log('already paused!');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Every state inherits from <code>BaseState</code> which means they all create a reference to an <code>owner</code> object in their <code>initialize</code> methods. The <code>owner</code> is going to be our actual <code>VideoPlayer</code> object. Rather than having <code>videoPlayer.play</code> lead to some big weird conditional:</p>
+
+<p>``` js
+play: function() {
+  if (this.status == 'playing') {</p>
+
+<pre><code>  return;
+</code></pre>
+
+<p>  } else if (this.status == 'stopped') {</p>
+
+<pre><code>  // play the video
+</code></pre>
+
+<p>  } else if (this.status == 'paused') {</p>
+
+<pre><code>  // unpause and play
+</code></pre>
+
+<p>  }
+  else if ...
+}
+```</p>
+
+<p>we're instead going to delegate the work to our State objects. They'll handle switching from one State to the next and so long as we provide the exact same public API methods in each, they should be interchangeable. Inheriting from the same BaseState ensures that all of the States have the same public methods and each State can choose how or if it wants to override them. In our example the <code>StoppingState</code> overrides the <code>enter</code> method to display some text as we're transitioning into this state. Again, you can override some or all of the methods, <code>enter</code> and <code>exit</code> are great for building up/tearing down anything that our state might need and <code>execute</code> is where the main work of our state should happen.</p>
+
+<p>Let's take a look at the <code>VideoPlayer</code> which is a <code>Backbone.View</code> that will leverage our State objects:</p>
+
+<p>``` js
+var VideoPlayer = Backbone.View.extend({
+  initialize: function() {</p>
+
+<pre><code>this.states = {};
+this.states.playing = new PlayingState(this);
+this.states.stopping = new StoppingState(this);
+this.states.pausing = new PausingState(this);
+this.changeState(this.states.pausing);
+</code></pre>
+
+<p>  },
+  play: function() {</p>
+
+<pre><code>this.state.play();
+</code></pre>
+
+<p>  },
+  stop: function() {</p>
+
+<pre><code>this.state.stop();
+</code></pre>
+
+<p>  },
+  pause: function() {</p>
+
+<pre><code>this.state.pause();
+</code></pre>
+
+<p>  },
+  changeState: function(state) {</p>
+
+<pre><code>// Make sure the current state wasn't passed in
+if (this.state !== state) {
+  // Make sure the current state exists before
+  // calling exit() on it
+  if (this.state) {
+    this.state.exit();
+  }
+  this.state = state;
+  this.state.enter();
+  this.state.execute();
+}
+</code></pre>
+
+<p>  }
+});
+<code>``
+You'll notice that</code>VideoPlayer<code>instantiates its own State objects when it is first created. Then whenever we call one of its public methods the call is delegated to whichever state object is currently residing in</code>this.state`.</p>
+
+<p>Let's instantiate a new VideoPlayer to see it in action:</p>
+
+<p>``` js
+var videoPlayer = new VideoPlayer();</p>
+
+<p>=> 'pausing the video.'</p>
+
+<p>videoPlayer.play();</p>
+
+<p>=> 'changing to the playing state...'
+=> 'playing the video!'</p>
+
+<p>videoPlayer.play();</p>
+
+<p>=> 'already playing!'</p>
+
+<p>videoPlayer.stop();</p>
+
+<p>=> 'changing to the stopping state...'
+=> 'we have entered the stopping state...'
+=> 'stopping the video...'
+```</p>
+
+<p>Hopefully this gives you some food for thought the next time you're trying to wrangle some unwieldy component. I cannot count how many times I've used this pattern in other languages to tidy up and organize my code. I'm looking forward to working with it again in Backbone and I'd love to hear anyone's take on how this can be tweaked or improved. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Focused, Hurried</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Testing AMD Backbone Modules]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/29/testing-backbone-modules/"/>
+    <updated>2012-05-29T08:03:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/29/testing-backbone-modules</id>
+    <content type="html"><![CDATA[<p>Continuing from <a href="http://robdodson.me/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/">yesterday's post</a> I'm going to start to incorporate Backbone into my BDD setup. I'm going to use the <a href="https://github.com/tbranyen/backbone-boilerplate">Backbone Boilerplate</a> and <a href="https://github.com/backbone-boilerplate/grunt-bbb">grunt-bbb</a> to setup a new project. If you're new to the boilerplate or grunt-bbb <a href="http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/">checkout my previous post on getting started.</a></p>
+
+<!--more-->
+
+
+<h3>Shiny and new</h3>
+
+<p>I've created a new directory called <code>amd-tests</code> and once I <code>cd</code> inside I run <code>bbb init</code> to template out a new project. By default the boilerplate uses Require.js and AMD modules and we have a little example one already created for us. It's called, well, Example :) We'll use this to create our model for testing since I know that everyone should be on the same page with this module.</p>
+
+<p>I'm going to change our model's name from Example.Model to Example.Photo so our terminalogy won't get muddy. We'll give it some default properties for <code>src</code> and <code>caption</code>. Later on we'll test that a freshly created model has these same defaults. When we're done setting up our <code>/app/example.js</code> file should look like this. Keep in mind that the boilerplate adds a lot of stuff to get us started so you can ignore everything that isn't Example.Photo</p>
+
+<p>``` js /app/example.js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone"</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+],</p>
+
+<p>function(namespace, Backbone) {</p>
+
+<p>  // Create a new module
+  var Example = namespace.module();</p>
+
+<p>  // !!! Our awesome new model !!!
+  Example.Photo = Backbone.Model.extend({</p>
+
+<pre><code>defaults: {
+  src: '/images/placeholder.jpg',
+  caption: 'Waiting for content...'
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Collection = Backbone.Collection.extend({ /<em> ... </em>/ });
+  Example.Router = Backbone.Router.extend({ /<em> ... </em>/ });</p>
+
+<p>  // This will fetch the tutorial template and render it.
+  Example.Views.Tutorial = Backbone.View.extend({</p>
+
+<pre><code>template: "app/templates/example.html",
+
+render: function(done) {
+  var view = this;
+
+  // Fetch the template, render it to the View element and call done.
+  namespace.fetchTemplate(this.template, function(tmpl) {
+    view.el.innerHTML = tmpl();
+
+    // If a done function is passed, call it with the element
+    if (_.isFunction(done)) {
+      done(view.el);
+    }
+  });
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Required, return the module for AMD compliance
+  return Example;</p>
+
+<p>});
+```
+Now comes the rather tricky part. We need to create a test runner HTML file that can incorporate mocha, chai and sinon. It also has to load our Example module and maintain all of that module's dependencies. I spent a <em>ton</em> of time on IRC today sorting this out so here is my current best stab at things based on some <a href="https://gist.github.com/2655876">VERY generous gists</a> from <a href="https://github.com/kmiyashiro">Kelly Miyashiro.</a></p>
+
+<p>Let's start with the index.html file that'll be our test runner:</p>
+
+<p>``` html test/index.html
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="mocha/mocha.css" />
+  <script src="../assets/js/libs/require.js"></script>
+  <script src="mocha/mocha.js"></script>
+  <script src="sinon/sinon.js"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+  <script></p>
+
+<pre><code>require([
+  '../test/test.example'
+], runMocha);
+</code></pre>
+
+<p>  </script>
+  <div id="mocha"></div>
+</body>
+</html>
+```</p>
+
+<p>The first thing we do is add require.js, then mocha and sinon. Why no Chai? Good question. Kelly didn't do it so I didn't do it. If anyone wants to cite the pros and cons of this approach I'm all ears. Next we add our own config.js that is specific to our tests. We might have a config.js somewhere else that runs our main app but we'll also need this one to run our tests. Finally we have a script block sitting on top of our <code>#mocha</code> div. The script block loads in our specs (in this case I've only written one but you can do multiple specs here). A final argument to the require call is <code>runMocha</code>. Essentially this is the function that is executed <em>AFTER</em> the modules have finished loading. In our case runMocha is located inside the new config.js we've defined just for our tests. Let's take a look at it now.</p>
+
+<p>``` js test/config.js
+require.config({</p>
+
+<pre><code>// Base URL relative to the test runner
+// Paths are relative to this
+baseUrl: '../app',
+paths: {
+    // Testing libs
+    'chai'          : '../test/chai/chai',
+    'common'        : '../test/common',
+    'jquery'        : '../assets/js/libs/jquery',
+    'underscore'    : '../assets/js/libs/underscore',
+    'backbone'      : '../assets/js/libs/backbone',
+    'use'           : '../assets/js/plugins/use'
+},
+use: {
+    backbone: {
+        deps: ['use!underscore', 'jquery'],
+        attach: 'Backbone'
+    },
+    underscore: {
+        attach: '_'
+    },
+    mocha: {
+        attach: 'mocha'
+    }
+},
+priority: [
+    'jquery',
+    'underscore',
+    'common'
+]
+</code></pre>
+
+<p>});</p>
+
+<p>mocha.setup({</p>
+
+<pre><code>ui: 'bdd',
+ignoreLeaks: true
+</code></pre>
+
+<p>});</p>
+
+<p>// Protect from barfs
+console = window.console || function() {};</p>
+
+<p>var runMocha = function() {</p>
+
+<pre><code>mocha.run();
+</code></pre>
+
+<p>};
+```</p>
+
+<p>Lots of stuff here but nothing to get alarmed about. <a href="http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/">If you've read my previous getting started post you'll know all about the config.js file.</a> Go back and read the previous post if none of this makes sense to you. The thing to take note of is the <code>priority</code> array and the <code>runMocha</code> function at the bottom of the page. I don't have much experience with the priority array and I didn't find much documentation on it but Kelly uses it <a href="https://gist.github.com/2655876">in the gists</a> to make sure that jQuery, chai and any chai plugins are properly setup on the page.</p>
+
+<p>``` js test/common.js
+// Include and setup all the stuff for testing
+define(function(require) {</p>
+
+<pre><code>window.$ = window.jQuery = require('jquery');
+window.chai         = require('chai');
+window.expect       = chai.expect;
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Good practice? Bad practice? I'm not sure and I would love comments if anyone has a take on things. Underneath the priority array is a setup function which sends some configuration parameters to mocha. <code>ignoreLeaks</code> is useful because it's easy for mocha to see jQuery or any other global variable as a good reason to abort a test. IMO that's what JSLint/Hint is for, and bailing everytime you see a global is going to make testing 3rd party code especially difficult. My advice, leave it off. Finally we call <code>mocha.run()</code> via the <code>runMocha</code> function. Remember that this function is executed inside our test runner after all the specs are loaded, like so:</p>
+
+<p>``` html test/index.html</p>
+
+<script>
+    require([
+      '../test/test.example'
+    ], runMocha);
+  </script>
+
+
+<p>```</p>
+
+<p>Doing it this way guarantees that all the dependencies our module needs will be loaded before we start running our tests.</p>
+
+<h3>Oh right, the tests!</h3>
+
+<p>Wow! OK so hopefully you're still with me because after all of that we <em>still</em> need to generate some tests. Since it's getting late I'm just going to put together a really simple spec to make sure our default values are being set on the model.</p>
+
+<p>I've created a file called <code>test.example.js</code> which will test our <code>Example</code> module.</p>
+
+<p>``` js test/test.example.js
+define(function(require) {
+  var Example = require('modules/example');</p>
+
+<p>  describe('Example', function() {</p>
+
+<pre><code>describe('Photo', function() {
+  var photo = new Example.Photo();
+  it('should have proper defaults', function(done) {
+      expect(photo.get('src')).to.equal('/images/placeholder.jpg');
+      expect(photo.get('caption')).to.equal('Waiting for content...');
+      done();
+  });
+});
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>It isn't amazing but it gets us started testing our module. I'm explicitly calling <code>done()</code> at the end of our test because I saw mention on StackOverflow that you should do this when testing AMD modules in the browser with mocha otherwise you can get false passing tests. Not sure if it's absolutely necessary but I guess better safe than sorry!</p>
+
+<p>At this point I'm exhausted and hopefully you have a decent head start on your tests. I know that this post jumps around a lot so please take a moment <a href="https://github.com/robdodson/backbone-boilerplate-mocha">to grab the repo I've posted which contains all the source code.</a> Again. Caveat. I'm learning along with you so there are lots of newbie mistakes being made, I'm sure. I really want to hear your feedback if you have any. Good luck!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Events: Framework Communication]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/25/backbone-events-framework-communication/"/>
+    <updated>2012-05-25T08:01:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/25/backbone-events-framework-communication</id>
+    <content type="html"><![CDATA[<p>I want to figure out how to communicate on a framework level within Backbone. Coming from Flash and <a href="http://www.robotlegs.org/">RobotLegs</a> I'm used to a few MVC conventions that work very well as far as event dispatching goes. In RobotLegs you typically have a framework wide eventDispatcher that anyone can tune into. In a nutshell your View will trigger an event, for instance a user clicking a button, and that will get dispatched to interested framework actors. These can be other Views or, more likely, they can be Commands. The Commands are like single use actions tied directly to events. Think of it like binding every public method of your controller to an event. The Commands will typically effect models, changing them in some way, and the Models will dispatch an event that the Views listen for to update themselves.</p>
+
+<p>Backbone works differently in that Views are often tied directly to their models like so:</p>
+
+<p>``` js
+var doc = Documents.first(); // &lt;-- Model object</p>
+
+<p>new DocumentRow({ // &lt;-- View object with model reference
+  model: doc,
+  id: "document-row-" + doc.id
+});
+```</p>
+
+<p>When you use this approach it's trivial to tell the view to listen to the model's change event and then call <code>view.render()</code>. Essentially you are munging some of a Controller's responsibilities into the View. That's all well and good but let's say we want to dispatch an event from one view which will affect other views and actors. This event has nothing to do with a model, maybe it's just an animation of some kind that others need to know about. So how do we go about this?</p>
+
+<!--more-->
+
+
+<h3>Communicating between Views in Backbone</h3>
+
+<p>To facilitate this communication we're going to use the <code>app</code> object that <a href="https://github.com/tbranyen/backbone-boilerplate">Backbone Boilerplate</a> creates for us. If you look in the <code>namespace.js</code> file that comes with the boilerplate you should see a line like this way down at the bottom:</p>
+
+<p><code>js namespace.js
+app: _.extend({}, Backbone.Events)
+</code>
+If you're not familiar with <a href="http://underscorejs.org/#extend">Underscore.js's extend method</a> it basically takes all of the properties and functions of one object and copies them onto another. If you're coming from a language that supports classical inheritence this should feel familiar. In the above example it's creating a new empty object (app), and extending/inheriting from the Backbone.Events object. This means that the <code>app</code> property of the <code>namespace</code> module is basically one big event dispatcher.</p>
+
+<p>So let's create two very simple views in a module called <code>Chatty</code>. One will be <code>Subject</code> and the other <code>Observer</code>. When we click the Subject we want it to dispatch an event that any framework actor can tune into. We'll call this event <code>clicked:subject</code>. When the Observer hears the <code>clicked:subject</code> event we want it to replace its html content with whatever message is sent along.</p>
+
+<p>``` js chatty.js
+define([
+  "namespace", // &lt;-- see I'm bringing in the namespace module</p>
+
+<p>  // Libs
+  "use!backbone"</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins</p>
+
+<p>],</p>
+
+<p>function(namespace, Backbone) { // &lt;-- make sure to pass namespace as an argument</p>
+
+<p>  // Create a new module
+  var Chatty = namespace.module();</p>
+
+<p>  Chatty.Views.Subject = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+className: 'subject',
+events: {
+  'click': 'onClick'
+},
+initialize: function() {
+  this.render();
+  this.$el.html("I'm the Subject. Everyone listen up!");
+},
+onClick: function(e) {
+  namespace.app.trigger('clicked:subject', 'watch it, buster!'); // &lt;-- trigger a framework event
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  Chatty.Views.Observer = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+className: 'observer',
+initialize: function() {
+  this.render();
+  this.$el.html("I'm the Observer. Quietly waiting...");
+
+  namespace.app.on('clicked:subject', this.onSubjectClicked, this); &lt;-- listen for framework events
+},
+onSubjectClicked: function(message) {
+  this.$el.html("I heard the Subject say... " + message);
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Required, return the module for AMD compliance
+  return Chatty;</p>
+
+<p>});
+```</p>
+
+<p>In our main.js file we're just going to append those two views to the DOM whenever someone hits our route:</p>
+
+<p>``` js main.js
+require([
+  "namespace",</p>
+
+<p>  // Libs
+  "jquery",
+  "use!backbone",</p>
+
+<p>  // Modules
+  "modules/chatty"
+],</p>
+
+<p>function(namespace, $, Backbone, Chatty) {</p>
+
+<p>  // Defining the application router, you can attach sub routers here.
+  var Router = Backbone.Router.extend({</p>
+
+<pre><code>routes: {
+  "chatty": "chatty"
+},
+
+chatty: function() {
+  var subject = new Chatty.Views.Subject();
+  var observer = new Chatty.Views.Observer();
+  $("#main").append(subject.el);
+  $("#main").append(observer.el);
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  ...
+```</p>
+
+<p>And there you have it. When we click on <code>Subject</code> it should replace the content in <code>Observer</code> like so:
+<img class="center" src="/images/subject_observer.png" title="'The Observer hears the Subject'" ></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Excited, Rested</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <updated>2012-05-24T07:23:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
+
+<!--more-->
+
+
+<h3>View Events and the DOM</h3>
+
+<p>After looking around for a bit I've found this <a href="http://documentcloud.github.com/backbone/#FAQ-events">list of the events that Backbone can dispatch.</a> Nothing in there about render or adding elements to the DOM :(</p>
+
+<p>More searching reveals that almost everyone points to the <a href="http://docs.jquery.com/Plugins/livequery">livequery plugin for jQuery.</a> Livequery seems like a mostly deprecated plugin since jQuery has both <code>.live()</code> and <code>.delegate()</code> methods now. The one exception is that livequery will fire a callback when an element is created.</p>
+
+<p>Another alternative is to fire a custom event from my View's render method. While this does seem cleaner than using a plugin unfortunately we might call render over and over again. A middle of the road solution would be to use <code>.one()</code> to bind to the first render event.</p>
+
+<p>In my mind I would like every Backbone View to extend a base class which dispatches a custom <code>addedToDOM</code> event and <code>removedFromDOM</code> event. I'm not sure what the performance cost of using livequery to do this is but let's write it up and maybe we can do a jsPerf later.</p>
+
+<h3>Load a jQuery plugin with AMD</h3>
+
+<p>Let's download livequery <a href="https://github.com/brandonaaron/livequery">from the git repo.</a> Now that we have it we're in another little dilemma. The boilerplate loads jQuery like an AMD module...so how do you use a jQuery plugin with AMD?</p>
+
+<p>It's very possible this is not the intended method but here's how I've gone about solving the problem. Since require.js is only going to load stuff if we specify it as a dependency then we'll need to request the plugin just like any other module. If we put the plugin in our <code>assets/js/plugins</code> folder then we'll already have a path to <code>plugins</code> provided by <code>config.js</code>.</p>
+
+<p>``` js config.js
+require.config({
+  // Initialize the application with the main application file
+  deps: ["main"],</p>
+
+<p>  paths: {</p>
+
+<pre><code>// JavaScript folders
+libs: "../assets/js/libs",
+plugins: "../assets/js/plugins", // &lt;---- !!! look here! 
+
+// Libraries
+jquery: "../assets/js/libs/jquery",
+underscore: "../assets/js/libs/underscore",
+backbone: "../assets/js/libs/backbone",
+
+// Shim Plugin
+use: "../assets/js/plugins/use"
+</code></pre>
+
+<p>  },</p>
+
+<p>  use: {</p>
+
+<pre><code>backbone: {
+  deps: ["use!underscore", "jquery"],
+  attach: "Backbone"
+},
+
+underscore: {
+  attach: "_"
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Then we can load livequery as if it were any other module. This might seem odd because a dependency gets passed to our pseudo-constructor as an argument:</p>
+
+<p>``` js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone",</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+  "plugins/jquery.livequery"
+],</p>
+
+<p>function(namespace, Backbone, livequery) { // &lt;-- see how livequery is passed</p>
+
+<p>...</p>
+
+<p>```</p>
+
+<p>But we're not going to use that argument. It's just there to make sure that <code>jquery.livequery.js</code> gets added to the page. We'll ignore it and use livequery via jquery instead, like so:</p>
+
+<p>``` js
+$('#sections').livequery(function() {</p>
+
+<pre><code>console.log('sections added to DOM!');
+</code></pre>
+
+<p>}, function() {</p>
+
+<pre><code>console.log('sections removed from DOM!');
+</code></pre>
+
+<p>});
+<code>``
+Keep in mind that require.js and AMD are just tacking the script elements onto the page. Requiring our plugin in this fashion is no different than tacking a</code>script` onto the HTML at runtime.</p>
+
+<p>Here's my example.js file <a href="http://robdodson.me/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/">from the last post</a>, now using livequery to listen for when the element is added to and removed from the DOM.</p>
+
+<p>``` js example.js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone",</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+  "plugins/jquery.livequery"
+],</p>
+
+<p>function(namespace, Backbone, livequery) {</p>
+
+<p>  // Create a new module
+  var Example = namespace.module();</p>
+
+<p>  // Example extendings
+  Example.Model = Backbone.Model.extend({ /<em> ... </em>/ });
+  Example.Collection = Backbone.Collection.extend({ /<em> ... </em>/ });
+  Example.Router = Backbone.Router.extend({ /<em> ... </em>/ });</p>
+
+<p>  // This will fetch the tutorial template and render it.
+  Example.Views.Tutorial = Backbone.View.extend({</p>
+
+<pre><code>template: "app/templates/example.html",
+
+render: function(done) {
+  var view = this;
+
+  // Fetch the template, render it to the View element and call done.
+  namespace.fetchTemplate(this.template, function(tmpl) {
+    view.el.innerHTML = tmpl();
+
+    // If a done function is passed, call it with the element
+    if (_.isFunction(done)) {
+      done(view.el);
+    }
+  });
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Left = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'left-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Middle = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'middle-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Right = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'right-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Sections = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'sections',
+
+leftView: undefined,
+middleView: undefined,
+rightView: undefined,
+
+events: {
+  "click .container":    "onChildClicked"
+},
+
+initialize: function() {
+  this.leftView = new Example.Views.Left();
+  this.middleView = new Example.Views.Middle();
+  this.rightView = new Example.Views.Right();
+
+  this.$el.append(this.leftView.render().el);
+  this.$el.append(this.middleView.render().el);
+  this.$el.append(this.rightView.render().el);
+
+  $('#sections').livequery(function() {
+    console.log('sections added to DOM!');
+  }, function() {
+    console.log('sections removed from DOM!');
+  });
+},
+
+// We should do this work with events instead of methods
+setInitialPosition: function() {
+  this.$el.css({left: $(window).width() / 2 - this.$el.width() / 2 });
+},
+
+onChildClicked: function($e) {
+  var $target = $($e.target);
+
+  switch($e.target.id) {
+    case 'left-container':
+      this.$el.animate({left: $(window).width() / 2 - $target.width() / 2});
+      break;
+
+    case 'middle-container':
+      this.$el.animate({left: $(window).width() / 2 - this.$el.width() / 2 });
+      break;
+
+    case 'right-container':
+      this.$el.animate({left: $(window).width() / 2 - this.$el.width() + $target.width() / 2});
+      break;
+  }
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Required, return the module for AMD compliance
+  return Example;</p>
+
+<p>});
+```</p>
+
+<p>I tried this out by adding and removing the <code>Example.Sections</code> view from the DOM and both console logs fired, so yeah, awesome! In lieu of creating a base class and adding an addedToDOM and removedFromDOM event we can do something like this to achieve that effect:</p>
+
+<p>``` js example.js
+initialize: function() {
+  this.leftView = new Example.Views.Left();
+  this.middleView = new Example.Views.Middle();
+  this.rightView = new Example.Views.Right();</p>
+
+<p>  this.$el.append(this.leftView.render().el);
+  this.$el.append(this.middleView.render().el);
+  this.$el.append(this.rightView.render().el);</p>
+
+<p>  _.bindAll(this); // make sure all the methods of our object have the right 'this'</p>
+
+<p>  $('#sections').livequery(this.onAddedToDOM, this.onRemovedFromDOM);
+},</p>
+
+<p>onAddedToDOM: function() {
+  console.log('added to DOM!');
+},</p>
+
+<p>onRemovedFromDOM: function() {
+  console.log('removed from DOM!');
+},
+```</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Hot</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How do you switch between views in Backbone]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/"/>
+    <updated>2012-05-23T07:56:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone</id>
+    <content type="html"><![CDATA[<p>I'm going to try to approach some of my future articles as more of a question/answer setup so they don't turn into these sprawling tutorials. Today I want to focus on moving between views in Backbone.js. I'm starting with some very simple templates and three views: LeftView, MiddleView, RightView. To do this quickly we'll make it so each view is essentially a big button which, when clicked on, should animate to the middle of the screen.</p>
+
+<!--more-->
+
+
+<p>Here's what one of my templates looks like:</p>
+
+<p>``` html right.html</p>
+
+<div id="right-container" class="container">
+  Everyone knows I'm right.
+</div>
+
+
+<p>
+```</p>
+
+<p>One of the first thing I'm noticing is that all of my templates seem to be wrapped in an extra div. Since this extra div is block displayed I can't get my items to line up next to each other... Oh! T<a href="http://stackoverflow.com/questions/7894253/backbone-js-turning-off-wrap-by-div-in-render">he problem is because I haven't specified a tagName for my views.</a> I think I can actually do everything in the View declaration without needing a template.</p>
+
+<p><code>js example.js
+Example.Views.Right = Backbone.View.extend({
+  tagName: 'div',
+  id: 'right-container',
+  className: 'container'
+});
+</code>
+That should create our view for us with the proper tag, class and id attributes. My containers are just colored squares so I don't need to populate them with any content. If I did want to use this approach I could add more content like this:</p>
+
+<p>```js example.js
+Example.Views.Right = Backbone.View.extend({
+  tagName: 'div',
+  id: 'right-container',
+  className: 'container',
+  initialize: function() {</p>
+
+<pre><code>this.el.innerHTML = "Hello World!";
+</code></pre>
+
+<p>  }
+});
+```
+Or I could render a template. Again for our purposes we just want to move some colored blocks around so the first approach is sufficient.</p>
+
+<p>Here is our most basic <code>Router</code> showing how to add the views to stage. Since we aren't using a template we can just call the regular render function and append the returned element to the DOM.</p>
+
+<p>``` js main.js
+var Router = Backbone.Router.extend({
+  routes: {</p>
+
+<pre><code>"": "index"
+</code></pre>
+
+<p>  },</p>
+
+<p>  index: function() {</p>
+
+<pre><code>var leftView = new Example.Views.Left();
+var middleView = new Example.Views.Middle();
+var rightView = new Example.Views.Right();
+
+// Attach the views to the DOM
+$("#main").append(leftView.render().el);
+$("#main").append(middleView.render().el);
+$("#main").append(rightView.render().el);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Here are my very simple styles:</p>
+
+<p>``` css style.css
+.container {
+  width: 300px;
+  height: 300px;
+  display: inline-block;
+  margin-right: 50px;
+}</p>
+
+<h1>left-container {</h1>
+
+<p>  background: #F00;
+}</p>
+
+<h1>middle-container {</h1>
+
+<p>  background: #0F0;
+}</p>
+
+<h1>right-container {</h1>
+
+<p>  background: #00F;
+}
+```</p>
+
+<p>We should now have a very simple horizontal layout.</p>
+
+<p><img class="center" src="http://f.cl.ly/items/173L112z0g2t3S1h3k1E/Screen%20Shot%202012-05-23%20at%209.02.56%20AM.png" title="'Our Basic Backbone Layout'" ></p>
+
+<h3>Composite Views</h3>
+
+<p>Well I'd like to center my views in the middle of the screen but moving each item individually is going to be pretty challenging. I think the better idea would be to wrap my views in a containing view which can then be easily centered on screen.</p>
+
+<p>Here's what that looks like:</p>
+
+<p>``` js
+Example.Views.Sections = Backbone.View.extend({
+  tagName: 'div',
+  id: 'sections',
+  leftView: undefined,
+  middleView: undefined,
+  rightView: undefined,</p>
+
+<p>  initialize: function() {</p>
+
+<pre><code>this.leftView = new Example.Views.Left();
+this.middleView = new Example.Views.Middle();
+this.rightView = new Example.Views.Right();
+
+this.$el.append(this.leftView.render().el);
+this.$el.append(this.middleView.render().el);
+this.$el.append(this.rightView.render().el);
+</code></pre>
+
+<p>  },</p>
+
+<p>  // We should do this work with events instead of methods
+  setInitialPosition: function() {</p>
+
+<pre><code>this.$el.css({left: $(window).width() / 2 - this.$el.width() / 2 });
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Our Sections view is going to contain our 3 subordinate views. When it gets added to the DOM, <code>initialize</code> will run and create our subviews. I've also defined a method <code>setInitialPosition</code> which centers our view on screen. Tomorrow I'll replace this with an event handler that fires whenever our element is added to the DOM. For now I'm too lazy to look up the supported events :D</p>
+
+<p>The sections view is absolutely positioned and it's width and height are explicitly defined in the css. In the short term here's how we've updated things:</p>
+
+<p>``` css</p>
+
+<h1>sections {</h1>
+
+<p>  display: inline-block;
+  position: absolute;
+  width: 1000px;
+  height: 300px;
+  top: 50px;
+  left: 0;
+}</p>
+
+<p>.container {
+  width: 300px;
+  height: 300px;
+}</p>
+
+<h1>left-container {</h1>
+
+<p>  background: #F00;
+  position: absolute;
+  top: 0;
+  left: 0;
+}</p>
+
+<h1>middle-container {</h1>
+
+<p>  background: #0F0;
+  position: absolute;
+  top: 0;
+  left: 350px;
+}</p>
+
+<h1>right-container {</h1>
+
+<p>  background: #00F;
+  position: absolute;
+  top: 0;
+  left: 700px;
+}
+```
+I wanted to give each view a 50px margin on each side so in the short term all these values are hard coded. I'll think about how to make things more dynamic.</p>
+
+<p>Let's listen to when the user clicks on a view. When we hear that we'll animate the whole sections container over so that view is centered on screen.</p>
+
+<p>We'll need to add an events hash to our Sections view. Since all of our children implement the same <code>.container</code> class we may as well listen for a click on that.</p>
+
+<p><code>js
+events: {
+  "click .container":    "onChildClicked"
+}
+</code></p>
+
+<p>In our handler, <code>onChildClicked</code>, we'll figure out which child was actually clicked and then animate ourselves accordingly. Here's the entire object for your reference with the handler at the bottom.</p>
+
+<p>``` js
+Example.Views.Sections = Backbone.View.extend({
+  tagName: 'div',
+  id: 'sections',</p>
+
+<p>  leftView: undefined,
+  middleView: undefined,
+  rightView: undefined,</p>
+
+<p>  events: {</p>
+
+<pre><code>"click .container":    "onChildClicked"
+</code></pre>
+
+<p>  },</p>
+
+<p>  initialize: function() {</p>
+
+<pre><code>this.leftView = new Example.Views.Left();
+this.middleView = new Example.Views.Middle();
+this.rightView = new Example.Views.Right();
+
+this.$el.append(this.leftView.render().el);
+this.$el.append(this.middleView.render().el);
+this.$el.append(this.rightView.render().el);
+</code></pre>
+
+<p>  },</p>
+
+<p>  // We should do this work with events instead of methods
+  setInitialPosition: function() {</p>
+
+<pre><code>this.$el.css({left: $(window).width() / 2 - this.$el.width() / 2 });
+</code></pre>
+
+<p>  },</p>
+
+<p>  // Whenever a child is clicked let's animate so it is
+  // centered on screen
+  onChildClicked: function($e) {</p>
+
+<pre><code>  var $target = $($e.target);
+
+  switch($e.target.id) {
+    case 'left-container':
+      this.$el.animate({
+        left: $(window).width() / 2 - $target.width() / 2
+      });
+      break;
+
+    case 'middle-container':
+      this.$el.animate({
+        left: $(window).width() / 2 - this.$el.width() / 2
+      });
+      break;
+
+    case 'right-container':
+      this.$el.animate({
+        left: $(window).width() / 2 - this.$el.width() + $target.width() / 2
+      });
+      break;
+  }
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Laggy, Pensive</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

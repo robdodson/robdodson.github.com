@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Puzzles | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/puzzles/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Pangrams in Ruby]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/09/pangrams-in-ruby/"/>
+    <updated>2012-05-09T23:15:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/09/pangrams-in-ruby</id>
+    <content type="html"><![CDATA[<p>I'm a big fan of sites like <a href="http://www.rubyquiz.com/">RubyQuiz</a> and <a href="http://www.codeeval.com/">CodeEval</a>. In my opinion doing short puzzles and brain-teasers is a great way to explore a language. Here's one such puzzle taken from CodeEval which asks that you devise a program to read in a file, parse each line and decide if it is a pangram or not.</p>
+
+<blockquote><p>The sentence 'A quick brown fox jumps over the lazy dog' contains every single letter in the alphabet. Such sentences are called pangrams. You are to write a program, which takes a sentence, and returns all the letters it is missing (which prevent it from being a pangram). You should ignore the case of the letters in sentence, and your return should be all lower case letters, in alphabetical order. You should also ignore all non US-ASCII characters.In case the input sentence is already a pangram, print out the string NULL</p></blockquote>
+
+<!--more-->
+
+
+<p>Here's my first attempt. Hopefully I can come back to this post in a few weeks and try it again in a bit more elegant fashion :)</p>
+
+<p>```ruby pangrams.rb
+File.open(ARGV[0]).each_line do |line|</p>
+
+<p>  missing_letters = []</p>
+
+<p>  unless line.chomp.empty?</p>
+
+<pre><code>line.chomp!
+line.downcase!
+('a'..'z').each do |l|
+  if line.index(l).nil?
+    missing_letters &lt;&lt; l
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  if missing_letters.empty?</p>
+
+<pre><code>puts "NULL"
+</code></pre>
+
+<p>  else</p>
+
+<pre><code>puts missing_letters.join('')
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>And here's some input:
+<code>text sentences.txt
+A quick brown fox jumps over the lazy dog
+A slow yellow fox crawls under the proactive dog
+AbC
+</code></p>
+
+<p>To run it from the command line you'll need to pass in the path to the sentece file as an argument. Here's what it would look like if <code>pangrams.rb</code> and <code>sentences.txt</code> were in the same folder:
+```
+ruby pangrams.rb sentences.txt</p>
+
+<h1>outputs...</h1>
+
+<p>NULL
+bjkmqz
+defghijklmnopqrstuvwxyz
+```
+Play around with this, throw some different sentence combinations at it to see what it spits out. Then try to write your own implementation. A good next step would be to modify the script so it can support empty lines in the text file.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

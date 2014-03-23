@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: HTML Imports | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/html-imports/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
+    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <updated>2013-10-02T08:05:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
+
+<p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+
+<!-- more -->
+
+
+<h2>Github</h2>
+
+<p><a href="https://github.com/robdodson/mark-down">If you'd like to follow along you can grab the code from Github.</a></p>
+
+<h2>The Setup</h2>
+
+<p>First things first, we need to download the latest version of Polymer. I like to do this with <a href="http://bower.io">bower</a> and I would encourage you to do so as well. Although it hasn't been discussed much, I think bower is going to be as important to web components as npm and the node_modules folder is to Node.js. When developers can assume the location and version of a dependency then they're able to remove extra work from the consumer's plate. But that's a discussion for another day! For now let's just run</p>
+
+<p><code>
+bower init
+</code></p>
+
+<p>to create our <code>bower.json</code> file.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/bower-init.jpg" title="'bower init is kinda awesome'" ></p>
+
+<p>And we'll want to install our Polymer and Markdown dependencies so</p>
+
+<p><code>
+bower install polymer markdown --save
+</code></p>
+
+<p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
+
+<p>``` html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Markdown Polymer Element&lt;/title&gt;
+
+&lt;!-- Include our Markdown lib --&gt;
+&lt;script src="./lib/markdown.js"&gt;&lt;/script&gt;
+
+&lt;!-- Include Polymer awesomesauce --&gt;
+&lt;script src="./lib/polymer.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Import our polymer elements --&gt;
+&lt;link rel="import" href="./elements/mark-down.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;!-- Test our awesome new tag --&gt;
+&lt;mark-down&gt;&lt;/mark-down&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<h2>The Element</h2>
+
+<p>We'll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
+
+<p>``` html
+<polymer-element name="mark-down">
+  <template></p>
+
+<pre><code>&lt;div id="markdown"&gt;&lt;/div&gt;
+</code></pre>
+
+<p>  </template>
+  <script></p>
+
+<pre><code>Polymer("mark-down");
+</code></pre>
+
+<p>  </script>
+</polymer-element>
+```</p>
+
+<p>Let's walk through this a bit.</p>
+
+<p><code>html
+&lt;polymer-element name="mark-down"&gt;
+</code>
+This line tells Polymer that we'd like to define a new element and its tag name should be <code>mark-down</code>.</p>
+
+<p><code>html
+&lt;template&gt;
+  &lt;div id="markdown"&gt;&lt;/div&gt;
+&lt;/template&gt;
+</code>
+This is our template which Polymer will convert to <a href="/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
+
+<p>``` html</p>
+
+<script>
+  Polymer("mark-down");
+</script>
+
+
+<p>```
+Finally, we call the Polymer constructor and pass it the name of our element. This makes our new tag available so we can start using it in the document. But first we'll need to parse our Markdown into HTML!</p>
+
+<h2>Markdown</h2>
+
+<p>All custom elements have a <code>createdCallback</code> which can be used as a kind of constructor function. Polymer shortens this method name to <code>created</code> but it's essentially the same thing. We'll use the <code>created</code> callback to grab the <code>innerHTML</code> of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.</p>
+
+<p>``` js
+Polymer("mark-down", {
+  created: function() {</p>
+
+<pre><code>var content = this.trim(this.innerHTML);
+var parsed = markdown.toHTML(content);
+this.$.markdown.innerHTML = parsed;
+</code></pre>
+
+<p>  },
+  // Remove excess white space
+  trim: function() { ... }
+});
+```</p>
+
+<p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I'm using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon's Markdown element.</a> Big thanks to Ryan :D</p>
+
+<p><code>js
+created: function() {
+  var content = this.trim(this.innerHTML);
+  ...
+},
+</code></p>
+
+<p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
+
+<p><code>js
+created: function() {
+  ...
+  var parsed = markdown.toHTML(content);
+  this.$.markdown.innerHTML = parsed;
+}
+</code></p>
+
+<h3>Node Finding</h3>
+
+<p>You might notice the funny use of <code>$</code> and think I'm doing something clever with jQuery. What's actually happening is that Polymer creates a map of any element inside of our template with an <code>id</code>. It then stores this map in a <code>$</code> property. So if you're using ids you can quickly access elements with the use of <code>this.$.someId</code>. In the Polymer docs this is referred to as <a href="http://www.polymer-project.org/getting-started.html#automatic-node-finding">automatic node finding.</a></p>
+
+<p><em>But aren't ids an anti-pattern?</em></p>
+
+<p>Although the traditional document model only allows for one id per page, the Shadow DOM creates a kind of clean slate where each element has its own id sandbox. This means we can use an id of <code>#markdown</code> in our element and not worry if the parent document also contains an element with id <code>#markdown</code>. Pretty nifty!</p>
+
+<h2>Test</h2>
+
+<p>The only thing left is for us to throw some Markdown into our tag to test it out.</p>
+
+<p>``` html
+<mark-down>
+  # This is a heading
+  ## This is a subheading</p>
+
+<p>  Here is <strong>more</strong> <em>Markdown!</em></p>
+
+<p>  <code>This is some codez</code></p>
+
+<p>  This <a href="http://robdodson.me">is a link</a>
+</mark-down>
+```</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/markdown-example.jpg" title="'sweet sweet markdown!'" ></p>
+
+<p>Piece O' Cake!</p>
+
+<h2>Moar!</h2>
+
+<p>There's a lot more that we could do, for instance, using something like <code>contenteditable</code> to allow us to toggle back and forth between the source and the rendered content. <a href="https://github.com/robdodson/mark-down">I've posted the code on Github</a> so fork it and go crazy.</p>
+
+<p>Be sure to leave a comment if you want to share your experiments!</p>
+
+<p>Till next time!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Web Components Resources]]></title>
+    <link href="http://robdodson.github.com/blog/2013/08/22/web-components-resources/"/>
+    <updated>2013-08-22T17:47:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/08/22/web-components-resources</id>
+    <content type="html"><![CDATA[<p>Eric Bidelman (<a href="http://twitter.com/ebidel">@ebidel</a>) put together <a href="https://gist.github.com/ebidel/6314025">a great list of Web Components Resources</a>. It's nice to have it all in one place because it sure can get confusing hoping around from spec to article to slideshow, etc. If you have more resources make sure to do a PR and add them to the list!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Exploring HTML Imports]]></title>
+    <link href="http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/"/>
+    <updated>2013-08-20T13:07:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/08/20/exploring-html-imports</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2013/03/17/why-web-components/">Web Components</a> have come a long way in the past few months and one of the technologies that I'm most interested in is <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html">HTML Imports</a> (or "imports", for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Elements</a> where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.</p>
+
+<!--more-->
+
+
+<h2>The Lowdown</h2>
+
+<p>Imports are a new type of <code>link</code> tag which should be familiar to you since that's also how we load our stylesheets.</p>
+
+<p><code>html
+&lt;link rel="stylesheet" href="http://robdodson.github.com/path/to/styles.css"&gt;
+</code></p>
+
+<p>For an import we just replace the <code>rel</code> with one of type <code>import</code>.</p>
+
+<p><code>html
+&lt;link rel="import" href="http://robdodson.github.com/path/to/some/import.html"&gt;
+</code></p>
+
+<p>At the moment, imports do not block like script tags. However, that may change in the future to help with <a href="http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html">Custom Element resolution.</a></p>
+
+<h2>Support</h2>
+
+<p>Native imports are only available in Chrome Canary v31 and Chrome Dev v30. Thankfully <a href="http://www.polymer-project.org/">Polymer</a> <a href="http://www.polymer-project.org/platform/html-imports.html">offers a polyfill</a> if you want to try them out in other modern / "evergreen" browsers.</p>
+
+<p>To use HTML Imports make sure you've enabled the following
+in Chrome's <code>about:flags</code>.</p>
+
+<p>√ Experimental Web Platform features<br>
+√ HTML Imports<br></p>
+
+<h2>Codez!</h2>
+
+<p>I've created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I'll link to the sketch so you can quickly try things out.</p>
+
+<h2>A Basic Example</h2>
+
+<h3>Sketch 0: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/0-basic">Basic</a></h3>
+
+<p>OK so what's a very basic import look like?</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Basic HTML Imports&lt;/title&gt;
+&lt;!-- Pull in our blog post example --&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;p&gt;Hello World!&lt;/p&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```
+In its simplest form the import works just like calling a stylesheet. We have to make sure there's a document to import so let's create a fake blog post.</p>
+
+<p>``` html imports/blog-post.html</p>
+
+<div id="blog-post">
+  <h1>Awesome header</h1>
+  <p>Here is some really interesting paragraph content.</p>
+</div>
+
+
+<p>```</p>
+
+<p>To test you'll need to host your <code>index.html</code> and <code>imports/</code> folder on a local server. I recommend <a href="https://github.com/visionmedia/serve">serve</a> if you don't already have one installed.</p>
+
+<p>Once you have that setup visit your index page. If you take a look at the console you can see the request returning.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-console.jpg" title="'Our first HTML import!'" ></p>
+
+<p>Well that's cool, but now what?</p>
+
+<p>Let's grab the content of the import using some JavaScript and append it to the body.</p>
+
+<p>``` html index.html
+<body>
+  <p>Hello World!</p></p>
+
+<p>  <script></p>
+
+<pre><code>var link = document.querySelector('link[rel=import]');
+var content = link.import.querySelector('#blog-post');
+document.body.appendChild(content.cloneNode(true));
+</code></pre>
+
+<p>  </script>
+</body>
+<code>``
+First we query the</code>link<code>tag which loaded our import. Then we extract our</code>#blog-post<code>element and store it in a variable called</code>content<code>. You'll notice that we don't have to write any event handler code to wait till the import has loaded, we can just assume the content is there and start working with it. Finally we add the new content to our</code>body`.</p>
+
+<p>If you're following along you should end up with something like this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen1.jpg" title="'Basic Import Example'" ></p>
+
+<p>Exciting, I know ;) But it demonstrates a no frills approach to loading content that doesn't require ajax and writing our own event handlers. Let's keep digging to see what else we find...</p>
+
+<h2>A Basic Example with Polymer</h2>
+
+<h3>Sketch 1: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/1-basic-polymer">Basic-Polymer</a></h3>
+
+<p>If you want to try out the snippets above in a browser other than Chrome Canary you'll need to use Google's <a href="http://www.polymer-project.org/">Polymer Project</a>. Polymer is a collection of polyfills and additional sugars which seeks to enable the use of Web Components in all modern browsers. The hope is that devolopers will use Polymer to inform the W3C on which direction to take with Web Components; so rather than wait for a stinky spec we can guide the implementation process.</p>
+
+<p>Polymer attempts to keep parity with the the evolving specifications but obviously there are some places where the API must differ because of the limitations of current browsers. In the case of HTML Imports, Polymer waits for the <code>DOMContentLoaded</code> event before triggering the actual import process. This means we need to listen for the <code>HTMLImportsLoaded</code> event on either <code>window</code> or <code>document</code> to know when it is finished.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Basic HTML Imports&lt;/title&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;p&gt;Hello World!&lt;/p&gt;
+
+&lt;!-- Include polymer.js --&gt;
+&lt;script src="http://robdodson.github.com/bower_components/polymer/polymer.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Listen for the HTMLImportsLoaded event --&gt;
+&lt;script&gt;
+  window.addEventListener('HTMLImportsLoaded', function() {
+    var link = document.querySelector('link[rel=import]');
+    var content = link.import.querySelector('#blog-post');
+    document.body.appendChild(content.cloneNode(true));
+  });
+&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```
+Using the above we should get the same results as before.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen1.jpg" title="'Basic Import Example with Polymer'" ></p>
+
+<p>You might notice that I used <code>polymer.min.js</code> instead of only including the <a href="http://www.polymer-project.org/platform/html-imports.html">HTML Imports polyfill</a>. Polymer is structured so you can take any of the polyfills &agrave; la carte but I find it's easier to just include all of Polymer when I'm experimenting, rather than worry if I have each individual polyfill loaded. That's just personal preference (aka I'm lazy).</p>
+
+<h2>Using CSS in our Imports</h2>
+
+<h3>Sketch 2: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/2-css">CSS</a></h3>
+
+<p>Let's put Polymer to the side for a bit and go back to our original, native example.</p>
+
+<p>One of the first things I wanted to try was importing documents using the new CSS <a href="http://www.w3.org/TR/html51/document-metadata.html#attr-style-scoped"><code>scoped</code></a> attribute. The <code>scoped</code> attribute allows you to include <code>&lt;style&gt;</code> tags inside of an element which <strong>only affect that element and not the entire document</strong>. Let's update our index file a bit to demonstrate:</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Imports with CSS&lt;/title&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;!-- Add a header so we can show off scoped --&gt;
+&lt;h1&gt;Boring header&lt;/h1&gt;
+&lt;p&gt;Hello World!&lt;/p&gt;
+
+&lt;script&gt;
+  var link = document.querySelector('link[rel=import]');
+  var content = link.import.querySelector('#blog-post');
+  document.body.appendChild(content.cloneNode(true));
+&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+<code>``
+The only change I've made is to add an</code>h1<code>at line 10 so we can better illustrate how</code>scoped` works. Now let's update our fake blog post.</p>
+
+<p>``` html imports/blog-post.html</p>
+
+<div id="blog-post">
+  <style scoped>
+    h1 {
+      background: lightgreen;
+      color: green;
+    }
+
+    p {
+      font-size: 16px;
+      font-family: Helvetica, Arial, sans-serif;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+
+  <h1>Awesome header</h1>
+  <p>
+    Here is some really interesting paragraph content.
+    It comes with its own stylesheet!
+  </p>
+</div>
+
+
+<p>```
+When we run this in Canary we should get the following:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen2.jpg" title="'Imports with Scoped Styles'" ></p>
+
+<p>It's still not much to look at but the gears in my imagination are starting to turn now. We just imported a document, which has its own styles that are scoped specifically to it, and we stamped its contents onto our page. We're starting to get into Web Components territory and that's pretty exciting. Let's see what else we can do...</p>
+
+<h2>Using Scripts in our Imports</h2>
+
+<h3>Sketch 3: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/3-script">Script</a></h3>
+
+<p>Next let's look at using <code>&lt;script&gt;</code> tags inside of our import. We'll start by removing the <code>&lt;script&gt;</code> block from our <code>index.html</code>.</p>
+
+<p>```html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Basic HTML Imports&lt;/title&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/blog-post.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;h1&gt;Boring header&lt;/h1&gt;
+&lt;p&gt;Hello World!&lt;/p&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>Then we'll transfer that script block over to our blog post.</p>
+
+<p>```html imports/blog-post.html</p>
+
+<div id="blog-post">
+  <style scoped>
+    h1 {
+      background: lightgreen;
+      color: green;
+    }
+
+    p {
+      font-size: 16px;
+      font-family: Helvetica, Arial, sans-serif;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+
+  <h1>Awesome header</h1>
+  <p>
+    Here is some really interesting paragraph content.
+    It comes with its own stylesheet!
+  </p>
+</div>
+
+
+
+
+<script>
+  // thisDoc refers to the "importee", which is blog-post.html
+  var thisDoc = document.currentScript.ownerDocument;
+
+  // thatDoc refers to the "importer", which is index.html
+  var thatDoc = document;
+
+  // grab the contents of the #blog-post from this document
+  // and append it to the importing document.
+  var content = thisDoc.querySelector('#blog-post');
+  thatDoc.body.appendChild(content.cloneNode(true));
+</script>
+
+
+<p>```
+If we run this we should get the exact same outcome as before.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen2.jpg" title="'Imports with Scoped Styles'" ></p>
+
+<p>An important thing to take notice of is the relationship between <code>thisDoc</code> and <code>thatDoc</code>. <code>thisDoc</code> refers to the <code>blog-post.html</code> document, while <code>thatDoc</code> refers to our index.html file. It's useful to distinguish between the two so we can <code>querySelector</code> for <code>#blog-post</code> and not worry that we may have grabbed something out of the importing document. <em>Thanks to <a href="https://twitter.com/coonsta">Dominic Cooney</a> for the heads up on this.</em></p>
+
+<p>You'll also notice that since the import has access to our <code>document</code> object it is able to add itself to the page. In practice you probably wouldn't want imports adding themselves wherever but the important takeaway is that <strong>anything imported can access the <code>document</code></strong>. This means an import could register itself as a Custom Element using our <code>document</code> object and we wouldn't need to write any additional code. We're almost to that point so let's keep going...</p>
+
+<h2>Using Templates in our Imports</h2>
+
+<h3>Sketch 4: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/4-template">Template</a></h3>
+
+<p>I'm getting a little tired of our fake "blog post" so let's switch over to something more practical. We'll use <a href="http://www.chartjs.org/">Chart.js</a> to create a very simple pie diagram and we'll use the new <code>&lt;template&gt;</code> tag to hold the contents of our import. If you haven't heard of the template tag before <a href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/">checkout this introduction</a>.</p>
+
+<p>To start, I've updated the <code>index.html</code> so it includes Chart.js and imports a new <code>chart.html</code> file.</p>
+
+<p>```html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Imports with Templates&lt;/title&gt;
+&lt;!-- Include Chart.js so our import can use it --&gt;
+&lt;script src="http://robdodson.github.com/lib/chart.min.js"&gt;&lt;/script&gt;
+&lt;!-- Make sure to import chart.html --&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/chart.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;h1&gt;Quarterly Pokemon Sales&lt;/h1&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+<code>``
+Originally I had the Chart.js script include on line 7 inside of</code>chart.html<code>. I realize now that this is an antipattern because</code>chart.html` has no idea where you would store your 3rd party libraries. If your import depends on 3rd party code I think it's best to keep it in the primary document.</p>
+
+<p>Here's what <code>chart.html</code> looks like:</p>
+
+<p>```html imports/chart.html
+<template id="chart-pie">
+  <canvas id="myChart" width="200" height="200"></canvas>
+  <script></p>
+
+<pre><code>var data = [
+  {
+    value: 30,
+    color:"#F38630"
+  },
+  {
+    value : 50,
+    color : "#E0E4CC"
+  },
+  {
+    value : 100,
+    color : "#69D2E7"
+  }
+];
+
+// Get the context of the canvas element we want to select
+// It's ok to use document here because this script block won't
+// activate till it's added to the page.
+var ctx = document.getElementById("myChart").getContext("2d");
+var myNewChart = new Chart(ctx).Pie(data);
+</code></pre>
+
+<p>  </script>
+</template></p>
+
+<script>
+  // thisDoc refers to the "importee", which is chart.html
+  var thisDoc = document.currentScript.ownerDocument;
+
+  // thatDoc refers to the "importer", which is index.html
+  var thatDoc = document;
+
+  // grab the contents of #chart-pie from this document
+  // and append it to the importing document.
+  var template = thisDoc.querySelector("#chart-pie");
+  thatDoc.body.appendChild(template.content.cloneNode(true));
+</script>
+
+
+<p><code>``
+We're creating a new</code><template>` which contains a canvas tag and a script block to create our pie chart. The advantage of using a template tag is that any script blocks inside of it will not execute until we clone the contents and add them to the DOM.</p>
+
+<p>Lines 29-37 should look familiar. We're grabbing the template and stamping its content onto the document. Notice on line 37 we use <code>template.content</code> to access the innards.</p>
+
+<p>Running the above gives us this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-template.jpg" title="'Imports with Template'" ></p>
+
+<p>Well this is interesting. We're importing an entire pie chart and our index page isn't cluttered with a bunch of code. Unfortunately we don't have much control over where the pie chart ends up. It would be nice if we could turn the contents of the import into a tag and place that wherever. Thankfully Custom Elements let us do just that!</p>
+
+<h2>Using Custom Elements in our Imports</h2>
+
+<h3>Sketch 5: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/5-custom-element">Custom Element</a></h3>
+
+<p>I'll say in advance that you might need to read through this section a few times before you fully grok it. We're going to touch on a lot of new stuff and I fully admit that I don't understand it all just yet. Consider this the bonus round :)</p>
+
+<p>Having said that, the final markup for our <code>index.html</code> file is going to look like this:</p>
+
+<p>```html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Imports with Custom Elements&lt;/title&gt;
+&lt;script src="http://robdodson.github.com/lib/chart.min.js"&gt;&lt;/script&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/chart.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;h1&gt;Quarterly Pokemon Sales&lt;/h1&gt;
+&lt;chart-pie&gt;&lt;/chart-pie&gt;
+&lt;chart-pie&gt;&lt;/chart-pie&gt;
+&lt;chart-pie&gt;&lt;/chart-pie&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+<code>``
+On lines 11-13 we're going to use our new Custom Element,</code>chart-pie`, which will allow us to produce pie charts wherever we want. The result will look like this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-custom-elements.jpg" title="'Imports with Custom Elements'" ></p>
+
+<p>Obviously not the most amazing thing ever but from a practical perspective being able to drop a pie chart on your page with one line of HTML is pretty sweet.</p>
+
+<p>To create the <code>chart-pie</code> tag we'll need to create a <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Element</a>. Custom Elements are new tags with a lifecycle of JavaScript callbacks. Typically they use <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM</a> to hide their internal markup and expose attributes and specific styles to the client. <a href="http://robdodson.me/blog/2013/03/17/why-web-components/">I wrote an article loosely explaining them</a> a while back so take a look at that and also checkout <a href="http://www.youtube.com/watch?v=fqULJBBEVQE">this talk by Eric Bidelman</a>.</p>
+
+<p>Here's what our updated <code>chart.html</code> looks like.</p>
+
+<p>```html imports/chart.html
+<template id="chart-pie">
+  <canvas class="myChart" width="200" height="200"></canvas>
+</template></p>
+
+<script>
+  // thisDoc refers to the "importee", which is chart.html
+  var thisDoc = document.currentScript.ownerDocument;
+
+  // thatDoc refers to the "importer", which is index.html
+  var thatDoc = document;
+
+  var template = thisDoc.querySelector('#chart-pie');
+
+  // Make sure you extend an existing HTMLElement prototype
+  var ChartPieProto = Object.create(HTMLElement.prototype);
+
+  // Setup optional lifecycle callbacks: createdCallback,
+  // enteredDocumentCallback, leftDocumentCallback and
+  // attributeChangedCallback
+  ChartPieProto.createdCallback = function() {
+    // Create a ShadowDOM to hold our template content
+    var root = this.createShadowRoot();
+    var clone = template.content.cloneNode(true);
+
+    // Create the pie chart with Chart.js
+    var data = [
+      {
+        value: 30,
+        color:"#F38630"
+      },
+      {
+        value : 50,
+        color : "#E0E4CC"
+      },
+      {
+        value : 100,
+        color : "#69D2E7"
+      }
+    ];
+
+    //Get the context of the canvas element we want to select
+    var ctx = clone.querySelector('.myChart').getContext('2d');
+    var myNewChart = new Chart(ctx).Pie(data);
+
+    // Add the template content + chart to our Shadow DOM
+    root.appendChild(clone);
+  };
+
+  var ChartPie = thatDoc.register('chart-pie', {prototype: ChartPieProto});
+  //var chartPie = new ChartPie();
+  //var chartPie = document.createElement('chart-pie');
+</script>
+
+
+<p>```
+Let's walk through it piece by piece.</p>
+
+<pre><code>&lt;template id="chart-pie"&gt;
+  &lt;canvas class="myChart" width="200" height="200"&gt;&lt;/canvas&gt;
+&lt;/template&gt;
+</code></pre>
+
+<p>On lines 1-3 we've shortened the <code>template</code> down so that it only contains our <code>canvas</code> tag. We'll use the Custom Element <code>createdCallback</code> to actually instantiate the chart in here.</p>
+
+<br>
+
+
+<pre><code>// thisDoc refers to the "importee", which is chart.html
+var thisDoc = document.currentScript.ownerDocument;
+
+// thatDoc refers to the "importer", which is index.html
+var thatDoc = document;
+
+var template = thisDoc.querySelector('#chart-pie');
+</code></pre>
+
+<p>Lines 6-12 should look familar from the last example. We're storing our two documents in variables and querying for the template tag.</p>
+
+<br>
+
+
+<pre><code>var ChartPieProto = Object.create(HTMLElement.prototype);
+</code></pre>
+
+<p>On line 15 we define the prototype for our Custom Element called <code>ChartPieProto</code>. This prototype extends the <code>HTMLElement</code> prototype which is a requirement for creating a new element.</p>
+
+<br>
+
+
+<pre><code>ChartPieProto.createdCallback = function() {
+  ...
+};
+</code></pre>
+
+<p>On line 20 we see the first lifecycle callback, <code>createdCallback</code>. The <code>createdCallback</code> is run every time the parser hits a new instance of our tag. Therefore we can use it as a kind of Constructor to kickoff the creation of our chart. We'll want to create a new chart instance for each tag so all of our Chart.js code has been moved inside of this callback.</p>
+
+<br>
+
+
+<pre><code>var root = this.createShadowRoot();
+var clone = template.content.cloneNode(true);
+</code></pre>
+
+<p>On lines 22-23 we create a <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM</a> to hold the markup for our chart.</p>
+
+<br>
+
+
+<pre><code>var data = [
+  {
+    value: 30,
+    color:"#F38630"
+  },
+  {
+    value : 50,
+    color : "#E0E4CC"
+  },
+  {
+    value : 100,
+    color : "#69D2E7"
+  }
+];
+
+//Get the context of the canvas element we want to select
+var ctx = clone.querySelector('.myChart').getContext('2d');
+var myNewChart = new Chart(ctx).Pie(data);
+</code></pre>
+
+<p>Lines 26-43 should look familiar. It's the same Chart.js code from before except now we use <code>querySelector</code> to find the contents of the template clone and we're using a class for <code>myChart</code> instead of an id.</p>
+
+<br>
+
+
+<pre><code>root.appendChild(clone);
+</code></pre>
+
+<p>On line 46 we add the new content to our Shadow DOM.</p>
+
+<br>
+
+
+<pre><code>var ChartPie = document.register('chart-pie', {prototype: ChartPieProto});
+</code></pre>
+
+<p>Line 49 is where we actually register our Custom Element and assign it to the name <code>chart-pie</code>. From here you can either place a <code>&lt;chart-pie&gt;&lt;/chart-pie&gt;</code> tag somewhere on your page, or use JavaScript to instantiate an instance and add it to the <code>document</code>. This is demonstrated in the comments on lines 50-51. If you refer back to our <code>index.html</code> example we just use the <code>&lt;chart-pie&gt;</code> tag.</p>
+
+<p>```html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Imports with Custom Elements&lt;/title&gt;
+&lt;script src="http://robdodson.github.com/lib/chart.min.js"&gt;&lt;/script&gt;
+&lt;link rel="import" href="http://robdodson.github.com/imports/chart.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;h1&gt;Quarterly Pokemon Sales&lt;/h1&gt;
+&lt;chart-pie&gt;&lt;/chart-pie&gt;
+&lt;chart-pie&gt;&lt;/chart-pie&gt;
+&lt;chart-pie&gt;&lt;/chart-pie&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```
+Which produces this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-custom-elements.jpg" title="'Imports with Custom Elements'" ></p>
+
+<h2>Conclusion</h2>
+
+<p>If you've made it this far congrats and thanks for hanging in there! I know that last section was a little crazy but stop for a moment and think about what we just did.</p>
+
+<p>By using an HTML Import we were able to pull in a document which added a new tag to our application. Imagine if <em>all</em> of Chart.js was written in this manner. There would be no need for us to write any glue code to generate a chart ever again. Instead we could manipulate the attributes of a <code>&lt;chart-pie&gt;</code> tag using something like Angular or any other front-end framework. That would allow us to focus only on the code that matters to our application and leave all that other boilerplate tucked away inside of Custom Elements.</p>
+
+<p>As a matter of fact the Polymer folks have already started doing this. Checkout the <a href="https://github.com/Polymer/more-elements">more-elements project on GitHub</a> which includes proof of concept wrappers for a number of libraries including Chart.js. Thanks to Scott Miles on <a href="https://groups.google.com/forum/#!forum/polymer-dev">the Polymer Google Group</a> for pointing that out to me :)</p>
+
+<p>Over the next few months I'll be blogging exclusively about this topic because I think it's really interesting so check back later for more!</p>
+
+<p>Till then make sure to <a href="http://twitter.com/rob_dodson">hit me up on Twitter</a> if you have any questions or leave a note in the comments. Thanks!</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,348 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Let's Talk SMACSS, Man | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">09 Jun 2012</span>
+	<h1 class="post-title">Let's Talk SMACSS, Man</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>In an effort to further my understanding of CSS best practices I&#8217;ve ended up with two sort of looming frameworks: <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> After reading up on both I feel more drawn toward SMACSS, most likely because it features a lumberjack on its site. I want to give a quick summary of what SMACSS has to offer. In so doing I&#8217;m going to borrow liberally from the documentation and then explain my thinking as it relates to certain passages. Cool? OK.</p>
+
+<!--more-->
+
+
+<h2>The Skinny</h2>
+
+<p>The ideas behind SMACSS were fostered over time by its creator, Jonathan Snook, who has worked on tons of sites, most notably YAHOO! Mail&#8217;s latest redesign. SMACSS is not a library of ready-made code that you can just download like <a href="http://twitter.github.com/bootstrap/">Twitter&#8217;s Bootstrap</a> or <a href="http://foundation.zurb.com/">ZURB&#8217;s Foundation.</a> Instead it is a collection of design ideas and suggestions codefied in an easy to read ebook. Think of it as a tool to help you decide <em>how</em> you&#8217;re going to write your CSS, rather than something which will write your CSS for you.</p>
+
+<p>The Core of the book, which is what I&#8217;m going to focus on today, is separated by stylesheet: Base Rules, Layout Rules, Module Rules, State Rules, and Theme Rules.</p>
+
+<h2>Base Rules</h2>
+
+<blockquote><p>Base rules are the defaults. They are almost exclusively single element selectors but it could include attribute selectors, pseudo-class selectors, child selectors or sibling selectors. Essentially, a base style says that wherever this element is on the page, it should look like this. &#8211; SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p><a href="http://www.stubbornella.org/content/">Nicole Sullivan</a>, creator of OOCSS, suggests that we start with the smallest possible elements of our site and design up from there. In the SMACSS philosophy this process would start with our <code>base.css</code> file. Think of it as the place where we define the absolute most basic styles any element on our site can have.</p>
+
+<figure class='code'><figcaption><span>base.css</span></figcaption><pre><code><span class="nt">body</span><span class="o">,</span> <span class="nt">form</span> <span class="p">{</span>
+    <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">a</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#039</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">a</span><span class="nd">:hover</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#03F</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>The idea is to give us a decent, even playing field where all of our core pieces are ready to be used in whatever fashion we see fit. You might find that you enjoy adding your css reset or normalization to a base.css file but personally I like to keep my reset separate to reduce clutter.</p>
+
+<h2>Layout Rules</h2>
+
+<blockquote><p>Layout rules divide the page into sections. Layouts hold one or more modules together. &#8211; SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>Your layout rules are where prototypes start to come to life. Every site can be broken down into two very broad layers. The first is the scaffolding of the page and the second is the modules which live in the scaffolding.</p>
+
+<p>To understand scaffolding, try looking at a website like <a href="http://www.cnn.com/">CNN</a> and unfocusing your eyes. Once you&#8217;re ignoring the words and pictures you should be able to easily describe the major areas of content: the header, the primary content, sidebars, etc. The rules which govern the positioning of those elements should live in <code>layout.css</code>.</p>
+
+<figure class='code'><figcaption><span>layout.css</span></figcaption><pre><code><span class="nf">#header</span><span class="o">,</span> <span class="nf">#article</span><span class="o">,</span> <span class="nf">#footer</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">960px</span><span class="p">;</span>
+    <span class="k">margin</span><span class="o">:</span> <span class="k">auto</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#article</span> <span class="p">{</span>
+    <span class="k">border</span><span class="o">:</span> <span class="k">solid</span> <span class="m">#CCC</span><span class="p">;</span>
+    <span class="k">border-width</span><span class="o">:</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>It&#8217;s also a good place to put other generalized layout styles which might be used elsewhere in your site. For instance, a horizontal list for menu items or breadcrumbs:</p>
+
+<figure class='code'><figcaption><span>layout.css</span></figcaption><pre><code><span class="nc">.h-list</span> <span class="p">{</span>
+    <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">list-style-type</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.h-list</span> <span class="o">&gt;</span> <span class="nt">li</span> <span class="p">{</span>
+    <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="o">-</span><span class="k">block</span><span class="p">;</span>
+    <span class="k">margin</span><span class="o">:</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+
+    <span class="c">/* IE7 hack to mimic inline-block on block elements */</span>
+    <span class="o">*</span><span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">zoom</span><span class="o">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>These styles don&#8217;t care about the color or background or any other specifics of their elements. They only care about how those elements will be layed out in space.</p>
+
+<h2>Module Rules</h2>
+
+<blockquote><p>Modules are the reusable, modular parts of our design. They are the callouts, the sidebar sections, the product lists and so on. &#8211; SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>The module rules are where the majority of your site code will go, as this sheet defines all the little inhabitants of that second layer I mentioned, the modules <em>inside</em> the scaffolding. Each module should be able to stand on its own, and as such, it might be a good idea to design them first in a separate file so there is no temptation to leverage styles already on the page. Once your module is complete you can drop it into your document and it <em>should</em> play nice with everyone else.</p>
+
+<p>Each module will typically start with a class name, and all subsequent selectors should work from this point down. Or if our module is going to be rather complex we can namespace our selectors. For instance:</p>
+
+<figure class='code'><figcaption><span>modules.css</span></figcaption><pre><code><span class="nc">.pod</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span>
+<span class="p">}</span>
+
+<span class="nc">.pod</span> <span class="o">&gt;</span> <span class="nt">h3</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#F00</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Or... */</span>
+
+<span class="nc">.pod-title</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#F00</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Whether you use descendant selectors or namespaced clases is really up to you and how complex your modules get. You definitely don&#8217;t want to end up with classitis. The advantage to using <code>.pod-title</code> is that it doesn&#8217;t tie us to an <code>h3</code>, however your markup might become a total mess if every single element requires its own class. Balance is key.</p>
+
+<h3>Subclassing Modules</h3>
+
+<p>One very important concept to keep in mind is that of subclassing modules. Imagine a scenario where you have a widget which exists in your primary content area. One day your boss tells you to move it into the sidebar, and once it&#8217;s there 99% of the styles should look the same, except the widget will now be about 3/4ths of its normal width and its text should be red instead of blue. Your first inclination might be to move the code for the widget into the sidebar and then to do something like this:</p>
+
+<figure class='code'><figcaption><span>modules.css</span></figcaption><pre><code><span class="c">/*</span>
+
+<span class="c">DON&#39;T DO THIS!</span>
+
+<span class="c">*/</span>
+
+<span class="nc">.widget</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.widget</span> <span class="nc">.widget-title</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#00F</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#sidebar</span> <span class="nc">.widget</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">75px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#sidebar</span> <span class="nc">.widget</span> <span class="nc">.widget-title</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">75px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>By leveraging the parent context we&#8217;ve now locked ourselves into a specificity war. Any change to our second widget requires the <code>#sidebar</code> id, which also means that this second widget cannot live anywhere else. Rather than using the parent we should consider the widget that lives in the sidebar as an <em>extension</em> of our original object.</p>
+
+<figure class='code'><figcaption><span>modules.css</span></figcaption><pre><code><span class="nc">.widget</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.widget</span> <span class="nc">.widget-title</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#00F</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Our Subclass */</span>
+<span class="nc">.widget-constrained</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">75px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.widget-constrained</span> <span class="nc">.widget-title</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#F00</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>To use a subclass we should apply both the original and the subclass styles to our element:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;widget widget-constrained&quot;</span><span class="nt">&gt;</span>...<span class="nt">&lt;/div&gt;</span>
+</code></pre></figure>
+
+
+<p>The benefit of doing it this way is that the styles are easier to read and also more flexible. Since there&#8217;s no parent coupling our <code>widget-constrained</code> can be used in the sidebar, footer, modals, or anywhere else you&#8217;d like.</p>
+
+<h2>State Rules</h2>
+
+<blockquote><p>State rules are ways to describe how our modules or layouts will look when in a particular state. Is it hidden or expanded? Is it active or inactive? They are about describing how a module or layout looks on screens that are smaller or bigger. They are also about describing how a module might look in different views like the home page or the inside page. &#8211; SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>The best example of what should go into a <code>states.css</code> is the classic error state.</p>
+
+<figure class='code'><figcaption><span>states.css</span></figcaption><pre><code><span class="nc">.is-error</span> <span class="p">{</span>
+    <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="nb">red</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Really anything that would potentially be added with JavaScript to illustrate a change in a module&#8217;s state would be a good candidate. Some other ones that come to mind are <code>is-hidden</code> or <code>is-pressed</code>.</p>
+
+<p>One rather sticky point to the whole idea of a <code>states.css</code> is that most of the states would need to either rely on being loaded after all your other stylesheets or have an <code>!important</code> added to them. I think for a lot of folks that is a dealbreaker, although in my opinion, if used properly, those few !importants can be very useful. For instance, if we add an <code>is-hidden</code> state to one of our elements I think it&#8217;s perfectly ok to <code>!important</code> the <code>display: none</code>.</p>
+
+<h3>Module States</h3>
+
+<p>An alternative to using <code>!important</code> all over the place is the idea of module states. So rather than <code>.is-pressed</code> in our <code>states.css</code> we would have <code>.is-btn-pressed</code> next to our <code>.btn</code> module in <code>modules.css</code>. I like this approach a lot and think it solves many of the places where <code>states.css</code> feels too general.</p>
+
+<h2>Theme Rules</h2>
+
+<blockquote><p>Theme rules are similar to state rules in that they describe how modules or layouts might look. Most sites don’t require a layer of theming but it is good to be aware of it.</p></blockquote>
+
+<p>The primary consideration for theme rules are when your site is able to be reskinned and also if the typography can be changed.</p>
+
+<p>Skinning a new module with a <code>theme.css</code> might look something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c">/* in modules.css */</span>
+<span class="nc">.mod</span> <span class="p">{</span>
+    <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* in theme.css */</span>
+<span class="nc">.mod</span> <span class="p">{</span>
+    <span class="k">border-color</span><span class="o">:</span> <span class="nb">blue</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Likewise if you need to switch to a different font or size, here is where you would do that. To be honest I don&#8217;t currently need to make any of my projects skinnable so I haven&#8217;t explored the ideas around <code>theme.css</code> all that much, but I do think it&#8217;s a good idea to keep in the back of your hat.</p>
+
+<h2>Wrap it up!</h2>
+
+<p>That does it for tonight. Hopefully you&#8217;re a little more enlightened with regards to SMACSS. Definitely <a href="http://smacss.com/">checkout the SMACSS site</a> and grab the book. And as always please feel free to leave comments and feedback. Thanks! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Anxious</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Let's Talk SMACSS, Man&amp;url=http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

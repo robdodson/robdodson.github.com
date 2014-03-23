@@ -1,0 +1,340 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Shadow DOM: JavaScript | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">02 Sep 2013</span>
+	<h1 class="post-title">Shadow DOM: JavaScript</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>We&#8217;re getting to a point where we&#8217;ve covered most of what there is to know about <a href="/blog/2013/03/16/html5-template-tag-introduction/">templates</a>, <a href="/blog/2013/08/20/exploring-html-imports/">imports</a> and shadow DOM (<a href="/blog/2013/08/26/shadow-dom-introduction/">1</a>, <a href="/blog/2013/08/27/shadow-dom-the-basics/">2</a>, <a href="/blog/2013/08/28/shadow-dom-styles/">3</a>, <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot/">4</a>). The end goal for all of these technologies is <strong>custom elements</strong>, but we&#8217;re not <em>quite</em> there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I&#8217;m going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you&#8217;ll be in a good place to start creating your own custom elements.</p>
+
+<p>Let&#8217;s get crackin&#8217;!</p>
+
+<!--more-->
+
+
+<p><em>Before we get started I wanted to thank Eric Bidelman for his <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/">amazing article on advanced Shadow DOM</a>. Most of this article is my interpretation of his post and I&#8217;m only covering a subset of what he presented. Definitely go read <a href="http://www.html5rocks.com/en/tutorials/#webcomponents">everything on HTML5 Rocks that pertains to Web Components</a> when you get a chance.</em></p>
+
+<h2>Support <a href="#" id="support"></a></h2>
+
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v31 or greater.</p>
+
+<p>Also make sure you&#8217;ve enabled the following in Chrome&#8217;s <code>about:flags</code>.</p>
+
+<p>√ Experimental Web Platform features<br>
+√ Experimental JavaScript<br></p>
+
+<p><em>I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)</em></p>
+
+<h2>Codez! <a href="#" id="codez"></a></h2>
+
+<p>I&#8217;ve created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I&#8217;ll link to the sketch so you can quickly try things out.</p>
+
+<h2>JavaScript Scope <a href="#" id="javascript-scope"></a></h2>
+
+<h3>Sketch 13: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/13-javascript-scope">javascript-scope</a></h3>
+
+<p>Remember when I spent all of that time <a href="/blog/2013/08/28/shadow-dom-styles/">explaining how Shadow DOM CSS was encapsulated and protected from the parent document</a> and how awesome that all was? You might also think that JavaScript works the same way—<em>I did at first</em>—but that&#8217;s actually not the case. With a few exceptions, which I&#8217;ll discuss later, JavaScript in the Shadow DOM works pretty much exactly as it always has. That means all the best practices you&#8217;ve learned over the years still apply.</p>
+
+<p>Here&#8217;s an example of what I&#8217;m talking about.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;host&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Hello World!<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">;</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;window.foo = &#39;</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nx">foo</span><span class="p">);</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-js1.jpg" title="'Shadow DOM global variable'" ></p>
+
+<p>Even though we&#8217;re using a template tag and our script block is inside the Shadow DOM, the <code>foo</code> variable still attaches itself to the <code>window</code>. There&#8217;s no special magic to keep it out of the global scope. Instead we need to rely on our trusty friend, <a href="http://en.wikipedia.org/wiki/Immediately-invoked_function_expression">the IIFE</a>, to make sure everything stays protected.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;template&gt;</span>
+  <span class="nt">&lt;h1&gt;</span>Hello World!<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+  <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">;</span>
+  <span class="p">}());</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-js2.jpg" title="'Shadow DOM IIFE'" ></p>
+
+<p>That&#8217;s more like it!</p>
+
+<h2>Event Retargeting <a href="#" id="event-retargeting"></a></h2>
+
+<p>As I mentioned previously, the one place where Shadow DOM JavaScript really differs is with respect to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
+
+<p>I know that doesn&#8217;t really sink in without an example so try this out.</p>
+
+<h3>Sketch 14: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/14-event-retargeting-shadow-nodes">event-retargeting-shadow-nodes</a></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;normal-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m normal text&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;host&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;shadow-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m shadow text&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; clicked!&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><a class="jsbin-embed" href="http://jsbin.com/IpaNAMi/3/embed?console,output">Shadow DOM Event Retargeting</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<p>Click on each of the above text fields and checkout what the console outputs. When you click on the &#8220;normal text&#8221; field it logs the <code>id</code> of that input. However, when you click on the &#8220;shadow text&#8221; field it logs the <code>id</code> of the host element (which is just <code>#host</code>). This is because <strong>events coming from shadow nodes have to be retargeted otherwise they would break encapsulation.</strong> If the event target continued to point at <code>#shadow-text</code> then anyone could dig around inside of our Shadow DOM and start messing things up.</p>
+
+<h3>Distributed Nodes</h3>
+
+<p>If you recall from the last post we talked about <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#distributed-nodes">distributed nodes</a>, which are bits of content taken from the shadow host and projected into the Shadow DOM. You might think that since these nodes appear in the Shadow DOM that their events would be retargeted as well. But that&#8217;s not the case.</p>
+
+<p>Heres&#8217; another example to demonstrate.</p>
+
+<h3>Sketch 15: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/15-event-retargeting-distributed-nodes">event-retargeting-distributed-nodes</a></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;normal-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m normal text&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;host&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;distributed-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m distributed text&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;shadow-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m shadow text&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; clicked!&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><a class="jsbin-embed" href="http://jsbin.com/UyIRUta/2/embed?console,output">Shadow DOM Event Retargeting</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<p>Like before, as you click on each input field you&#8217;ll see the id of the event&#8217;s target element. Clicking on the &#8220;distributed text&#8221; field shows that its event target remains intact. That&#8217;s because a distributed node comes from the parent document, so the user already has access to it. There&#8217;s no need to retarget its events and, in fact, you probably wouldn&#8217;t want to. If a user gives you a button to style with Shadow DOM they&#8217;re going to want to be able to listen to click events on it at some point.</p>
+
+<h2>Blocked Events <a href="#" id="blocked-events"></a></h2>
+
+<h3>Sketch 16: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/16-stopped-events">stopped-events</a></h3>
+
+<p>In some instances events are killed off rather than retargeted. The following events are always stopped at the root node and cannot be observed by the parent document:</p>
+
+<ul>
+<li><code>abort</code></li>
+<li><code>error</code></li>
+<li><code>select</code></li>
+<li><code>change</code></li>
+<li><code>load</code></li>
+<li><code>reset</code></li>
+<li><code>resize</code></li>
+<li><code>scroll</code></li>
+<li><code>selectstart</code></li>
+</ul>
+
+
+<p>Here&#8217;s an example to demonstrate what I mean.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;normal-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m normal text&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;host&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;distributed-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m distributed text&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;shadow-text&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;I&#39;m shadow text&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; text selected!&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><a class="jsbin-embed" href="http://jsbin.com/oLuZePo/2/embed?console,output">Shadow DOM Stopped Events</a><script src="http://static.jsbin.com/js/embed.js"></script></p>
+
+<p>Here I&#8217;m listening for <code>select</code> events which are triggered whenever you click and drag to highlight some text. If you try highlighting the text inside of the &#8220;normal text&#8221; input it should log <code>normal-text text selected!</code>. The &#8220;distributed text&#8221; input reacts in a similar fashion. But if you try to highlight the text inside of the &#8220;shadow text&#8221; input, nothing appears in the console. The event has been killed at the shadow root so it can&#8217;t bubble up to the document where our event listener lives. Keep this in mind if you think you need to use any of the above listed events in your Shadow DOM.</p>
+
+<h2>Conclusion <a href="#" id="conclusion"></a></h2>
+
+<p>So nothing <em>too</em> bad I hope. A few gotchas with JavaScript events but otherwise things work pretty much like what we&#8217;re accustomed to. If you read through the previous posts then you&#8217;re ready to move on to Custom Elements and <a href="http://www.polymer-project.org/">Polymer</a>! Refer back to these articles if you feel lost and as always be sure to <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment if you have any questions. Thanks!</p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Shadow DOM: JavaScript&amp;url=http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/09/02/shadow-dom-javascript/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

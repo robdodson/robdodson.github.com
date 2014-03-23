@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: jQuery Plugins | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/jquery-plugins/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <updated>2012-05-24T07:23:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
+
+<!--more-->
+
+
+<h3>View Events and the DOM</h3>
+
+<p>After looking around for a bit I've found this <a href="http://documentcloud.github.com/backbone/#FAQ-events">list of the events that Backbone can dispatch.</a> Nothing in there about render or adding elements to the DOM :(</p>
+
+<p>More searching reveals that almost everyone points to the <a href="http://docs.jquery.com/Plugins/livequery">livequery plugin for jQuery.</a> Livequery seems like a mostly deprecated plugin since jQuery has both <code>.live()</code> and <code>.delegate()</code> methods now. The one exception is that livequery will fire a callback when an element is created.</p>
+
+<p>Another alternative is to fire a custom event from my View's render method. While this does seem cleaner than using a plugin unfortunately we might call render over and over again. A middle of the road solution would be to use <code>.one()</code> to bind to the first render event.</p>
+
+<p>In my mind I would like every Backbone View to extend a base class which dispatches a custom <code>addedToDOM</code> event and <code>removedFromDOM</code> event. I'm not sure what the performance cost of using livequery to do this is but let's write it up and maybe we can do a jsPerf later.</p>
+
+<h3>Load a jQuery plugin with AMD</h3>
+
+<p>Let's download livequery <a href="https://github.com/brandonaaron/livequery">from the git repo.</a> Now that we have it we're in another little dilemma. The boilerplate loads jQuery like an AMD module...so how do you use a jQuery plugin with AMD?</p>
+
+<p>It's very possible this is not the intended method but here's how I've gone about solving the problem. Since require.js is only going to load stuff if we specify it as a dependency then we'll need to request the plugin just like any other module. If we put the plugin in our <code>assets/js/plugins</code> folder then we'll already have a path to <code>plugins</code> provided by <code>config.js</code>.</p>
+
+<p>``` js config.js
+require.config({
+  // Initialize the application with the main application file
+  deps: ["main"],</p>
+
+<p>  paths: {</p>
+
+<pre><code>// JavaScript folders
+libs: "../assets/js/libs",
+plugins: "../assets/js/plugins", // &lt;---- !!! look here! 
+
+// Libraries
+jquery: "../assets/js/libs/jquery",
+underscore: "../assets/js/libs/underscore",
+backbone: "../assets/js/libs/backbone",
+
+// Shim Plugin
+use: "../assets/js/plugins/use"
+</code></pre>
+
+<p>  },</p>
+
+<p>  use: {</p>
+
+<pre><code>backbone: {
+  deps: ["use!underscore", "jquery"],
+  attach: "Backbone"
+},
+
+underscore: {
+  attach: "_"
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Then we can load livequery as if it were any other module. This might seem odd because a dependency gets passed to our pseudo-constructor as an argument:</p>
+
+<p>``` js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone",</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+  "plugins/jquery.livequery"
+],</p>
+
+<p>function(namespace, Backbone, livequery) { // &lt;-- see how livequery is passed</p>
+
+<p>...</p>
+
+<p>```</p>
+
+<p>But we're not going to use that argument. It's just there to make sure that <code>jquery.livequery.js</code> gets added to the page. We'll ignore it and use livequery via jquery instead, like so:</p>
+
+<p>``` js
+$('#sections').livequery(function() {</p>
+
+<pre><code>console.log('sections added to DOM!');
+</code></pre>
+
+<p>}, function() {</p>
+
+<pre><code>console.log('sections removed from DOM!');
+</code></pre>
+
+<p>});
+<code>``
+Keep in mind that require.js and AMD are just tacking the script elements onto the page. Requiring our plugin in this fashion is no different than tacking a</code>script` onto the HTML at runtime.</p>
+
+<p>Here's my example.js file <a href="http://robdodson.me/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/">from the last post</a>, now using livequery to listen for when the element is added to and removed from the DOM.</p>
+
+<p>``` js example.js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone",</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+  "plugins/jquery.livequery"
+],</p>
+
+<p>function(namespace, Backbone, livequery) {</p>
+
+<p>  // Create a new module
+  var Example = namespace.module();</p>
+
+<p>  // Example extendings
+  Example.Model = Backbone.Model.extend({ /<em> ... </em>/ });
+  Example.Collection = Backbone.Collection.extend({ /<em> ... </em>/ });
+  Example.Router = Backbone.Router.extend({ /<em> ... </em>/ });</p>
+
+<p>  // This will fetch the tutorial template and render it.
+  Example.Views.Tutorial = Backbone.View.extend({</p>
+
+<pre><code>template: "app/templates/example.html",
+
+render: function(done) {
+  var view = this;
+
+  // Fetch the template, render it to the View element and call done.
+  namespace.fetchTemplate(this.template, function(tmpl) {
+    view.el.innerHTML = tmpl();
+
+    // If a done function is passed, call it with the element
+    if (_.isFunction(done)) {
+      done(view.el);
+    }
+  });
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Left = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'left-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Middle = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'middle-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Right = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'right-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Sections = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'sections',
+
+leftView: undefined,
+middleView: undefined,
+rightView: undefined,
+
+events: {
+  "click .container":    "onChildClicked"
+},
+
+initialize: function() {
+  this.leftView = new Example.Views.Left();
+  this.middleView = new Example.Views.Middle();
+  this.rightView = new Example.Views.Right();
+
+  this.$el.append(this.leftView.render().el);
+  this.$el.append(this.middleView.render().el);
+  this.$el.append(this.rightView.render().el);
+
+  $('#sections').livequery(function() {
+    console.log('sections added to DOM!');
+  }, function() {
+    console.log('sections removed from DOM!');
+  });
+},
+
+// We should do this work with events instead of methods
+setInitialPosition: function() {
+  this.$el.css({left: $(window).width() / 2 - this.$el.width() / 2 });
+},
+
+onChildClicked: function($e) {
+  var $target = $($e.target);
+
+  switch($e.target.id) {
+    case 'left-container':
+      this.$el.animate({left: $(window).width() / 2 - $target.width() / 2});
+      break;
+
+    case 'middle-container':
+      this.$el.animate({left: $(window).width() / 2 - this.$el.width() / 2 });
+      break;
+
+    case 'right-container':
+      this.$el.animate({left: $(window).width() / 2 - this.$el.width() + $target.width() / 2});
+      break;
+  }
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Required, return the module for AMD compliance
+  return Example;</p>
+
+<p>});
+```</p>
+
+<p>I tried this out by adding and removing the <code>Example.Sections</code> view from the DOM and both console logs fired, so yeah, awesome! In lieu of creating a base class and adding an addedToDOM and removedFromDOM event we can do something like this to achieve that effect:</p>
+
+<p>``` js example.js
+initialize: function() {
+  this.leftView = new Example.Views.Left();
+  this.middleView = new Example.Views.Middle();
+  this.rightView = new Example.Views.Right();</p>
+
+<p>  this.$el.append(this.leftView.render().el);
+  this.$el.append(this.middleView.render().el);
+  this.$el.append(this.rightView.render().el);</p>
+
+<p>  _.bindAll(this); // make sure all the methods of our object have the right 'this'</p>
+
+<p>  $('#sections').livequery(this.onAddedToDOM, this.onRemovedFromDOM);
+},</p>
+
+<p>onAddedToDOM: function() {
+  console.log('added to DOM!');
+},</p>
+
+<p>onRemovedFromDOM: function() {
+  console.log('removed from DOM!');
+},
+```</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Hot</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

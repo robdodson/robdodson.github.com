@@ -1,0 +1,1058 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Socket.io | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/socket-io/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building a Countdown Timer with Socket.io pt. 3]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/"/>
+    <updated>2012-06-07T19:41:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3</id>
+    <content type="html"><![CDATA[<p>Today's the day we wrap up our countdown timer and deploy it to Heroku. But before we launch this puppy we need to clean house a little and spice up the visual appeal.</p>
+
+<!--more-->
+
+
+<ul>
+<li><a href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/">Getting Started</a></li>
+<li><a href="http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/">Click here for part 1.</a></li>
+<li><a href="http://robdodson.me/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/">Click here for part 2.</a></li>
+</ul>
+
+
+<h3>Refactoring the Stopwatch</h3>
+
+<p>While the Stopwatch from our last post worked OK there are a spots that can be improved. For starters I'd like to separate the formatting of the time from the <code>onTick</code> method. Mainly because I want to be able to pull the current time out whenever someone hits reset or a new connection is made. Here's how I updated Stopwatch to accomodate these changes:</p>
+
+<p>``` js modles/stopwatch.js
+var util    = require('util'),</p>
+
+<pre><code>events  = require('events')
+_       = require('underscore');
+</code></pre>
+
+<p>// ---------------------------------------------
+// Constructor
+// ---------------------------------------------
+function Stopwatch() {</p>
+
+<pre><code>if(false === (this instanceof Stopwatch)) {
+    return new Stopwatch();
+}
+
+this.hour = 3600000;
+this.minute = 60000;
+this.second = 1000;
+this.time = this.hour;
+this.interval = undefined;
+
+events.EventEmitter.call(this);
+
+// Use Underscore to bind all of our methods
+// to the proper context
+_.bindAll(this);
+</code></pre>
+
+<p>};</p>
+
+<p>// ---------------------------------------------
+// Inherit from EventEmitter
+// ---------------------------------------------
+util.inherits(Stopwatch, events.EventEmitter);</p>
+
+<p>// ---------------------------------------------
+// Methods
+// ---------------------------------------------
+Stopwatch.prototype.start = function() {</p>
+
+<pre><code>if (this.interval) {
+    return;
+}
+
+console.log('Starting Stopwatch!');
+// note the use of _.bindAll in the constructor
+// with bindAll we can pass one of our methods to
+// setInterval and have it called with the proper 'this' value
+this.interval = setInterval(this.onTick, this.second);
+this.emit('start:stopwatch');
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.stop = function() {</p>
+
+<pre><code>console.log('Stopping Stopwatch!');
+if (this.interval) {
+    clearInterval(this.interval);
+    this.interval = undefined;
+    this.emit('stop:stopwatch');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.reset = function() {</p>
+
+<pre><code>console.log('Resetting Stopwatch!');
+this.time = this.hour;
+this.emit('reset:stopwatch', this.formatTime(this.time));
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.onTick = function() {</p>
+
+<pre><code>this.time -= this.second;
+
+var formattedTime = this.formatTime(this.time);
+this.emit('tick:stopwatch', formattedTime);
+
+if (this.time === 0) {
+    this.stop();
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.formatTime = function(time) {</p>
+
+<pre><code>var remainder = time,
+    numHours,
+    numMinutes,
+    numSeconds,
+    output = "";
+
+numHours = String(parseInt(remainder / this.hour, 10));
+remainder -= this.hour * numHours;
+
+numMinutes = String(parseInt(remainder / this.minute, 10));
+remainder -= this.minute * numMinutes;
+
+numSeconds = String(parseInt(remainder / this.second, 10));
+
+output = _.map([numHours, numMinutes, numSeconds], function(str) {
+    if (str.length === 1) {
+        str = "0" + str;
+    }
+    return str;
+}).join(":");
+
+return output;
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.getTime = function() {</p>
+
+<pre><code>return this.formatTime(this.time);
+</code></pre>
+
+<p>};</p>
+
+<p>// ---------------------------------------------
+// Export
+// ---------------------------------------------
+module.exports = Stopwatch;
+```</p>
+
+<p>I also namespaced the events so they would be easier to read when mixed in with the socket.io events. During the refactoring I noticed there were a lot of actors listening to, emitting or calling something like <code>start</code>. I'm not sure if there are common socket.io namespacing patterns but I based what I did on Backbone events and I think it works out well enough.</p>
+
+<h3>Cleaning up app.js</h3>
+
+<p>These changes to <code>Stopwatch</code> also require us to update the <code>app.js</code> that uses it.</p>
+
+<p>``` js app.js
+var stopwatch = new Stopwatch();
+stopwatch.on('tick:stopwatch', function(time) {
+  io.sockets.emit('time', { time: time });
+});</p>
+
+<p>stopwatch.on('reset:stopwatch', function(time) {
+  io.sockets.emit('time', { time: time });
+});</p>
+
+<p>stopwatch.start();</p>
+
+<p>io.sockets.on('connection', function (socket) {
+  io.sockets.emit('time', { time: stopwatch.getTime() });</p>
+
+<p>  socket.on('click:start', function () {</p>
+
+<pre><code>stopwatch.start();
+</code></pre>
+
+<p>  });</p>
+
+<p>  socket.on('click:stop', function () {</p>
+
+<pre><code>stopwatch.stop();
+</code></pre>
+
+<p>  });</p>
+
+<p>  socket.on('click:reset', function () {</p>
+
+<pre><code>stopwatch.reset();
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>I've made it so whenever a user resets or connects to the page they get the latest time. And of course whenever the stopwatch ticks they'll get an update as well. I think it might also be nice if pressing start dispatched the latest time, I should probably add that... ;)</p>
+
+<h3>Tweaking the views</h3>
+
+<p>Lastly I've updated the view by adding some more buttons to correspond to the start/stop and reset methods. I've also wrapped everything in a container to make it easier to position:</p>
+
+<p>``` html views/index.ejs</p>
+
+<div id="wrapper">
+    <div id="countdown"></div>
+    <button id="start" class="thoughtbot">Start</button>
+    <button id="stop" class="thoughtbot">Stop</button>
+    <button id="reset" class="thoughtbot">Reset</button>
+</div>
+
+
+<p><code>
+</code> js public/js/main.js
+var socket = io.connect(window.location.hostname);</p>
+
+<p>socket.on('time', function (data) {</p>
+
+<pre><code>$('#countdown').html(data.time);
+</code></pre>
+
+<p>});</p>
+
+<p>$('#start').click(function() {</p>
+
+<pre><code>socket.emit('click:start');
+</code></pre>
+
+<p>});</p>
+
+<p>$('#stop').click(function() {</p>
+
+<pre><code>socket.emit('click:stop');
+</code></pre>
+
+<p>});</p>
+
+<p>$('#reset').click(function() {</p>
+
+<pre><code>socket.emit('click:reset');
+</code></pre>
+
+<p>});
+```
+Also notice that the socket events coming from the view have been namespaced as well.</p>
+
+<h3>Improving the type</h3>
+
+<p>Next up I want to enhance the type using <a href="http://www.google.com/webfonts">one of Google's webfonts.</a> I chose a font called <code>Black Ops One</code> which seemed appropriately militaristic. Setting it up was as easy as adding one line to my <code>layout.ejs</code></p>
+
+<p><code>html views/layout.ejs
+&lt;link href='http://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'&gt;
+</code></p>
+
+<p>and my <code>main.css</code> file:</p>
+
+<p>``` css public/css/main.css</p>
+
+<h1>countdown {</h1>
+
+<p>  font-family: 'Black Ops One', cursive;
+  font-size: 90px;
+}
+<code>``
+Finally I chose to use some funky buttons from [Chad Mazzola's CSS3 Buttons project.](https://github.com/ubuwaits/css3-buttons) I went with the Thoughtbot buttons since they were red and awesome. The styles are pretty long so I'm just going to post my entire</code>main.css` for you to see:</p>
+
+<p>``` css public/css/main.css</p>
+
+<h1>wrapper {</h1>
+
+<p>  width: 475px;
+  height: 171px;
+  margin: 100px auto;
+}</p>
+
+<h1>countdown {</h1>
+
+<p>  font-family: 'Black Ops One', cursive;
+  font-size: 90px;
+}</p>
+
+<p>button.thoughtbot {
+  background-color: #ee432e;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ee432e), color-stop(50%, #c63929), color-stop(50%, #b51700), color-stop(100%, #891100));
+  background-image: -webkit-linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+  background-image: -moz-linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+  background-image: -ms-linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+  background-image: -o-linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+  background-image: linear-gradient(top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%);
+  border: 1px solid #951100;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4), 0 1px 3px #333333;
+  -moz-box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4), 0 1px 3px #333333;
+  box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4), 0 1px 3px #333333;
+  color: #fff;
+  font: bold 20px "helvetica neue", helvetica, arial, sans-serif;
+  line-height: 1;
+  padding: 12px 0 14px 0;
+  text-align: center;
+  text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.8);
+  width: 150px;
+}</p>
+
+<p>button.thoughtbot:hover {
+  background-color: #f37873;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f37873), color-stop(50%, #db504d), color-stop(50%, #cb0500), color-stop(100%, #a20601));
+  background-image: -webkit-linear-gradient(top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%);
+  background-image: -moz-linear-gradient(top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%);
+  background-image: -ms-linear-gradient(top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%);
+  background-image: -o-linear-gradient(top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%);
+  background-image: linear-gradient(top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%);
+  cursor: pointer;
+}</p>
+
+<p>button.thoughtbot:active {
+  background-color: #d43c28;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #d43c28), color-stop(50%, #ad3224), color-stop(50%, #9c1500), color-stop(100%, #700d00));
+  background-image: -webkit-linear-gradient(top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%);
+  background-image: -moz-linear-gradient(top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%);
+  background-image: -ms-linear-gradient(top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%);
+  background-image: -o-linear-gradient(top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%);
+  background-image: linear-gradient(top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%);
+  -webkit-box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4);
+  -moz-box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4);
+  box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4);
+}
+```
+<img class="center" src="https://s3.amazonaws.com/robdodson/images/defcon_final.png" title="'Defcon final'" ></p>
+
+<p>SWEEEEEEET! I'll go ahead and host it on Heroku but first I have to find out what the cost of leaving Node.js/Socket.io running indefinitely would be. Till then you should be able to get a local version of all this working or <a href="https://github.com/robdodson/defcon">just clone the Github repo</a> and now you too can have your very own Defcon stopwatch. enjoy! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building a Countdown Timer with Socket.io pt. 2]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/"/>
+    <updated>2012-06-06T07:47:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/">Continuing from yesterday's post</a> we started out with a rather crude timer and today I want to upgrade it to a full fledged model, <code>Stopwatch</code>, which dispatches events for the view to hook on to.</p>
+
+<!--more-->
+
+
+<ul>
+<li><a href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/">Getting Started</a></li>
+<li><a href="http://robdodson.me/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/">Click here for part 1.</a></li>
+<li><a href="http://robdodson.me/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/">Click here for part 3.</a></li>
+</ul>
+
+
+<h3>Extend Node's EventEmitter</h3>
+
+<p>We want to extend Node's EventEmitter object in order for our Stopwatch to dispatch its tick events. <a href="http://elegantcode.com/2011/02/21/taking-baby-steps-with-node-js-implementing-events/">Following this great article by Jan Van Ryswyck</a> I've arrived at something that looks like this:</p>
+
+<p>``` js models/stopwatch.js
+var util = require('util'),</p>
+
+<pre><code>events = require('events');
+</code></pre>
+
+<p>function Stopwatch() {</p>
+
+<pre><code>if(false === (this instanceof Stopwatch)) {
+    return new Stopwatch();
+}
+
+events.EventEmitter.call(this);
+
+var self = this;
+setInterval(function() {
+    self.emit('tick');
+}, 1000);
+</code></pre>
+
+<p>};</p>
+
+<p>util.inherits(Stopwatch, events.EventEmitter);
+module.exports = Stopwatch;
+```</p>
+
+<p>In our app.js we'll need to <code>require</code> our new Stopwatch module, create an instance of it, and add a listener for the tick event. Here's the abbreviated version:</p>
+
+<p>``` js app.js
+var Stopwatch = require('./models/stopwatch');</p>
+
+<p>...</p>
+
+<p>var stopwatch = new Stopwatch();
+stopwatch.on('tick', function() {
+  console.log('stopwatch tick!');
+});
+```
+If all goes well when you restart your server you should see 'stopwatch tick!' arriving every second.</p>
+
+<h3>Add to the prototype the RIGHT way</h3>
+
+<p>This next part is what tripped me up the other night and since it was rather late in the evening I was too out of it to figure out what was going wrong.</p>
+
+<p>To recap, we've created a model called <code>Stopwatch</code>, we gave it a constructor function and we told it to extend <code>events.EventEmitter</code>.</p>
+
+<p>Now I want to add a new method to my stopwatch but here's where you might run into a real gotcha. If you're like me you'd probably add it like this:</p>
+
+<p>``` js models/stopwatch.js
+var util = require('util'),</p>
+
+<pre><code>events = require('events');
+</code></pre>
+
+<p>function Stopwatch() {</p>
+
+<pre><code>if(false === (this instanceof Stopwatch)) {
+    return new Stopwatch();
+}
+
+events.EventEmitter.call(this);
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.foobar = function() {</p>
+
+<pre><code>console.log('foobar!');
+</code></pre>
+
+<p>}</p>
+
+<p>util.inherits(Stopwatch, events.EventEmitter);</p>
+
+<p>module.exports = Stopwatch;
+```</p>
+
+<p>Aaaand your app would explode like this:</p>
+
+<p><code>
+[ERROR] TypeError
+TypeError: Object #&lt;Stopwatch&gt; has no method 'foobar'
+</code></p>
+
+<p>That's because we can only add new methods <strong>after calling <code>util.inherits</code>.</strong> The proper way would look like this:</p>
+
+<p>``` js models/stopwatch.js</p>
+
+<p>var util = require('util'),</p>
+
+<pre><code>events = require('events');
+</code></pre>
+
+<p>function Stopwatch() {</p>
+
+<pre><code>if(false === (this instanceof Stopwatch)) {
+    return new Stopwatch();
+}
+
+events.EventEmitter.call(this);
+</code></pre>
+
+<p>};</p>
+
+<p>util.inherits(Stopwatch, events.EventEmitter);</p>
+
+<p>Stopwatch.prototype.foobar = function() {</p>
+
+<pre><code>console.log('foobar!');
+</code></pre>
+
+<p>}</p>
+
+<p>module.exports = Stopwatch;</p>
+
+<p>```</p>
+
+<p>This is also the approach <a href="http://nodejs.org/api/util.html#util_util_inherits_constructor_superconstructor">taken in the documentation.</a> Guess it pays to rtfm :D</p>
+
+<p>Here's what my final <code>Stopwatch</code> looks like:</p>
+
+<p>``` js models/stopwatch.js
+var util    = require('util'),</p>
+
+<pre><code>events  = require('events')
+_       = require('underscore');
+</code></pre>
+
+<p>// ---------------------------------------------
+// Constructor
+// ---------------------------------------------
+function Stopwatch() {</p>
+
+<pre><code>if(false === (this instanceof Stopwatch)) {
+    return new Stopwatch();
+}
+
+this.hour = 3600000;
+this.minute = 60000;
+this.second = 1000;
+this.time = this.hour;
+this.interval = undefined;
+
+events.EventEmitter.call(this);
+
+// Use Underscore to bind all of our methods
+// to the proper context
+_.bindAll(this, 'start', 'stop', 'reset', 'onTick');
+</code></pre>
+
+<p>};</p>
+
+<p>// ---------------------------------------------
+// Inherit from EventEmitter
+// ---------------------------------------------
+util.inherits(Stopwatch, events.EventEmitter);</p>
+
+<p>// ---------------------------------------------
+// Methods
+// ---------------------------------------------
+Stopwatch.prototype.start = function() {</p>
+
+<pre><code>console.log('Starting Stopwatch!');
+// note the use of _.bindAll in the constructor
+// with bindAll we can pass one of our methods to
+// setInterval and have it called with the proper 'this' value
+this.interval = setInterval(this.onTick, this.second);
+this.emit('start');
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.stop = function() {</p>
+
+<pre><code>console.log('Stopping Stopwatch!');
+if (this.interval) {
+    clearInterval(this.interval);
+    this.emit('stop');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.reset = function() {</p>
+
+<pre><code>console.log('Resetting Stopwatch!');
+this.time = this.hour;
+this.emit('reset');
+</code></pre>
+
+<p>};</p>
+
+<p>Stopwatch.prototype.onTick = function() {</p>
+
+<pre><code>var remainder = this.time,
+    numHours,
+    numMinutes,
+    numSeconds,
+    output = "";
+
+if (this.time === 0) {
+    this.stop();
+    return;
+}
+
+numHours = String(parseInt(remainder / this.hour, 10));
+remainder -= this.hour * numHours;
+
+numMinutes = String(parseInt(remainder / this.minute, 10));
+remainder -= this.minute * numMinutes;
+
+numSeconds = String(parseInt(remainder / this.second, 10));
+
+output = _.map([numHours, numMinutes, numSeconds], function(str) {
+    if (str.length === 1) {
+        str = "0" + str;
+    }
+    return str;
+}).join(":");
+
+this.emit('tick', output);
+this.time -= this.second;
+</code></pre>
+
+<p>};</p>
+
+<p>// ---------------------------------------------
+// Export
+// ---------------------------------------------
+module.exports = Stopwatch;
+```</p>
+
+<p>And here's how I'm using it in <code>app.js</code></p>
+
+<p>``` js app.js
+var Stopwatch = require('./models/stopwatch');</p>
+
+<p>...</p>
+
+<p>var stopwatch = new Stopwatch();
+stopwatch.on('tick', function(time) {
+  console.log('tick: ' + time);
+});
+stopwatch.start();
+```</p>
+
+<p>Running the above should give you something like this in your console:</p>
+
+<p><code>
+tick: 01:00:00
+tick: 00:59:59
+tick: 00:59:58
+tick: 00:59:57
+</code></p>
+
+<p>Ok that's it for today. Tomorrow we'll connect all this goodness to a View. If you have questions or feedback feel free to leave a comment. Thanks! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building a Countdown Timer with Socket.io]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io/"/>
+    <updated>2012-06-05T08:07:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/05/building-a-countdown-timer-with-socket-dot-io</id>
+    <content type="html"><![CDATA[<p>Yesterday I put together a very simple Node/Socket.io application and showed how to deploy it to Heroku. Today I'm going to keep going with that app to see if I can get the functionality that I want. The app is a basic stopwatch so that shouldn't be too hard. If you want to catch up <a href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/">checkout yesterday's article</a> which explains setting everything up.</p>
+
+<!--more-->
+
+
+<ul>
+<li><a href="http://robdodson.me/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/">Getting Started</a></li>
+<li><a href="http://robdodson.me/blog/2012/06/06/building-a-countdown-timer-with-socket-dot-io-pt-2/">Click here for part 2.</a></li>
+<li><a href="http://robdodson.me/blog/2012/06/07/building-a-countdown-timer-with-socket-dot-io-pt-3/">Click here for part 3.</a></li>
+</ul>
+
+
+<h3>Countdown</h3>
+
+<p>Just to get the ball rolling I'm going to write a little code in my <code>app.js</code> file right at the bottom to setup a very crude counter.</p>
+
+<p>``` js app.js<br/>
+var countdown = 1000;
+setInterval(function() {
+  countdown--;
+  io.sockets.emit('timer', { countdown: countdown });
+}, 1000);</p>
+
+<p>io.sockets.on('connection', function (socket) {
+  socket.on('reset', function (data) {</p>
+
+<pre><code>countdown = 1000;
+io.sockets.emit('timer', { countdown: countdown });
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>Elsewhere in my client-side js I'm going to listen for the <code>timer</code> event and update my DOM elements.</p>
+
+<p>``` js main.js
+var socket = io.connect(window.location.hostname);</p>
+
+<p>socket.on('timer', function (data) {</p>
+
+<pre><code>$('#counter').html(data.countdown);
+</code></pre>
+
+<p>});</p>
+
+<p>$('#reset').click(function() {</p>
+
+<pre><code>socket.emit('reset');
+</code></pre>
+
+<p>});
+```</p>
+
+<p>You'll also need to update your index.ejs file so it reads like this:</p>
+
+<p>``` html views/index.ejs</p>
+
+<div id="counter"></div>
+
+
+<p><button id="reset">Reset!</button>
+```</p>
+
+<p>Every second we'll decrement our countdown variable and broadcast its new value. If a client sends us a <code>reset</code> event we'll restart the timer and immediately broadcast the update to anyone connected. I noticed that since I'm using <code>xhr-polling</code> it can sometimes take a while for the timer to show up in my browser so keep that in mind.</p>
+
+<p>While this implementation isn't pretty it does get us a little bit further down the road. Unfortunately I've been tripped up by a bunch of Node's module issues so I have to cut tonight's post short :\</p>
+
+<p>Hopefully better luck tomorrow. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Sedate, Sleepy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Deploying Your First Node.js and Socket.io App to Heroku]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/"/>
+    <updated>2012-06-04T22:01:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku</id>
+    <content type="html"><![CDATA[<p><em>Update: This page has been translated into <a href="http://www.webhostinghub.com/support/es/misc/implementando-tus-primeras-aplicaciones">Spanish</a> by Maria Ramos.</em></p>
+
+<p>At my office we like to shoot each other from across the room with Nerf guns. In an effort to actually remain productive we've implemented a rule that whenever you get shot you're dead for 1 hour. But that hour can be a little tricky to keep track of between players. Who's dead and who isn't? Am I about to be shot right now??</p>
+
+<p>In an effort to keep track of things (and also because I need to write a blog post) I decided to start working on a little <a href="http://nodejs.org/">Node.js</a> and <a href="http://socket.io/">Socket.io</a> app. In this first post I'm just going to get things setup and deploy them to Heroku. Hopefully tomorrow we can work on implementing the actual timers. If you've never worked with Heroku before <a href="https://devcenter.heroku.com/articles/quickstart">you'll need to follow their getting started guide</a> to make sure you have all the proper command line tools. Don't worry, it's really easy and their documentation is <strong>awesome</strong>.</p>
+
+<!--more-->
+
+
+<h3>Express it!</h3>
+
+<p>To start us off we'll use <a href="http://expressjs.com/">Express</a> since it provides a nice, <a href="http://www.sinatrarb.com/">Sinatra</a> like layer on top of Node. If you haven't installed Node yet you can do it from the <a href="http://nodejs.org/">Node.js</a> site. The installer will also include <code>npm</code> which is Node's package manager. Following the instructions on the <a href="http://expressjs.com/">Express</a> site you should be able to just type:</p>
+
+<p><code>
+npm install -g express
+</code></p>
+
+<p>Now that you have Express installed you can use it to create a new project.</p>
+
+<p><code>
+express defcon
+</code>
+I'm calling my project <code>defcon</code> because I luvz <a href="http://en.wikipedia.org/wiki/WarGames">WarGames</a>. You can call yours whatever you'd like :)</p>
+
+<p>Next we need to <code>cd</code> into the defcon folder so we can install Socket.io and our other dependencies. There's a version of Socket.io designed to work with Express so we'll install that one.</p>
+
+<p><code>
+npm install -d  # install Express dependencies
+npm install socket.io express
+</code></p>
+
+<p>We'll also need to add socket.io to our <code>package.json</code> which is similar to a <code>Gemfile</code> if you're coming from Ruby, or just a big list of file dependencies if you're coming from something else :D When you distribute your app other developers can just run 'npm install -d' and it will add all of the modules listed to their project. Heroku will also use our <code>package.json</code> when we push our app to their servers. I'm also going to replace the <a href="http://jade-lang.com/">Jade</a> rendering engine with <a href="http://embeddedjs.com/">EJS</a> since it's easier for me to work with.</p>
+
+<p>``` js package.json
+{</p>
+
+<pre><code>"name": "defcon",
+"version": "0.0.1",
+"private": true,
+"dependencies": {
+  "express": "~2.5.8",
+  "ejs": "~0.7.1",
+  "socket.io": "~0.9.6"
+</code></pre>
+
+<p>  },
+  "engines": {</p>
+
+<pre><code>"node": "0.6.x"
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>The tilde <code>~</code> character tells NPM that it's ok to install this version of our module, or anything less than the next highest version number. So the following are equivalent: <code>"~1.2" = "&gt;=1.2.0 &lt;2.0.0"</code>. This is typically a good practice with modules because you'd like to receive bug fixes and patches but you don't want to let your app potentially download a v2 of some library which breaks the API.</p>
+
+<p>Run <code>npm install -d</code> again to make sure that <code>ejs</code> and anything else you've added are properly installed. Open up your app.js file that Express provided for you. We'll need to change a lot of stuff so it's probably easiest for you to just copy and paste this one that I've already prepared. Paste it into a new file if you'd like so you can compare all the differences.</p>
+
+<p>``` js app.js
+var express = require('express'),</p>
+
+<pre><code>app = express.createServer(express.logger()),
+io = require('socket.io').listen(app),
+routes = require('./routes');
+</code></pre>
+
+<p>// Configuration</p>
+
+<p>app.configure(function() {
+  app.set('views', <strong>dirname + '/views');
+  app.set('view engine', 'ejs');
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.static(</strong>dirname + '/public'));
+});</p>
+
+<p>app.configure('development', function() {
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});</p>
+
+<p>app.configure('production', function() {
+  app.use(express.errorHandler());
+});</p>
+
+<p>// Heroku won't actually allow us to use WebSockets
+// so we have to setup polling instead.
+// https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});</p>
+
+<p>// Routes</p>
+
+<p>var port = process.env.PORT || 5000; // Use the port that Heroku provides or default to 5000
+app.listen(port, function() {
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+});</p>
+
+<p>app.get('/', routes.index);</p>
+
+<p>var status = "All is well.";</p>
+
+<p>io.sockets.on('connection', function (socket) {
+  io.sockets.emit('status', { status: status }); // note the use of io.sockets to emit but socket.on to listen
+  socket.on('reset', function (data) {</p>
+
+<pre><code>status = "War is imminent!";
+io.sockets.emit('status', { status: status });
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>In my views folder I've created a <code>layout.ejs</code>...</p>
+
+<p>``` html views/layout.ejs
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Title&lt;/title&gt;
+&lt;meta name="description" content=""&gt;
+&lt;meta name="author" content=""&gt;
+
+&lt;!-- HTML5 shim, for IE6-8 support of HTML elements --&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+&lt;![endif]--&gt;
+
+&lt;!-- styles --&gt;
+&lt;link href="http://robdodson.github.com/css/main.css" rel="stylesheet"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;%- body %&gt;
+&lt;script src="http://robdodson.github.com/socket.io/socket.io.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.github.com/js/libs/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.github.com/js/main.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>and an <code>index.ejs</code>.</p>
+
+<p>``` html views/index.ejs</p>
+
+<div id="status"></div>
+
+
+<p><button id="reset">Reset!</button>
+```</p>
+
+<p>If you'd like you can open up <code>routes/index.js</code> and look around but you don't need to. It should render <code>layout.ejs</code> and <code>index.ejs</code> by default.</p>
+
+<p>A few more items to go...We need to add a copy of <a href="http://jquery.com/">jQuery</a> to our <code>public</code> folder and also a <code>main.js</code> file. I've renamed the structure to look like this:</p>
+
+<p>```
+public
+|
+|<em> css
+|</em> img
+|_ js</p>
+
+<pre><code>|_ libs
+    |_ jquery.js
+|_ plugins
+|_ main.js
+</code></pre>
+
+<p>```</p>
+
+<p>I guess that's just a habit of using Backbone Boilerplate all the time :) Here's what <code>main.js</code> should look like:</p>
+
+<p>``` js public/js/main.js
+var socket = io.connect(window.location.hostname);</p>
+
+<p>socket.on('status', function (data) {</p>
+
+<pre><code>$('#status').html(data.status);
+</code></pre>
+
+<p>});</p>
+
+<p>$('#reset').click(function() {</p>
+
+<pre><code>socket.emit('reset');
+</code></pre>
+
+<p>});
+```</p>
+
+<p>It's important to note the line that says <code>var socket = io.connect(window.location.hostname);</code>. In the socket.io docs they usually tell you to connect to <code>localhost</code> but since we're on heroku we'll need to instead connect to whatever our custom domain is.</p>
+
+<h3>Cross your fingers</h3>
+
+<p>At this point we should be ready to test everything. From the root of your project run <code>node app.js</code>. If all goes well you should see something like this:</p>
+
+<p><code>
+   info  - socket.io started
+Express server listening on port 5000 in development mode
+</code></p>
+
+<p>If not leave me a comment and I'll see if I can help you debug it. However let's assume that everything DID go well for you and now you're ready to connect to the local version of your app. Point your browser to http://localhost:5000 and you should see something like this:</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/all_is_well_with_sockets.png" title="'All is well with Socket.io'" ></p>
+
+<p>Now open another browser window and also point it at localhost:5000. In one of the windows click the button that says <code>Reset</code> which should change the copy in <em>both</em> windows to 'War is imminent!'</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/war_is_imminent_sockets.png" title="'War is Immentin with Socket.io'" ></p>
+
+<h3>Git'er done!</h3>
+
+<p>Alright we should have a functioning app at this point so let's put this baby into Git.</p>
+
+<p><code>
+git init
+echo 'node_modules' &gt;&gt; .gitignore
+</code></p>
+
+<p>We'll ignore the node_modules directory so Heroku can create its own version. Heroku requires that we deploy our app from Git which is kind of an awesome practice. We'll also need to define a <code>Procfile</code> which will list the processes that our app can run.</p>
+
+<p><code>
+touch Procfile
+echo 'web: node app.js' &gt;&gt; Procfile
+</code>
+To verify that our <code>Procfile</code> is working we can use Heroku's built in utility called <code>foreman</code>.</p>
+
+<p>```
+$ foreman start</p>
+
+<p>23:47:32 web.1     | started with pid 53197
+23:47:32 web.1     | info: socket.io started
+23:47:32 web.1     | Express server listening on port 5000 in development mode
+```</p>
+
+<p>Point your browser to <code>localhost:5000</code> to verify that things are still working. If everything looks good we're ready to commit to git.</p>
+
+<p><code>
+git add .
+git commit -m 'initial commit'
+</code></p>
+
+<h3>Deploy to Heroku</h3>
+
+<p>Now that our app is safely tucked away in git it's time to fire up a new Heroku instance.</p>
+
+<p><code>
+$ heroku create --stack cedar
+</code></p>
+
+<p>Heroku will do the work of setting up a new <code>git remote</code> for us to push our app to.</p>
+
+<p><code>
+$ git push heroku master
+</code></p>
+
+<p>We'll need to scale our web process before we can use the app.</p>
+
+<p><code>
+$ heroku ps:scale web=1
+</code></p>
+
+<p>To see which processes are running on Heroku you can use the <code>heroku ps</code> command.</p>
+
+<p>```
+$ heroku ps</p>
+
+<p>Process       State               Command</p>
+
+<hr />
+
+<p>web.1         up for 10s          node app.js
+```</p>
+
+<p>With everything setup we should be able to run <code>heroku open</code> which will fire up our browser and direct it to an instance of our app. There seems to be a fair bit of latency so it can take several seconds for the initial status of 'All is well' to show up. If you see the Reset button with nothing above it give it around 10 seconds to see if it eventually updates. Open another browser window and point it at the Heroku domain in the address bar. If you press the Reset button in one window it should immediately update in the next one.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/heroku_war_is_imminent.png" title="'Heroku: War is Imminent'" ></p>
+
+<h3>Wrapping up</h3>
+
+<p>Well I hope you enjoyed this brief tour of Socket.io and Heroku. Before we sign off let's make sure to turn off the running process on our Heroku instance:</p>
+
+<p><code>
+$ heroku ps:scale web=0
+</code></p>
+
+<p>If all went well you should have a decent starting point to build your own Socket.io app. If you're still having trouble checkout some of the great documentation from Heroku and/or leave a comment:</p>
+
+<p><a href="https://devcenter.heroku.com/articles/nodejs">https://devcenter.heroku.com/articles/nodejs</a></p>
+
+<p><a href="https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku">https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku</a></p>
+
+<p>Good Luck! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Antsy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

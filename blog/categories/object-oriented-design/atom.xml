@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Object Oriented Design | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/object-oriented-design/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed With Tests Pt...9?]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/"/>
+    <updated>2012-06-17T22:43:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9</id>
+    <content type="html"><![CDATA[<p>I just spent a few hours talking to my friend <a href="http://derekbradley.com/">Derek</a>(<a href="https://twitter.com/#!/derekebradley">@derekebradley</a>) about Ruby and it occured to me that I never finished this scraper project. We got awfully far with it but then it kind of died on the vine. <a href="http://robdodson.me/blog/2012/05/06/object-oriented-scraper-backed-with-tests/">Thankfully,</a> <a href="http://robdodson.me/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/">I</a> <a href="http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/">wrote</a> <a href="http://robdodson.me/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4/">it</a> <a href="http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/">all</a> <a href="http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/">down.</a> <a href="http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/">down.</a> <a href="http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/">down.</a></p>
+
+<p>The fact of the matter is I didn't know where to take the data. I didn't have a design or a layout that I could put it all into. I want to change all that. I want to turn this into something useful. But first I have to make sense of all the code that was written so many weeks ago.</p>
+
+<!--more-->
+
+
+<h2>Tests as documentation...bullshit.</h2>
+
+<p>Ok ok. I should say it's <em>total</em> bullshit to call your tests the documentation because they are helpful. But the fact of the matter is you can get so crafty with RSpec that it makes the tests difficult to read in a useful way. I'm not saying they're illegible, it's just that they leverage features which adds to their thought deficit. Before you go off saying that I wrote them wrong and tests should be all the documentation you need...shutup. They're helpful but I would love it if I had written a bit of Markdown Readme to go with all this...</p>
+
+<h2>Explain yourself</h2>
+
+<p>Let's see if I can regurgitate what this thing currently does in plain English.</p>
+
+<ul>
+<li><p>There's a config.yml file. It says what page to scrape, what the CSS selector for a post looks like and what the CSS selector for metadata looks like. The metadata is the list at the bottom of every page listing the time, amount of sleep, coffee, etc.</p></li>
+<li><p>There's a command line object, <code>tentacles</code>. It initiates <code>runner.rb</code>. <code>Runner</code> creates an instance of <code>Options</code>. <code>Options</code> loads the config.yml file and parses it, turning its properties into members of the options object.</p></li>
+<li><p>It actually doesn't do anything else beyond that. <code>runner.rb</code> stops right there but we have Rspec tests which fake data and check to see if our other classes work. Those other classes are...</p></li>
+<li><p><code>crawler.rb</code> should be the real meat of our program. Funny, seeing as how I wrote all this, that I totally can't remember who does what...</p></li>
+<li><p><code>crawler.rb</code> has two primary methods: <code>words_by_selector</code> and <code>metadata_by_selector</code>.</p></li>
+<li><p><code>words_by_selector</code> returns an array of words and the number of times they've occurred. This array should be in order from most used to least used.</p></li>
+<li><p><code>metadata_by_selector</code> returns the content of one of our metadata lists.... I think.</p></li>
+</ul>
+
+
+<h2>Make it work</h2>
+
+<p>With Tim Gunn's mantra we're gonna make this thing work. The tests verify that everything should be at least somewhat functioning. Since I'm a little drunk I can't do a <em>super</em> deep dive but let's see if we can get our runner to write out the contents of <code>words_by_selector</code> to a text file.</p>
+
+<p>``` ruby runner.rb
+require 'yaml'
+require_relative 'options'
+require_relative 'crawler'</p>
+
+<p>module Tentacles
+  class Runner</p>
+
+<pre><code>def initialize(config)
+  @options = Tentacles::Options.new(config)
+end
+
+def run      
+  @crawler = Tentacles::Crawler.from_uri(@options.uri)
+  output = @crawler.words_by_selector(@options.post_selector, 'ul:last-child')
+  File.open("output.txt", "w") do |file|
+    output.each do |line|
+      file.puts line
+    end
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>To get this working I <code>cd</code> into the lib/ folder where all the code lives and do an <code>irb -I .</code> so I can require the local files.</p>
+
+<p><code>
+require 'runner'
+runner = Tentacles::Runner.new('config.yml')
+runner.run
+</code></p>
+
+<p>After doing that we <em>do</em> get a text file, with copy that looks somewhat correct...</p>
+
+<p><code>
+we: 8
+to: 8
+npm: 6
+should: 5
+package: 4
+our: 4
+compliment: 4
+git: 3
+0: 3
+4: 3
+need: 3
+2: 3
+it: 3
+node_modules: 3
+the: 3
+have: 3
+be: 3
+json: 2
+your: 2
+any: 2
+dependencies: 2
+module: 2
+and: 2
+node: 2
+add: 2
+xml2json: 2
+how: 2
+s: 2
+in: 2
+you: 2
+json1: 2
+an: 2
+3: 2
+awesome: 2
+version: 2
+</code></p>
+
+<p>It looks like the copy from my most recent blog post, plus or minus a few words. Horrible regex aside it <em>kinda</em> works and that's what we're after. Maybe tomorrow we can turn it into some JSON :D Till then. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Drunk, Sleepy</li>
+    <li>Sleep: 3</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 8]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/"/>
+    <updated>2012-05-16T07:42:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8</id>
+    <content type="html"><![CDATA[<p>Yesterday's I refactored my specs and crawler to support ignoring selections. While I started parsing the metadata I quickly realized that certain bits were rather specific and needed to have custom parsing methods. Today I'm going to write some format objects to help with all that.</p>
+
+<!--more-->
+
+
+<p>Our metadata on the page looks like this:</p>
+
+<p><code>
+Time: 7:42 am
+Mood: Awake, Alert, Focused
+Sleep: 6
+Hunger: 0
+Coffee: 0
+</code></p>
+
+<p>Sleep, hunger and coffee are all floats, so one object could be just <code>FloatFormat</code>. Mood should produce an <code>Array</code> of objects so we could have a <code>CollectionFormat</code>. Finally time is going to combine the time listed in the metadata and the post date. We'll make a <code>DateTimeFormat</code> for that. These could all be methods of one big Format object as well but experience tells me that you need to be careful of monolithic actors that consume tons of different data types and spit out results. Those classes have a tendency to bloat very easily as project requirements change. I think it's better to produce classes which can be extended or abstracted as needs arise.</p>
+
+<p>So we know <em>who</em> is going to format but we still don't know <em>how</em>. I think I'd like to build a manifest which matches the metadata category to a format. Maybe something like this?</p>
+
+<p><code>ruby
+{
+  'Time'    =&gt; DateTimeFormat,
+  'Mood'    =&gt; CollectionFormat,
+  'Sleep'   =&gt; FloatFormat,
+  'Hunger'  =&gt; FloatFormat,
+  'Coffee'  =&gt; FloatFormat
+}
+</code></p>
+
+<p>I could probably look at each item and "detect" what kind of format it needs but I'd rather be explicit. If, for instance, I want to add another format, it's a lot easier to just change my manifest file vs. hacking on some detection scheme. I think we can just produce this manifest file in YAML and load it in at runtime. One thing I don't like about this approach is that it specifically names our format classes. You could generalize it so that it just matches a category to the desired output data, for instance <code>'Coffee' =&gt; Float</code> but then you run into problems with flexibility. What if Coffee still needed to output a float but had to go through a different Format than Hunger or Sleep? With that in mind we'll stick to the plan already laid out.</p>
+
+<p><code>yaml tentacles/lib/tentacles/formats.yml
+time:     DateTimeFormat
+mood:     CollectionFormat
+sleep:    FloatFormat
+hunger:   FloatFormat
+coffee:   FloatFormat
+</code></p>
+
+<h3>The Format object</h3>
+
+<p>I would love it if I could use the Format object as a module and just call a method on it from Crawler. It might look like this:</p>
+
+<p>```ruby
+def metadata_by_selector(selector)
+  node = nodes_by_selector(selector).first
+  metadata = {}
+  node.children.each do |child|</p>
+
+<pre><code>Tentacles::Format.insert(child, metadata)         
+</code></pre>
+
+<p>  end    <br/>
+end
+<code>``
+The only problem is</code>Format` needs to load in and parse its formats.yml file before it's any good to us. There's some interesting talk of the <a href="http://www.subelsky.com/2008/05/using-rubys-autoload-method-to.html">Module#autoload method</a> but that's not quite what I need...</p>
+
+<p>Seems like I can't find any good documentation on this so instead we'll make it an instance of the class. Also I'm lazy so I'm going to have that instance load its own formats.yml file. Normally I like to only have one entry point for configuration files but...whatever.</p>
+
+<h3>How do I convert a string into a class name in Ruby?</h3>
+
+<p>Well we know we can load our YAML file but all of our format classes are going to come in as strings. I did some digging to figure out how to convert the string into an actual class that can then be instantiated. If you just want to convert a String into a class you can use <code>Object.const_get('Foobar').new</code> but that's not going to work for us since our code is wrapped in a module. To convert a string into a module class we'll need to use the name of our module: <code>Tentacles.const_get('DateTimeFormat').new</code>.</p>
+
+<p>With that in mind I want to spec out a simple test that passes in string of metadata and receives a printed notification that the right formatter has been created. We'll then refactor it to actually use the formatter on the string.</p>
+
+<p>```ruby tentacles/spec/format_spec.rb
+require_relative '../lib/tentacles/format'
+require_relative '../lib/tentacles/date_time_format'</p>
+
+<p>describe Tentacles::Format do
+  describe "when asked to parse some metadata" do</p>
+
+<pre><code>it "should create the right formatter" do
+  @format = Tentacles::Format.new
+  @format.parse('Time: 8:03 am').should be_an_instance_of(Tentacles::DateTimeFormat)
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/format.rb
+require 'yaml'
+require_relative 'date_time_format'</p>
+
+<p>module Tentacles
+  class Format</p>
+
+<pre><code>def initialize
+  @categories = YAML.load(File.open(File.dirname(__FILE__) + '/formats.yml'))
+end
+
+def parse(data)
+  category = data.split(':')[0]
+  category.downcase!
+  Tentacles.const_get(@categories[category]).new
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/date_time_format.rb
+module Tentacles
+  class DateTimeFormat</p>
+
+<pre><code>def initialize
+  puts 'DateTimeFormat created!'
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Now let's take it a step further so we can convert an actual time into a DateTime object. Here's our updated spec:</p>
+
+<p>```ruby
+require_relative '../lib/tentacles/format'
+require 'date'</p>
+
+<p>describe Tentacles::Format do
+  describe "when asked to parse some metadata" do</p>
+
+<pre><code>it "should create the right formatter" do
+  @format = Tentacles::Format.new
+  @format.parse('Time: 8:03 am').should be_an_instance_of(Date)
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>To pull this off we'll need the help of at least 2 new gems: <a href="http://rubygems.org/gems/chronic">Chronic</a> and <a href="http://rubygems.org/gems/activesupport">ActiveSupport</a>. Chronic is a natural language parser which can convert strings into useable timestamps. ActiveSupport is a library of extensions originally created for Rails which have been abstracted into a general purpose toolset. We're going to combine these two gems to turn the phrase "8:03 am" into a Ruby DateTime.</p>
+
+<p>Gotta first update the Gemfile with our new dependencies and run <code>bundle install</code>.</p>
+
+<p>```ruby
+source 'https://rubygems.org'</p>
+
+<p>gem 'rspec', '2.9.0'
+gem 'nokogiri', '~>1.5.2'
+gem 'awesome_print', '~>1.0.2'
+gem 'fakeweb', '~>1.3.0'
+gem 'chronic', '~> 0.6.7'
+gem 'activesupport', '~> 3.2.3'
+```</p>
+
+<p>Next we bang out a quick parse method inside of DateTimeFormat. Our Tentacles::Format is going to delegate its parse call to whichever subordinate formatter it creates. Code speaks louder than words:</p>
+
+<p>```ruby tentacles/lib/tentacles/format.rb
+require 'yaml'
+require_relative 'date_time_format'</p>
+
+<p>module Tentacles
+  class Format</p>
+
+<pre><code>def initialize
+  @categories = YAML.load(File.open(File.dirname(__FILE__) + '/formats.yml'))
+end
+
+# Create a formatter based on the content of the passed
+# in data. Delegate the parse call to this new formatter
+def parse(data)
+  category, *content = data.split(':')
+  category.downcase!
+  formatter = Tentacles.const_get(@categories[category]).new
+  formatter.parse(content)
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/tentacles/date_time_format.rb
+require 'chronic'
+require 'active_support/core_ext/string/conversions.rb'</p>
+
+<p>module Tentacles
+  class DateTimeFormat</p>
+
+<pre><code>def initialize
+  puts 'DateTimeFormat created!'
+end
+
+def parse(content)
+  Chronic.parse(content.join(':')).to_datetime
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>With all that in place our test should pass. Nice!!!!!! We're well on our way to processing the remaining metadata. Tomorrow I'll whip up our other formats and figure out how to pull the date out of a blog post so we can combine that with the time to get a proper DateTime.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Alert, Focused</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 7]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/"/>
+    <updated>2012-05-15T21:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7</id>
+    <content type="html"><![CDATA[<p>During my last post I realized that including my metadata in the blog post as only a ul meant that all the words were being scraped as part of the keyword frequency search. After thinking about it for a while I think I'm going to give the keyword search method an optional value which it can use to ignore or delete certain nodes.</p>
+
+<!--more-->
+
+
+<p>Thankfully I have my tests in place to validate what our final output should look like. Which means I'm basically hacking away at Nokogiri to get things to pass. Here's what I finally settle on:</p>
+
+<p>```ruby
+def words_by_selector(selector, ignored_selector = nil)
+  node = nodes_by_selector(selector).first
+  if ignored_selector</p>
+
+<pre><code>ignored = node.css(ignored_selector)
+ignored.remove()
+</code></pre>
+
+<p>  end
+  words = words_from_string(node.content)
+  count_frequency(words)</p>
+
+<p>  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map { |word, count| "#{word}: #{count}"}
+end
+```</p>
+
+<p>I think the code is pretty self explanatory. Moving on to the metadata we expect a Hash that looks like this:</p>
+
+<p><code>
+{
+  datetime: 2012-05-13T08:03:00-07:00,
+  mood: ['Happy', 'Drowsy', 'Peaceful'],
+  sleep: 5.5,
+  hunger: 3.0,
+  coffee: 0.0
+}
+</code></p>
+
+<p>As I'm playing back and forth with the metadata selector methods I'm realizing that writing non-brittle tests is extremely difficult!</p>
+
+<p>I'm noticing that some of the metadata, when broken into Strings, don't parse very well. For instance:</p>
+
+<p><code>Time: 8:03</code> splits up into <code>["Time", " 8", "03"]</code></p>
+
+<p>We can use a splat operator to clean that up a bit for us:</p>
+
+<p>```ruby
+def metadata_by_selector(selector)
+  node = nodes_by_selector(selector).first
+  metadata = {}
+  node.children.each do |child|</p>
+
+<pre><code>key, *value = child.content.split(':')
+puts "#{key}: #{value}"
+</code></pre>
+
+<p>  end    <br/>
+end
+```</p>
+
+<p>The above should produce something like:</p>
+
+<p><code>
+Time: [" 8", "03 am"]
+Mood: [" Happy, Drowsy, Peaceful"]
+Sleep: [" 5.5"]
+Hunger: [" 3"]
+Coffee: [" 0"]
+</code></p>
+
+<p>Close... but still not perfect. I think the best thing to do would be to write some formatter objects or functions to handle the different kinds of metadata. We'll tackle that tomorrow.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Fat, Tired, Drunk</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 6]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/"/>
+    <updated>2012-05-13T07:52:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6</id>
+    <content type="html"><![CDATA[<p>Yesterday we verified that our <code>Crawler</code> was able to hit a document and, given the right selector, pull down a list of words and their frequency on the page. We also created a custom exception to be used whenever the selector fails to pull down the right content. I'm going to repeat this process today with the <code>get_metadata_by_selector</code>. If there's time we'll try to output another file with our data, otherwise that'll be tomorrow's homeworkd :D</p>
+
+<!--more-->
+
+
+<p>Let's take a moment to look at today's metadata to figure out what we'd like our output to reflect.</p>
+
+<p><code>
+- Time: 8:03 am
+- Mood: Happy, Drowsy, Peaceful
+- Sleep: 5.5
+- Hunger: 3
+- Coffee: 0
+</code></p>
+
+<p>That's the actual markdown that goes into the editor but it gets converted into a <code>ul</code>. I don't <em>think</em> you can pass a CSS class to markdown syntax otherwise I'd use one here. We could go back and wrap everything in regular HTML tags but since we know that our metadata is going to be the last ul per entry we'll just use that knowledge to build our selector. Obviously a more robust solution would use a CSS class so that might be a good refactoring for the future.</p>
+
+<p>I figure for now we'll just parse the metadata into a Hash that'll look something like this:</p>
+
+<p><code>
+{
+  datetime: 2012-05-13T08:03:00-07:00,
+  mood: ['Happy', 'Drowsy', 'Peaceful'],
+  sleep: 5.5,
+  hunger: 3.0,
+  coffee: 0.0
+}
+</code>
+In the final iteration we'll toss all of our Metadata Hashes into an ordered Array so we can visualize them over time.</p>
+
+<h3>Red, Green, Refactor</h3>
+
+<p>Ok, time for a failing test. Let's make sure that our selector pulls something down and if it doesn't we should raise the custom <code>SelectionError</code> we defined yesterday. I'm already seeing some repetitive code in our Crawler so I'm refactoring it. Where we need to get a group of XML nodes from the document via selector I've created a private helper called <code>nodes_by_selector</code>. This is also where we'll raise our exception if nothing came back. I'm also cleaning up some of the word cruff from our public API so instead of <code>get_words_by_selector</code> it's not just <code>words_by_selector</code>. The same goes for our metadata method.</p>
+
+<p>```ruby tentacles/lib/tentacles/crawler_rb
+require 'open-uri'
+require 'nokogiri'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  @uri = uri
+  @doc = Nokogiri::HTML(open(@uri))
+  @counts = Hash.new(0)
+end
+
+def words_by_selector(selector)
+  nodes = nodes_by_selector(selector)
+  nodes.each do |node|
+    words = words_from_string(node.content)
+    count_frequency(words)
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map { |word, count| "#{word}: #{count}"}
+end
+
+def metadata_by_selector(selector)
+  nodes = nodes_by_selector(selector)
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def nodes_by_selector(selector)
+  nodes = doc.css(selector)
+  raise Tentacles::SelectionError, 
+    'The selector did not return an results!' if nodes.empty?
+  nodes
+end 
+
+def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+<code>
+Going back to the tests we need to refactor a bit for any place that's been broken. Immediately I saw that my `nodes_by_selector` method was not initially returning the nodes so I added that back in. The tests brought that to my attention before I had to do any potentially painful debugging. Beyond that we just need to fix up our method names:
+</code>ruby tentacles/spec/crawler_spec.rb
+require_relative '../lib/tentacles/crawler'
+require 'fakeweb'</p>
+
+<p>describe Tentacles::Crawler do</p>
+
+<p>  before do</p>
+
+<pre><code># Create a mock options object
+@options = {
+  uri: 'http://robdodson.me', 
+  post_selector: '.entry-content',
+  metadata_selector: '.personal-metadata'
+}
+
+# Create a mock web request
+FakeWeb.register_uri(:get, @options[:uri],
+                     :body =&gt; '&lt;div class="' + @options[:post_selector].delete(".") + 
+                     '"&gt;Hello Hello Hello World World Foobar!&lt;/div&gt;')
+</code></pre>
+
+<p>  end</p>
+
+<p>  describe "constructors" do</p>
+
+<pre><code>describe "#from_uri" do
+  it "should respond" do
+    Tentacles::Crawler.should respond_to(:from_uri)
+  end
+
+  it "should return an instance" do
+    crawler = Tentacles::Crawler.from_uri(@options[:uri])
+    crawler.should be_an_instance_of(Tentacles::Crawler)
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  describe "instances" do</p>
+
+<pre><code>before do
+  @crawler = Tentacles::Crawler.from_uri(@options[:uri])
+end
+
+subject { @crawler }
+
+it { should respond_to(:words_by_selector) }
+it { should respond_to(:metadata_by_selector) }
+
+context "post-construct" do
+  it "should have the right document" do
+    @crawler.doc.content.should =~ /Hello Hello Hello World World Foobar!/
+  end
+end
+
+describe "#words_by_selector" do
+  it "should produce an Array of keywords" do
+    expected_array = ['hello: 3', 'world: 2', 'foobar: 1']
+    actual_array = @crawler.words_by_selector(@options[:post_selector])
+    actual_array.should eq(expected_array)
+  end
+
+  it "should raise an exception if nothing was returned" do
+    expect { @crawler.words_by_selector('some-gibberish-selector') }.to raise_error(Tentacles::SelectionError, 'The selector did not return an results!')  
+  end
+end
+
+describe "#metadata_by_selector" do
+  it "should raise an exception if nothing was returned" do
+    expect { @crawler.metadata_by_selector('some-gibberish-selector') }.to raise_error(Tentacles::SelectionError, 'The selector did not return an results!')  
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>We've got a duplicate test in there where both <code>#words_by_selector</code> and <code>#metadata_by_selector</code> are checking that they both raise an exception if nothing comes down. Let's see if we can refactor those into an RSpec shared example. I'm not sure if this is a best practice or not but here's my implementation:</p>
+
+<p>```ruby tentacles/spec/crawler_spec.rb
+shared_examples_for "all selector methods" do
+  describe "when selection has no nodes" do</p>
+
+<pre><code>it "should raise an exception" do
+  expect { @crawler.send(selector_method, 'some-gibberish-selector') }.to raise_error(Tentacles::SelectionError, 'The selector did not return an results!')  
+end
+</code></pre>
+
+<p>  end
+end</p>
+
+<h3>...</h3>
+
+<p>describe "#words_by_selector" do
+  it_behaves_like "all selector methods" do</p>
+
+<pre><code>let(:selector_method) { :words_by_selector }
+</code></pre>
+
+<p>  end</p>
+
+<h1>...</h1>
+
+<p>end</p>
+
+<p>describe "#metadata_by_selector" do
+  it_behaves_like "all selector methods" do</p>
+
+<pre><code>let(:selector_method) { :metadata_by_selector }
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Basically we're putting our method name as a symbol into a variable using <code>let</code> and then calling that method in the shared_examples_for block. Notice how we're using <code>@crawler.send(selector_method, ...)</code>? In this case <code>selector_method</code> refers to our method name symbol.</p>
+
+<p>If you run this in RSpec's nested mode it looks pretty cool:</p>
+
+<p>```ruby
+Tentacles::Crawler
+  constructors</p>
+
+<pre><code>#from_uri
+  should respond
+  should return an instance
+</code></pre>
+
+<p>  instances</p>
+
+<pre><code>should respond to #words_by_selector
+should respond to #metadata_by_selector
+post-construct
+  should have the right document
+#words_by_selector
+  should produce an Array of keywords
+  behaves like all selector methods
+    when selection has no nodes
+      should raise an exception
+#metadata_by_selector
+  behaves like all selector methods
+    when selection has no nodes
+      should raise an exception
+</code></pre>
+
+<p>```</p>
+
+<p>Ok, so we know that all of our selector methods raise the proper exception if they are called with a bunk selector. Now let's make sure we can get our metadata downloaded and structured.</p>
+
+<p>Unfortunately I'm realizing that if the <code>ul</code> for our metadata is part of the post then those words get counted along with everything else, which is not what I want. I need to figure out how to exclude that content...</p>
+
+<p>I could either tell my crawler to explicitly ignore that content or wrap my blog entry in an even more specific class and just select that. I guess that'll be an exercise for tomorrow :\</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Happy, Drowsy, Peaceful</li>
+    <li>Sleep: 5.5</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 5]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
+    <updated>2012-05-12T07:02:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
+    <content type="html"><![CDATA[<p>Last night I got the <code>Crawler</code> passing its test for <code>#get_words_by_selector</code>. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both <code>throw</code>/<code>catch</code> and <code>raise</code>/<code>rescue</code> so what's the difference between throw/catch and raise/rescue in Ruby?</p>
+
+<!--more-->
+
+
+<h3>Throwing exceptions for control flow</h3>
+
+<p>There's a great guest post by Avdi Grimm on <a href="http://rubylearning.com/blog/2011/07/12/throw-catch-raise-rescue-im-so-confused/">RubyLearning</a> which covers this topic in depth. To summarize <code>throw</code>/<code>catch</code> is mainly used when doing <em>exceptions as control flow</em>. In other words, if you need to break out of a deeply nested loop or some other expensive operation you can throw an exception symbol which can be caught someone high up the call stack. Initially this rubbed me the wrong way since I know that things like <code>goto</code> and <code>labels</code> are a bad practice. Someone else raised this point in the comments to which Avid responded:</p>
+
+<blockquote><p>There is a fundamental difference between throw/catch and goto. Goto, in languages which support it, pays no attention to the stack. Any resources which were allocated before the goto are simply left dangling unless they are manually cleaned up.</p>
+
+<p>throw/catch, like exception handling, unwinds the stack, triggering ensure blocks along the way. So, for example, if you throw inside an open() {…} block, the open file will be closed on the way up to the catch() block.</p></blockquote>
+
+<h3>Raising exceptions for everything else</h3>
+
+<p>With <code>throw</code>/<code>catch</code> out of the way that leaves <code>raise</code>/<code>rescue</code> to handle everything else. I'm willing to bet that 99% of error code should probably be raising exceptions and throw/catch should only be used in situations where you need the control flow behavior. With that knowledge in hand I need to decide between one of Ruby's built-in Exceptions or defining one of my own. Let's define one of our own so we can get that experience under our belt.</p>
+
+<h3>Creating an exception subclass in Ruby</h3>
+
+<p>One tip I picked up while doing my research into <code>raise</code> and <code>throw</code> is that any exception that doesn't subclass StandardError will not be caught by default. Here's an example to illustrate:</p>
+
+<p>```ruby</p>
+
+<h2>#</h2>
+
+<h1>First we define an exception class which doesn't</h1>
+
+<h1>inherit from StandardError. As a result it won't</h1>
+
+<h1>be caught by a simple rescue. Instead we would</h1>
+
+<h1>need to rescue by its class name</h1>
+
+<h2>#</h2>
+
+<p>class MyBadException &lt; Exception
+end</p>
+
+<p>def miss_bad_exception
+  raise MyBadException.new
+  rescue
+  p "I'll never be called :("
+end</p>
+
+<p>miss_bad_exception
+MyBadException: MyBadException
+  from (irb):4:in <code>miss_bad_exception'
+  from (irb):8
+  from /Users/Rob/.rvm/rubies/ruby-1.9.3-p125/bin/irb:16:in</code><main></p>
+
+<h1>See that calling the method produces an uncaught exception...</h1>
+
+<h2>#</h2>
+
+<h1>Next we'll subclass StandardError. As a result</h1>
+
+<h1>we won't have to explicitly define our class name</h1>
+
+<h1>for a rescue to work.</h1>
+
+<h2>#</h2>
+
+<p>class MyGoodException &lt; StandardError
+end</p>
+
+<p>def save_good_exception
+  raise MyGoodException.new
+  rescue
+  p "I'm saved! My hero!"
+end</p>
+
+<p>save_good_exception
+"I'm saved! My hero!"</p>
+
+<h1>Yay! Our exception was caught!</h1>
+
+<p><code>``
+We'll call our Exception</code>SelectorError` to indicate that the provided selector did not return any results. For reference I often refer to <a href="http://rubylearning.com/satishtalim/ruby_exceptions.html">this chart on RubyLearning</a> when I want to see a list of all the available Exception classes. In our case we'll just inherit from StandardError.</p>
+
+<p><code>ruby tentacles/lib/selection_error.rb
+module Tentacles
+  class SelectionError &lt; StandardError
+  end
+end
+</code>
+I don't think we actually need to do much more than that. The ability to pass a payload message should come from the super class so I think we're good to go. Here's our updated spec:</p>
+
+<p>```ruby
+it "should raise an exception if nothing was returned" do</p>
+
+<pre><code>    expect { @crawler.get_words_by_selector('some-gibberish-selector') }.to raise_error(Tentacles::SelectionError, 'The selector did not return an results!')  
+</code></pre>
+
+<p>end
+<code>``      
+Initially the test fails so now we need to update our</code>Crawler` to check if nothing was returned and raise the custom exception.</p>
+
+<p>Here's our updated <code>Crawler</code> with additional require and updated method.</p>
+
+<p>```ruby tentacles/lib/crawler.rb
+require 'open-uri'
+require 'nokogiri'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  @uri = uri
+  @doc = Nokogiri::HTML(open(@uri))
+  @counts = Hash.new(0)
+end
+
+def get_words_by_selector(selector)
+  entries = doc.css(selector)
+  raise Tentacles::SelectionError, 
+    'The selector did not return an results!' if entries.empty?
+  entries.each do |entry|
+    words = words_from_string(entry.content)
+    count_frequency(words)
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map { |word, count| "#{word}: #{count}"}
+end
+
+def get_metadata_by_selector(selector)
+  # TODO
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>All tests passing, we're good to go :)</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Alert, Awake, Anxious</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

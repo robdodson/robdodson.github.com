@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Data Structures | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/data-structures/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby Objects and Dot Syntax]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/01/ruby-objects-and-dot-syntax/"/>
+    <updated>2012-05-01T07:37:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/01/ruby-objects-and-dot-syntax</id>
+    <content type="html"><![CDATA[<p>Coming from JavaScript I'm very accustomed to doing something like this:</p>
+
+<p>``` javascript Javascript
+var person = { name: 'Rob', city: 'San Francisco' }</p>
+
+<p>console.log( person.city );   // 'San Francisco'</p>
+
+<p>```</p>
+
+<p>Using dot syntax to access a <code>Hash</code> is second nature to me. That's why I was surprised when I ran into the following error yesterday while writing some Ruby.</p>
+
+<p>``` ruby Ruby
+person = {name: 'Rob', city: 'San Francisco'}
+ => {:name=>"Rob", :city=>"San Francisco"}</p>
+
+<p>puts person.city</p>
+
+<p>NoMethodError: undefined method `city' for {:name=>"Rob", :city=>"San Francisco"}:Hash
+```</p>
+
+<p>"Hmm, weird," I thought. I know I've seen dot syntax used in Ruby before..what gives?</p>
+
+<!--more-->
+
+
+<h3>Dot Syntax and the Ruby Hash Object</h3>
+
+<p>As it turns out Ruby does not support dot syntax for the <code>Hash</code> object. If I had wanted to access the <code>city</code> property from my previous example I should have done it using the symbol key like so:</p>
+
+<p><code>ruby
+person[:city]
+ =&gt; "San Francisco"
+</code></p>
+
+<p>There are a few data structures that are very similar to <code>Hashes</code> and seeing those used in the wild perhaps threw me off. So I figured I'd write a post about the do's and dont's of dot syntax and how different object types react to it.</p>
+
+<h4>Class</h4>
+
+<p>The first and most obvious one is the <code>Class</code> object. Really I'm talking about instances of a <code>Class</code> here, for example an instance of class <code>Person</code> might have a <code>city</code> attribute. Here's what that would look like.</p>
+
+<p>```ruby Person: Long Version
+class Person
+  def initialize(name, city)</p>
+
+<pre><code>@name = name
+@city = city
+</code></pre>
+
+<p>  end</p>
+
+<p>  def name</p>
+
+<pre><code>@name
+</code></pre>
+
+<p>  end</p>
+
+<p>  def city</p>
+
+<pre><code>@city
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>person = Person.new('Rob', 'San Francisco')
+ => #&lt;Person:0x007ff15412a8c0 @name="Rob", @city="San Francisco"></p>
+
+<p>person.city
+ => "San Francisco"
+<code>``
+Since I've defined methods for both</code>name<code>and</code>city<code>, using dot syntax to access those properties basically means we're calling those methods. The methods just return the instance variables, acting as getters. You can shorten this by using</code>attr_reader<code>or</code>attr_accessor`.</p>
+
+<p>```ruby Person: Short Version
+class Person
+  attr_accessor :name, :city
+  def initialize(name, city)</p>
+
+<pre><code>@name = name
+@city = city
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>person = Person.new('Rob', 'San Francisco')
+ => #&lt;Person:0x007ff15412a8c0 @name="Rob", @city="San Francisco"></p>
+
+<p>person.city
+ => "San Francisco"
+```</p>
+
+<h4>Struct</h4>
+
+<p>The <code>Struct</code> object is another commonly used element which allows dot access to its attributes. Quoting from <a href="http://www.ruby-doc.org/core-1.9.3/Struct.html">the documentation</a>:</p>
+
+<blockquote><p>A Struct is a convenient way to bundle a number of attributes together, using accessor methods, without having to write an explicit class.</p></blockquote>
+
+<p>Examples speak louder than words so here's our <code>Person</code> again.</p>
+
+<p>```ruby Person Struct
+Person = Struct.new(:name, :city)
+ => Person</p>
+
+<p>person = Person.new('Rob', 'San Francisco')
+ => #<struct Person name="Rob", city="San Francisco"></p>
+
+<p>person.city
+ => "San Francisco"
+<code>``
+As I understand it a</code>Struct<code>is basically sealed after you've given it an initial definition. This means that you can't keep tacking on properties like you can with a</code>Hash`</p>
+
+<p>```ruby</p>
+
+<h1>Continuing from above...</h1>
+
+<p>person.age = 28
+NoMethodError: undefined method `age=' for #<struct Person name="Rob", city="San Francisco"></p>
+
+<p>person[:age] = 28
+NameError: no member 'age' in struct
+```</p>
+
+<h4>OpenStruct</h4>
+
+<p>Finally we come to the <code>OpenStruct</code> which has both dynamic attributes and dot syntax. <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html">The documentation describes it like so</a>:</p>
+
+<blockquote><p>An OpenStruct is a data structure, similar to a Hash, that allows the definition of arbitrary attributes with their accompanying values.</p></blockquote>
+
+<p>And again here is our <code>Person</code> from before. Note that <code>OpenStruct</code> needs you to <code>require</code> it.
+```ruby Person OpenStruct
+require 'ostruct'</p>
+
+<p>person = OpenStruct.new
+ => #<OpenStruct></p>
+
+<p>person.name = 'Rob'
+ => "Rob"</p>
+
+<p>person.city = 'San Francisco'
+ => "San Francisco"</p>
+
+<p>person.city
+ => "San Francisco"
+```</p>
+
+<p>If you noticed, we didn't need to define the attributes of our <code>Person</code> before creating an instance of it. This means we could keep adding attributes indefinitely. Want your person to respond to <code>age</code>? Just tack it on.</p>
+
+<p>```ruby
+person.age = 28
+ => 28</p>
+
+<p>person.age
+ => 28
+```</p>
+
+<p>For the sake of brevity you can pass in a <code>Hash</code> and <code>OpenStruct</code> will covert it for you.
+```ruby
+require 'ostruct'</p>
+
+<p>person = OpenStruct.new(name: 'Rob', city: 'San Francisco')
+ => #<OpenStruct name="Rob", city="San Francisco"></p>
+
+<p>person.city
+ => "San Francisco"
+<code>``
+This all seems wonderful but there's one huge caveat which comes from the way</code>OpenStruct` finds all of these dynamic attributes. As <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html">the documentation describes it</a>:</p>
+
+<blockquote><p>An OpenStruct utilizes Ruby’s method lookup structure to and find and define the necessary methods for properties. This is accomplished through the method method_missing and define_method.</p>
+
+<p>This should be a consideration if there is a concern about the performance of the objects that are created, as there is much more overhead in the setting of these properties compared to using a Hash or a Struct.</p></blockquote>
+
+<p>Definitely keep that in mind if you're writing time sensitive code. In those situations you'll want to use a <code>Hash</code> or a <code>Struct</code> instead.</p>
+
+<p><small>Source:<br />
+<a href="http://www.ruby-doc.org/core-1.9.3/Class.html">http://www.ruby-doc.org/core-1.9.3/Class.html</a><br />
+<a href="http://www.ruby-doc.org/core-1.9.3/Struct.html">http://www.ruby-doc.org/core-1.9.3/Struct.html</a><br />
+<a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html">http://ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html</a><br />
+<a href="http://stackoverflow.com/questions/9356704/unable-to-use-dot-syntax-for-ruby-hash">http://stackoverflow.com/questions/9356704/unable-to-use-dot-syntax-for-ruby-hash</a><br />
+<a href="http://www.rubyist.net/~slagell/ruby/accessors.html">http://www.rubyist.net/~slagell/ruby/accessors.html</a>
+</small></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

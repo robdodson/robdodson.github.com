@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Rails | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to setup PostgreSQL for Rails and Heroku]]></title>
+    <link href="http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
+    <updated>2012-04-27T07:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
+    <content type="html"><![CDATA[<h3>Install PostgreSQL Locally</h3>
+
+<p>Ryan Bates has already put together a wonderful Railscast on this topic so feel free to <a href="http://railscasts.com/episodes/342-migrating-to-postgresql">jump over there</a> to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.</p>
+
+<!--more-->
+
+
+<p>There are a few different options for installing PostgreSQL. The first one, which Ryan outlines, is to use <a href="http://mxcl.github.com/homebrew/">Homebrew</a> and simply do a <code>brew install postgresql</code>. Some folks might not be comfortable with that process so I wanted to also recommend the new <a href="http://postgresapp.com/">PostgreSQL.app</a> from the team at <a href="http://www.heroku.com/">Heroku</a>. If you're more used to tools like <a href="http://www.mamp.info/en/index.html">MAMP</a> then the PostgreSQL.app might be a bit more your style.</p>
+
+<p>If you go the Homebrew route make sure you type in <code>initdb /usr/local/var/postgres</code> after the install finishes to init your first database. The installer will also mention some commands you can use to have PostgreSQL auto-start whenever you turn on your computer. I wasn't a big fan of this approach so instead I created two aliases in my .bash_profile.</p>
+
+<p><code>
+alias pg-start='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
+alias pg-stop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
+</code>
+With these I can just type <code>pg-start</code> to fire up Postgres and <code>pg-stop</code> when I want to shut it down.</p>
+
+<h3>Change Rails Database to PostgreSQL</h3>
+
+<p>The next thing you'll want to do is either convert an existing project to PostgreSQL or create a new rails project and set PostgreSQL as the database.</p>
+
+<p>Creating a new rails project for Postgres is as easy as <code>rails new blog -d postgresql</code>. After running this command you'll also need to call <code>rake db:create:all</code> to create a new database.</p>
+
+<p>To convert an existing project you'll want to update your Gemfile to include the <code>pg</code> gem. A basic Gemfile might look something like this:</p>
+
+<p>``` ruby
+source 'https://rubygems.org'</p>
+
+<p>gem 'rails', '3.2.3'
+gem 'pg', '~>0.13.2'</p>
+
+<p>group :assets do
+  gem 'sass-rails',   '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'uglifier', '>= 1.0.3'
+end</p>
+
+<p>gem 'jquery-rails'</p>
+
+<p>```
+You'll also need to update your config/database.yml to look for Postgres instead of SQLite or MySQL.</p>
+
+<p>``` yaml config/database.yml
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: [insert your dev database name]
+  pool: 5
+  username: [insert your user name]
+  password:</p>
+
+<p>test:
+  adapter: postgresql
+  encoding: unicode
+  database: [insert your test database name]
+  pool: 5
+  username: [insert your user name]
+  password:
+<code>``
+Since we haven't created any Postgres user accounts both Homebrew and PostgreSQL.app will simply use our current username as the login. The password can remain blank. After this is done you'll also need to call</code>rake db:create:all` to create the new database.</p>
+
+<h3>Connect a Rails Project to a PostgreSQL Database on Heroku</h3>
+
+<p>If your project isn't already under version control then now would be a good time to set that up.</p>
+
+<p><code>
+git init
+git add .
+git commit -m 'Initial commit!'
+</code>
+Next we'll create a free Heroku instance
+<code>
+heroku create --stack cedar
+</code>
+After that's done we'll simply push our project up there.
+<code>
+git push heroku master
+</code>
+You might see some deprecation warnings about vendor plugins. For now you can (probably) safely ignore those.</p>
+
+<p>Here's one little gotcha that I seemed to run into. If you try to access your site on Heroku using the <code>heroku open</code> command you might get an error page. You have to make sure to also call <code>heroku run rake db:create:all</code> otherwise your production database will not be in place and your app will fail to connect to it. Speaking of production databases, you should also note that Heroku will overwrite whatever you put into your config/database.yml so you don't have to worry about figuring out all the connection details for their shared services...it'll all just work. Sweet!</p>
+
+<h3>PostgreSQL GUI</h3>
+
+<p>One last tip re: your new Postgres setup. If you're just starting out like me then your command line fu is probably not as strong as you'd like it to be. Personally I really like having a nice GUI to visualize the tables in my database. For MySQL I usually use the awesome (and free) <a href="http://www.sequelpro.com/">SequelPro</a>. For PostgreSQL you can use <a href="http://inductionapp.com/">Induction</a>. It doesn't seem like they have a downloadable binary on their website (weird?) but you can grab one out of <a href="https://github.com/Induction/Induction/downloads">the Github repo's downloads page</a>. Connecting to your Postgres instance can be a little tricky, you have to make sure to use the PostgreSQL adapter, localhost as the hostname, your computer's username as the user and the password can remain blank. You also <em>HAVE</em> to give it a database name (even though it says it's optional) or it will throw a <code>FATAL:  database [your username] does not exist</code>. Here's a screenshot of what mine looks like:</p>
+
+<p><img class="center" src="/images/induction_screen.png" title="'Induction Login Screen'" ></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A Basic RVM Tutorial for Rails 3]]></title>
+    <link href="http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/"/>
+    <updated>2011-09-23T07:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3</id>
+    <content type="html"><![CDATA[<h3>What is RVM?</h3>
+
+<p><a href="https://rvm.io//">RVM</a> is a great Ruby and gem management tool that should probably be the first thing you install if you’re learning Rails (or Ruby for that matter). The main benefit of RVM is that it helps to keep your rubies and your gems organized into discrete folders which can easily be thrown away and recreated. If you’ve ever had a gem explode on you, then you know how great a feature like this is. I’ll cover the basics of using RVM in this post to quickly get you up and running. This tutorial is written for the OSX terminal, if you're on Windows...um...kill yourself.</p>
+
+<!--more-->
+
+
+<h3>How to Install RVM</h3>
+
+<p>First download and run the RVM installation script. Thankfully the authors have made this nice and easy for you. Just copy and paste the following into your command line:</p>
+
+<p><code>
+curl -L get.rvm.io | bash -s stable
+</code></p>
+
+<p>Next you’re going to want to make sure that RVM gets loaded into your shell sessions. The easiest way to do this is to open up your .bash_profile file located in your user's home directory (that's what the ~ stands for in your terminal) and add the following to the bottom:</p>
+
+<p><code>
+[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm" # This loads RVM into a shell session.
+</code></p>
+
+<p>Then quit your terminal window and open it up again. You should be able to type: <code>rvm -v</code> to verify that RVM is loaded and ready for use. If instead it just returns the prompt then you've probably missed a step along the way. Check out the <a href="https://rvm.io/rvm/install/">RVM installation page</a> and double check that you've done everything correctly.</p>
+
+<h3>A Guided Tour of RVM's Inner Workings</h3>
+
+<p>To get us started lets look around inside the .rvm directory. Try the following:</p>
+
+<p><code>
+cd ~/.rvm
+ls
+</code></p>
+
+<p>When you list out the contents of rvm you’ll see several folders but the ones we’re most interested in are gems and rubies. The gems folder is going to hold all of our gems after we create a <em>gemset</em>. The rubies folder holds different versions of ruby for us to play with. The really cool thing about RVM is that it lets you swap versions of ruby and different gemsets around so you can test out new packages without blowing stuff up. Made a mistake and installed the wrong gems? Just blow away the gemset and start over, no need to track everything down and uninstall it. RVM also lets you ensure that you have the same gems running for your dev, test and production environments :)</p>
+
+<p>Now that you have RVM installed, the next thing you’ll want to do is to install the latest version of Ruby. If you haven’t previously installed Ruby and you’re on OSX then typing <code>ruby -v</code> into the command line should produce something like this:</p>
+
+<p><code>ruby 1.8.7 (2009-06-12 patchlevel 174) [universal-darwin10.0]</code></p>
+
+<p>We’re going to leave the default version of Ruby installed on our machine, and instead install a new version using RVM. The current latest version of Ruby is 1.9.3, so try typing:</p>
+
+<p><code>
+rvm install 1.9.3
+</code></p>
+
+<p>It will take a little while to run but if all goes well we should have a brand new working copy of Ruby.</p>
+
+<p>Now try:</p>
+
+<p>```
+rvm use 1.9.3
+ruby -v</p>
+
+<h1>ruby 1.9.3p125 (2012-02-16 revision 34643) [x86_64-darwin11.2.0]</h1>
+
+<p>which ruby</p>
+
+<h1>/Users/Rob/.rvm/rubies/ruby-1.9.3-p125/bin/ruby</h1>
+
+<p>```</p>
+
+<p>We can see that not only are we running the latest version of ruby, but instead of being stashed in some random system folder somewhere, it’s being kept inside of a directory in RVM. To make sure that every time we open terminal we are using this new version of ruby we’ll simply say:</p>
+
+<p><code>
+rvm use 1.9.3 --default
+</code></p>
+
+<p>That will tell RVM to use this version as its default Ruby any time we open a terminal session.</p>
+
+<h3>What are RVM Gemsets?</h3>
+
+<p>I have to admit that when I first started using Ruby I found the concept of gems really confusing. In Flash or JavaScript if you want to use some code you just download the folder from github and include it in your project. Ruby does something similar with gems except it tries to automate the process for you and often times this can lead to busted projects. Because some gems rely on other gems it isn’t unheard of to have two gems in conflict which means your project won’t run and if you’re new to ruby or rails this can be just enough to make you call it quits. Here is where RVM really shines because it makes it OK to screw up your gems by sequestering them into their own little packages which you can recreate and destroy at will.</p>
+
+<p>Lets get started by typing:</p>
+
+<p><code>
+rvm gemset create my-new-gemset
+</code></p>
+
+<p>You should get a confirmation that a new gemset was created as well as a path to the new gemset. Let’s go take a look at that path.</p>
+
+<p>```</p>
+
+<h1>Make sure to use the path RVM provided you.</h1>
+
+<p>cd /Users/RobDodson/.rvm/gems/ruby-1.9.3-p125@my-new-gemset
+ls
+```</p>
+
+<p>Right now the folder is empty because we haven’t told RVM to install any gems into this gemset. Let’s change that by first assigning our current instance of ruby to this set.</p>
+
+<p><code>
+rvm 1.9.3@my-new-gemset --default
+</code></p>
+
+<p>The @ character tells RVM that we want to assign this gemset to our current ruby instance. The default flag is just there since I tend to forget to make my gemsets defaults and RVM will reset to whatever the prior default was the last time the flag was set. Let’s verify that things worked by typing:</p>
+
+<p><code>
+rvm current
+</code></p>
+
+<p>Which should output: <code>ruby-1.9.3-p125@my-new-gemset</code>. Similarly you could type:</p>
+
+<p><code>
+rvm gemset list
+</code></p>
+
+<p>To see a list of all your gemsets with a hash rocket next to the one currently in use.</p>
+
+<h3>How to Install Gems with RVM</h3>
+
+<p>Ok, so lets install some gems then. We’ll start by installing the Nokogiri gem, just as a test. But before we do this let me give you a little warning. In a lot of documentation you'll see people installing gems with the <code>sudo</code> keyword at the beginning of the commmand. If you're not using RVM then doing it this way makes sense. However if you ARE using RVM then <em>you should never install a gem with <code>sudo</code>!</em> In short, RVM does command line wizardry and installing gems with <code>sudo</code> will place them outside of the .rvm directory. You'll think you've installed a gem properly but really it'll be somewhere in the system folder. To install a gem using RVM we simply leave off the <code>sudo</code> keyword. Let's try one by typing:</p>
+
+<p><code>
+gem install nokogiri
+</code></p>
+
+<p>After the installation has finished we should be able to see our new gem. If you’re still inside of the gems directory from earlier you can do a <code>cd gems</code>
+otherwise you’ll need to dig into it with a path that looks like this</p>
+
+<p><code>cd /Users/RobDodson/.rvm/gems/ruby-1.9.3-p125@my-new-gemset/gems</code></p>
+
+<p>Now if you type <code>ls</code> you should see your version of nokogiri. Let’s pause for a moment and consider what just happened. If you use Ruby Gems without RVM then everything will be installed in the system folder. If we wanted to have 2 different versions of nokogiri we would need to make sure that there wasn’t any kind of conflict in our gems directory. Since we’re using RVM to manage our gems, we’re able to tell Ruby Gems to put one version of nokogiri in the ‘my-new-gemset’ directory and another version in the ‘some-other-gemset’ directory. This is a great feature, especially when you want to try out an upgrade or a different version of a particular library. Rather than having to uninstall your working gem, you can just create a new gemset. If things blow up then you can throw it away and revert back to the previous gemset.</p>
+
+<p>Lets make another gemset and this time install a new instance of Rails.</p>
+
+<p><code>
+rvm create gemset my-new-rails-setup
+rvm 1.9.3@my-new-rails-setup
+gem install rails
+</code></p>
+
+<p>Now lets go into the folder for that gemset. Again the path should look similar to this:</p>
+
+<p><code>cd /Users/RobDodson/.rvm/gems/ruby-1.9.3-p125@my-new-rails-setup/gems</code></p>
+
+<p>Type <code>ls</code> this time and you’ll see <em>WAY</em> more gems. Imagine that we wanted to test our application on a different version of Rails. Managing all those gems in one directory would be a huge pain but thankfully RVM is taking care of that for us. If we decide that this version of rails is not for us we can just delte the gemset with:</p>
+
+<p><code>
+rvm gemset delete my-new-rails-setup
+</code></p>
+
+<p>And recreate it however we want :D</p>
+
+<p>That wraps it up for today. If you have any questions you can post a comment or hit me up on twitter <a href="http://twitter.com/robdodson">@rob_dodson</a>.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Syntax Error: Unexpected tIDENTIFIER in Rails 3]]></title>
+    <link href="http://robdodson.github.com/blog/2011/09/21/syntax-error-unexpected-tidentifier/"/>
+    <updated>2011-09-21T07:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2011/09/21/syntax-error-unexpected-tidentifier</id>
+    <content type="html"><![CDATA[<p>Today we’re going to look at this little gem, which is really nothing more than a syntax error. If you’re not used to Ruby’s syntax, this can be a particularly easy stumbling block.</p>
+
+<!--more-->
+
+
+<p>For starters here’s the image you see in Rails 3 when things go South:</p>
+
+<p><img class="center" src="/images/unexpected_tidentifier.jpg" title="'Syntax Error: Unexpected tIDENTIFIER'" ></p>
+
+<p>Just to focus your attention, I’ll post the snippet of code that was causing the issue.</p>
+
+<p><code>erb
+&lt;%= link_to "Goodbye" say_goodbye_path %&gt;
+</code></p>
+
+<p>Can you tell me what’s wrong with the code above? If you’re coming from a Ruby background it should be plainly obvious, but if you’re coming from more of an ECMAScript or Java/C/C++ background things might be a little more subtle. What if I rewrote it like this?</p>
+
+<p><code>ruby
+linkTo("Goodbye" sayGoodbyePath);
+</code></p>
+
+<p>Did you notice I left out a comma when passing my function arguments? The proper code would look something like this:</p>
+
+<p>```erb</p>
+
+<h1>note the comma between arguments</h1>
+
+<p>&lt;%= link_to "Goodbye", say_goodbye_path %>
+```</p>
+
+<p>If you want to explore this a bit more (and if you’re new to Ruby—trust me—you do) then strap in for a brief tangent.</p>
+
+<h3>Ruby Says Goodbye to Braces (sort of)</h3>
+
+<p>One of Ruby’s double edged swords, especially if you’re coming from another language, is the exclusion of various syntactical elements to improve brevity and readability. In Actionscript 3 you might iterate over a list of items like this:</p>
+
+<p><code>actionscript3
+for each (var person:Object in people) {
+  trace(person.name);
+}
+</code></p>
+
+<p>However in Ruby you can write it much more succinctly:
+```ruby
+for person in @people
+  puts person.name
+end</p>
+
+<h1>or...</h1>
+
+<p>@people.each do |person|
+  puts person.name
+end
+```</p>
+
+<p>Just that example alone doesn’t look so bad but where it gets tricky for a newcomer like myself is when the parenthesis wrapping a function’s arguments are excluded. This is the case in our original example and it can be pretty jarring for someone not used to that kind of shorthand. Suddenly I’m left wondering if I’m calling another function, or using a keyword, or some other idiom of the language that I don’t fully grasp.</p>
+
+<p>It gets especially confusing when dealing with hashes as function arguments. Here’s a quote from <a href="http://pragprog.com/book/rails4/agile-web-development-with-rails">Agile Web Development with Rails, 4th Edition</a> with some emphasis added:</p>
+
+<blockquote><p>You can pass hashes as parameters on method calls. <strong>Ruby allows you to omit the braces, but only if the hash is the last parameter of the call.</strong> Rails makes extensive use of this feature…In effect, though, you can ignore that it’s a hash and pretend that Ruby has keyword arguments.</p></blockquote>
+
+<p>As you start to learn Rails you’ll see this kind of thing everywhere. At first I thought there was a special language construct that I was missing (similar to the ‘keyword’ referred to in the book) but in actuality it’s just hashes without the surrounding brackets. Common Rails practices take this to the extreme, mixing and omitting braces quite frequently. Take for example this validation:</p>
+
+<p>```ruby
+validates :email, presence:   true,</p>
+
+<pre><code>                format:     { with: VALID_EMAIL_REGEX },
+                uniqueness: { case_sensitive: false }
+</code></pre>
+
+<p>```</p>
+
+<p>To confuse the issue even further, the hash syntax changed from Ruby 1.8.7 to 1.9 allowing you to swap the place of the colon on your symbols. This makes newer Rails examples seem like they’re using another part of the language that you might not be familiar with. Below is an example, note the position of the colons:</p>
+
+<p>```ruby
+ # Ruby 1.8.7 hash syntax
+say_hello :name => 'Rob', :age => 27
+say_hello(:name => 'Rob', :age => 27)
+say_hello({:name => 'Rob', :age => 27})</p>
+
+<h1>Ruby 1.9 hash syntax</h1>
+
+<p>say_hello name: 'Rob', age: 27
+say_hello(name: 'Rob', age: 27)
+say_hello({name: 'Rob', age: 27})
+say_hello :name => 'Rob', :age => 27
+say_hello(:name => 'Rob', :age => 27)
+say_hello({:name => 'Rob', :age => 27})
+```</p>
+
+<p>All of the above code evaluates to the same thing (give it a shot in IRB). At this point we’re way off topic but I wanted to put this out there in case anyone else is struggling with these concepts. After getting used to the syntax (or lack thereof) these kinds of mistakes are easily cleared up, but for now just be mindful of what version of Ruby your examples are written in.</p>
+
+<h3>Resolution</h3>
+
+<p>Check the syntax of your method call. Odds are you forgot a comma somewhere.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[NoMethodError in Rails 3]]></title>
+    <link href="http://robdodson.github.com/blog/2011/09/20/nomethoderror-in-rails-3/"/>
+    <updated>2011-09-20T07:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2011/09/20/nomethoderror-in-rails-3</id>
+    <content type="html"><![CDATA[<p>Coming from Actionscript 3 I’m pretty used to all of the different errors that the Flash compiler and runtime typically throw at me. But now that I’ve started teaching myself Ruby on Rails 3 I’m having to learn a whole new lexicon of messages which generally amount to “Something blow’d up...”</p>
+
+<p>For my own benefit, and hopefully for the benefit of others, I’m going to post the errors and solutions that I come up with. Hopefully since I’m a total newbie, explaining things from my perspective will help other people who are new to the language as well.</p>
+
+<!--more-->
+
+
+<p>To start of we have the <code>NoMethodError</code>.
+<img class="center" src="/images/no_method_error.jpg" title="'NoMethodError'" ></p>
+
+<p>You get a <code>NoMethodError</code> when you try to call a method which either doesn’t exist on an Object, or the Object itself doesn’t exist. Since <code>Nil</code> is actually an object in Ruby (it’s an instance of <code>NilClass</code>) this error can sometimes be a bit misleading (especially if you come from a language where Nil or Null is represented by a primitive or a data type like in Actionscript 3).</p>
+
+<p>The real reason this occurs is either because the Object itself is Nil (and you probably didn’t intend that) or you forgot to define the method on your Object. In Flash you would get an error saying you can’t call a method on a null object reference, since null is just a primitive data type. But in Ruby, it says that the method you wanted didn’t exist because you called it on an ACTUAL NilClass object and NilClass doesn't define whatever method name you passed.</p>
+
+<h3>Resolution</h3>
+
+<ol>
+<li><p>If your error says “undefined method ‘some_method_name’ for NilClass:Class” (like it does in the picture) then you’ve accidentally tried to call a method on an Object which doesn’t really exist. You probably just didn’t pass or instantiate the Object properly.</p></li>
+<li><p>If you see the correct class type in the error then you’ve just failed to declare that method or perhaps mistyped its name. Verify that the method exists in the class and that you don’t have any spelling errors :)</p></li>
+</ol>
+
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

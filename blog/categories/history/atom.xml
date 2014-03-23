@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: History | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/history/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Exploring the Backbone Router and History API]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api/"/>
+    <updated>2012-05-21T07:59:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api</id>
+    <content type="html"><![CDATA[<p>I want to talk a bit more about the Backbone Router because I think it's one of the first pieces of the framework that people run up against that deviates from the standard MVC setup.</p>
+
+<!--more-->
+
+
+<p>If you've used Rails before you're used to the idea of <code>routes</code> which pick apart a url and figure out which controller to run. CodeIgniter uses the same paradigm but I'm not sure if they also call them routes or use a different term. Contrary to this, in Backbone the Router is like a controller for the entire application. This makes it similar to Sinatra. Creating two different routes which replace the content of the page each time would look like this:</p>
+
+<p>``` js
+var Router = Backbone.Router.extend({
+  routes: {</p>
+
+<pre><code>"": "index",
+"search": "search"
+</code></pre>
+
+<p>  },</p>
+
+<p>  index: function() {</p>
+
+<pre><code>var tutorial = new Example.Views.Tutorial();
+
+// Attach the tutorial page to the DOM
+tutorial.render(function(el) {
+  $("#main").html(el);
+});
+</code></pre>
+
+<p>  },</p>
+
+<p>  search: function() {</p>
+
+<pre><code>var search = new Example.Views.Search();
+
+// Attach the search page to the DOM
+search.render(function(el) {
+  $("#main").html(el);
+});
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>If you're using the Backbone Boilerplate you won't need to tell the Router to update every time someone clicks a link. The Boilerplate implements the following block of code at the very bottom of main.js</p>
+
+<p>``` js
+// All navigation that is relative should be passed through the navigate
+  // method, to be processed by the router.  If the link has a data-bypass
+  // attribute, bypass the delegation completely.
+  $(document).on("click", "a:not([data-bypass])", function(evt) {</p>
+
+<pre><code>// Get the anchor href and protcol
+var href = $(this).attr("href");
+var protocol = this.protocol + "//";
+
+// Ensure the protocol is not part of URL, meaning its relative.
+if (href &amp;&amp; href.slice(0, protocol.length) !== protocol &amp;&amp;
+    href.indexOf("javascript:") !== 0) {
+  // Stop the default event to ensure the link will not cause a page
+  // refresh.
+  evt.preventDefault();
+
+  // `Backbone.history.navigate` is sufficient for all Routers and will
+  // trigger the correct events.  The Router's internal `navigate` method
+  // calls this anyways.
+  Backbone.history.navigate(href, true);
+}
+</code></pre>
+
+<p>  });
+```</p>
+
+<p>In short this is an application wide handler for any relative anchor that doesn't have a <code>data-bypass</code> attribute. So something like <code>&lt;a href="search"&gt;Search&lt;/a&gt;</code> would get passed through here.
+The last few bits prevent the link from completely refreshing the page—<code>evt.preventDefault()</code>—and pipe the href through the router. Actually the href gets piped through <code>Backbone.history.navigate</code> which <code>Router.navigate</code> proxies. When you call <code>Router.navigate('foobar')</code> you're supposed to pash a hash of <code>{trigger: true}</code> if you'd like the router to run the corresponding <code>foobar</code> method. If you dig into the source you can see that just passing true will also have the same effect and that's what's done here by the Boilerplate.</p>
+
+<p>Originally I had written my View like this because I thought I had to use the Router explicitly.</p>
+
+<p>``` js
+// This will fetch the tutorial template and render it.
+Example.Views.Tutorial = Backbone.View.extend({
+  template: "app/templates/example.html",</p>
+
+<p>  // Listen for when the user clicks our anchor tag
+  events: {</p>
+
+<pre><code>'click .search': 'search'
+</code></pre>
+
+<p>  },</p>
+
+<p>  // Note: I'm stopping the event and explicitly telling the Router to
+  // update the history and trigger the corresponding search method.
+  search: function(e) {</p>
+
+<pre><code>e.preventDefault();
+namespace.app.router.navigate('search', {trigger: true});
+</code></pre>
+
+<p>  },</p>
+
+<p>  ...</p>
+
+<p><code>``
+Notice that I've defined a</code>search<code>method which listens for a click on my anchor of class</code>.search`. This is inline with the vanilla Backbone.js documentation but since the Boilerplate has added that application wide handler for us, we don't need this function unless there's some additional work that search needs to do. By just letting that global handler do its thing our route will still be called and we can save a fair bit of boilerplate in our templates.</p>
+
+<p>If you want to subvert the handler then you can just call <code>preventDefault</code> and <code>stopPropagation</code> on the click event like so:</p>
+
+<p>``` js</p>
+
+<p>Example.Views.Tutorial = Backbone.View.extend({</p>
+
+<p>  template: "app/templates/example.html",</p>
+
+<p>  events: {</p>
+
+<pre><code>'click .search': 'search'
+</code></pre>
+
+<p>  },</p>
+
+<p>  search: function(e) {</p>
+
+<pre><code>e.preventDefault();
+e.stopPropagation();
+namespace.app.router.navigate('whatever');
+</code></pre>
+
+<p>  }</p>
+
+<p>...</p>
+
+<p>```</p>
+
+<p>Something else to keep in mind is that the boilerplate comes with <code>History pushState</code> turned on by default.</p>
+
+<p><code>js
+// Trigger the initial route and enable HTML5 History API support
+Backbone.history.start({ pushState: true });
+</code></p>
+
+<p><s>This lets you create routes that look like this: <code>mysite.com/search/foobar</code> instead of using a hash <code>mysite.com/#search/foobar</code>. The only problem is that for HTML5 History pushState to work your server has to keep resolving to index.html. The boilerplate tutorial says to use <code>node build/server</code> to run your project server, even though elsewhere it says to use <code>bbb server</code>. Neither works so I've <a href="https://github.com/backbone-boilerplate/grunt-bbb/issues/21">logged an issue on Github.</a> Very possible I'm doing it wrong but we'll see. For now I'm not using pushState so I changed the line in main.js to read <code>Backbone.history.start()</code> and instead I'm using the hash approach.</s></p>
+
+<p><em>UPDATE: Turns out there was a bug in the Backbone Boilerplate, make sure in your index.html file that the data-main attribute starts from the root of the site, like so: <code>data-main="/app/config"</code>. Also make sure to use bbb server as node build/server is deprecated.</em></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Hurried, Focused</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

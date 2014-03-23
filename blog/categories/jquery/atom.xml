@@ -1,0 +1,1026 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: jQuery | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/jquery/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[JavaScript Design Patterns: Observer]]></title>
+    <link href="http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/"/>
+    <updated>2012-08-16T13:19:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer</id>
+    <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>Observer is one of the most popular design patterns and chances are you're probably already using it. If you've ever written an event listener with <code>addEventListener</code> or used one of jQuery's many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc... then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn't care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<p><blockquote><p>Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote></p>
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Dependents</li>
+<li>Publish-Subscribe</li>
+</ul>
+
+
+<h2>When to use it</h2>
+
+<ul>
+<li><p>When the state or actions of one object depends on the state or actions of another object.</p></li>
+<li><p>When changing one object necessitates a change to an unknown number of <em>other</em> objects.</p></li>
+<li><p>When an object should be able to notify other objects of changes without knowing anything about these other objects.</p></li>
+</ul>
+
+
+<h2>Pros and Cons</h2>
+
+<ul>
+<li><p><strong>Pro:</strong> Very loose coupling between objects.</p></li>
+<li><p><strong>Pro:</strong> The ability to broadcast changes and updates.</p></li>
+<li><p><strong>Con:</strong> Potentially unexpected updates and sequencing issues.</p></li>
+</ul>
+
+
+<h2>The Many Faces of Observer</h2>
+
+<p>Because of its popularity the Observer pattern often goes by a few different names. The primary objects are the <strong>Subject</strong> and the <strong>Observers</strong> though sometimes they are referred to as <strong>Publisher</strong>/<strong>Subscribers</strong> or <strong>Event Dispatcher</strong>/<strong>Listeners</strong>. Although you can definitely split hairs regarding the actual implementation of this pattern, in essence we're usually talking about the same thing. When the Subject's state changes it sends out notifications, unaware of who its Observers are. The Observers, in turn, perform some action in response to this update.</p>
+
+<p>I'm going to heavily quote (*cough* <em>plagiarize</em> *cough*) the wonderful <a href="http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752">JavaScript Patterns by Stoyan Stefanov</a> to sum up all the parts of an Observer/Pub-Sub relationship:</p>
+
+<p><em>"The publisher object needs to have a property <code>subscribers</code> that is an array storing all subscribers. The act of subscription is merely adding to this array. When an event occurs, the publisher loops through the list of subscribers and notifies them. The notification means calling a method of the subscriber object. Therefore, when subscribing, the subscriber provides one of its methods to the publisher’s subscribe() method.</em></p>
+
+<p><em>The publisher can also provide unsubscribe(), which means removing from the array of subscribers. The last important method of the publisher is publish(), which will call the subscribers’ methods."</em></p>
+
+<p>Here is Stoyan's Pub/Sub implementation. Note that the <code>on</code> function accepts a <code>context</code> argument which allows you to set the handler's context and in turn, the value of <code>this</code>. We'll discuss this a bit more later.</p>
+
+<p>``` js</p>
+
+<p>var publisher = {</p>
+
+<pre><code>subscribers: {
+    any: [] // event type: subscribers
+},
+on: function(type, fn, context) {
+    type = type || 'any';
+    fn = typeof fn === 'function' ? fn : context[fn];
+    if (typeof this.subscribers[type] === "undefined") {
+        this.subscribers[type] = [];
+    }
+    this.subscribers[type].push({ fn: fn, context: context || this });
+},
+remove: function(type, fn, context) {
+    this.visitSubscribers('unsubscribe', type, fn, context);
+},
+fire: function(type, publication) {
+    this.visitSubscribers('publish', type, publication);
+},
+visitSubscribers: function(action, type, arg, context) {
+    var pubtype = type || 'any',
+        subscribers = this.subscribers[pubtype],
+        i,
+        max = subscribers ? subscribers.length : 0;
+
+    for (i = 0; i &lt; max; i += 1) {
+        if (action === 'publish') {
+            // Call our observers, passing along arguments
+             subscribers[i].fn.call(subscribers[i].context, arg);
+        } else {
+            if (subscribers[i].fn === arg &amp;&amp; subscribers[i].context === context) {
+                subscribers.splice(i, 1);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>};</p>
+
+<p>```</p>
+
+<p>In practice using the <code>publisher</code> might look something like this:</p>
+
+<p>``` js
+function handleLogin() {</p>
+
+<pre><code>console.log('we haz a users!');
+</code></pre>
+
+<p>}</p>
+
+<p>publisher.subscribe('login.complete', handleLogin);</p>
+
+<p>// ... .
+// Elaborate user login process...</p>
+
+<p>publisher.publish('login.complete');
+```</p>
+
+<h2>Mind the Context</h2>
+
+<p>In JavaScript the keyword <code>this</code> in a function will refer to the context in which the function was called. Sometimes functions are global and sometimes they're part of a larger Object. Here's a brief example to clarify:</p>
+
+<p>``` js
+var foobar = {</p>
+
+<pre><code>doWork: function() {
+    console.log('doing some work...');
+    console.log(this);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>foobar.doWork(); // <code>this</code> will refer to foobar</p>
+
+<p>var doWorkClone = foobar.doWork;
+doWorkClone(); // <code>this</code> will refer to window</p>
+
+<p>var workClones = [];
+workClones.push(foobar.doWork);
+workClones<a href="">0</a>; // <code>this</code> will refer to the workClones Array
+```</p>
+
+<p>The first time we call <code>doWork</code> we do so in the <em>context</em> of the <code>foobar</code> object: <code>foobar.doWork()</code>. As a result the term <code>this</code> inside of the <code>doWork</code> method will refer to <code>foobar</code>.</p>
+
+<p>The second time we call <code>doWork</code> we do so by referencing the method through a variable. We're calling <code>doWork</code> using that variable's <em>context</em>. But the variable is a global variable, it's just hanging out on the page! As a result <code>this</code> will refer to <code>window</code>.</p>
+
+<p>In the third example we're stuffing <code>doWork</code> into an array, then referencing it by index, then calling it. In this <em>context</em> <code>doWork</code> is scoped to the <code>workClones</code> Array, since it's also an Object. A little confusing I know.</p>
+
+<p>So why do I care?</p>
+
+<p>Well if you go back and look at the <code>publisher</code> example you'll notice that we pass a function reference to be called whenever the Subject sends out a notification. In our case it looks like this: <code>publisher.subscribe('login.complete', handleLogin);</code> If <code>handleLogin</code> needs to use <code>this</code> we might be in a world of hurt because <code>publisher</code> is going to call <code>handleLogin</code> using itself as the value of <code>this</code>. Uh oh!</p>
+
+<h2>Preserving Context in Observer</h2>
+
+<p>JavaScript's context switching can be really bizarre if you've never had to manage it before. To mitigate this problem we have a handful of useful strategies.</p>
+
+<p>The first one, which is demonstrated in the <code>publisher</code>, is to pass along a <code>context</code> whenever we subscribe a function. This is the third argument to our <code>publisher</code>'s <code>on</code> method.</p>
+
+<p>``` js
+on: function(type, fn, context) {</p>
+
+<pre><code>    type = type || 'any';
+    fn = typeof fn === 'function' ? fn : context[fn];
+    if (typeof this.subscribers[type] === "undefined") {
+        this.subscribers[type] = [];
+    }
+    this.subscribers[type].push({ fn: fn, context: context || this });
+},
+</code></pre>
+
+<p><code>``
+By storing the</code>context<code>we ensure that when it's time to call our function, we can do so in the correct context with the correct value for</code>this<code>. We do this through the use of JavaScript's</code>call` method which allows us to define in which context a function should execute.</p>
+
+<p><code>js
+subscribers[i].fn.call(subscribers[i].context, arg);
+</code></p>
+
+<p>This can be a very powerful feature especially for utility functions. Checkout the MDN docs for a deeper understanding of <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/call">call</a> and its cousin <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/apply">apply.</a></p>
+
+<p>But what if you're not using our <code>publisher</code> example? What if you're using a slightly more popular library like jQuery to manage your events? Maybe you have some code that looks like this:</p>
+
+<p><code>`` js
+// Substitute</code>on<code>for</code>click<code>or</code>delegate<code>or</code>live` or
+// whatever else you're using :)</p>
+
+<p>$('.login-button').on('click', function() {</p>
+
+<pre><code>// tell the app the user is trying to log in!
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Well in this case we might have to use a different approach. As anyone who's used jQuery knows, the value of <code>this</code> in our handler function is going to refer to the DOM element that jQuery selected. Sometimes that's really useful but other times, like in this case, it isn't going to do us much good.</p>
+
+<h3>Closures</h3>
+
+<p>Closures are a powerful feature of ECMAScript and they're especially useful when passing around functions. The best definition I've found for a closure comes from <a href="http://jibbering.com/faq/notes/closures/">this article:</a></p>
+
+<blockquote><p>The simple explanation of a Closure is that ECMAScript allows inner functions; function definitions and function expressions that are inside the function bodies of other functions. And that those inner functions are allowed access to all of the local variables, parameters and declared inner functions within their outer function(s).</p></blockquote>
+
+<p>So let's see that in action.</p>
+
+<p>``` js</p>
+
+<p>var loginController = {</p>
+
+<pre><code>init: function() {
+    var self = this;
+
+    $('.login-button').on('click', function() {
+        self.handleLogin(); // use self as a stand in for `this` 
+    });
+},
+handleLogin: function() {
+    console.log('handling login!');
+}
+</code></pre>
+
+<p>}</p>
+
+<p><code>``
+In the above example the var</code>self<code>exists in a kind of interesting limbo: it is part of</code>loginController's<code></code>init<code>method and also part of the function registered as the</code>on('click')<code>handler. As a result, when the function is executed,</code>self<code>is still in the context of the</code>loginController<code>object and thus logs</code>handling login!`</p>
+
+<p>Awesome! We've solved the issue of preserving scope, right? Well, yes but it's not our only option. Many people (myself included) find it annoying to sprinkle <code>var self = this</code> all over their app. To mitigate things we also have <code>Function.bind</code>.</p>
+
+<h3>Bindings</h3>
+
+<p>The addition of <code>Function.bind</code> in ECMAScript 5 allows us to specify in which context a function should be called, in other words, <em>binding</em> that function (and the value of <code>this</code>) to a particular context. Let's see it in action:</p>
+
+<p>``` js
+var widget = {</p>
+
+<pre><code>name: 'My Awesome Widget!',
+sayName: function() {
+    console.log(this.name);
+}
+</code></pre>
+
+<p>};</p>
+
+<p>var nameFunc = widget.sayName.bind(widget);
+nameFunc(); // outputs: 'My Awesome Widget!'
+```</p>
+
+<p>Calling <code>Function.bind</code> will actually create a closure preserving whatever scope we've passed in. It returns a clone of our original function but this time it is bound to a particular context. In the above example it's bound to the <code>widget</code> object. While it's cleaner than our original closure example we're still in a dilemma because we want <code>sayName</code> to ALWAYS be called in the context of <code>widget</code>. How about something like this instead: <code>widget.sayName = widget.sayName.bind(widget);</code> Hey, now we're talking! By overwriting our function and binding it to our <code>widget</code> object we've gotten very close to how classical languages like Java and Actionscript handle scope! This means it's easy to both subscribe and unsubscribe our method, safe in the knowledge that it will always use the proper scope. If you're lazy (like me) take some time to research <a href="http://underscorejs.org/">Underscore.js</a> which provides both <a href="http://underscorejs.org/#bind">bind</a> and <a href="http://underscorejs.org/#bindAll">bindAll</a> functions to ease the process of connecting your methods to their parent objects.</p>
+
+<p>I'll save you the speech on treating JavaScript like other languages except to say anytime you're writing code to make one language act like another you should obviously research whether that's the best course of action or not. In my experience I've found that binding observers can make writing event listeners much cleaner but your mileage may vary and comments/feedback are always welcome :D</p>
+
+<p>Also if you want to read more on <code>Function.bind</code> you can do so <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind">here on MDN.</a></p>
+
+<h2>The Push and Pull Model</h2>
+
+<p>Typically when you create a Subject/Observer relationship you'll want the Subject to send along additional information during its event dispatch. The amount of information can vary widely. Sometimes you'll want to send a lot of information and other times you'll want the observers to receive the event and then query for more information. When you're sending a lot of information it's referred to as the <em>push model</em> and when the Observers should query for more information it's referred to as the <em>pull model</em>. The Gang of Four describe the differences between the two:</p>
+
+<blockquote><p>The pull model emphasizes the subject’s ignorance of its observers, whereas the push model assumes subjects know something about their observers’ needs. The push model might make observers less reusable, because Subject classes make assumptions about Observer classes that might not always be true. On the other hand, the pull model may be inefficient, because Observer classes must ascertain what changed without help from the Subject.</p></blockquote>
+
+<p>There's no right or wrong approach but it is good to understand the differences between the two.</p>
+
+<h2>PubSub and Observer mixins</h2>
+
+<p>If you want a quick, easy to use event dispatcher the <a href="https://github.com/mroderick/PubSubJS">PubSubJS</a> library does a wonderful job of providing an easy to use event dispatcher. It also includes a jQuery plugin variant if that's more your style. If you're looking for something a little less global and a bit more OO checkout this utility function from <a href="http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752">JavaScript Patterns</a> which mixes-in the <code>publisher</code> to other objects.</p>
+
+<p>``` js
+function makePublisher(o) {</p>
+
+<pre><code>var i;   
+for (i in publisher) {     
+    if (publisher.hasOwnProperty(i) &amp;&amp; typeof publisher[i] === "function") {
+        o[i] = publisher[i];     
+    }   
+}
+o.subscribers = {
+    any: []
+};
+</code></pre>
+
+<p>}
+```</p>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/observer/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li>Promise: A Promise is an observable token given from one object to another. Promises wrap an operation and notify their observers when the operation either succeeds or fails.</li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Make Your Own jQuery Deferreds and Promises]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/"/>
+    <updated>2012-06-03T20:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises</id>
+    <content type="html"><![CDATA[<p>Last week <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">I did a post on how to load an Underscore template using jQuery's Deferred method</a>. I got some great feedback from folks and decided I should do a follow up showing how to create your own Deferreds.</p>
+
+<!--more-->
+
+
+<h3>What's a Deferred again...?</h3>
+
+<p>So, quick summary time. jQuery has a neat little Object called a <code>Deferred</code> which is basically a wrapper around a function or a group of functions. Let's say that you want to load 3 different json files via ajax and when all that's done you want to let the rest of the world know. Using jQuery's <code>Deferred</code> Object we can actually put a wrapper around those 3 ajax functions and fire off a callback when they've all finished. <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">Refer back to my previous post (toward the bottom) where I explain some of these callbacks.</a></p>
+
+<p><code>Deferred</code> isn't limited to ajax calls, it can work in just about any environment. Let's do an example using jQuery's animate function. We'll fade an item and when it's finished animating we'll resolve our <code>Deferred</code> object.</p>
+
+<h3>Our First Deferred</h3>
+
+<p>Here's the code we'll be using in our index.html file:</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Deferred Sandbox&lt;/title&gt;
+&lt;style type="text/css"&gt;
+  #container {
+    width: 100px;
+    height: 100px;
+    background: #CCC;
+  }
+&lt;/style&gt;
+
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="main.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;div id="main"&gt;
+  &lt;div id="container"&gt;&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>Take note of the fact that I've included jquery.js and main.js in the same folder as index.html. If you run the above you should get a simple little grey square in the top left of your screen. Now let's dive into the JavaScript.</p>
+
+<p>``` js main.js
+var container = {</p>
+
+<pre><code>initialize: function($el) {
+    // Store a reference to our element
+    // on the page
+    this.$el = $el;
+},
+fadeOut: function() {
+    // Create a new Deferred.
+    var dfd = new $.Deferred();
+
+    this.$el.animate({
+        opacity: 0
+    }, 2000, function() {
+        // When we're done animating
+        // we'll resolve our Deferred.
+        // This will call any done() callbacks
+        // attached to either our Deferred or
+        // one of its promises.
+        dfd.resolve("Finished fading out!");
+    });
+
+    // Return an immutable promise object.
+    // Clients can listen for its done or fail
+    // callbacks but they can't resolve it themselves
+    return dfd.promise();
+}
+</code></pre>
+
+<p>};</p>
+
+<p>$(function() {</p>
+
+<pre><code>// Hook the container object up to the #container div
+container.initialize($('#container'));
+
+// Instruct the container to fade out. When we call
+// fadeOut we should get a promise back as a return value
+var promise = container.fadeOut();
+
+// Now that we have a promise we can hook a done callback
+// onto it. The done() method will fire once the promise
+// is resolved.
+promise.done(function(message) {
+    console.log(message);
+});
+</code></pre>
+
+<p>});
+```</p>
+
+<p>That's a fair bit of code so let's walk through it bit by bit. We start off by creating an object called <code>container</code> which is going to wrap the <code>#container</code> div already on the page. The real guts of container happens in the <code>fadeOut</code> method:</p>
+
+<p>``` js
+fadeOut: function() {</p>
+
+<pre><code>// Create a new Deferred.
+var dfd = new $.Deferred();
+
+this.$el.animate({
+    opacity: 0
+}, 2000, function() {
+    // When we're done animating
+    // we'll resolve our Deferred.
+    // This will call any done() callbacks
+    // attached to either our Deferred or
+    // one of its promises.
+    dfd.resolve("Finished fading out!");
+});
+
+// Return an immutable promise object.
+// Clients can listen for its done or fail
+// callbacks but they can't resolve it themselves
+return dfd.promise();
+</code></pre>
+
+<p>}
+<code>``
+The first thing we do is to create a new</code>Deferred<code>using jQuery's Deferred constructor. Ignore the animation function for a moment and look at the bottom of this method. See how we're returning</code>dfd.promise()<code>? A promise is a dynamically generated object which lets clients hook onto our</code>done<code>and</code>fail<code>callbacks but it doesn't let them do anything to change our original</code>Deferred<code>object. A promise is an</code>immutable<code>object, meaning clients can listen to it but they can't really do anything to change it. We want this functionality because we don't want someone else to come along and accidentally resolve our</code>Deferred<code>. So instead of returning the</code>Deferred<code>we just created, we only return its</code>promise`.</p>
+
+<p>OK back to the animation function:</p>
+
+<p>``` js
+this.$el.animate({</p>
+
+<pre><code>opacity: 0
+</code></pre>
+
+<p>}, 2000, function() {</p>
+
+<pre><code>// When we're done animating
+// we'll resolve our Deferred.
+// This will call any done() callbacks
+// attached to either our Deferred or
+// one of its promises.
+dfd.resolve("Finished fading out!");
+</code></pre>
+
+<p>});
+<code>``
+If you've used</code>jQuery.animate<code>before this should look pretty straightforward to you. At the end of our animation we pass in an anonymouse function which will be run when the animation completes. In this function we tell our</code>Deferred<code>to resolve. Resolving the</code>Deferred<code>causes any</code>done<code>callbacks to fire. In this case we're also passing along a little snippet of text. When you resolve a</code>Deferred<code>you can give it an optional payload object which will be passed to all the</code>done` callbacks. This is extremely useful if you're using ajax to pass along the final data value. In this case we're just going to log the message into the console:</p>
+
+<p>``` js
+promise.done(function(message) {</p>
+
+<pre><code>console.log(message);
+</code></pre>
+
+<p>});
+<code>``
+There are more cool things you can do with</code>Deferreds<code>I highly recommend you [spend some time with the documentation](http://api.jquery.com/category/deferred-object/) and trying out some of the other methods like</code>pipe<code>or</code>resolveWith<code>. Also as a side note [checkout this page](http://api.jquery.com/promise/) which shows how to extract a</code>promise` by type. It will actually let you do everything we've done in our animation example but with fewer lines of code.</p>
+
+<p>Let me know if this is helpful or if you have any questions. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Silly, Lazy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <updated>2012-05-30T08:53:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
+
+<!--more-->
+
+
+<p>Since I'm using Backbone Boilerplate I've gotten used to having my template loading method already stubbed out for me. Here's the one they use:</p>
+
+<p>``` js
+fetchTemplate: function(path, done) {
+  var JST = window.JST = window.JST || {};
+  var def = new $.Deferred();</p>
+
+<p>  // Should be an instant synchronous way of getting the template, if it
+  // exists in the JST object.
+  if (JST[path]) {</p>
+
+<pre><code>if (_.isFunction(done)) {
+  done(JST[path]);
+}
+
+return def.resolve(JST[path]);
+</code></pre>
+
+<p>  }</p>
+
+<p>  // Fetch it asynchronously if not available from JST, ensure that
+  // template requests are never cached and prevent global ajax event
+  // handlers from firing.
+  $.ajax({</p>
+
+<pre><code>url: path,
+type: "get",
+dataType: "text",
+cache: false,
+global: false,
+
+success: function(contents) {
+  JST[path] = _.template(contents);
+
+  // Set the global JST cache and return the template
+  if (_.isFunction(done)) {
+    done(JST[path]);
+  }
+
+  // Resolve the template deferred
+  def.resolve(JST[path]);
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Ensure a normalized return value (Promise)
+  return def.promise();
+}
+```</p>
+
+<p>Not having previous experience working with <a href="http://api.jquery.com/category/deferred-object/">jQuery.Deferred</a> I was initially put-off by the idea of just copy/pasting this function over to him, especially since I couldn't explain what was going on. I knew that I probably wanted to use Deferreds and Promises but I wasn't sure how best to explain the concepts nor did this method seem to do much in the way of loading JSON, it was just for loading templates. Since my friend only wanted to load 1 template and 1 JSON file I thought it best for us to start small, and to write something that we could easily debug. Knowing I wanted to use Deferreds I found <a href="http://msdn.microsoft.com/en-us/magazine/gg723713.aspx">this wonderful article by Addy Osmani and Julian Aubourg</a> detailing how Deferreds work. It is VERY comprehensive and for our purposes I only needed to read the first few paragraphs before I had enough to start.</p>
+
+<p>In a nutshell deferreds are objects which contain promises (also objects). Promises can be in various states, <code>pending</code>, <code>resolved</code> or <code>rejected</code>. Once you have a deferred (or it's promise) you can hook functions on to it so when it changes from a <code>pending</code> to <code>resolved</code> state all those functions fire. It's actually the promise that changes state but you can use the deferred like a promise because in most cases it will just proxy the calls to its promise object. Using deferreds can be nice for several reasons. For starters, you can avoid the jQuery <em>pyramid of doom</em></p>
+
+<p>``` js</p>
+
+<p>// NOOOOOOoooooooooo</p>
+
+<p>$.ajax({
+  url: 'foo.php',
+  success: function() {</p>
+
+<pre><code>$.ajax({
+  url: 'bar.php',
+  success: function() {
+    $.ajax({
+      url: 'baz.php',
+      success: function() {
+        ...
+      }
+    })
+  }
+})
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>```</p>
+
+<p>Secondly your deferreds/promises are little tokens that you can hand out from your services so other actors don't have to get all up in your ajax guts. Someone makes an API request, you give em a token, when it resolves they play with the data.</p>
+
+<p>``` js
+function doSomethingWithHugeData(data) {
+  console.log("man, look at all these 1's and 0's!");
+}</p>
+
+<p>var dfd = myService.getSomeHugeData();
+dfd.done(doSomethingWithHugeData);
+```</p>
+
+<p>This is a much nicer approach than passing in a callback that your service will need to execute whenever it finishes getting its data. Your service shouldn't care about your callbacks. It should care about getting data and letting people know when that data's been got! :D</p>
+
+<h3>But I digress...</h3>
+
+<p>We were <em>trying</em> to load some JSON and a template, so let's get back to the task at hand. Since we know that we have two ajax calls, one for the JSON and one for the template, and we know that we don't really want to do anything till both of these calls have completed we've got a perfect use case for <a href="http://api.jquery.com/jQuery.when/">$.when</a>. <code>when</code> accepts a list of deferreds/promises and acts as one big deferred, waiting for all of its children to resolve before it resolves. This is a nice way to build a sequencer. In our case we're going to take  two ajax calls and toss them into <code>$.when</code>. When it resolves we'll use <code>$.then</code> to tell it what our success and failure callbacks should be.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Deferred Sandbox&lt;/title&gt;
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="underscore.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;div id="main"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  $(function() {
+
+    function successFunc(jsonRes, templateRes) {
+      var json = _.first(jsonRes);
+      var template = _.first(templateRes);
+      var compiled = _.template(template, json);
+      $('#main').html(compiled);
+    }
+
+    function failureFunc() {
+      console.log('fail whale!');
+    }
+
+    $.when(
+      $.ajax("person.json"),
+      $.ajax("person.template.html")
+    ).then(successFunc, failureFunc);
+
+  });
+&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>In our case everything is in the same folder as index.html so there's no need for any paths. Keep in mind that in most (all?) browsers you'll need to be running a local server for the above code to actually work. In Chrome, at least, you can't run an html file from file:// and have it load external resources, it'll complain that the access-origin is not allowed.</p>
+
+<p>Let me take a moment to explain <code>$.then</code> a little bit. We know that <code>$.ajax</code> returns a deferred, and that the deferred's promise can be in three states: <code>pending</code>, <code>resolved</code>, <code>rejected</code>. So if we did something like this:</p>
+
+<p><code>js
+var dfd = $.ajax('foobar.php');
+</code></p>
+
+<p><code>dfd</code> would be a deferred object with a <code>pending</code> promise. Deferred's let us link methods up to them for when their state changes. These methods are: <code>done()</code>, <code>fail()</code>, <code>always()</code>, <code>progress()</code>, and <code>then()</code>. There are more but <a href="http://api.jquery.com/category/deferred-object/">I'll let the documentation explain them.</a> <code>done()</code> and <code>fail()</code> each accept either a single callback or an array of callbacks to be fired when the deferred changes to either the <code>resolved</code> or <code>rejected</code> state.</p>
+
+<p>``` js
+function successFunc() {
+  console.log('success! do stuff with data!');
+}</p>
+
+<p>function failureFunc() {
+  console.log('failure! um...give up!');
+}</p>
+
+<p>var service = {
+  getJSON: function() {</p>
+
+<pre><code>return $.ajax('person.json');
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>service.getJSON()
+.done(successFunc)
+.fail(failureFunc);</p>
+
+<p>```</p>
+
+<p><code>always()</code> fires its callbacks regardless of whether the deferred was <code>resolved</code> or <code>rejected</code>. This might be a good place to put any cleanup code. <code>progress()</code> is fired during any progress events that the process might emit. Finally there's <code>then()</code> which is what we're using in our template example. <code>then()</code> is essentially shorthand for <code>done()</code> and <code>fail()</code> so you can pass it two callbacks or two arrays of success/fail callbacks.</p>
+
+<p>Hopefully that's helpful for you all and you can go back and clean up some of those pyramids that might be lingering in your code. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Reserved, Sedate</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Penner easing equations with GFX and CSS3]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3/"/>
+    <updated>2012-05-27T00:07:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3</id>
+    <content type="html"><![CDATA[<p>This is going to be a bit of lightening post because it's rather late and I need to get to bed. I spent most of the day either eating dim sum or hanging out at the <a href="http://www.meetup.com/San-Francisco-Creative-Coders/">SF Creative Coders BBQ</a> so I've neglected my blogging duties a bit.</p>
+
+<p>I have something which will hopefully be useful for some folks who are getting into CSS3 animations with the Gfx plugin for jQuery. <a href="http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx/">I've blogged a bit about Gfx before</a> and one of the first things I noticed was the lack of a built in easing library. Coming from the Flash world where <a href="http://www.greensock.com/tweenlite/">TweenLite is king</a> I've grown very accustomed to using Robert Penner's easing equations for great effect. The same equations are used by the jQuery framework to do its animations. Thankfully <a href="http://matthewlein.com/ceaser/">Matthew Lein was kind enough to convert those over to cubic-beziers</a> for those of us doing CSS3 animations. Since Gfx accepts cubic-beziers I moved the equations from Matthew's tool into an AMD compliant module and <a href="https://github.com/robdodson/amd-css3-ease">put it up on Github.</a> It's very simple so if AMD isn't your thing you can just rip those parts out :D</p>
+
+<!--more-->
+
+
+<p>Example usage looks something like this:</p>
+
+<p>``` js
+// After requiring the ease module and
+// passing it into your View with the
+// name 'Ease'</p>
+
+<p>this.$el.gfx({</p>
+
+<pre><code>translateY: '300px'
+</code></pre>
+
+<p>}, {</p>
+
+<pre><code>duration: 500,
+easing: Ease.easeInExpo 
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Give it a shot and consider donating to Matthew's project or buying Robert Penner like a million beers!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Tipsy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Events: Adding Views to the DOM]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/"/>
+    <updated>2012-05-24T07:23:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views</id>
+    <content type="html"><![CDATA[<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
+
+<!--more-->
+
+
+<h3>View Events and the DOM</h3>
+
+<p>After looking around for a bit I've found this <a href="http://documentcloud.github.com/backbone/#FAQ-events">list of the events that Backbone can dispatch.</a> Nothing in there about render or adding elements to the DOM :(</p>
+
+<p>More searching reveals that almost everyone points to the <a href="http://docs.jquery.com/Plugins/livequery">livequery plugin for jQuery.</a> Livequery seems like a mostly deprecated plugin since jQuery has both <code>.live()</code> and <code>.delegate()</code> methods now. The one exception is that livequery will fire a callback when an element is created.</p>
+
+<p>Another alternative is to fire a custom event from my View's render method. While this does seem cleaner than using a plugin unfortunately we might call render over and over again. A middle of the road solution would be to use <code>.one()</code> to bind to the first render event.</p>
+
+<p>In my mind I would like every Backbone View to extend a base class which dispatches a custom <code>addedToDOM</code> event and <code>removedFromDOM</code> event. I'm not sure what the performance cost of using livequery to do this is but let's write it up and maybe we can do a jsPerf later.</p>
+
+<h3>Load a jQuery plugin with AMD</h3>
+
+<p>Let's download livequery <a href="https://github.com/brandonaaron/livequery">from the git repo.</a> Now that we have it we're in another little dilemma. The boilerplate loads jQuery like an AMD module...so how do you use a jQuery plugin with AMD?</p>
+
+<p>It's very possible this is not the intended method but here's how I've gone about solving the problem. Since require.js is only going to load stuff if we specify it as a dependency then we'll need to request the plugin just like any other module. If we put the plugin in our <code>assets/js/plugins</code> folder then we'll already have a path to <code>plugins</code> provided by <code>config.js</code>.</p>
+
+<p>``` js config.js
+require.config({
+  // Initialize the application with the main application file
+  deps: ["main"],</p>
+
+<p>  paths: {</p>
+
+<pre><code>// JavaScript folders
+libs: "../assets/js/libs",
+plugins: "../assets/js/plugins", // &lt;---- !!! look here! 
+
+// Libraries
+jquery: "../assets/js/libs/jquery",
+underscore: "../assets/js/libs/underscore",
+backbone: "../assets/js/libs/backbone",
+
+// Shim Plugin
+use: "../assets/js/plugins/use"
+</code></pre>
+
+<p>  },</p>
+
+<p>  use: {</p>
+
+<pre><code>backbone: {
+  deps: ["use!underscore", "jquery"],
+  attach: "Backbone"
+},
+
+underscore: {
+  attach: "_"
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Then we can load livequery as if it were any other module. This might seem odd because a dependency gets passed to our pseudo-constructor as an argument:</p>
+
+<p>``` js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone",</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+  "plugins/jquery.livequery"
+],</p>
+
+<p>function(namespace, Backbone, livequery) { // &lt;-- see how livequery is passed</p>
+
+<p>...</p>
+
+<p>```</p>
+
+<p>But we're not going to use that argument. It's just there to make sure that <code>jquery.livequery.js</code> gets added to the page. We'll ignore it and use livequery via jquery instead, like so:</p>
+
+<p>``` js
+$('#sections').livequery(function() {</p>
+
+<pre><code>console.log('sections added to DOM!');
+</code></pre>
+
+<p>}, function() {</p>
+
+<pre><code>console.log('sections removed from DOM!');
+</code></pre>
+
+<p>});
+<code>``
+Keep in mind that require.js and AMD are just tacking the script elements onto the page. Requiring our plugin in this fashion is no different than tacking a</code>script` onto the HTML at runtime.</p>
+
+<p>Here's my example.js file <a href="http://robdodson.me/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/">from the last post</a>, now using livequery to listen for when the element is added to and removed from the DOM.</p>
+
+<p>``` js example.js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone",</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+  "plugins/jquery.livequery"
+],</p>
+
+<p>function(namespace, Backbone, livequery) {</p>
+
+<p>  // Create a new module
+  var Example = namespace.module();</p>
+
+<p>  // Example extendings
+  Example.Model = Backbone.Model.extend({ /<em> ... </em>/ });
+  Example.Collection = Backbone.Collection.extend({ /<em> ... </em>/ });
+  Example.Router = Backbone.Router.extend({ /<em> ... </em>/ });</p>
+
+<p>  // This will fetch the tutorial template and render it.
+  Example.Views.Tutorial = Backbone.View.extend({</p>
+
+<pre><code>template: "app/templates/example.html",
+
+render: function(done) {
+  var view = this;
+
+  // Fetch the template, render it to the View element and call done.
+  namespace.fetchTemplate(this.template, function(tmpl) {
+    view.el.innerHTML = tmpl();
+
+    // If a done function is passed, call it with the element
+    if (_.isFunction(done)) {
+      done(view.el);
+    }
+  });
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Left = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'left-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Middle = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'middle-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Right = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'right-container',
+className: 'container'
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Views.Sections = Backbone.View.extend({</p>
+
+<pre><code>tagName: 'div',
+id: 'sections',
+
+leftView: undefined,
+middleView: undefined,
+rightView: undefined,
+
+events: {
+  "click .container":    "onChildClicked"
+},
+
+initialize: function() {
+  this.leftView = new Example.Views.Left();
+  this.middleView = new Example.Views.Middle();
+  this.rightView = new Example.Views.Right();
+
+  this.$el.append(this.leftView.render().el);
+  this.$el.append(this.middleView.render().el);
+  this.$el.append(this.rightView.render().el);
+
+  $('#sections').livequery(function() {
+    console.log('sections added to DOM!');
+  }, function() {
+    console.log('sections removed from DOM!');
+  });
+},
+
+// We should do this work with events instead of methods
+setInitialPosition: function() {
+  this.$el.css({left: $(window).width() / 2 - this.$el.width() / 2 });
+},
+
+onChildClicked: function($e) {
+  var $target = $($e.target);
+
+  switch($e.target.id) {
+    case 'left-container':
+      this.$el.animate({left: $(window).width() / 2 - $target.width() / 2});
+      break;
+
+    case 'middle-container':
+      this.$el.animate({left: $(window).width() / 2 - this.$el.width() / 2 });
+      break;
+
+    case 'right-container':
+      this.$el.animate({left: $(window).width() / 2 - this.$el.width() + $target.width() / 2});
+      break;
+  }
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Required, return the module for AMD compliance
+  return Example;</p>
+
+<p>});
+```</p>
+
+<p>I tried this out by adding and removing the <code>Example.Sections</code> view from the DOM and both console logs fired, so yeah, awesome! In lieu of creating a base class and adding an addedToDOM and removedFromDOM event we can do something like this to achieve that effect:</p>
+
+<p>``` js example.js
+initialize: function() {
+  this.leftView = new Example.Views.Left();
+  this.middleView = new Example.Views.Middle();
+  this.rightView = new Example.Views.Right();</p>
+
+<p>  this.$el.append(this.leftView.render().el);
+  this.$el.append(this.middleView.render().el);
+  this.$el.append(this.rightView.render().el);</p>
+
+<p>  _.bindAll(this); // make sure all the methods of our object have the right 'this'</p>
+
+<p>  $('#sections').livequery(this.onAddedToDOM, this.onRemovedFromDOM);
+},</p>
+
+<p>onAddedToDOM: function() {
+  console.log('added to DOM!');
+},</p>
+
+<p>onRemovedFromDOM: function() {
+  console.log('removed from DOM!');
+},
+```</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Hot</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CSS3 | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/css3/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Penner easing equations with GFX and CSS3]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3/"/>
+    <updated>2012-05-27T00:07:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/27/penner-easing-equations-with-gfx-and-css3</id>
+    <content type="html"><![CDATA[<p>This is going to be a bit of lightening post because it's rather late and I need to get to bed. I spent most of the day either eating dim sum or hanging out at the <a href="http://www.meetup.com/San-Francisco-Creative-Coders/">SF Creative Coders BBQ</a> so I've neglected my blogging duties a bit.</p>
+
+<p>I have something which will hopefully be useful for some folks who are getting into CSS3 animations with the Gfx plugin for jQuery. <a href="http://robdodson.me/blog/2012/05/22/css3-transitions-with-gfx/">I've blogged a bit about Gfx before</a> and one of the first things I noticed was the lack of a built in easing library. Coming from the Flash world where <a href="http://www.greensock.com/tweenlite/">TweenLite is king</a> I've grown very accustomed to using Robert Penner's easing equations for great effect. The same equations are used by the jQuery framework to do its animations. Thankfully <a href="http://matthewlein.com/ceaser/">Matthew Lein was kind enough to convert those over to cubic-beziers</a> for those of us doing CSS3 animations. Since Gfx accepts cubic-beziers I moved the equations from Matthew's tool into an AMD compliant module and <a href="https://github.com/robdodson/amd-css3-ease">put it up on Github.</a> It's very simple so if AMD isn't your thing you can just rip those parts out :D</p>
+
+<!--more-->
+
+
+<p>Example usage looks something like this:</p>
+
+<p>``` js
+// After requiring the ease module and
+// passing it into your View with the
+// name 'Ease'</p>
+
+<p>this.$el.gfx({</p>
+
+<pre><code>translateY: '300px'
+</code></pre>
+
+<p>}, {</p>
+
+<pre><code>duration: 500,
+easing: Ease.easeInExpo 
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Give it a shot and consider donating to Matthew's project or buying Robert Penner like a million beers!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Tipsy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CSS3 Transitions with GFX]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/22/css3-transitions-with-gfx/"/>
+    <updated>2012-05-22T08:06:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/22/css3-transitions-with-gfx</id>
+    <content type="html"><![CDATA[<p>CSS3 is a rather verbose tool especially when it comes to transitions and animations. I want to see if there's a way to clean a lot of that up with either a SASS mixin or a jQuery library like <a href="http://maccman.github.com/gfx/">gfx.</a></p>
+
+<p>We'll try to do something simple at first to recreate an animation like the one we have below.</p>
+
+<p><small>Rollover the grey area to activate it.</small></p>
+
+<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+    .container {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      background-color: #CCC;
+    }
+
+    #example1 .container:hover .widget {
+      background-color: red;
+      left: 200px;
+      top: 200px;
+    }
+
+    #example1 .widget {
+      background-color: black;
+      left: 10px;
+      position: absolute;
+      top: 10px;
+      width: 20px;
+      height: 20px;
+      -webkit-transition: background-color 1s linear, left 1s, top 2s;
+      -moz-transition: background-color 1s linear, left 1s, top 2s;
+      -ms-transition: background-color 1s linear, left 1s, top 2s;
+      -o-transition: background-color 1s linear, left 1s, top 2s;
+      transition: background-color 1s linear, left 1s, top 2s;
+    }
+  </style>
+</div>
+
+
+
+
+<div id="example1">
+  <div class="container">
+      <div class="widget"></div>
+  </div>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+</div>
+
+
+
+
+<!--more-->
+
+
+<p>The code to produce the above animation looks something like this:</p>
+
+<p>``` css
+.container {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  background-color: #CCC;
+}</p>
+
+<p>.container:hover .widget {
+  background-color: red;
+  left: 200px;
+  top: 200px;
+}</p>
+
+<p>.widget {
+  background-color: black;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  -webkit-transition: background-color 1s linear, left 1s, top 2s;
+  -moz-transition: background-color 1s linear, left 1s, top 2s;
+  -ms-transition: background-color 1s linear, left 1s, top 2s;
+  -o-transition: background-color 1s linear, left 1s, top 2s;
+  transition: background-color 1s linear, left 1s, top 2s;
+}
+```
+We definitely don't want all that logic in our CSS. Ideally we could trigger these kinds of things from JavaScript, which is where Gfx comes in.</p>
+
+<p>Using Gfx we can get similar but not exactly the same result with the following snippet:</p>
+
+<p>``` js
+$("#widget")</p>
+
+<pre><code>.gfx({ translateX: '200px' }, { duration: '1000', queue: false })
+.gfx({ translateX: '200px', translateY: '200px' }, { duration: '2000' });
+</code></pre>
+
+<p>```</p>
+
+<p>After tinkering with Gfx for what seems like hours at this point I haven't figured out a way to pass two different times to simultaneous animations. From one animation to the next you have to specify the end points from the previous animations or else the styles will revert. That's why I'm passing <code>translateX: '200px'</code> in both places...although I'm not 100% if that's what I should be doing. I emailed the author of Gfx so we'll see what he says :)</p>
+
+<p><em>Update: Alex responded:</em></p>
+
+<blockquote><p>atm gfx is -webkit-transition: all - perhaps that's something that should be added.</p></blockquote>
+
+<p>I've looked at other libraries including <a href="http://ricostacruz.com/jquery.transit/">jQuery Transit</a> and <a href="http://visionmedia.github.com/move.js/">Move.js</a>, and they all seem to be set to the 'all' mode. If anyone knows of a good library that can handle simultaneous animations I would love to hear about it. I think otherwise you would just need to create two animation objects and run them at the same time... but I haven't tested that theory yet.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Sedated, Upset-Stomach, Laggy</li>
+    <li>Sleep: 5.5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

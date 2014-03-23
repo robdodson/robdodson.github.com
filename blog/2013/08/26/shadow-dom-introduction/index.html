@@ -1,0 +1,230 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Shadow DOM: Introduction | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">26 Aug 2013</span>
+	<h1 class="post-title">Shadow DOM: Introduction</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>The topic we&#8217;ll be covering today, Shadow DOM, is big and at times rather confusing. It is also, potentially, one of the most transformative things to happen to web development in at least the last 5-10 years. Rather than attempt to cover it all in one post I&#8217;m going to split it up into a series of articles spread out over the coming weeks.</p>
+
+<p>For now let&#8217;s start with a general introduction: <strong>What</strong> is Shadow DOM and <strong>why</strong> is it important?</p>
+
+<!--more-->
+
+
+<h2>The What (Briefly) <a href="#" id="the-what"></a></h2>
+
+<p>Perhaps Shadow DOM is best explained with an example, and no example is better than the new <code>&lt;video&gt;</code> tag. Consider the one below:</p>
+
+<p><video id="video" controls="" preload="none" poster="http://media.w3.org/2010/05/sintel/poster.png">
+  <source id="mp4" src="http://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4">
+  <source id="webm" src="http://media.w3.org/2010/05/sintel/trailer.webm" type="video/webm">
+  <source id="ogv" src="http://media.w3.org/2010/05/sintel/trailer.ogv" type="video/ogg">
+</video></p>
+
+<p>The markup for this video is quite simple.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;video</span> <span class="na">id=</span><span class="s">&quot;video&quot;</span> <span class="na">controls=</span><span class="s">&quot;&quot;</span> <span class="na">preload=</span><span class="s">&quot;none&quot;</span> <span class="na">poster=</span><span class="s">&quot;http://media.w3.org/2010/05/sintel/poster.png&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;source</span> <span class="na">id=</span><span class="s">&quot;mp4&quot;</span> <span class="na">src=</span><span class="s">&quot;http://media.w3.org/2010/05/sintel/trailer.mp4&quot;</span> <span class="na">type=</span><span class="s">&quot;video/mp4&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;source</span> <span class="na">id=</span><span class="s">&quot;webm&quot;</span> <span class="na">src=</span><span class="s">&quot;http://media.w3.org/2010/05/sintel/trailer.webm&quot;</span> <span class="na">type=</span><span class="s">&quot;video/webm&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;source</span> <span class="na">id=</span><span class="s">&quot;ogv&quot;</span> <span class="na">src=</span><span class="s">&quot;http://media.w3.org/2010/05/sintel/trailer.ogv&quot;</span> <span class="na">type=</span><span class="s">&quot;video/ogg&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/video&gt;</span>
+</code></pre></figure>
+
+
+<p>Primarily there is a <code>&lt;video&gt;</code> tag with a few attributes and some nested <code>&lt;source&gt;</code> tags. But if you stop to think about it there&#8217;s actually <em>way</em> more going on here. The video player itself has play/pause buttons, a progress slider, a time code, volume controls and (once it is playing) a full screen toggle. So where is the code for all that?</p>
+
+<h3>The Shadows</h3>
+
+<p><a href="#" id="the-shadows"></a></p>
+
+<p>As it turns out each browser vendor has already written the code to make our video player work. They&#8217;ve just hidden it from us using the <strong>Shadow DOM</strong>. If you open the Chrome Dev Tools and click the option to <code>Show Shadow DOM</code> you can then inspect the video player in more detail.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/show-shadow-dom.jpg" title="'Enable Shadow DOM in the Dev Tools'" ></p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/video-shadow-dom.jpg" title="'Enable Shadow DOM in the Dev Tools'" ></p>
+
+<p>Notice the grayed out <code>#document-fragment</code>? That&#8217;s where all of our video player controls actually live. The browsers gray this content out to indicate that it is inside the Shadow DOM and not available to the rest of the page. Meaning, you cannot write CSS selectors which accidentally target it and you cannot write JavaScript to dig around inside of it. Instead the player comes with a set of attributes which you can add to the <code>&lt;video&gt;</code> tag which will configure the player for you.</p>
+
+<p><strong><em>So, what is the Shadow DOM?</em></strong>
+In a nutshell Shadow DOM is a new part of the HTML spec which allows developers to encapsulate their HTML markup, CSS styles and JavaScript. Shadow DOM, along with a few other technologies which we&#8217;ll cover later, gives developers the ability to build their own 1st class tags and APIs just like the <code>&lt;video&gt;</code> or <code>&lt;audio&gt;</code> tag. Collectively, these new tags and APIs are referred to as <strong>Web Components</strong>.</p>
+
+<h2>The Why <a href="#" id="the-why"></a></h2>
+
+<p>If you&#8217;ve been developing web sites for a while you&#8217;ve probably heard of <a href="http://getbootstrap.com/">Bootstrap</a>. Bootstrap is a collection of UI components which comes with a set of style sheets, scripts and documented HTML patterns to tie it all together. Here is an example of the markup required for a Bootstrap <a href="http://getbootstrap.com/components/#navbar">navbar</a>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;nav</span> <span class="na">class=</span><span class="s">&quot;navbar navbar-default navbar-fixed-top&quot;</span> <span class="na">role=</span><span class="s">&quot;navigation&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;navbar-header&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">class=</span><span class="s">&quot;navbar-toggle&quot;</span> <span class="na">data-toggle=</span><span class="s">&quot;collapse&quot;</span> <span class="na">data-target=</span><span class="s">&quot;.navbar-ex6-collapse&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;sr-only&quot;</span><span class="nt">&gt;</span>Toggle navigation<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;icon-bar&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;icon-bar&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;icon-bar&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+    <span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;navbar-brand&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Brand<span class="nt">&lt;/a&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;collapse navbar-collapse navbar-ex6-collapse&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;nav navbar-nav&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;active&quot;</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Home<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>About<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Contact<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/nav&gt;</span>
+</code></pre></figure>
+
+
+<p>Because there is no way to package Bootstrap components you must write out the HTML <em>exactly</em> as it is documented. Often times that means copying and pasting code from the Bootstrap docs into your application. While you are able to quickly build a page using this approach, it also means that much of the markup in your application is something you didn&#8217;t write and are not deeply familiar with. This can lead to all sorts of sneaky little bugs.</p>
+
+<p>Consider also that the Bootstrap style sheet is ~6,600 lines long, meaning at any point you could accidentally override a crucial selector and blow up a portion of your page. Or that your JavaScript will have to coexist with the Bootstrap JavaScript and similarly respect its boundaries and never inadvertently trespass.</p>
+
+<p><strong>It can be a lot to manage.</strong></p>
+
+<p>And, of course, all of the above also applies to any 3rd party jQuery plugins, animation engines, charting libraries, modules, sprockets and widgets that are included in your application&#8230;</p>
+
+<p>Let&#8217;s imagine, instead, that the Bootstrap navbar works exactly like the <code>&lt;video&gt;</code> tag from our previous example. Maybe it looks something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;bootstrap</span><span class="na">-navbar</span> <span class="na">fixed-top</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Home<span class="nt">&lt;/a&gt;</span>
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>About<span class="nt">&lt;/a&gt;</span>
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Contact<span class="nt">&lt;/a&gt;</span>
+<span class="err">&lt;</span>/bootstrap-navbar&gt;
+</code></pre></figure>
+
+
+<p><em>That does seem a bit easier to wrangle, right?</em></p>
+
+<p>Until recently such a thing was not really possible. You&#8217;ve always been able to define your own tags in HTML but the browsers just treat them as <code>&lt;div&gt;</code>s and you get no special encapsulation benefits. If you <em>really</em> wanted privacy you could use <code>iframes</code> but <code>iframes</code> are bloated and often difficult to work with. With the introduction of Shadow DOM all of that changes.</p>
+
+<p>I&#8217;m sure by now you&#8217;re tired of listening to me prattle on and you&#8217;re ready for some code! Follow me on to our next post where we&#8217;ll dive into Shadow DOM and walk through the basics.</p>
+
+<h2><a href="/blog/2013/08/27/shadow-dom-the-basics/">Continue to Shadow DOM: Basics &rarr;</a></h2>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Shadow DOM: Introduction&amp;url=http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/08/26/shadow-dom-introduction/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

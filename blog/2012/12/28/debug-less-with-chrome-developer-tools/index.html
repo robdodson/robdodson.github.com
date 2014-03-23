@@ -1,0 +1,255 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Debug LESS with Chrome Developer Tools | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">28 Dec 2012</span>
+	<h1 class="post-title">Debug LESS With Chrome Developer Tools</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><em>11/19/2013: Updated to work with LESS v1.5.1 which now has support for v3 source maps</em></p>
+
+<p>If you&#8217;ve spent much time with preprocessors like LESS you&#8217;ve probably discovered their one rather crippling flaw: debugging. With thousands of lines of LESS code suddenly turning into even more thousands of lines of CSS, it can become nearly impossible to tell where a particular style originated. Thankfully the Chrome team is addressing this problem with their recent support for <strong>CSS source maps.</strong></p>
+
+<p>Today I&#8217;ll teach you how to rework your LESS preprocessor so it plays nice with Chrome and reunites you with your old friend: the CSS inspector.</p>
+
+<!--more-->
+
+
+<p>Just to whet your appetite here&#8217;s a teaser of what we&#8217;re going to accomplish.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/less-preview.png" title="'A preview of the Inspector showing LESS debugging'" ></p>
+
+<p>You&#8217;ll notice, over on the right, instead of your typical <code>style.css: 7</code> it says <code>modules.less: 7</code>. That&#8217;s right, the developer tools are looking at the generated CSS and source mapping it back to the LESS file!</p>
+
+<p>Clicking on the line number will dive into the LESS file itself.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/less-preview2.png" title="'The inspector revealing the actual LESS file'" ></p>
+
+<p>To achieve this effect, we&#8217;ll need to tell the LESS compiler to generate a source map file when it spits out our CSS. A source map tells the debugger how to find its way from generated output back to the source file.</p>
+
+<p><em>Important: If you use less.js to compile your LESS in the browser, the techniques we&#8217;ll be covering will not work for you. Please see <a href="https://code.google.com/p/chromium/issues/detail?id=285786">this ticket</a> for more information.</em></p>
+
+<h2>Setting Up Chrome <a href="#" id="setting-up-chrome"></a></h2>
+
+<p>Fire up the developer tools and click the gear in the bottom right.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/chrome-options.png" title="'Chrome Developer tools options'" ></p>
+
+<p>In the left hand sidebar click <code>General</code>. Scroll down to where it says <code>Sources</code> and click <code>Enable CSS source maps</code>.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/enable-css-source-maps.jpg" title="'Enable CSS source maps'" ></p>
+
+<h2>Processors <a href="#" id="processors"></a></h2>
+
+<p>There are a quite a few ways to convert your LESS into properly source mapped CSS code. You can use the <code>lessc</code> command line tool, or have the server do it with a tool like <a href="https://github.com/emberfeather/less.js-middleware">less-middleware</a> for <a href="http://www.senchalabs.org/connect/">connect</a>. As I mentioned previously, you can also compile LESS on the client-side using <code>less.js</code>, but <a href="https://code.google.com/p/chromium/issues/detail?id=285786">the current implementation of source maps in Chrome does not support this.</a></p>
+
+<h3>lessc <a href="#" id="lessc"></a></h3>
+
+<p>If you&#8217;ve <a href="https://github.com/less/less.js/#getting-started">installed LESS using npm</a>, check that you&#8217;ve got the latest version. You&#8217;ll need <code>1.5.0</code> or above.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nv">$ </span>lessc --version
+lessc 1.5.1 <span class="o">(</span>LESS Compiler<span class="o">)</span> <span class="o">[</span>JavaScript<span class="o">]</span>
+</code></pre></figure>
+
+
+<p>If your version is not <code>1.5.0</code> or greater, you should run <code>npm update -g less</code>.</p>
+
+<h3>Outputting a source map</h3>
+
+<p>Let&#8217;s imagine your project has a directory structure like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>css/
+less/
+  index.less
+  modules.less
+  variables.less
+index.html
+</code></pre></figure>
+
+
+<p><code>index.less</code> imports all of the other LESS files, so that&#8217;s the one we want to compile to CSS. Our goal is to have an <code>index.css</code> and <code>index.css.map</code> file inside of the <code>css/</code> folder when everything is finished.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>css/
+  index.css
+  index.css.map
+less/
+  index.less
+  modules.less
+  variables.less
+index.html
+</code></pre></figure>
+
+
+<p>To do this with <code>lessc</code> we&#8217;ll run the following command from the root of the project:</p>
+
+<p><code>lessc less/index.less &gt; css/index.css --source-map=css/index.css.map --source-map-basepath=css</code></p>
+
+<p>Kind of a mouthful, I know.</p>
+
+<p>The first bit is just compiling our LESS file to a CSS file in the <code>css/</code> dir.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>lessc less/index.less &gt; css/index.css
+</code></pre></figure>
+
+
+<p>The <code>--source-map</code> flag tells <code>lessc</code> where to put the souce map file. In this case we want it inside the <code>css/</code> dir as well.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>--source-map<span class="o">=</span>css/index.css.map
+</code></pre></figure>
+
+
+<p>The <code>--source-map-basepath</code> flag tells <code>lessc</code></p>
+
+<h3>less-middleware <a href="#" id="less-middleware"></a></h3>
+
+<p>You might need to update your version of the middleware to whatever&#8217;s the latest, which looks like 0.1.9 as of this writing.</p>
+
+<p>In your app you&#8217;ll need to add the <code>dumpLineNumbers</code> options to the middleware&#8217;s config.</p>
+
+<figure class='code'><figcaption><span>app.js</span></figcaption><pre><code><span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">lessMiddleware</span><span class="p">({</span>
+  <span class="nx">src</span><span class="o">:</span> <span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;path/to/src&#39;</span><span class="p">,</span>
+  <span class="nx">dest</span><span class="o">:</span> <span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;path/to/dest&#39;</span><span class="p">,</span>
+  <span class="nx">dumpLineNumbers</span><span class="o">:</span> <span class="s1">&#39;mediaquery&#39;</span>
+<span class="p">}));</span>
+</code></pre></figure>
+
+
+<p>After that you should be all set. Make sure any minification is turned off or it will screw up the source maps.</p>
+
+<h2>Conclusion</h2>
+
+<p>Personally I&#8217;ve found this trick <em>extremely</em> useful when working with large LESS codebases. I&#8217;ve seen some chatter that Stylus might also support this trick so if you have first-hand experience debugging Stylus with Chrome please drop me a comment. Otherwise I might do a follow up showing how to achieve similar results in that language.</p>
+
+<p>Any questions or comments hit me up in the discussion area below.</p>
+
+<p>&#8211; Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Debug LESS with Chrome Developer Tools&amp;url=http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

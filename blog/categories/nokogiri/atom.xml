@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Nokogiri | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/nokogiri/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Failing at Ruby]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/"/>
+    <updated>2012-06-23T01:08:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/23/failing-at-ruby</id>
+    <content type="html"><![CDATA[<p>I'm just getting my ass kicked by Ruby tonight so I don't have much to show. Trying to just get my metadata scraping to output something currently looks like this:</p>
+
+<p>``` ruby
+require 'open-uri'
+require 'nokogiri'
+require 'mechanize'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  # Create a new instance of Mechanize and grab our page
+  @agent = Mechanize.new
+
+  @uri = uri
+  @page = @agent.get(@uri)
+  @counts = Hash.new(0)
+end
+
+def words_by_selector(selector, ignored_selector = nil)
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # Get rid of the first anchor since it's the site header
+  post_links.shift 
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      if ignored_selector
+        ignored = node.css(ignored_selector)
+        ignored.remove()
+      end
+      words = words_from_string(node.content)
+      count_frequency(words)
+    end
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map! do |word, count|
+    { word: word, count: count }
+  end
+  { word_count: sorted }
+end
+
+def metadata_by_selector(selector)
+  metadata = { posts: [] }
+
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # Get rid of the first anchor since it's the site header
+  post_links.shift
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    time = @doc.css('time')[0]
+    post_data = {}
+    post_data[:date] = { date: time['datetime'] }
+    post_data[:stats] = []
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      node.children.each do |child|
+        post_data[:stats].push(child.content)
+      end                
+    end
+    metadata[:posts].push(post_data)
+  end
+  p metadata
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def nodes_by_selector(selector)
+  nodes = @doc.css(selector)
+  raise Tentacles::SelectionError, 
+    'The selector did not return an results!' if nodes.empty?
+  nodes
+end 
+
+def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Really ugly code that still doesn't work. My biggest problem with Ruby is that I don't have very good debugging tools and that frustrates the shit out of me. I'm so used to the visual debuggers in the Chrome Dev tools that doing everything with <code>p</code> or <code>puts</code> is just soul-crushing.</p>
+
+<!--more-->
+
+
+<p>Right now my biggest problem is that data isn't being returned from the spider for whatever reason. This is especially annoying because the operation takes a while to run... I should slim it down but my brain is too tired to re-write the code. I'm kind of hoping for a lucky break. Advice to anyone just starting out in programming, do not do exactly what I'm doing right now.</p>
+
+<p>Ok so after getting my ass totally handed to me by Ruby here's a working version of the spider that grabs the proper metadata.</p>
+
+<p>``` ruby
+require 'open-uri'
+require 'nokogiri'
+require 'mechanize'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  # Create a new instance of Mechanize and grab our page
+  @agent = Mechanize.new
+
+  @uri = uri
+  @page = @agent.get(@uri)
+  @counts = Hash.new(0)
+end
+
+def words_by_selector(selector, ignored_selector = nil)
+  # # Get all the links on the page
+  # post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # # Get rid of the first anchor since it's the site header
+  # post_links.shift 
+  # post_links.each do |link|
+  #   post = link.click
+  #   @doc = post.parser
+  #   nodes = nodes_by_selector(selector)
+  #   nodes.each do |node|
+  #     if ignored_selector
+  #       ignored = node.css(ignored_selector)
+  #       ignored.remove()
+  #     end
+  #     words = words_from_string(node.content)
+  #     count_frequency(words)
+  #   end
+  # end
+
+  # sorted = @counts.sort_by { |word, count| count }
+  # sorted.reverse!
+  # sorted.map! do |word, count|
+  #   { word: word, count: count }
+  # end
+  # { word_count: sorted }
+end
+
+def metadata_by_selector(selector)
+  metadata = { posts: [] }
+  puts 'starting'
+  p metadata
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # Get rid of the first anchor since it's the site header
+  post_links.shift
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    time = @doc.css('time')[0]
+    post_data = {}
+    post_data[:date] = time['datetime']
+    post_data[:stats] = []
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      node.children.each do |child|
+        unless child.content.chomp.empty?
+          post_data[:stats].push(child.content)
+        end
+      end                
+    end
+    metadata[:posts].push(post_data)
+    puts 'post added'
+    p metadata
+  end
+  puts 'returning'
+  p metadata
+  metadata
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def nodes_by_selector(selector)
+  nodes = @doc.css(selector)
+  # raise Tentacles::SelectionError, 
+  #   'The selector did not return an results!' if nodes.empty?
+  nodes
+end 
+
+def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+<code>``
+I had to comment out the</code>Tentacles::SelectionError` because it was throwing and saying it wasn't getting any content with a selector even though it was. Not sure wtf is going on there but I'm sure it has to do with the fact that it's 1:30 a.m. I have a rule that nothing good happens after 11pm when it comes to coding. Tonight has lived up to that. Anyway the above should put out a hash which when converted to JSON looks like this:</p>
+
+<p>``` json
+{
+  "posts": [</p>
+
+<pre><code>{
+  "date": "2012-06-22T00:31:00-07:00",
+  "stats": [
+    "Time: 12:31 am",
+    "Mood: Tired",
+    "Sleep: 6",
+    "Hunger: 0",
+    "Coffee: 1"
+  ]
+},
+{
+  "date": "2012-06-21T01:27:00-07:00",
+  "stats": [
+    "Time: 1:28 am",
+    "Mood: Tired, Annoyed",
+    "Sleep: 6",
+    "Hunger: 0",
+    "Coffee: 1"
+  ]
+},
+{
+  "date": "2012-06-20T00:09:00-07:00",
+  "stats": [
+    "Time: 12:10 am",
+    "Mood: Tired, Introspective",
+    "Sleep: 4.5",
+    "Hunger: 2",
+    "Coffee: 1"
+  ]
+},
+</code></pre>
+
+<p>... .
+```
+I'm pretty certain I could have done this with Node in a fraction of the time if only because Node is much easier to debug with Chrome Dev tools using node-inspector. While I love the Ruby language I definitely do not like debugging it...</p>
+
+<p>Tomorrow I might write some JS to give my brain a break. I'm thoroughly pissed off at Ruby for the evening. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Pissed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Quick Spider Example]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/21/quick-spider-example/"/>
+    <updated>2012-06-21T01:27:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/21/quick-spider-example</id>
+    <content type="html"><![CDATA[<p>``` ruby
+require 'mechanize'</p>
+
+<h1>Create a new instance of Mechanize and grab our page</h1>
+
+<p>agent = Mechanize.new
+page = agent.get('http://robdodson.me/blog/archives/')</p>
+
+<h1>Find all the links on the page that are contained within</h1>
+
+<h1>h1 tags.</h1>
+
+<p>post_links = page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+post_links.shift</p>
+
+<h1>Follow each link and print out its title</h1>
+
+<p>post_links.each do |link|</p>
+
+<pre><code>post = link.click
+doc = post.parser
+p doc.css('.entry-title').text
+</code></pre>
+
+<p>end
+```
+Having a horrible time getting anything to run tonight. The code from above is a continuation from yesterday's post except this time we're finding every link on the page, then following that link and spitting out its title. Using this formula you could build something entirely recursive which acts as a full blown spider.</p>
+
+<p>Unfortunately getting this to integrate into the existing app is not working for me tonight. Coding anything after 11 pm is usually a bad call, so I'm going to shut it down and try again in the morning.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Annoyed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Crawling pages with Mechanize and Nokogiri]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/"/>
+    <updated>2012-06-20T00:09:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri</id>
+    <content type="html"><![CDATA[<p>Short post tonight because I spent so much time figuring out the code. It's late and my brain is firing on about 1 cylinder so it took longer than I expected to get everything working.</p>
+
+<p>The scraper that I'm building is supposed to work like a spider and crawl of the pages of my blog. I wasn't sure what the best way to do that was so I started Googling and came up with <a href="http://mechanize.rubyforge.org/">Mechanize.</a> There are other tools built on top of Mechanize, like <a href="https://github.com/felipecsl/wombat">Wombat</a>, but since my task is so simple I figured I could just write everything I needed with Mechanize and Nokogiri. It's usually a better idea to work with simple tools when you're first grasping concepts so you don't get lost in the weeds of some high powered framework.</p>
+
+<!--more-->
+
+
+<p>Since it's late I'll let the code do the talking:</p>
+
+<p>``` ruby crawler.rb
+require 'mechanize'</p>
+
+<h1>Create a new instance of Mechanize and grab our page</h1>
+
+<p>agent = Mechanize.new
+page = agent.get('http://robdodson.me/blog/archives/')</p>
+
+<h1>Find all the links on the page that are contained within</h1>
+
+<h1>h1 tags.</h1>
+
+<p>post_links = page.links.find_all { |l| l.attributes.parent.name == 'h1' }</p>
+
+<h1>Click on one of our post links and store the response</h1>
+
+<p>post = post_links[1].click
+doc = page.parser # Same as Nokogiri::HTML(page.body)
+p doc
+```</p>
+
+<p>This code is hopefully easy enough to digest. After I get the page I find all of the links which are wrapped inside of an <code>h1</code>. Just as an example I <code>click</code> a link from the list using Array syntax and store the response in another var. You <em>could</em> click all of the links by iterating through the post_links object, and that's what we'll tackle tomorrow. For now I just follow 1 link and use a convenience method to parse the page with Nokogiri. After that we have a Nokogiri <code>doc</code> ready to be manipulated however we see fit.</p>
+
+<p><a href="https://gist.github.com/2958538">Here's a link to the Gist</a> if you'd like to tweak or play with the code. Pop it into <code>irb</code> and give it a shot. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Introspective</li>
+    <li>Sleep: 4.5</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 8]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/"/>
+    <updated>2012-05-16T07:42:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8</id>
+    <content type="html"><![CDATA[<p>Yesterday's I refactored my specs and crawler to support ignoring selections. While I started parsing the metadata I quickly realized that certain bits were rather specific and needed to have custom parsing methods. Today I'm going to write some format objects to help with all that.</p>
+
+<!--more-->
+
+
+<p>Our metadata on the page looks like this:</p>
+
+<p><code>
+Time: 7:42 am
+Mood: Awake, Alert, Focused
+Sleep: 6
+Hunger: 0
+Coffee: 0
+</code></p>
+
+<p>Sleep, hunger and coffee are all floats, so one object could be just <code>FloatFormat</code>. Mood should produce an <code>Array</code> of objects so we could have a <code>CollectionFormat</code>. Finally time is going to combine the time listed in the metadata and the post date. We'll make a <code>DateTimeFormat</code> for that. These could all be methods of one big Format object as well but experience tells me that you need to be careful of monolithic actors that consume tons of different data types and spit out results. Those classes have a tendency to bloat very easily as project requirements change. I think it's better to produce classes which can be extended or abstracted as needs arise.</p>
+
+<p>So we know <em>who</em> is going to format but we still don't know <em>how</em>. I think I'd like to build a manifest which matches the metadata category to a format. Maybe something like this?</p>
+
+<p><code>ruby
+{
+  'Time'    =&gt; DateTimeFormat,
+  'Mood'    =&gt; CollectionFormat,
+  'Sleep'   =&gt; FloatFormat,
+  'Hunger'  =&gt; FloatFormat,
+  'Coffee'  =&gt; FloatFormat
+}
+</code></p>
+
+<p>I could probably look at each item and "detect" what kind of format it needs but I'd rather be explicit. If, for instance, I want to add another format, it's a lot easier to just change my manifest file vs. hacking on some detection scheme. I think we can just produce this manifest file in YAML and load it in at runtime. One thing I don't like about this approach is that it specifically names our format classes. You could generalize it so that it just matches a category to the desired output data, for instance <code>'Coffee' =&gt; Float</code> but then you run into problems with flexibility. What if Coffee still needed to output a float but had to go through a different Format than Hunger or Sleep? With that in mind we'll stick to the plan already laid out.</p>
+
+<p><code>yaml tentacles/lib/tentacles/formats.yml
+time:     DateTimeFormat
+mood:     CollectionFormat
+sleep:    FloatFormat
+hunger:   FloatFormat
+coffee:   FloatFormat
+</code></p>
+
+<h3>The Format object</h3>
+
+<p>I would love it if I could use the Format object as a module and just call a method on it from Crawler. It might look like this:</p>
+
+<p>```ruby
+def metadata_by_selector(selector)
+  node = nodes_by_selector(selector).first
+  metadata = {}
+  node.children.each do |child|</p>
+
+<pre><code>Tentacles::Format.insert(child, metadata)         
+</code></pre>
+
+<p>  end    <br/>
+end
+<code>``
+The only problem is</code>Format` needs to load in and parse its formats.yml file before it's any good to us. There's some interesting talk of the <a href="http://www.subelsky.com/2008/05/using-rubys-autoload-method-to.html">Module#autoload method</a> but that's not quite what I need...</p>
+
+<p>Seems like I can't find any good documentation on this so instead we'll make it an instance of the class. Also I'm lazy so I'm going to have that instance load its own formats.yml file. Normally I like to only have one entry point for configuration files but...whatever.</p>
+
+<h3>How do I convert a string into a class name in Ruby?</h3>
+
+<p>Well we know we can load our YAML file but all of our format classes are going to come in as strings. I did some digging to figure out how to convert the string into an actual class that can then be instantiated. If you just want to convert a String into a class you can use <code>Object.const_get('Foobar').new</code> but that's not going to work for us since our code is wrapped in a module. To convert a string into a module class we'll need to use the name of our module: <code>Tentacles.const_get('DateTimeFormat').new</code>.</p>
+
+<p>With that in mind I want to spec out a simple test that passes in string of metadata and receives a printed notification that the right formatter has been created. We'll then refactor it to actually use the formatter on the string.</p>
+
+<p>```ruby tentacles/spec/format_spec.rb
+require_relative '../lib/tentacles/format'
+require_relative '../lib/tentacles/date_time_format'</p>
+
+<p>describe Tentacles::Format do
+  describe "when asked to parse some metadata" do</p>
+
+<pre><code>it "should create the right formatter" do
+  @format = Tentacles::Format.new
+  @format.parse('Time: 8:03 am').should be_an_instance_of(Tentacles::DateTimeFormat)
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/format.rb
+require 'yaml'
+require_relative 'date_time_format'</p>
+
+<p>module Tentacles
+  class Format</p>
+
+<pre><code>def initialize
+  @categories = YAML.load(File.open(File.dirname(__FILE__) + '/formats.yml'))
+end
+
+def parse(data)
+  category = data.split(':')[0]
+  category.downcase!
+  Tentacles.const_get(@categories[category]).new
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/date_time_format.rb
+module Tentacles
+  class DateTimeFormat</p>
+
+<pre><code>def initialize
+  puts 'DateTimeFormat created!'
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Now let's take it a step further so we can convert an actual time into a DateTime object. Here's our updated spec:</p>
+
+<p>```ruby
+require_relative '../lib/tentacles/format'
+require 'date'</p>
+
+<p>describe Tentacles::Format do
+  describe "when asked to parse some metadata" do</p>
+
+<pre><code>it "should create the right formatter" do
+  @format = Tentacles::Format.new
+  @format.parse('Time: 8:03 am').should be_an_instance_of(Date)
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>To pull this off we'll need the help of at least 2 new gems: <a href="http://rubygems.org/gems/chronic">Chronic</a> and <a href="http://rubygems.org/gems/activesupport">ActiveSupport</a>. Chronic is a natural language parser which can convert strings into useable timestamps. ActiveSupport is a library of extensions originally created for Rails which have been abstracted into a general purpose toolset. We're going to combine these two gems to turn the phrase "8:03 am" into a Ruby DateTime.</p>
+
+<p>Gotta first update the Gemfile with our new dependencies and run <code>bundle install</code>.</p>
+
+<p>```ruby
+source 'https://rubygems.org'</p>
+
+<p>gem 'rspec', '2.9.0'
+gem 'nokogiri', '~>1.5.2'
+gem 'awesome_print', '~>1.0.2'
+gem 'fakeweb', '~>1.3.0'
+gem 'chronic', '~> 0.6.7'
+gem 'activesupport', '~> 3.2.3'
+```</p>
+
+<p>Next we bang out a quick parse method inside of DateTimeFormat. Our Tentacles::Format is going to delegate its parse call to whichever subordinate formatter it creates. Code speaks louder than words:</p>
+
+<p>```ruby tentacles/lib/tentacles/format.rb
+require 'yaml'
+require_relative 'date_time_format'</p>
+
+<p>module Tentacles
+  class Format</p>
+
+<pre><code>def initialize
+  @categories = YAML.load(File.open(File.dirname(__FILE__) + '/formats.yml'))
+end
+
+# Create a formatter based on the content of the passed
+# in data. Delegate the parse call to this new formatter
+def parse(data)
+  category, *content = data.split(':')
+  category.downcase!
+  formatter = Tentacles.const_get(@categories[category]).new
+  formatter.parse(content)
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/tentacles/date_time_format.rb
+require 'chronic'
+require 'active_support/core_ext/string/conversions.rb'</p>
+
+<p>module Tentacles
+  class DateTimeFormat</p>
+
+<pre><code>def initialize
+  puts 'DateTimeFormat created!'
+end
+
+def parse(content)
+  Chronic.parse(content.join(':')).to_datetime
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>With all that in place our test should pass. Nice!!!!!! We're well on our way to processing the remaining metadata. Tomorrow I'll whip up our other formats and figure out how to pull the date out of a blog post so we can combine that with the time to get a proper DateTime.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Alert, Focused</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 7]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/"/>
+    <updated>2012-05-15T21:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7</id>
+    <content type="html"><![CDATA[<p>During my last post I realized that including my metadata in the blog post as only a ul meant that all the words were being scraped as part of the keyword frequency search. After thinking about it for a while I think I'm going to give the keyword search method an optional value which it can use to ignore or delete certain nodes.</p>
+
+<!--more-->
+
+
+<p>Thankfully I have my tests in place to validate what our final output should look like. Which means I'm basically hacking away at Nokogiri to get things to pass. Here's what I finally settle on:</p>
+
+<p>```ruby
+def words_by_selector(selector, ignored_selector = nil)
+  node = nodes_by_selector(selector).first
+  if ignored_selector</p>
+
+<pre><code>ignored = node.css(ignored_selector)
+ignored.remove()
+</code></pre>
+
+<p>  end
+  words = words_from_string(node.content)
+  count_frequency(words)</p>
+
+<p>  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map { |word, count| "#{word}: #{count}"}
+end
+```</p>
+
+<p>I think the code is pretty self explanatory. Moving on to the metadata we expect a Hash that looks like this:</p>
+
+<p><code>
+{
+  datetime: 2012-05-13T08:03:00-07:00,
+  mood: ['Happy', 'Drowsy', 'Peaceful'],
+  sleep: 5.5,
+  hunger: 3.0,
+  coffee: 0.0
+}
+</code></p>
+
+<p>As I'm playing back and forth with the metadata selector methods I'm realizing that writing non-brittle tests is extremely difficult!</p>
+
+<p>I'm noticing that some of the metadata, when broken into Strings, don't parse very well. For instance:</p>
+
+<p><code>Time: 8:03</code> splits up into <code>["Time", " 8", "03"]</code></p>
+
+<p>We can use a splat operator to clean that up a bit for us:</p>
+
+<p>```ruby
+def metadata_by_selector(selector)
+  node = nodes_by_selector(selector).first
+  metadata = {}
+  node.children.each do |child|</p>
+
+<pre><code>key, *value = child.content.split(':')
+puts "#{key}: #{value}"
+</code></pre>
+
+<p>  end    <br/>
+end
+```</p>
+
+<p>The above should produce something like:</p>
+
+<p><code>
+Time: [" 8", "03 am"]
+Mood: [" Happy, Drowsy, Peaceful"]
+Sleep: [" 5.5"]
+Hunger: [" 3"]
+Coffee: [" 0"]
+</code></p>
+
+<p>Close... but still not perfect. I think the best thing to do would be to write some formatter objects or functions to handle the different kinds of metadata. We'll tackle that tomorrow.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Fat, Tired, Drunk</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

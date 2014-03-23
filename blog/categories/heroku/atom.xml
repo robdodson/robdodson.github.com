@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Heroku | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/heroku/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Deploying Your First Node.js and Socket.io App to Heroku]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/"/>
+    <updated>2012-06-04T22:01:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku</id>
+    <content type="html"><![CDATA[<p><em>Update: This page has been translated into <a href="http://www.webhostinghub.com/support/es/misc/implementando-tus-primeras-aplicaciones">Spanish</a> by Maria Ramos.</em></p>
+
+<p>At my office we like to shoot each other from across the room with Nerf guns. In an effort to actually remain productive we've implemented a rule that whenever you get shot you're dead for 1 hour. But that hour can be a little tricky to keep track of between players. Who's dead and who isn't? Am I about to be shot right now??</p>
+
+<p>In an effort to keep track of things (and also because I need to write a blog post) I decided to start working on a little <a href="http://nodejs.org/">Node.js</a> and <a href="http://socket.io/">Socket.io</a> app. In this first post I'm just going to get things setup and deploy them to Heroku. Hopefully tomorrow we can work on implementing the actual timers. If you've never worked with Heroku before <a href="https://devcenter.heroku.com/articles/quickstart">you'll need to follow their getting started guide</a> to make sure you have all the proper command line tools. Don't worry, it's really easy and their documentation is <strong>awesome</strong>.</p>
+
+<!--more-->
+
+
+<h3>Express it!</h3>
+
+<p>To start us off we'll use <a href="http://expressjs.com/">Express</a> since it provides a nice, <a href="http://www.sinatrarb.com/">Sinatra</a> like layer on top of Node. If you haven't installed Node yet you can do it from the <a href="http://nodejs.org/">Node.js</a> site. The installer will also include <code>npm</code> which is Node's package manager. Following the instructions on the <a href="http://expressjs.com/">Express</a> site you should be able to just type:</p>
+
+<p><code>
+npm install -g express
+</code></p>
+
+<p>Now that you have Express installed you can use it to create a new project.</p>
+
+<p><code>
+express defcon
+</code>
+I'm calling my project <code>defcon</code> because I luvz <a href="http://en.wikipedia.org/wiki/WarGames">WarGames</a>. You can call yours whatever you'd like :)</p>
+
+<p>Next we need to <code>cd</code> into the defcon folder so we can install Socket.io and our other dependencies. There's a version of Socket.io designed to work with Express so we'll install that one.</p>
+
+<p><code>
+npm install -d  # install Express dependencies
+npm install socket.io express
+</code></p>
+
+<p>We'll also need to add socket.io to our <code>package.json</code> which is similar to a <code>Gemfile</code> if you're coming from Ruby, or just a big list of file dependencies if you're coming from something else :D When you distribute your app other developers can just run 'npm install -d' and it will add all of the modules listed to their project. Heroku will also use our <code>package.json</code> when we push our app to their servers. I'm also going to replace the <a href="http://jade-lang.com/">Jade</a> rendering engine with <a href="http://embeddedjs.com/">EJS</a> since it's easier for me to work with.</p>
+
+<p>``` js package.json
+{</p>
+
+<pre><code>"name": "defcon",
+"version": "0.0.1",
+"private": true,
+"dependencies": {
+  "express": "~2.5.8",
+  "ejs": "~0.7.1",
+  "socket.io": "~0.9.6"
+</code></pre>
+
+<p>  },
+  "engines": {</p>
+
+<pre><code>"node": "0.6.x"
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>The tilde <code>~</code> character tells NPM that it's ok to install this version of our module, or anything less than the next highest version number. So the following are equivalent: <code>"~1.2" = "&gt;=1.2.0 &lt;2.0.0"</code>. This is typically a good practice with modules because you'd like to receive bug fixes and patches but you don't want to let your app potentially download a v2 of some library which breaks the API.</p>
+
+<p>Run <code>npm install -d</code> again to make sure that <code>ejs</code> and anything else you've added are properly installed. Open up your app.js file that Express provided for you. We'll need to change a lot of stuff so it's probably easiest for you to just copy and paste this one that I've already prepared. Paste it into a new file if you'd like so you can compare all the differences.</p>
+
+<p>``` js app.js
+var express = require('express'),</p>
+
+<pre><code>app = express.createServer(express.logger()),
+io = require('socket.io').listen(app),
+routes = require('./routes');
+</code></pre>
+
+<p>// Configuration</p>
+
+<p>app.configure(function() {
+  app.set('views', <strong>dirname + '/views');
+  app.set('view engine', 'ejs');
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.static(</strong>dirname + '/public'));
+});</p>
+
+<p>app.configure('development', function() {
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});</p>
+
+<p>app.configure('production', function() {
+  app.use(express.errorHandler());
+});</p>
+
+<p>// Heroku won't actually allow us to use WebSockets
+// so we have to setup polling instead.
+// https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});</p>
+
+<p>// Routes</p>
+
+<p>var port = process.env.PORT || 5000; // Use the port that Heroku provides or default to 5000
+app.listen(port, function() {
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+});</p>
+
+<p>app.get('/', routes.index);</p>
+
+<p>var status = "All is well.";</p>
+
+<p>io.sockets.on('connection', function (socket) {
+  io.sockets.emit('status', { status: status }); // note the use of io.sockets to emit but socket.on to listen
+  socket.on('reset', function (data) {</p>
+
+<pre><code>status = "War is imminent!";
+io.sockets.emit('status', { status: status });
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>In my views folder I've created a <code>layout.ejs</code>...</p>
+
+<p>``` html views/layout.ejs
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Title&lt;/title&gt;
+&lt;meta name="description" content=""&gt;
+&lt;meta name="author" content=""&gt;
+
+&lt;!-- HTML5 shim, for IE6-8 support of HTML elements --&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+&lt;![endif]--&gt;
+
+&lt;!-- styles --&gt;
+&lt;link href="http://robdodson.github.com/css/main.css" rel="stylesheet"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;%- body %&gt;
+&lt;script src="http://robdodson.github.com/socket.io/socket.io.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.github.com/js/libs/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://robdodson.github.com/js/main.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>and an <code>index.ejs</code>.</p>
+
+<p>``` html views/index.ejs</p>
+
+<div id="status"></div>
+
+
+<p><button id="reset">Reset!</button>
+```</p>
+
+<p>If you'd like you can open up <code>routes/index.js</code> and look around but you don't need to. It should render <code>layout.ejs</code> and <code>index.ejs</code> by default.</p>
+
+<p>A few more items to go...We need to add a copy of <a href="http://jquery.com/">jQuery</a> to our <code>public</code> folder and also a <code>main.js</code> file. I've renamed the structure to look like this:</p>
+
+<p>```
+public
+|
+|<em> css
+|</em> img
+|_ js</p>
+
+<pre><code>|_ libs
+    |_ jquery.js
+|_ plugins
+|_ main.js
+</code></pre>
+
+<p>```</p>
+
+<p>I guess that's just a habit of using Backbone Boilerplate all the time :) Here's what <code>main.js</code> should look like:</p>
+
+<p>``` js public/js/main.js
+var socket = io.connect(window.location.hostname);</p>
+
+<p>socket.on('status', function (data) {</p>
+
+<pre><code>$('#status').html(data.status);
+</code></pre>
+
+<p>});</p>
+
+<p>$('#reset').click(function() {</p>
+
+<pre><code>socket.emit('reset');
+</code></pre>
+
+<p>});
+```</p>
+
+<p>It's important to note the line that says <code>var socket = io.connect(window.location.hostname);</code>. In the socket.io docs they usually tell you to connect to <code>localhost</code> but since we're on heroku we'll need to instead connect to whatever our custom domain is.</p>
+
+<h3>Cross your fingers</h3>
+
+<p>At this point we should be ready to test everything. From the root of your project run <code>node app.js</code>. If all goes well you should see something like this:</p>
+
+<p><code>
+   info  - socket.io started
+Express server listening on port 5000 in development mode
+</code></p>
+
+<p>If not leave me a comment and I'll see if I can help you debug it. However let's assume that everything DID go well for you and now you're ready to connect to the local version of your app. Point your browser to http://localhost:5000 and you should see something like this:</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/all_is_well_with_sockets.png" title="'All is well with Socket.io'" ></p>
+
+<p>Now open another browser window and also point it at localhost:5000. In one of the windows click the button that says <code>Reset</code> which should change the copy in <em>both</em> windows to 'War is imminent!'</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/war_is_imminent_sockets.png" title="'War is Immentin with Socket.io'" ></p>
+
+<h3>Git'er done!</h3>
+
+<p>Alright we should have a functioning app at this point so let's put this baby into Git.</p>
+
+<p><code>
+git init
+echo 'node_modules' &gt;&gt; .gitignore
+</code></p>
+
+<p>We'll ignore the node_modules directory so Heroku can create its own version. Heroku requires that we deploy our app from Git which is kind of an awesome practice. We'll also need to define a <code>Procfile</code> which will list the processes that our app can run.</p>
+
+<p><code>
+touch Procfile
+echo 'web: node app.js' &gt;&gt; Procfile
+</code>
+To verify that our <code>Procfile</code> is working we can use Heroku's built in utility called <code>foreman</code>.</p>
+
+<p>```
+$ foreman start</p>
+
+<p>23:47:32 web.1     | started with pid 53197
+23:47:32 web.1     | info: socket.io started
+23:47:32 web.1     | Express server listening on port 5000 in development mode
+```</p>
+
+<p>Point your browser to <code>localhost:5000</code> to verify that things are still working. If everything looks good we're ready to commit to git.</p>
+
+<p><code>
+git add .
+git commit -m 'initial commit'
+</code></p>
+
+<h3>Deploy to Heroku</h3>
+
+<p>Now that our app is safely tucked away in git it's time to fire up a new Heroku instance.</p>
+
+<p><code>
+$ heroku create --stack cedar
+</code></p>
+
+<p>Heroku will do the work of setting up a new <code>git remote</code> for us to push our app to.</p>
+
+<p><code>
+$ git push heroku master
+</code></p>
+
+<p>We'll need to scale our web process before we can use the app.</p>
+
+<p><code>
+$ heroku ps:scale web=1
+</code></p>
+
+<p>To see which processes are running on Heroku you can use the <code>heroku ps</code> command.</p>
+
+<p>```
+$ heroku ps</p>
+
+<p>Process       State               Command</p>
+
+<hr />
+
+<p>web.1         up for 10s          node app.js
+```</p>
+
+<p>With everything setup we should be able to run <code>heroku open</code> which will fire up our browser and direct it to an instance of our app. There seems to be a fair bit of latency so it can take several seconds for the initial status of 'All is well' to show up. If you see the Reset button with nothing above it give it around 10 seconds to see if it eventually updates. Open another browser window and point it at the Heroku domain in the address bar. If you press the Reset button in one window it should immediately update in the next one.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/heroku_war_is_imminent.png" title="'Heroku: War is Imminent'" ></p>
+
+<h3>Wrapping up</h3>
+
+<p>Well I hope you enjoyed this brief tour of Socket.io and Heroku. Before we sign off let's make sure to turn off the running process on our Heroku instance:</p>
+
+<p><code>
+$ heroku ps:scale web=0
+</code></p>
+
+<p>If all went well you should have a decent starting point to build your own Socket.io app. If you're still having trouble checkout some of the great documentation from Heroku and/or leave a comment:</p>
+
+<p><a href="https://devcenter.heroku.com/articles/nodejs">https://devcenter.heroku.com/articles/nodejs</a></p>
+
+<p><a href="https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku">https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku</a></p>
+
+<p>Good Luck! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Antsy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to setup PostgreSQL for Rails and Heroku]]></title>
+    <link href="http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/"/>
+    <updated>2012-04-27T07:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku</id>
+    <content type="html"><![CDATA[<h3>Install PostgreSQL Locally</h3>
+
+<p>Ryan Bates has already put together a wonderful Railscast on this topic so feel free to <a href="http://railscasts.com/episodes/342-migrating-to-postgresql">jump over there</a> to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.</p>
+
+<!--more-->
+
+
+<p>There are a few different options for installing PostgreSQL. The first one, which Ryan outlines, is to use <a href="http://mxcl.github.com/homebrew/">Homebrew</a> and simply do a <code>brew install postgresql</code>. Some folks might not be comfortable with that process so I wanted to also recommend the new <a href="http://postgresapp.com/">PostgreSQL.app</a> from the team at <a href="http://www.heroku.com/">Heroku</a>. If you're more used to tools like <a href="http://www.mamp.info/en/index.html">MAMP</a> then the PostgreSQL.app might be a bit more your style.</p>
+
+<p>If you go the Homebrew route make sure you type in <code>initdb /usr/local/var/postgres</code> after the install finishes to init your first database. The installer will also mention some commands you can use to have PostgreSQL auto-start whenever you turn on your computer. I wasn't a big fan of this approach so instead I created two aliases in my .bash_profile.</p>
+
+<p><code>
+alias pg-start='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
+alias pg-stop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
+</code>
+With these I can just type <code>pg-start</code> to fire up Postgres and <code>pg-stop</code> when I want to shut it down.</p>
+
+<h3>Change Rails Database to PostgreSQL</h3>
+
+<p>The next thing you'll want to do is either convert an existing project to PostgreSQL or create a new rails project and set PostgreSQL as the database.</p>
+
+<p>Creating a new rails project for Postgres is as easy as <code>rails new blog -d postgresql</code>. After running this command you'll also need to call <code>rake db:create:all</code> to create a new database.</p>
+
+<p>To convert an existing project you'll want to update your Gemfile to include the <code>pg</code> gem. A basic Gemfile might look something like this:</p>
+
+<p>``` ruby
+source 'https://rubygems.org'</p>
+
+<p>gem 'rails', '3.2.3'
+gem 'pg', '~>0.13.2'</p>
+
+<p>group :assets do
+  gem 'sass-rails',   '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'uglifier', '>= 1.0.3'
+end</p>
+
+<p>gem 'jquery-rails'</p>
+
+<p>```
+You'll also need to update your config/database.yml to look for Postgres instead of SQLite or MySQL.</p>
+
+<p>``` yaml config/database.yml
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: [insert your dev database name]
+  pool: 5
+  username: [insert your user name]
+  password:</p>
+
+<p>test:
+  adapter: postgresql
+  encoding: unicode
+  database: [insert your test database name]
+  pool: 5
+  username: [insert your user name]
+  password:
+<code>``
+Since we haven't created any Postgres user accounts both Homebrew and PostgreSQL.app will simply use our current username as the login. The password can remain blank. After this is done you'll also need to call</code>rake db:create:all` to create the new database.</p>
+
+<h3>Connect a Rails Project to a PostgreSQL Database on Heroku</h3>
+
+<p>If your project isn't already under version control then now would be a good time to set that up.</p>
+
+<p><code>
+git init
+git add .
+git commit -m 'Initial commit!'
+</code>
+Next we'll create a free Heroku instance
+<code>
+heroku create --stack cedar
+</code>
+After that's done we'll simply push our project up there.
+<code>
+git push heroku master
+</code>
+You might see some deprecation warnings about vendor plugins. For now you can (probably) safely ignore those.</p>
+
+<p>Here's one little gotcha that I seemed to run into. If you try to access your site on Heroku using the <code>heroku open</code> command you might get an error page. You have to make sure to also call <code>heroku run rake db:create:all</code> otherwise your production database will not be in place and your app will fail to connect to it. Speaking of production databases, you should also note that Heroku will overwrite whatever you put into your config/database.yml so you don't have to worry about figuring out all the connection details for their shared services...it'll all just work. Sweet!</p>
+
+<h3>PostgreSQL GUI</h3>
+
+<p>One last tip re: your new Postgres setup. If you're just starting out like me then your command line fu is probably not as strong as you'd like it to be. Personally I really like having a nice GUI to visualize the tables in my database. For MySQL I usually use the awesome (and free) <a href="http://www.sequelpro.com/">SequelPro</a>. For PostgreSQL you can use <a href="http://inductionapp.com/">Induction</a>. It doesn't seem like they have a downloadable binary on their website (weird?) but you can grab one out of <a href="https://github.com/Induction/Induction/downloads">the Github repo's downloads page</a>. Connecting to your Postgres instance can be a little tricky, you have to make sure to use the PostgreSQL adapter, localhost as the hostname, your computer's username as the user and the password can remain blank. You also <em>HAVE</em> to give it a database name (even though it says it's optional) or it will throw a <code>FATAL:  database [your username] does not exist</code>. Here's a screenshot of what mine looks like:</p>
+
+<p><img class="center" src="/images/induction_screen.png" title="'Induction Login Screen'" ></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

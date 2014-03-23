@@ -54,16 +54,18 @@
 </div>
 	
 	<header class="post-header">
-		<span class="post-meta">19 Nov 2013</span>
+		<span class="post-meta">02 Sep 2013</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/">
+			<a href="/blog/2013/09/02/shadow-dom-javascript/">
 			
-				@font-face Doesn&#8217;t Work in the Shadow DOM</a>
+				Shadow DOM: JavaScript</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
+		<p>We&#8217;re getting to a point where we&#8217;ve covered most of what there is to know about <a href="/blog/2013/03/16/html5-template-tag-introduction/">templates</a>, <a href="/blog/2013/08/20/exploring-html-imports/">imports</a> and shadow DOM (<a href="/blog/2013/08/26/shadow-dom-introduction/">1</a>, <a href="/blog/2013/08/27/shadow-dom-the-basics/">2</a>, <a href="/blog/2013/08/28/shadow-dom-styles/">3</a>, <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot/">4</a>). The end goal for all of these technologies is <strong>custom elements</strong>, but we&#8217;re not <em>quite</em> there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I&#8217;m going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you&#8217;ll be in a good place to start creating your own custom elements.</p>
+
+<p>Let&#8217;s get crackin&#8217;!</p>
 
 
 	</section>
@@ -73,16 +75,16 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">15 Nov 2013</span>
+		<span class="post-meta">29 Aug 2013</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/15/the-cat-and-the-hat-css-selectors/">
+			<a href="/blog/2013/08/29/shadow-dom-styles-cont-dot/">
 			
-				The Cat and the Hat CSS Selectors</a>
+				Shadow DOM: Styles (Cont.)</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
+		<p>In <a href="/blog/2013/08/28/shadow-dom-styles/">yesterday&#8217;s post</a> we covered the basics of working with styles in Shadow DOM. But we&#8217;ve only just scratched the surface! Today we&#8217;ll continue from where we left off and explore how to work with <strong>distributed nodes</strong> and how to poke holes in our components so the outside world can reach in and customize &#8216;em.</p>
 
 
 	</section>
@@ -92,16 +94,18 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">12 Nov 2013</span>
+		<span class="post-meta">28 Aug 2013</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/12/repeating-templates-in-polymer/">
+			<a href="/blog/2013/08/28/shadow-dom-styles/">
 			
-				Repeating Templates in Polymer</a>
+				Shadow DOM: Styles</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
+		<p><a href="/blog/2013/08/27/shadow-dom-the-basics/">Yesterday&#8217;s post</a> was all about coding and structuring your first Shadow DOM elements. But I&#8217;m sure most of you were wondering, how do we style these things?!</p>
+
+<p>The use of CSS in Shadow DOM is an interesting and large topic. So large, in fact, that I&#8217;m going to split it up over the next couple of posts. Today we&#8217;ll learn the basics of using CSS within the <strong>shadow boundary</strong>, and also how to style our <strong>shadow hosts</strong>.</p>
 
 
 	</section>
@@ -111,41 +115,18 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">24 Oct 2013</span>
+		<span class="post-meta">27 Aug 2013</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/10/24/web-components-revolution/">
+			<a href="/blog/2013/08/27/shadow-dom-the-basics/">
 			
-				Web Components Revolution</a>
+				Shadow DOM: The Basics</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
+		<p>In my <a href="/blog/2013/08/26/shadow-dom-introduction/">previous post</a>, I introduced the <strong>Shadow DOM</strong> and made the case for why it is important. Today, we&#8217;ll get our hands dirty with some code! By the end of this post, you&#8217;ll be able to create your own encapsulated widgets that pull in content from the outside world and rearrange their bits and pieces to produce something wholly different.</p>
 
-<br>
-
-
-<h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
-
-	</section>
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">02 Oct 2013</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2013/10/02/creating-a-markdown-tag-with-polymer/">
-			
-				Creating a Markdown Tag With Polymer</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>Ah Markdown&#8230; Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress&#8217; HTML mode, too limiting. Markdown changed all of that for me and I think it&#8217;s high time we make it a full fledged member of our developer toolbox.</p>
-
-<p>So today I&#8217;m going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+<p>Let&#8217;s get started!</p>
 
 
 	</section>
@@ -155,26 +136,48 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">16 Sep 2013</span>
+		<span class="post-meta">26 Aug 2013</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/09/16/the-art-of-fear-blogging/">
+			<a href="/blog/2013/08/26/shadow-dom-introduction/">
 			
-				The Art of Fear Blogging</a>
+				Shadow DOM: Introduction</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>Years ago <a href="http://www.radiolab.org/2011/mar/08/you-v-you/">I heard a radio story about a woman hopelessly addicted to cigarettes.</a> Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.</p>
+		<p>The topic we&#8217;ll be covering today, Shadow DOM, is big and at times rather confusing. It is also, potentially, one of the most transformative things to happen to web development in at least the last 5-10 years. Rather than attempt to cover it all in one post I&#8217;m going to split it up into a series of articles spread out over the coming weeks.</p>
 
+<p>For now let&#8217;s start with a general introduction: <strong>What</strong> is Shadow DOM and <strong>why</strong> is it important?</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">22 Aug 2013</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2013/08/22/web-components-resources/">
+			
+				Web Components Resources</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>Eric Bidelman (<a href="http://twitter.com/ebidel">@ebidel</a>) put together <a href="https://gist.github.com/ebidel/6314025">a great list of Web Components Resources</a>. It&#8217;s nice to have it all in one place because it sure can get confusing hoping around from spec to article to slideshow, etc. If you have more resources make sure to do a PR and add them to the list!</p>
 
 	</section>
 </article>
 
 <nav class="pagination" role="pagination">
     
-    <span class="page-number">Page 1 of 16</span>
+        <a class="newer-posts" href="/">← Newer Posts</a>
     
-        <a class="older-posts" href="/blog/page/2/">Older Posts →</a>
+    <span class="page-number">Page 2 of 16</span>
+    
+        <a class="older-posts" href="/blog/page/3/">Older Posts →</a>
     
 </nav>
   </main>

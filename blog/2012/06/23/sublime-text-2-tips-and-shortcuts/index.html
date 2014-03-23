@@ -1,0 +1,303 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Sublime Text 2 Tips and Shortcuts | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">23 Jun 2012</span>
+	<h1 class="post-title">Sublime Text 2 Tips and Shortcuts</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>I&#8217;ve been using Sublime Text 2 for probably two months now and in that time I&#8217;ve discovered tons of useful tricks. I figured I should start writing them down for anyone who might be interested. I&#8217;ll try to explain the bits that seem esoteric because there are a lot of cool commands which only work in certain contexts.</p>
+
+<!--more-->
+
+
+<h2>Finding your preferences</h2>
+
+<p>One of the first things you want to do with Sublime is to find your User key bindings. They&#8217;re located under <code>Sublime Text 2 &gt; Preferences &gt; Key Bindings - User</code></p>
+
+<p>Sublime Text is very DIY so there isn&#8217;t a fancy GUI to help you change keyboard shortcuts. Instead you use the preference file to override the default shortcuts. Like a lot of things in Sublime, this can at first seem annoying and non-intuitive. That is, until you realize that by doing it this way Sublime has actually given you the power to make <em>extremely</em> awesome key bindings. Take some time to look around in this file. I still only understand a fraction of what all it does but the little bits I learn here and there give me all sorts of ideas for new shortcuts. Just remember, if you want to change a keyboard shortcut you should do it in the User&#8217;s key bindings and not the Default key bindings.</p>
+
+<p><strong>Pro Tip:</strong> If you ever want to change a keyboard shortcut but can&#8217;t figure out what command is currently running open up Sublime&#8217;s built in terminal with <code>ctrl+`</code> then type <code>sublime.log_commands(True)</code>. Now when you execute your command from the menu you should see its name show up in the console. Just remember to turn logging off when you&#8217;re done :)</p>
+
+<h2>Sublime Package Control</h2>
+
+<p>If you only follow one piece of my advice make it this: <a href="http://wbond.net/sublime_packages/package_control">Install Sublime Package Control.</a></p>
+
+<p>Package Control makes it extremely easy to manage your Sublime plugins. It also helps with discovering new ones, which is nice. Just install it if you haven&#8217;t already, it&#8217;s impossible to live without.</p>
+
+<h2>Setting up a command line shortcut</h2>
+
+<p>I highly recommend setting up a symlink so you can easily open things with Sublime. <a href="http://www.sublimetext.com/docs/2/osx_command_line.html">This article details how to go about it on OSX.</a></p>
+
+<p>CLI FTW!</p>
+
+<h2>The Command Palette</h2>
+
+<p>OK, so hopefully you&#8217;ve setup Sublime Package Control. Maybe you&#8217;ve even installed some plugins. It&#8217;s time for you to meet the Command Palette then. <code>cmd+shift+p</code> will open up the window and from here you can execute just about any command either native to Sublime or part of a plugin. It is super useful for all those things you don&#8217;t run often enough to turn into full blown keyboard shortcuts. It&#8217;s also useful if you know the name of a command but can&#8217;t remember what section of the menu it lives under.</p>
+
+<h2>Goto Anything&#8230;</h2>
+
+<p>So you want to fly around your project like a ninja on methamphetamines, eh? Then the shortcut you want is <code>cmd+p</code>. Once you&#8217;ve opened the dialog try typing a filename. Useful right? But wait, there&#8217;s more&#8230;</p>
+
+<p>If you preface what you&#8217;re typing with a <code>@</code> it will look for &#8220;symbols&#8221; in the current file. Ex: <code>@foobar</code>. But just typing <code>@</code> will give you a nice file outline. The definition of what a symbol is depends on the file-type. In a Markdown file, for instance, it will list every header. In a JavaScript or Ruby file it will list every method of an object.</p>
+
+<p>One last trick. If instead of an <code>@</code> you preface things with an <code>:</code> you can type a line number instead and hit enter to jump to that point. Ex: <code>:415</code></p>
+
+<p>There are other keyboard shortcuts for jumping to a line and going to a symbol but why bother when you can just use <code>cmd+p</code> and some easy prefixing.</p>
+
+<h2>Splitting the editor windows</h2>
+
+<p>OK this one is also important and I can&#8217;t recommend it enough. <strong>Learn to split your editor windows.</strong> I never used this feature in previous IDEs and now I wonder how I ever lived without it. Whether you have a unit test in one window and an implementation in the other, or some HTML and CSS, this feature is just always handy.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/sublime-split-panes.png" title="'Split windows in Sublime'" ></p>
+
+<p>I <em>live</em> in split panes. They&#8217;ve changed my workflow significantly for the better. Less time switching between files and finding your place is an incredible advantage. You can access them through <code>View &gt; Layouts</code>. It will behoove you to learn these keyboard shortcuts. Also learn the shortcuts for <code>View &gt; Focus Group</code> and <code>View &gt; Move File to Group</code>.</p>
+
+<h2>Selections</h2>
+
+<p>There are some neat selections which come in handy depending on your context. Personally I use Expand Selection to Tag, <code>cmd+shift+a</code> quite frequently when writing HTML. I also use Expand Selection to Line, <code>cmd+L</code> and Expand Selection to Word, <code>cmd+D</code> a lot.</p>
+
+<h2>Selections with Multiple Cursors</h2>
+
+<p>Multiple cursors&#8230; It&#8217;s one of those things you didn&#8217;t realize you needed until suddenly you had it and you were all like &#8220;WHAAAAAAAAT!&#8221;</p>
+
+<p>There are a handful of ways to activate multiple cursors in Sublime. Hitting <code>cmd+D</code> to select multiples of the same word will put us into a multi-cursor context.</p>
+
+<p>Another way to go about it is to highlight a block of text and hit <code>cmd+shift+L</code> which will split each line into its own selection. This is extremely useful when editing HTML where often times you have repeating elements and you want to tweak a class name on all of them.</p>
+
+<p>You can also just hold <code>cmd</code> and click around your file to add more cursors. Or you can hold <code>ctrl+shift</code> and tap either the up or down arrows to add a new cursor in that direction.</p>
+
+<h2>Moving Lines</h2>
+
+<p><code>Edit &gt; Line &gt; Swap Line Up</code></p>
+
+<p><code>Edit &gt; Line &gt; Swap Line Down</code></p>
+
+<p><code>Edit &gt; Line &gt; Duplicate Line</code></p>
+
+<p>Learn em. Love em. I changed my keyboard shortcut for these so I can&#8217;t recall what it is by default. Regardless I think I use these three commands more than any other so I would say if you only learn three shortcuts, make it these three.</p>
+
+<p><strong>Pro Tip:</strong> If you want to duplicate a block of code highlight it and hit <code>cmd+L</code> to select the new line before you hit <code>cmd+shift+D</code>. This way your duplicated block will appear on a new line, rather than next to the previous block of code.</p>
+
+<h2>Wrap your lines</h2>
+
+<p>If you&#8217;ve installed the <a href="https://github.com/SublimeText/Tag">Tag plugin</a> you should have some extra line wrapping methods. I would also recommend you install <a href="https://bitbucket.org/sublimator/sublime-2-zencoding">ZenCoding</a>. I&#8217;m suggesting this for two reasons:</p>
+
+<ol>
+<li>You get awesome new features&#8230;</li>
+<li>I can&#8217;t remember if what I&#8217;m about to say is native to Sublime or part of a plugin.</li>
+</ol>
+
+
+<p>OK with that out of the way&#8230;</p>
+
+<p>Let&#8217;s say you&#8217;re working on some HTML and you have a block of text that you&#8217;d like to wrap in a <code>p</code> tag. No problemo! Highlight the text and hit <code>ctrl+shift+w</code> or <code>Edit &gt; Tag &gt; Wrap Selection in Tag</code>. There&#8217;s a more advanced versions that comes with the ZenCoding plugin which lets you do really elaborate wrappings. I believe the keyboard shortcut for that is <code>ctrl+alt+w</code>. Personally I dislike using the <code>ctrl</code> key on my Mac laptop so I changed both of those keyboard shortcuts to the following:</p>
+
+<figure class='code'><pre><code>{ "keys": ["super+shift+r"], "command": "insert_snippet", "args": { "name": "Packages/XML/long-tag.sublime-snippet" } },
+{ "keys": ["alt+shift+r"], "command": "wrap_zen_as_you_type",
+"context": [
+    {
+      "operand": "text.html, text.xml",
+      "operator": "equal",
+      "match_all": true,
+      "key": "selector"
+    }
+  ]
+}</code></pre></figure>
+
+
+<p>You&#8217;ll notice that instead of just using a <code>wrap_in_tag</code> command name the first entry actually calls another command, <code>insert_snippet</code> and passes it an argument: <code>Packages/XML/long-tag.sublime.snippet</code> which is the location of a snippet file. Pretty cool trick!</p>
+
+<p>Also note that Sublime uses the term &#8220;super&#8221; to refer to the command key</p>
+
+<h2>Bookmarks!</h2>
+
+<p>If you&#8217;re like me then you lose your place in large files. That&#8217;s where bookmarks can be a big help. <code>cmd+F2</code> will add a new bookmark on the page. The bookmark is tied to the line so if you use the move line up/down commands it will move the bookmark as well (nice). To cycle through your bookmarks just hit F2. The rest of the bookmark commands are located in <code>Goto &gt; Bookmarks</code>. Take note of the one that says <code>Select All Bookmarks</code> which will basically let you do a multi-selection on all of the lines you&#8217;ve already bookmarked.</p>
+
+<h2>Marks</h2>
+
+<p>Marks are very similar to bookmarks but they serve a different purpose. They&#8217;re located in <code>Edit &gt; Mark</code> and their keyboard shortcuts are a little weird because you need to hit <code>cmd+K</code> and then a secondary shortcut like <code>cmd+space</code>. I find myself using Marks a few times a day to do large selections. For instance if you have a big block of HTML it can be very tricky to stay inside the proper scope if you&#8217;re trying to delete all the contents of a very high level container. With Marks you can just put a mark on the opening line of the container, hit <code>cmd+shift+a</code> to select down to the bottom of the tag, and then hit <code>cmd+K, cmd+a</code> to select everything back to your previous mark. Marks can also be used to swap lines of text but I&#8217;ve never needed to do that in practice.</p>
+
+<h2>Hide the Sidebar</h2>
+
+<p>To hide the sidebar hit <code>cmd+K, cmd+B</code>. Since I work on a laptop I often hide the sidebar to give myself that extra 100px of reading space.</p>
+
+<h2>Turn off Minimap</h2>
+
+<p>Do you guys use that minimap thing in the top corner of the editor windows? I find it <em>incredibly</em> distracting and it also takes up screen space. To disable it go to <code>View &gt; Hide Minimap</code>.</p>
+
+<h2>Saving a project</h2>
+
+<p>This one might be obvious for many of you but it wasn&#8217;t something I was really taking advantage of until recently. Once you have a folder open it can be beneficial to save it as a project via the <code>Project &gt; Save Project As...</code> command. Save the project files in the root of your app and then whenever you do <code>Project &gt; Recent Projects...</code> it will open everything up with all your windows just as you left them.</p>
+
+<p>To switch between projects use <code>ctrl+cmd+p</code>.</p>
+
+<h2>Some awesome plugins</h2>
+
+<p>Sublime is all about plugins so here&#8217;s a list of some of my favorites. Once you have Package Control installed you can just hit <code>cmd+shift+p</code> and type <code>discover</code>, then hit enter which will take you to a page listing tons of plugins. Try out some (or all) of the ones below. They&#8217;re great :D</p>
+
+<ul>
+<li>AdvancedNewFile</li>
+<li>HtmlTidy</li>
+<li>Nettuts+ Fetch</li>
+<li>Prefixr</li>
+<li>RubyTest</li>
+<li>Shell Turtlestein</li>
+<li>SideBarEnhancements</li>
+<li>sublime-github</li>
+<li>Sublime-JSHint</li>
+<li>SublimeCodeIntel</li>
+<li>Tag</li>
+<li>ZenCoding</li>
+</ul>
+
+
+<h2>Convert Case</h2>
+
+<p>If you highlight some text you can use <code>cmd+K, cmd+U</code> to uppercase it. Likewise you can use <code>cmd+K, cmd+L</code> to lowercase it.</p>
+
+<h2>Spell Check :)</h2>
+
+<p>Finally I wouldn&#8217;t be much of a blogger if I didn&#8217;t point out the spell check feature. Hit <code>F6</code> to check your current file. Once you&#8217;ve turned it on the spell checker will stay on until you hit <code>F6</code> again.</p>
+
+<h2>Hack the Planet!</h2>
+
+<p>We&#8217;ve only really scratched the surface of what Sublime is capable of. In the future I&#8217;d like to write more about its awesome Macros, Snippets and Plugin architecture. Till then, have fun hacking. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Sublime Text 2 Tips and Shortcuts&amp;url=http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

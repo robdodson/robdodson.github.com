@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Fonts | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/fonts/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
+    <link href="http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
+    <updated>2013-11-19T09:27:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
+    <content type="html"><![CDATA[<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
+
+<!-- more -->
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/polymer-fonts-busted.png" title="'Busted Polymer Fonts'" ></p>
+
+<p>uh oh...</p>
+
+<p>At first, I was pretty confused. Why was everything working fine in Chrome, but acting crazy in Canary? I did some digging and manged to turn up <a href="https://groups.google.com/d/msg/polymer-dev/UUwew3x82EU/m9x2qWPi9ZoJ">this thread</a> on the Polymer mailing list.</p>
+
+<h2>The Fix</h2>
+
+<p>I had a bit of an "aha moment" when I remembered that the current version of Chrome doesn't actually hide any styles in the Shadow DOM, so my <code>@font-face</code> rules were ending up in the global scope. Canary, on the other hand, is encapsulating those styles in a shadow boundary and falling prey to an apparent bug.</p>
+
+<p>A simple workaround is to pull your <code>@font-face</code> rules out of the stylesheet for your element, and move them to the top of your import, like so:</p>
+
+<p>```
+&lt;style&gt;
+  @font-face {</p>
+
+<pre><code>font-family: 'FontAwesome';
+src: url('../fonts/fontawesome-webfont.eot?v=4.0.3');
+src: url('../fonts/fontawesome-webfont.eot?#iefix&amp;v=4.0.3') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+font-weight: normal;
+font-style: normal;
+</code></pre>
+
+<p>  }
+&lt;/style&gt;</p>
+
+<p><polymer-element name="semantic-ui-icon" noscript>
+  <template></p>
+
+<pre><code>&lt;link rel="stylesheet" href="./icon.css"&gt;
+&lt;content&gt;&lt;/content&gt;
+</code></pre>
+
+<p>  </template>
+</polymer-element>
+```</p>
+
+<p>I found this approach <a href="http://www.polymer-project.org/docs/polymer/styling.html#making-styles-global">in the Polymer documentation</a>, so I'm hoping it's considered a best practice. You'll also need to do this if you're using <code>@-webkit-keyframes</code> rules.</p>
+
+<p>I hope that clears things up for some of you who may have been stuck. I know it took me a couple days to come up with this solution, so I thought it best to go ahead and post about it :)</p>
+]]></content>
+  </entry>
+  
+</feed>

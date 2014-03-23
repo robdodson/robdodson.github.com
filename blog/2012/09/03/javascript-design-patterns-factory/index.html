@@ -1,0 +1,410 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>JavaScript Design Patterns: Factory | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Exploring Abstract Factory, Factory Method and Simple Factories in JavaScript.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">03 Sep 2012</span>
+	<h1 class="post-title">JavaScript Design Patterns: Factory</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>Factories encapsulate and separate object creation from the rest of your code. In situations where the creation of an object can be complex or subject to change a factory can act as a nice buffer to help keep things tidy. Without proper planning Factories can lead to class explosions; as a result the pattern can be both a blessing and a curse depending on how it&#8217;s used.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<h4>Factory Method</h4>
+
+<blockquote><p>Define an interface for creating an object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote>
+
+
+<h4>Abstract Factory</h4>
+
+<blockquote><p>Provide an interface for creating families of related or dependent objects without specifying their concrete classes.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote>
+
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Virtual Constructor (<strong>Factory Method</strong>)</li>
+<li>Kit (<strong>Abstract Factory</strong>)</li>
+</ul>
+
+
+<h2>Simple Factory vs Factory Method vs Abstract Factory</h2>
+
+<p>The phrase &#8220;Factory Pattern&#8221; is rather overloaded so I&#8217;m going to give you a quick crash course in the three main types of factories.</p>
+
+<p>A <strong>simple factory</strong> is an object which encapsulates the creation of another object, shielding that code from the rest of your application.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">UserFactory</span><span class="p">.</span><span class="nx">createUser</span><span class="p">();</span>
+</code></pre></figure>
+
+
+<p>It&#8217;s common to parameterize simple factory methods to increase the number of products they&#8217;re able to return.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">admin</span> <span class="o">=</span> <span class="nx">UserFactory</span><span class="p">.</span><span class="nx">createUser</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">customer</span> <span class="o">=</span> <span class="nx">UserFactory</span><span class="p">.</span><span class="nx">createUser</span><span class="p">(</span><span class="s1">&#39;customer&#39;</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>The actual implementaiton of <code>createUser</code> might look something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">UserFactory</span><span class="p">.</span><span class="nx">createUser</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Admin</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;customer&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Customer</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></figure>
+
+
+<p>Typically the return value from a factory is known as the <code>Product</code>. In the case of our <code>UserFactory</code> there are two Products: <code>Admin</code> and <code>Customer</code>. It&#8217;s important for these products to maintain a consistent interface so the client can use any product from our factory without needing to do elaborate checks to see if a particular method exists.</p>
+
+<h3>Factory Method</h3>
+
+<p>While the Simple Factory is a nice start and good for many situations it&#8217;s possible to extend this even further through the use of the <strong>Factory Method</strong> pattern.</p>
+
+<blockquote><p>The Factory Method Pattern defines an interface <br/>for creating an object, but lets subclasses decide which <br/>class to instantiate.  Factory Method lets a class defer <br/>instantiation to subclasses.</p><footer><strong>Elisabeth Freeman</strong> <cite>Head First Design Patterns</cite></footer></blockquote>
+
+
+<p>Factory Method defines one method, <code>createThing</code> for instance, which is overriden by subclasses who decide what to return. The Factories and Products must conform to interfaces for clients to be able to use them.</p>
+
+<p>In <em>Head First Design Patterns</em> a Factory Method pattern is used to allow a PizzaStore to define many subclasses such as ChicagoPizzaStore, CaliforniaPizzaStore, NewYorkPizzaStore. Each subclass overrides <code>createPizza</code> and returns its own particular style of pizza (ie: a ChicagoPizza or a CaliforniaPizza). The main take away is that there is only one method, <code>createPizza</code>, that does anything. By subclassing and overriding this method we can offer aditional flexibility beyond what&#8217;s possible with the Simple Factory.</p>
+
+<h3>Abstract Factory</h3>
+
+<p>Unlike the Factory Method pattern, <strong>Abstract Factory</strong> defines any number of methods which return Products.</p>
+
+<blockquote><p>The Abstract Factory Pattern provides an interface <br/>for creating families of related or dependent objects <br/>without specifying their concrete classes.</p><footer><strong>Elisabeth Freeman</strong> <cite>Head First Design Patterns</cite></footer></blockquote>
+
+
+<p>Again in <em>Head First Design Patterns</em>, an Abstract Factory pattern is used to provide different Pizza ingredients depending on the type of Pizza. For instance, a ChicagoPizza would be given a ChicagoPizzaIngredients factory with methods like <code>createDough</code>, <code>createSauce</code>, <code>createCheese</code>, etc. A CaliforniaPizzaIngredients factory would also implement <code>createDough</code>, <code>createSauce</code> and <code>createCheese</code>. In this way the factories would be interchangeable.</p>
+
+<p>The authors are keen to point out that the methods of the Abstract Factory (<code>createDough</code>, <code>createSauce</code>, etc) look very similar to the Factory Method (<code>createPizza</code>). One way of thinking about things is that an Abstract Factory can be composed of Factory Methods.</p>
+
+<h2>The Factory Method in JavaScript</h2>
+
+<p>Since I&#8217;ve already shown a basic Simple Factory let&#8217;s take a stab at doing the Factory Method in JS. We&#8217;ll continue with the PizzaStore theme since I&#8217;ve already spelled out how each pattern applies to it. We&#8217;re going to do this without the use of the <code>new</code> keyword and instead we&#8217;ll take advantage of JavaScript&#8217;s prototypes. How you ask?</p>
+
+<h3>The very awesome Object.create</h3>
+
+<p>ECMAScript 5 introduced a new method of the <code>Object</code> prototype called <code>create</code>. You can read up on it in full detail <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/create">on MDN.</a> In a nutshell it lets you pass in a prototype and receive a new object which points to that prototype. <code>Object.create</code> is actually a simple Factory Method! Here&#8217;s an example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">firstPizzaStore</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">PizzaStore</span><span class="p">);</span>
+<span class="nx">firstPizzaStore</span><span class="p">.</span><span class="nx">createPizza</span><span class="p">();</span> <span class="c1">// returns &#39;Generic pizza created&#39;</span>
+</code></pre></figure>
+
+
+<p>One very cool feature of <code>Object.create</code> is that it accepts a properties object which is then mixed in to the returned object. The code can get a little verbose since it uses <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/defineProperty">defineProperty syntax</a> so instead let&#8217;s steal a function from <a href="http://yehudakatz.com/2011/08/12/understanding-prototypes-in-javascript/">Yehuda Katz</a> which lets us do something very similar.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">fromPrototype</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">newObject</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">prototype</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">prop</span> <span class="k">in</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">object</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">newObject</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">object</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">newObject</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></figure>
+
+
+<p>Now that we have that we can continue on our way. One quick caveat though! Some browsers *cough* <strong>IE</strong> *cough* don&#8217;t support <code>Object.create</code> so we need to shim it. Thankfully MDN has got our back:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Polyfill</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Object.create implementation only accepts the first parameter.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kd">function</span> <span class="nx">F</span><span class="p">()</span> <span class="p">{}</span>
+        <span class="nx">F</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Drop that into your page and you should be able to use Object.create like we are above. Note that the shim does not support the second properties object. For our purposes that&#8217;s ok but definitely keep it in mind if you&#8217;re thinking of using it.</p>
+
+<h3>Back to the Factory Method</h3>
+
+<p>With <code>Object.create</code> and <code>fromPrototype</code> in hand we&#8217;re ready to tackle our first Factory Method.</p>
+
+<p>Let&#8217;s start by creating a PizzaStore:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Define the Pizza product</span>
+<span class="kd">var</span> <span class="nx">Pizza</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Plain Generic Pizza&#39;</span>
+<span class="p">};</span>
+
+<span class="c1">// And the basic PizzaStore</span>
+<span class="kd">var</span> <span class="nx">PizzaStore</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">createPizza</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;cheese&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Pizza</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Cheesy, Generic Pizza&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;veggie&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Pizza</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Veggie, Generic Pizza&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></figure>
+
+
+<p>Easy enough. Ok now let&#8217;s extend the PizzaStore so we have two variations: ChicagoPizzaStore and CaliforniaPizzaStore.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">ChicagoPizzaStore</span> <span class="o">=</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">PizzaStore</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">createPizza</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;cheese&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Pizza</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Cheesy, Deep-dish Chicago Pizza&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;veggie&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Pizza</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Veggie, Deep-dish Chicago Pizza&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">CaliforniaPizzaStore</span> <span class="o">=</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">PizzaStore</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">createPizza</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;cheese&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Pizza</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Cheesy, Tasty California Pizza&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s1">&#39;veggie&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Pizza</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Veggie, Tasty California Pizza&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">// Elsewhere in our app...</span>
+<span class="kd">var</span> <span class="nx">chicagoStore</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ChicagoPizzaStore</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">pizza</span> <span class="o">=</span> <span class="nx">chicagoStore</span><span class="p">.</span><span class="nx">createPizza</span><span class="p">(</span><span class="s1">&#39;veggie&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">pizza</span><span class="p">.</span><span class="nx">description</span><span class="p">);</span> <span class="c1">// returns &#39;Veggie, Deep-dish Chicago Pizza&#39;</span>
+</code></pre></figure>
+
+
+<h2>The Abstract Factory in JavaScript</h2>
+
+<p>Since we have a variety of pizza styles we might also have a variety of ingredients. Let&#8217;s see if we can accomodate all the different kinds.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Ingredients</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">createDough</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;generic dough&#39;</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">createSauce</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;generic sauce&#39;</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">createCrust</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;generic crust&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">Ingredients</span><span class="p">.</span><span class="nx">createChicagoStyle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Ingredients</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">createDough</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;thick, heavy dough&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">createSauce</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;rich marinara&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">createCrust</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;deep-dish&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+
+<span class="nx">Ingredients</span><span class="p">.</span><span class="nx">createCaliforniaStyle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fromPrototype</span><span class="p">(</span><span class="nx">Ingredients</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">createDough</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;light, fluffy dough&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">createSauce</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;tangy red sauce&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">createCrust</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;thin and crispy&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</code></pre></figure>
+
+
+<p>In the above example <code>Ingredients</code> is our Abstract Factory. We know that for every
+different kind of pizza we&#8217;ll need different ingredients and therefore a new Factory Method. We also know that we have different styles of pizza so we&#8217;ll need Chicago style ingredients and California style ingredients. When a client wishes to grab some ingredients for a particular kind of pizza they just say:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">californiaIngredients</span> <span class="o">=</span> <span class="nx">Ingredients</span><span class="p">.</span><span class="nx">createCaliforniaStyle</span><span class="p">();</span>
+<span class="nx">californiaIngredients</span><span class="p">.</span><span class="nx">createCrust</span><span class="p">();</span> <span class="c1">// returns &#39;thin and crispy&#39;;</span>
+</code></pre></figure>
+
+
+<p>The object that is returned by the call <code>createCaliforniaStyle</code> is the concrete implementation of our Abstract Ingredients object. In other words, if <code>Ingredients</code> is the Abstract Factory, then the object returned by <code>createCaliforniaStyle</code> could also be thought of as a <code>CaliforniaIngredients</code> object. It is a <em>subclass</em> of <code>Ingredients</code> if you want to think of it that way. The returned object extends <code>Ingredients</code> and overrides its Factory Methods with its own methods. In so doing we provide a lot of additional flexibility to our app. If we want to add a Hawaiian style ingredients we just add a <code>createHawaiianStyle</code> method.</p>
+
+<p>If you recall from <a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">the previous article on Decorators</a> we talked about the <strong>Open-Closed Principle</strong> which states that &#8220;classes should be open for extension but closed for modification.&#8221; You&#8217;ll notice that adding a <code>createHawaiianStyle</code> method would actually violate this principle so it should be noted that when using an Abstract Factory approach you&#8217;ll probably have to reopen the class/object a few times to modify it. Not ideal but depending on your use case this might not be such  big deal and you might prefer the flexibility and organization that the factory offers.</p>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/factory/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li>Template Methods: Factory Methods are usually called within Template Methods.</li>
+<li><a href="http://robdodson.me/blog/2012/08/08/javascript-design-patterns-singleton/">Singleton</a>: A concrete factory is often a singleton.</li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=JavaScript Design Patterns: Factory&amp;url=http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/09/03/javascript-design-patterns-factory/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

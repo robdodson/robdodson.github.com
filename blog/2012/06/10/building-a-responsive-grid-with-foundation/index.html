@@ -1,0 +1,415 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Building a Responsive Grid with Foundation | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">10 Jun 2012</span>
+	<h1 class="post-title">Building a Responsive Grid With Foundation</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Yesterday I introduced <a href="http://smacss.com/">SMACSS</a> and did my best to give a high level overview of its main ideas. I&#8217;m using it on my current project and I&#8217;m really enjoying it so far. There&#8217;s just something about having things codified by someone with more experience that gives me immense comfort. When I feel confused I can refer back to those docs and sort out what would be the best path. Standing on the shoulders of giants and all that jazz ;)</p>
+
+<p>Today I want to talk about a CSS framework called <a href="http://foundation.zurb.com/">Foundation</a>, written by the team at <a href="http://www.zurb.com/">ZURB.</a> Unlike SMACSS, Foundation is an actual library of modular code ready to help you quickly prototype your project. The two aren&#8217;t mutually exclusive. You might think of Foundation as a shiny new toolbox but SMACSS is going to be your &#8216;How To&#8217; manual, helping you implement all the new goodes that Foundation has to offer.</p>
+
+<!--more-->
+
+
+<p>I&#8217;m sure many of you have heard of <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> which is very similar and somewhat more popular than Foundation. I chose to use Foundation for this post because Bootstrap feels bloated to me, and I also didn&#8217;t want to have to do everything in <a href="http://lesscss.org/">LESS.</a> Don&#8217;t get me wrong, I loves me some LESS and some <a href="http://sass-lang.com/">SASS</a>, but not everyone is comfortable with those tools and it&#8217;s already a big ask to ramp up on a new CSS framework.</p>
+
+<p>Since it&#8217;s a little late in the evening I&#8217;m just going to dip my toe into some of what Foundation has to offer by quickly mocking up a very simple layout using their responsive grids.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_mockup.png" title="'Our very basic responsive layout'" ></p>
+
+<p>Obviously nothing fancy, the main bits I want to explore are how easy it is to lay items out using the grid and how does it react on the iPhone.</p>
+
+<h2>Everything in its place</h2>
+
+<p>The first thing you should do, if you haven&#8217;t already is to go to <a href="http://foundation.zurb.com/">the Foundation site</a> and download the package.</p>
+
+<p>Let&#8217;s make a new folder with an index.html file and bring over the javascripts and stylesheets folders from the Foundation package. Just to start out your new index.html file should look something like this:</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- Set the viewport width to device width for mobile --&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;title&gt;</span>Responsive Grid Prototype<span class="nt">&lt;/title&gt;</span>
+
+    <span class="c">&lt;!-- Included CSS Files --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;stylesheets/foundation.css&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;stylesheets/app.css&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/modernizr.foundation.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+    <span class="c">&lt;!-- container --&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;header</span> <span class="na">class=</span><span class="s">&quot;twelve columns&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p&gt;</span>HEADER<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/header&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="c">&lt;!-- container --&gt;</span>
+
+
+    <span class="c">&lt;!-- Included JS Files --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/jquery.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/foundation.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Couple that with the <code>app.css</code> file, like so:</p>
+
+<figure class='code'><figcaption><span>stylesheets/app.css</span></figcaption><pre><code><span class="nt">html</span><span class="o">,</span> <span class="nt">body</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#FFF</span><span class="p">;</span>
+    <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">30px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">header</span> <span class="p">{</span>
+    <span class="k">background</span><span class="o">:</span> <span class="m">#CCC</span><span class="p">;</span>
+    <span class="k">height</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+    <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>That should give us our roughed out grey header area. If we examine our HTML a few items should jump out. Mainly that we&#8217;re using classes like <code>.container</code>, <code>.row</code> and <code>.twelve .columns</code>. These are all part of Foundation&#8217;s grid system which seperates major sections into subcategories to help with organization and layout. The documentation explains it better than I can:</p>
+
+<blockquote><p>The grid is built around three key elements: containers, rows, and columns. Containers create base padding for the page; rows create a max-width and contain the columns; and columns create the final structure.</p></blockquote>
+
+<p>Since Foundation uses a twelve column grid system, specifying that an item is <code>.twelve .columns</code> means it will stretch to be the full width of its row. By default a row&#8217;s maximum width is 980px but we can change this if we want in the <code>foundation.css</code> file.</p>
+
+<figure class='code'><figcaption><span>stylesheets/foundation.css</span></figcaption><pre><code><span class="nc">.row</span> <span class="p">{</span> <span class="k">width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span><span class="p">;</span> <span class="k">max-width</span><span class="o">:</span> <span class="m">980px</span><span class="p">;</span> <span class="k">min-width</span><span class="o">:</span> <span class="m">727px</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0</span> <span class="k">auto</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c">/* To fix the grid into a certain size, set max-width to width */</span>
+</code></pre></figure>
+
+
+<p>With that knowledge we can go ahead and quickly mock up the other sections of our page.</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- Set the viewport width to device width for mobile --&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;title&gt;</span>Responsive Grid Prototype<span class="nt">&lt;/title&gt;</span>
+
+    <span class="c">&lt;!-- Included CSS Files --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;stylesheets/foundation.css&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;stylesheets/app.css&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/modernizr.foundation.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+    <span class="c">&lt;!-- container --&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;header</span> <span class="na">class=</span><span class="s">&quot;twelve columns&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p&gt;</span>HEADER<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/header&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;main eight columns&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p&gt;</span>MAIN<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;aside</span> <span class="na">class=</span><span class="s">&quot;four columns hide-on-phones&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p&gt;</span>ASIDE<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/aside&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;footer</span> <span class="na">class=</span><span class="s">&quot;twelve columns&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p&gt;</span>FOOTER<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/footer&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="c">&lt;!-- container --&gt;</span>
+
+
+    <span class="c">&lt;!-- Included JS Files --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/jquery.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/foundation.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>And we&#8217;ll need to update the CSS to match.</p>
+
+<figure class='code'><figcaption><span>app.css</span></figcaption><pre><code><span class="nt">html</span><span class="o">,</span> <span class="nt">body</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#FFF</span><span class="p">;</span>
+    <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">30px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">header</span><span class="o">,</span> <span class="nc">.main</span><span class="o">,</span> <span class="nt">aside</span><span class="o">,</span> <span class="nt">footer</span> <span class="p">{</span>
+    <span class="k">margin-top</span><span class="o">:</span> <span class="m">20px</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="m">#CCC</span><span class="p">;</span>
+    <span class="k">height</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+    <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_layout_basic.png" title="'Our basic layout'" ></p>
+
+<p>That wasn&#8217;t so hard was it?</p>
+
+<p>Let&#8217;s throw in some dummy copy to make our columns expand so we can get closer to our original comp. For that we&#8217;ll turn to <a href="http://baconipsum.com">Bacon Ipsum</a></p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- Set the viewport width to device width for mobile --&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;title&gt;</span>Responsive Grid Prototype<span class="nt">&lt;/title&gt;</span>
+
+    <span class="c">&lt;!-- Included CSS Files --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;stylesheets/foundation.css&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;stylesheets/app.css&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/modernizr.foundation.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+    <span class="c">&lt;!-- container --&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;header</span> <span class="na">class=</span><span class="s">&quot;twelve columns&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;/header&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;main eight columns&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p&gt;</span>Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.<span class="nt">&lt;/p&gt;</span>
+
+                <span class="nt">&lt;p&gt;</span>Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.<span class="nt">&lt;/p&gt;</span>
+
+                <span class="nt">&lt;p&gt;</span>Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.<span class="nt">&lt;/p&gt;</span>
+
+                <span class="nt">&lt;p&gt;</span>Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;aside</span> <span class="na">class=</span><span class="s">&quot;four columns&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;ul&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>First Item<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Second Item<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Third Item<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Fourth Item<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                <span class="nt">&lt;/ul&gt;</span>
+            <span class="nt">&lt;/aside&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;footer</span> <span class="na">class=</span><span class="s">&quot;twelve columns&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;/footer&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="c">&lt;!-- container --&gt;</span>
+
+
+    <span class="c">&lt;!-- Included JS Files --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/jquery.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;javascripts/foundation.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>While that expands everything nicely I&#8217;d like to add some padding to the mix. But as soon as I try to pad my <code>.main</code> div everything explodes! Turns out we need to make sure we&#8217;re using <code>box-sizing: border-box</code> otherwise the padding will expand our columns and destroy our grid. For a deeper explanation of <code>box-sizing: border-box</code> checkout <a href="http://paulirish.com/2012/box-sizing-border-box-ftw/">this great post by Paul Irish.</a> With that addition our CSS should now look like this:</p>
+
+<figure class='code'><figcaption><span>stylesheets/app.css</span></figcaption><pre><code><span class="o">*</span> <span class="p">{</span>
+    <span class="n">box</span><span class="o">-</span><span class="n">sizing</span><span class="o">:</span> <span class="k">border</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">html</span><span class="o">,</span> <span class="nt">body</span> <span class="p">{</span>
+    <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">header</span><span class="o">,</span> <span class="nc">.main</span><span class="o">,</span> <span class="nt">aside</span><span class="o">,</span> <span class="nt">footer</span> <span class="p">{</span>
+    <span class="k">margin-top</span><span class="o">:</span> <span class="m">20px</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="m">#CCC</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">header</span><span class="o">,</span> <span class="nt">footer</span> <span class="p">{</span>
+    <span class="k">height</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.main</span><span class="o">,</span> <span class="nt">aside</span> <span class="p">{</span>
+    <span class="k">padding</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_layout_ipsum.png" title="'Responsive layout with lorem ipsum'" ></p>
+
+<h2>Making friends with mobile</h2>
+
+<p>Well I&#8217;m sure if you&#8217;ve made it to this point you&#8217;re ready to see how this all works on an iPhone. A quick test you can perform is to just narrow your browser window until it is only about 300px wide (the iPhone has a roughly 320px display area, I believe). As you do so the columns should narrow, reflowing their content as they do so. Eventually our <code>aside</code> will <em>pop</em> from its current position and line up underneath our <code>.main</code> content.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_linear.png" title="'Linear flow with Foundation'" ></p>
+
+<p>But what if we don&#8217;t want the sidebar to appear on a mobile phone? Perhaps we just want to show the <code>.main</code> content if the screen is too narrow. Easy! Foundation provides <a href="http://foundation.zurb.com/docs/layout.php">some nice helper classes</a> which we can use to toggle elements on or off depending on the device. We&#8217;ll just add a <code>.hide-on-phones</code> class to our aside</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;aside</span> <span class="na">class=</span><span class="s">&quot;four columns hide-on-phones&quot;</span><span class="nt">&gt;</span>
+</code></pre></figure>
+
+
+<p>and&#8230;<em>voila!</em> The <code>aside</code> disappears on small screens!</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_hide_on_phones.png" title="'Hiding the aside'" ></p>
+
+<p>Nice and simple, yeah? If you&#8217;d like to checkout the project running live you can <a href="http://robdodson.s3-website-us-east-1.amazonaws.com/tutorials/building-a-responsive-grid-with-foundation/index.html">follow this link</a>. Resize your browser or hit it with an iPhone to see it do its magic. Also you can <a href="https://github.com/robdodson/foundation-grid-tutorial">grab the source code off of Github.</a> Enjoy! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Relaxed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Building a Responsive Grid with Foundation&amp;url=http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

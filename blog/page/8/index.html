@@ -54,16 +54,16 @@
 </div>
 	
 	<header class="post-header">
-		<span class="post-meta">19 Nov 2013</span>
+		<span class="post-meta">16 Jun 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/">
+			<a href="/blog/2012/06/16/publish-your-node-library-to-npm/">
 			
-				@font-face Doesn&#8217;t Work in the Shadow DOM</a>
+				Publish Your Node Library to NPM</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
+		<p>Alright, <a href="http://robdodson.me/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/">contuing from yesterday</a> we want to take our little Node module and make it available to the world as a really awesome command line tool.</p>
 
 
 	</section>
@@ -73,16 +73,16 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">15 Nov 2013</span>
+		<span class="post-meta">15 Jun 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/15/the-cat-and-the-hat-css-selectors/">
+			<a href="/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/">
 			
-				The Cat and the Hat CSS Selectors</a>
+				How to Run a Node Script From the Command Line</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
+		<p>This post is going to be short and sweet because I have to help my lady pack for her big trip to Germany. Over the past few days I&#8217;ve been messing around with command line tools written in Ruby so today I decided to give it a shot in Node.</p>
 
 
 	</section>
@@ -92,16 +92,18 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">12 Nov 2013</span>
+		<span class="post-meta">14 Jun 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/12/repeating-templates-in-polymer/">
+			<a href="/blog/2012/06/14/how-to-write-a-command-line-ruby-gem/">
 			
-				Repeating Templates in Polymer</a>
+				How to Write a Command Line Ruby Gem</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
+		<p>So <a href="http://robdodson.me/blog/2012/06/13/writing-a-command-line-tool-in-ruby/">yesterday we saw how to setup and run ruby scripts as executables from the command line.</a> While this is pretty rad, it definitely has its limitations. For one, it&#8217;s not very portable and secondly it just isn&#8217;t very flexible or powerful. If we stuck with this approach we&#8217;d need to write our own semantic versioning, we&#8217;d have to setup a way to make sure that all of our required 3rd party gems get installed properly&#8230; really it&#8217;ll just be a big mess if we try to hand-roll it.</p>
+
+<p>Instead we&#8217;re going to turn to Bundler to help us manage our files and turn our command line tool into a ruby gem. I&#8217;m going to start fresh and create a totally new tool, called <code>zerp</code>. I don&#8217;t know what <code>zerp</code>&#8217;s purpose will be in the long run, but today we&#8217;re going to make it print some text to verify everything is working.</p>
 
 
 	</section>
@@ -111,41 +113,16 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">24 Oct 2013</span>
+		<span class="post-meta">13 Jun 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/10/24/web-components-revolution/">
+			<a href="/blog/2012/06/13/writing-a-command-line-tool-in-ruby/">
 			
-				Web Components Revolution</a>
+				Writing a Command Line Tool in Ruby</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
-
-<br>
-
-
-<h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
-
-	</section>
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">02 Oct 2013</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2013/10/02/creating-a-markdown-tag-with-polymer/">
-			
-				Creating a Markdown Tag With Polymer</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>Ah Markdown&#8230; Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress&#8217; HTML mode, too limiting. Markdown changed all of that for me and I think it&#8217;s high time we make it a full fledged member of our developer toolbox.</p>
-
-<p>So today I&#8217;m going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+		<p>Yesterday I tried to do a post on creating your first Ruby Gem as a command line tool. <a href="http://robdodson.me/blog/2012/06/12/messing-around-with-gems/">It didn&#8217;t go very well.</a> In an effort to better understand what goes on with command line tools I&#8217;m going to start from the most basic, a ruby script that is in our <code>PATH</code>.</p>
 
 
 	</section>
@@ -155,16 +132,35 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">16 Sep 2013</span>
+		<span class="post-meta">12 Jun 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/09/16/the-art-of-fear-blogging/">
+			<a href="/blog/2012/06/12/messing-around-with-gems/">
 			
-				The Art of Fear Blogging</a>
+				Messing Around With Gems</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>Years ago <a href="http://www.radiolab.org/2011/mar/08/you-v-you/">I heard a radio story about a woman hopelessly addicted to cigarettes.</a> Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.</p>
+		<p>I want to work on a code generation tool, similar to the one offered up by Rails. However my Ruby-fu is a bit rusty at the moment so this might be an interesting struggle.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">11 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/11/some-octopress-rake-tips/">
+			
+				Some Octopress Rake Tips</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>This is a quick post just to scratch one of my own itches. I&#8217;ve been using Octopress every single day for around two months now and the generation time for my blog is slowly starting to creep up. I&#8217;d heard that you could isolate a post and just preview/generate it instead of doing the whole blog every time but it wasn&#8217;t until today that I finally decided to look into it.</p>
 
 
 	</section>
@@ -172,9 +168,11 @@
 
 <nav class="pagination" role="pagination">
     
-    <span class="page-number">Page 1 of 16</span>
+        <a class="newer-posts" href="/blog/page/7/">← Newer Posts</a>
     
-        <a class="older-posts" href="/blog/page/2/">Older Posts →</a>
+    <span class="page-number">Page 8 of 16</span>
+    
+        <a class="older-posts" href="/blog/page/9/">Older Posts →</a>
     
 </nav>
   </main>

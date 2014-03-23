@@ -1,0 +1,406 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Shadow DOM: The Basics | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">27 Aug 2013</span>
+	<h1 class="post-title">Shadow DOM: The Basics</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>In my <a href="/blog/2013/08/26/shadow-dom-introduction/">previous post</a>, I introduced the <strong>Shadow DOM</strong> and made the case for why it is important. Today, we&#8217;ll get our hands dirty with some code! By the end of this post, you&#8217;ll be able to create your own encapsulated widgets that pull in content from the outside world and rearrange their bits and pieces to produce something wholly different.</p>
+
+<p>Let&#8217;s get started!</p>
+
+<!--more-->
+
+
+<h2>Support <a href="#" id="support"></a></h2>
+
+<p>In order to try the examples, I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> 33 or greater.</p>
+
+<p>Also make sure you&#8217;ve enabled the following in Chrome&#8217;s <code>about:flags</code>.</p>
+
+<p>√ Experimental Web Platform features<br>
+√ Experimental JavaScript<br></p>
+
+<h2>Codez! <a href="#" id="codez"></a></h2>
+
+<p>I&#8217;ve created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover, I&#8217;ll link to the sketch so you can quickly try things out.</p>
+
+<h2>A Basic Example <a href="#" id="basic-example"></a></h2>
+
+<h3>Sketch 0: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/00-basic">basic</a></h3>
+
+<p>Let&#8217;s take a look at a very simple HTML document.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;my-widget&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>My Widget Header<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Some my-widget content<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;my-other-widget&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>My Other Widget Header<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Some my-other-widget content<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p>In HTML, every element is considered to be a <strong>node</strong>. When you have a group of these nodes nested inside one another, it is known as a <strong>node tree</strong>.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/tree-chart.svg" title="'A basic node tree!'" ></p>
+
+<p>What&#8217;s unique about shadow DOM is that it allows us to create our own node trees, known as <strong>shadow trees</strong>, that encapsulate their contents and render only what they choose. This means we can inject text, rearrange content, add styles, etc. Here&#8217;s an example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;widget&quot;</span><span class="nt">&gt;</span>Hello, world!<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.widget&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+  <span class="nx">root</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;Im inside yr div!&#39;</span><span class="p">;</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-basic1.jpg" title="'Our first shadow dom'" ></p>
+
+<p>Using the code above, we&#8217;ve replaced the text content of our <code>.widget</code> div using a shadow tree. To create a shadow tree, we first specify that a node should act as a <strong>shadow host</strong>. In this case, we use <code>.widget</code> as our shadow host. Then we add a new node to our shadow host, known as a <strong>shadow root</strong>. The shadow root acts as the first node in your shadow tree and all other nodes descend from it.</p>
+
+<p>If you were to inspect this element in the Chrome Dev Tools (and you had <a href="/blog/2013/08/26/shadow-dom-introduction#the-shadows">Show Shadow DOM</a> turned on), it would look something like this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-basic-inspect.jpg" title="'Inspecting our first shadow dom'" ></p>
+
+<p>Do you see how <code>#document-fragment</code> is grayed out? That&#8217;s our shadow root. <strong>The takeaway is that the content inside of the shadow host is <em>not</em> rendered. Instead, the content inside of the shadow root is what gets rendered.</strong></p>
+
+<p>This is why, when we run our example, we see <code>Im inside yr div!</code> instead of <code>Hello, world!</code></p>
+
+<p>We can visualize this process in another graph:</p>
+
+<p><img class="center" src="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/assets/images/tree-of-trees.svg" title="'Shadow tree graph'" ></p>
+
+<p>Let&#8217;s do one more example, to help it all sink in.</p>
+
+<h2>A Basic Example (cont.) <a href="#" id="basic-example-cont"></a></h2>
+
+<h3>Sketch 1: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/01-basic-cont">basic-cont</a></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;widget&quot;</span><span class="nt">&gt;</span>Hello, world!<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.widget&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+
+    <span class="kd">var</span> <span class="nx">header</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">);</span>
+    <span class="nx">header</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;A Wild Shadow Header Appeared!&#39;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">paragraph</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">);</span>
+    <span class="nx">paragraph</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;Some sneaky shadow text&#39;</span><span class="p">;</span>
+
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">header</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">paragraph</span><span class="p">);</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-basic-cont1.jpg" title="'A slightly more advanced shadow dom sketch'" ></p>
+
+<p>I&#8217;m taking our previous example and adding two additional elements to it. I&#8217;ve done this to illustrate that working with the shadow DOM is really not so different from working with the regular DOM. You still create elements and use <code>appendChild</code> or <code>insertBefore</code> to add them to a parent. In the Chrome Dev Tools it looks like this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-basic-cont-inspect.jpg" title="'Inspecting our shadow dom'" ></p>
+
+<p>Just like before, the content in the <em>shadow host</em>, <code>Hello, world!</code>, is not rendered. Instead the content in the <em>shadow root</em> is rendered.</p>
+
+<p>&#8220;That&#8217;s easy enough,&#8221; you might say. &#8220;But what if I actually <em>want</em> the content in my shadow host to render?&#8221;</p>
+
+<p>Well, dear reader, you&#8217;ll be happy to know that&#8217;s not only possible but it&#8217;s actually one of the killer features of shadow DOM. Let&#8217;s keep going and I&#8217;ll show you how!</p>
+
+<h2>Content <a href="#" id="content"></a></h2>
+
+<h3>Sketch 2: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/02-content">content</a></h3>
+
+<p>In our last two examples, we&#8217;ve completely replaced the content in our shadow hosts with whatever was inside our shadow root. While this is a neat trick, in practice, it&#8217;s not very useful. What would be really great is if we could take the <strong>content</strong> from our shadow host and then use the structure of the shadow root for <strong>presentation</strong>. Separating the content from the presentation like this allows us to be much more flexible with how our page actually renders.</p>
+
+<p>First things first, to use the content in our shadow host we&#8217;re going to need to employ the new <code>&lt;content&gt;</code> tag. Here&#8217;s an example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;pokemon&quot;</span><span class="nt">&gt;</span>
+    Jigglypuff
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;pokemon-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>A Wild <span class="nt">&lt;content&gt;&lt;/content&gt;</span> Appeared!<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.pokemon&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.pokemon-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-content1.jpg" title="'Mixing content and presentation'" ></p>
+
+<p>If you&#8217;ve been following along, this should look familiar. Using the <code>&lt;content&gt;</code> tag, we&#8217;ve created an <strong>insertion point</strong> that <strong>projects</strong> the text from the <code>.pokemon</code> div, so it appears within our shadow <code>&lt;h1&gt;</code>. Insertion points are very powerful because they allow us to change the order in which things render without physically altering the source. It also means that we can be selective about what gets rendered.</p>
+
+<p>You may have noticed that we&#8217;re using a <a href="/blog/2013/03/16/html5-template-tag-introduction/">template tag</a> instead of building our shadow DOM entirely in JavaScript. I&#8217;ve found that using <code>&lt;template&gt;</code> tags makes the process of working with the shadow DOM much easier.</p>
+
+<p>Let&#8217;s look at a more advanced example to demonstrate how to work with multiple insertion points.</p>
+
+<h2>Selects <a href="#" id="selects"></a></h2>
+
+<h3>Sketch 3: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/03-selects">selects</a></h3>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bio&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;first-name&quot;</span><span class="nt">&gt;</span>Rob<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;last-name&quot;</span><span class="nt">&gt;</span>Dodson<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;city&quot;</span><span class="nt">&gt;</span>San Francisco<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;state&quot;</span><span class="nt">&gt;</span>California<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;p&gt;</span>
+      I specialize in Front-End development (HTML/CSS/JavaScript) with a touch of Node and Ruby sprinkled in. I’m also a writer and occasional daily blogger. Though I’m originally from the South, these days I live and work in beautiful San Francisco, California.
+    <span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;bio-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;dl&gt;</span>
+      <span class="nt">&lt;dt&gt;</span>First Name<span class="nt">&lt;/dt&gt;</span>
+      <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.first-name&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+      <span class="nt">&lt;dt&gt;</span>Last Name<span class="nt">&lt;/dt&gt;</span>
+      <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.last-name&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+      <span class="nt">&lt;dt&gt;</span>City<span class="nt">&lt;/dt&gt;</span>
+      <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.city&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+      <span class="nt">&lt;dt&gt;</span>State<span class="nt">&lt;/dt&gt;</span>
+      <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.state&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;/dl&gt;</span>
+    <span class="nt">&lt;p&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/p&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.bio&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.bio-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">);</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-selects1.jpg" title="'Using content selects'" ></p>
+
+<p>In this example, we&#8217;re building a very simple biography widget. Because each definition field needs specific content, we have to tell the <code>&lt;content&gt;</code> tag to be selective about where things are inserted. To do this, we use the <code>select</code> attribute. The <code>select</code> attribute uses CSS selectors to pick out which items it wishes to display.</p>
+
+<p>For instance, <code>&lt;content select=".last-name"&gt;</code> looks inside the shadow host for any element with a matching class of <code>.last-name</code>. If it finds a match, it will render its content inside of the shadow DOM.</p>
+
+<h3>Changing Order</h3>
+
+<p>As I mentioned before, insertion points allow us to change the rendering order of our presentation without needing to modify the structure of our content. <strong>Remember, the content is what lives in the shadow host and the presentation is what lives in the shadow root/shadow DOM.</strong> A good example would be to swap the rendering order of the first and last names.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;bio-template&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;dl&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>Last Name<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.last-name&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>First Name<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.first-name&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>City<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.city&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>State<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.state&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+  <span class="nt">&lt;/dl&gt;</span>
+  <span class="nt">&lt;p&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-selects2.jpg" title="'Changing the order of our selects'" ></p>
+
+<p>By simply changing the structure of our <code>template</code>, we&#8217;ve altered the presentation, but the order of the content remains the same. To understand what I mean, take a look at the Chrome Dev Tools.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-selects-inspect.jpg" title="'Changing the order of our selects'" ></p>
+
+<p>As you can see, <code>.first-name</code> is still the first child in the shadow host, but we&#8217;ve made it appear as if it comes after <code>.last-name</code>. We did this by changing the order of our insertion points. That&#8217;s pretty powerful when you think about it.</p>
+
+<h3>Greedy Insertion Points</h3>
+
+<p>You may have noticed, at the end of the <code>.bio-template</code>, we have a <code>&lt;content&gt;</code> tag with an empty string inside of its <code>select</code> attribute.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;p&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/p&gt;</span>
+</code></pre></figure>
+
+
+<p>This is considered a wildcard selection and it will grab any content in the shadow host that is left over. The following three selections are all equivalent:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+<span class="nt">&lt;conent</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/conent&gt;</span>
+<span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;*&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</code></pre></figure>
+
+
+<p>As an experiment, let&#8217;s move this wildcard selection to the top of our <code>template</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;bio-template&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;p&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/p&gt;</span>
+  <span class="nt">&lt;dl&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>Last Name<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.last-name&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>First Name<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.first-name&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>City<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.city&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+    <span class="nt">&lt;dt&gt;</span>State<span class="nt">&lt;/dt&gt;</span>
+    <span class="nt">&lt;dd&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;.state&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/dd&gt;</span>
+  <span class="nt">&lt;/dl&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-selects3.jpg" title="'Overlly greedy selects'" ></p>
+
+<p>You&#8217;ll notice that it completely changes the presentation of our widget by moving all content inside of the <code>&lt;p&gt;</code> tag. That&#8217;s because selections are greedy and items may only be selected one time. Since we have a wildcard selection at the top of our template, it grabs all of the content from the shadow host and doesn&#8217;t leave anything for the other <code>selects</code>.</p>
+
+<p>Dominic Cooney (<a href="http://twitter.com/coonsta">@coonsta</a>) does a great job of describing this in his post on <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM 101</a>. In it, he compares the selection process to party invitations.</p>
+
+<blockquote><p>The content element is the invitation that lets content from the document into the backstage Shadow DOM rendering party. These invitations are delivered in order; who gets an invitation depends on to whom it is addressed (that is, the select attribute.) Content, once invited, always accepts the invitation (who wouldn’t?!) and off it goes. If a subsequent invitation is sent to that address again, well, nobody is home, and it doesn’t come to your party.</p></blockquote>
+
+
+<p>Mastering selects and insertion points can be pretty tricky, so Eric Bidelman (<a href="http://twitter.com/ebidel">@ebidel</a>) created an <a href="http://html5-demos.appspot.com/static/shadowdom-visualizer/index.html">insertion point visualizer</a> to help illustrate the concepts.</p>
+
+<p>He also created this handy video explaining it :)</p>
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/qnJ_s58ubxg" frameborder="0" allowfullscreen></iframe>
+
+
+<h2>Conclusion <a href="#" id="conclusion"></a></h2>
+
+<p>We still have a lot more to talk about, but for today, let&#8217;s wrap things up. Tomorrow, we&#8217;ll dig into CSS style encapsulation and later JavaScript and user interaction. As always, if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
+
+<h2><a href="/blog/2013/08/28/shadow-dom-styles/">Continue to Shadow DOM: Styles &rarr;</a></h2>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Shadow DOM: The Basics&amp;url=http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/08/27/shadow-dom-the-basics/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

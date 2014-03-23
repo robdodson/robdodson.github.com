@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Sinon | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/sinon/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Testing AMD Backbone Modules]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/29/testing-backbone-modules/"/>
+    <updated>2012-05-29T08:03:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/29/testing-backbone-modules</id>
+    <content type="html"><![CDATA[<p>Continuing from <a href="http://robdodson.me/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/">yesterday's post</a> I'm going to start to incorporate Backbone into my BDD setup. I'm going to use the <a href="https://github.com/tbranyen/backbone-boilerplate">Backbone Boilerplate</a> and <a href="https://github.com/backbone-boilerplate/grunt-bbb">grunt-bbb</a> to setup a new project. If you're new to the boilerplate or grunt-bbb <a href="http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/">checkout my previous post on getting started.</a></p>
+
+<!--more-->
+
+
+<h3>Shiny and new</h3>
+
+<p>I've created a new directory called <code>amd-tests</code> and once I <code>cd</code> inside I run <code>bbb init</code> to template out a new project. By default the boilerplate uses Require.js and AMD modules and we have a little example one already created for us. It's called, well, Example :) We'll use this to create our model for testing since I know that everyone should be on the same page with this module.</p>
+
+<p>I'm going to change our model's name from Example.Model to Example.Photo so our terminalogy won't get muddy. We'll give it some default properties for <code>src</code> and <code>caption</code>. Later on we'll test that a freshly created model has these same defaults. When we're done setting up our <code>/app/example.js</code> file should look like this. Keep in mind that the boilerplate adds a lot of stuff to get us started so you can ignore everything that isn't Example.Photo</p>
+
+<p>``` js /app/example.js
+define([
+  "namespace",</p>
+
+<p>  // Libs
+  "use!backbone"</p>
+
+<p>  // Modules</p>
+
+<p>  // Plugins
+],</p>
+
+<p>function(namespace, Backbone) {</p>
+
+<p>  // Create a new module
+  var Example = namespace.module();</p>
+
+<p>  // !!! Our awesome new model !!!
+  Example.Photo = Backbone.Model.extend({</p>
+
+<pre><code>defaults: {
+  src: '/images/placeholder.jpg',
+  caption: 'Waiting for content...'
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  Example.Collection = Backbone.Collection.extend({ /<em> ... </em>/ });
+  Example.Router = Backbone.Router.extend({ /<em> ... </em>/ });</p>
+
+<p>  // This will fetch the tutorial template and render it.
+  Example.Views.Tutorial = Backbone.View.extend({</p>
+
+<pre><code>template: "app/templates/example.html",
+
+render: function(done) {
+  var view = this;
+
+  // Fetch the template, render it to the View element and call done.
+  namespace.fetchTemplate(this.template, function(tmpl) {
+    view.el.innerHTML = tmpl();
+
+    // If a done function is passed, call it with the element
+    if (_.isFunction(done)) {
+      done(view.el);
+    }
+  });
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Required, return the module for AMD compliance
+  return Example;</p>
+
+<p>});
+```
+Now comes the rather tricky part. We need to create a test runner HTML file that can incorporate mocha, chai and sinon. It also has to load our Example module and maintain all of that module's dependencies. I spent a <em>ton</em> of time on IRC today sorting this out so here is my current best stab at things based on some <a href="https://gist.github.com/2655876">VERY generous gists</a> from <a href="https://github.com/kmiyashiro">Kelly Miyashiro.</a></p>
+
+<p>Let's start with the index.html file that'll be our test runner:</p>
+
+<p>``` html test/index.html
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="mocha/mocha.css" />
+  <script src="../assets/js/libs/require.js"></script>
+  <script src="mocha/mocha.js"></script>
+  <script src="sinon/sinon.js"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+  <script></p>
+
+<pre><code>require([
+  '../test/test.example'
+], runMocha);
+</code></pre>
+
+<p>  </script>
+  <div id="mocha"></div>
+</body>
+</html>
+```</p>
+
+<p>The first thing we do is add require.js, then mocha and sinon. Why no Chai? Good question. Kelly didn't do it so I didn't do it. If anyone wants to cite the pros and cons of this approach I'm all ears. Next we add our own config.js that is specific to our tests. We might have a config.js somewhere else that runs our main app but we'll also need this one to run our tests. Finally we have a script block sitting on top of our <code>#mocha</code> div. The script block loads in our specs (in this case I've only written one but you can do multiple specs here). A final argument to the require call is <code>runMocha</code>. Essentially this is the function that is executed <em>AFTER</em> the modules have finished loading. In our case runMocha is located inside the new config.js we've defined just for our tests. Let's take a look at it now.</p>
+
+<p>``` js test/config.js
+require.config({</p>
+
+<pre><code>// Base URL relative to the test runner
+// Paths are relative to this
+baseUrl: '../app',
+paths: {
+    // Testing libs
+    'chai'          : '../test/chai/chai',
+    'common'        : '../test/common',
+    'jquery'        : '../assets/js/libs/jquery',
+    'underscore'    : '../assets/js/libs/underscore',
+    'backbone'      : '../assets/js/libs/backbone',
+    'use'           : '../assets/js/plugins/use'
+},
+use: {
+    backbone: {
+        deps: ['use!underscore', 'jquery'],
+        attach: 'Backbone'
+    },
+    underscore: {
+        attach: '_'
+    },
+    mocha: {
+        attach: 'mocha'
+    }
+},
+priority: [
+    'jquery',
+    'underscore',
+    'common'
+]
+</code></pre>
+
+<p>});</p>
+
+<p>mocha.setup({</p>
+
+<pre><code>ui: 'bdd',
+ignoreLeaks: true
+</code></pre>
+
+<p>});</p>
+
+<p>// Protect from barfs
+console = window.console || function() {};</p>
+
+<p>var runMocha = function() {</p>
+
+<pre><code>mocha.run();
+</code></pre>
+
+<p>};
+```</p>
+
+<p>Lots of stuff here but nothing to get alarmed about. <a href="http://robdodson.me/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/">If you've read my previous getting started post you'll know all about the config.js file.</a> Go back and read the previous post if none of this makes sense to you. The thing to take note of is the <code>priority</code> array and the <code>runMocha</code> function at the bottom of the page. I don't have much experience with the priority array and I didn't find much documentation on it but Kelly uses it <a href="https://gist.github.com/2655876">in the gists</a> to make sure that jQuery, chai and any chai plugins are properly setup on the page.</p>
+
+<p>``` js test/common.js
+// Include and setup all the stuff for testing
+define(function(require) {</p>
+
+<pre><code>window.$ = window.jQuery = require('jquery');
+window.chai         = require('chai');
+window.expect       = chai.expect;
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Good practice? Bad practice? I'm not sure and I would love comments if anyone has a take on things. Underneath the priority array is a setup function which sends some configuration parameters to mocha. <code>ignoreLeaks</code> is useful because it's easy for mocha to see jQuery or any other global variable as a good reason to abort a test. IMO that's what JSLint/Hint is for, and bailing everytime you see a global is going to make testing 3rd party code especially difficult. My advice, leave it off. Finally we call <code>mocha.run()</code> via the <code>runMocha</code> function. Remember that this function is executed inside our test runner after all the specs are loaded, like so:</p>
+
+<p>``` html test/index.html</p>
+
+<script>
+    require([
+      '../test/test.example'
+    ], runMocha);
+  </script>
+
+
+<p>```</p>
+
+<p>Doing it this way guarantees that all the dependencies our module needs will be loaded before we start running our tests.</p>
+
+<h3>Oh right, the tests!</h3>
+
+<p>Wow! OK so hopefully you're still with me because after all of that we <em>still</em> need to generate some tests. Since it's getting late I'm just going to put together a really simple spec to make sure our default values are being set on the model.</p>
+
+<p>I've created a file called <code>test.example.js</code> which will test our <code>Example</code> module.</p>
+
+<p>``` js test/test.example.js
+define(function(require) {
+  var Example = require('modules/example');</p>
+
+<p>  describe('Example', function() {</p>
+
+<pre><code>describe('Photo', function() {
+  var photo = new Example.Photo();
+  it('should have proper defaults', function(done) {
+      expect(photo.get('src')).to.equal('/images/placeholder.jpg');
+      expect(photo.get('caption')).to.equal('Waiting for content...');
+      done();
+  });
+});
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>It isn't amazing but it gets us started testing our module. I'm explicitly calling <code>done()</code> at the end of our test because I saw mention on StackOverflow that you should do this when testing AMD modules in the browser with mocha otherwise you can get false passing tests. Not sure if it's absolutely necessary but I guess better safe than sorry!</p>
+
+<p>At this point I'm exhausted and hopefully you have a decent head start on your tests. I know that this post jumps around a lot so please take a moment <a href="https://github.com/robdodson/backbone-boilerplate-mocha">to grab the repo I've posted which contains all the source code.</a> Again. Caveat. I'm learning along with you so there are lots of newbie mistakes being made, I'm sure. I really want to hear your feedback if you have any. Good luck!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mocking Requests with Mocha, Chai and Sinon]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/"/>
+    <updated>2012-05-28T11:20:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/05/27/testing-backbone-boilerplate-with-mocha-and-chai/">After a bit of a rocky start yesterday</a> I've finally got Mocha and Chai running in the browser which is great. Today I'd like to test out some of the async functionality of Mocha. This seems to be the big selling point for most people so we'll kick the tires a bit.</p>
+
+<!--more-->
+
+
+<h3>Basic Async Tests with Mocha and Chai</h3>
+
+<p>I wrote a little Node service that we'll consume for testing purposes. This is my first <a href="http://nodejs.org/">Node</a> and <a href="http://expressjs.com/">Express</a> app so apologies if it's lamesauce. I used the <code>express</code> command to boilerplate a project called <code>pickles</code> with some very basic routes:</p>
+
+<p>``` js
+// Routes</p>
+
+<p>var count = 100;</p>
+
+<p>app.get('/', function(req, res) {
+  res.send('Welcome to the Pickle Store!');
+});</p>
+
+<p>app.get('/pickles', function(req, res) {
+  res.json({</p>
+
+<pre><code>count: count,
+message: 'oh boy, ' + count + ' pickles!'
+</code></pre>
+
+<p>  });
+});</p>
+
+<p>app.get('/pickles/add/:num', function(req, res) {
+  count += parseInt(req.params.num);
+  res.json({</p>
+
+<pre><code>add: req.params.num,
+message: 'you added ' + req.params.num + ' pickles to the pickle barrel!'
+</code></pre>
+
+<p>  });
+});</p>
+
+<p>app.listen(3000, function(){
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+});
+```
+We'll need to make sure our node service is running for our tests to work and all of our URLs will point at localhost:3000. Obviously you wouldn't want this for a production setting but it'll be fine for demonstration purposes.</p>
+
+<p>Here is our really simple Mocha spec. We're actually creating a <code>pickelStore</code> object in the spec file itself so we can test against it.</p>
+
+<p>``` js test.pickles.js
+var expect = chai.expect;</p>
+
+<p>var pickleStore = {
+  pickles: function() {</p>
+
+<pre><code>$.ajax({
+  url: 'http://localhost:3000/pickles',
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  }
+});
+</code></pre>
+
+<p>  },
+  add: function(num) {</p>
+
+<pre><code>$.ajax({
+  url: 'http://localhost:3000/pickles/add/' + num,
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  }
+});
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>describe('Pickle Store', function() {
+  describe('#pickles', function() {</p>
+
+<pre><code>pickleStore.pickles();
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>I just want to see if the ajax methods will run and hit our Node service but I'm running into the following issue in Chrome:</p>
+
+<p><code>
+XMLHttpRequest cannot load http://localhost:3000/pickles. Origin null is not allowed by Access-Control-Allow-Origin.
+</code>
+Bummer... :(</p>
+
+<p>OK, what's going on here... To StackOverflow! <a href="http://stackoverflow.com/questions/8456538/origin-null-is-not-allowed-by-access-control-allow-origin/8456586#8456586">Aaaand we have our response.</a> After a bit of googling I came across <a href="http://www.stoimen.com/blog/2010/11/19/diving-into-node-js-very-first-app/">this post</a> which mentions adding <code>res.header('Access-Control-Allow-Origin', '*');</code> to my Node responses. That does the trick. I also found <a href="http://www.stoimen.com/blog/2010/11/19/diving-into-node-js-very-first-app/">this post</a> which describes setting up <a href="https://developer.mozilla.org/en/http_access_control">CORS</a> with Express.</p>
+
+<p>OK hopefully we're done with Node for now. I don't want this to turn into a node tutorial... Let's see if we can get the tests to perform using Mocha. We'll need some way to mock and spy on the ajax because I don't want to test the data coming from the actual service. I've realized I want to <em>simulate</em> the service for client-side Mocha tests. In a future tutorial I'll test the service itself using the Node aspect of Mocha. Kind of silly to lead off this way but whatever, moving on!</p>
+
+<h3>Enter Sinon.js</h3>
+
+<p>I'm going to use <a href="http://sinonjs.org/">Sinon.js</a> to help me mock, stub, fake, spy and do whatever the heck else I need to make sure my client code is solid. After downloading the js file for Sinon you can just add it to our test/index.html under the line where we added mocha.</p>
+
+<p>``` html
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="mocha/mocha.css" />
+  <script src="../assets/js/libs/jquery.js"></script>
+  <script src="chai/chai.js"></script>
+  <script src="mocha/mocha.js"></script>
+  <script src="sinon/sinon.js"></script>
+  <script>mocha.setup('bdd');</script>
+  <script src="test.pickles.js"></script>
+  <script></p>
+
+<pre><code>$(function() {
+  mocha.run();
+})
+</code></pre>
+
+<p>  </script>
+</head>
+<body>
+  <div id="mocha"></div>
+</body>
+</html>
+```</p>
+
+<p>Now we can use Sinon in our <code>test.pickles.js</code> file to get a handled on our ajax. Let's first test that an ajax call is made when we run the <code>pickles()</code> method of the <code>pickleStore</code> object. We'll make sure this first test fails, then we'll change the spec to make it pass.</p>
+
+<p>``` js test.pickles.js
+var expect = chai.expect;</p>
+
+<p>var pickleStore = {
+  pickles: function() {</p>
+
+<pre><code>$.ajax({
+  url: 'http://localhost:3000/pickles',
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  }
+});
+</code></pre>
+
+<p>  },
+  add: function(num) {</p>
+
+<pre><code>$.ajax({
+  url: 'http://localhost:3000/pickles/add/' + num,
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  }
+});
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>describe('Pickle Store', function() {
+  describe('#pickles', function() {</p>
+
+<pre><code>// Use Sinon to replace jQuery's ajax method
+// with a spy.
+beforeEach(function() {
+  sinon.spy($, 'ajax');
+});
+
+// Restor jQuery's ajax method to its
+// original state
+afterEach(function() { 
+  $.ajax.restore();
+})
+
+it('should make an ajax call', function(done) {
+  pickleStore.pickles();
+  expect($.ajax.calledOnce).to.be.false; // see if the spy WASN'T called
+  done(); // let Mocha know we're done async testing
+});
+</code></pre>
+
+<p>  });
+});
+```
+<img class="center" src="https://s3.amazonaws.com/robdodson/images/first_failing_ajax_test.png" title="'Our first failing test with Mocha, Chai and Sinon. Yay!'" ></p>
+
+<p>Changing this line <code>expect($.ajax.calledOnce).to.be.false;</code> from <code>false</code> to <code>true</code> should make our test pass. Yay, first async test in the bag! Next let's try to fake a response from the server. But I'm realizing that the succesful server response should <em>do</em> something to my pickleStore object, otherwise why do I care about the data? So I'm going to update pickelStore with the following success callback on its pickles method:</p>
+
+<p>``` js test.pickles.js
+var pickleStore = {
+  count: 0,
+  status: '',
+  pickles: function() {</p>
+
+<pre><code>var self = this;
+$.ajax({
+  url: 'http://localhost:3000/pickles',
+  dataType: 'json',
+  success: function(data) {
+    self.count = parseInt(data.count);
+    self.status = data.status;
+  }
+});
+</code></pre>
+
+<p>  },
+  add: function(num) {</p>
+
+<pre><code>$.ajax({
+  url: 'http://localhost:3000/pickles/add/' + num,
+  dataType: 'json',
+  success: function(data) {
+    console.log(data);
+  }
+});
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>... .
+```</p>
+
+<p>Now we can test what happens after the server sends a succesful response. But how do we get that response and how do we force the success callback? For that we'll need to use Sinon's <code>stub.yieldsTo</code> method. It's mentioned in <a href="http://sinonjs.org/docs/#stubs">the docs on this page</a> if you scroll down. <code>yieldsTo</code> lets us direct the path of our spy so it will not only pretend to be jQuery's <code>ajax</code> method, but it will also force itself into the <code>success</code> callback with an optional hash of parameters which simulate our service response. Sweet! We'll have to revise the <code>beforeEach</code> in our spec though otherwise Sinon will complain that we're wrapping <code>ajax</code> twice. The updated spec should look like this. Again, take note that we're going to make it fail first by expecting a count of 99 pickles instead of 100.</p>
+
+<p>``` js test.pickles.js
+... .</p>
+
+<p>describe('Pickle Store', function() {
+  describe('#pickles', function() {</p>
+
+<pre><code>// Use Sinon to replace jQuery's ajax method
+// with a spy. This spy will also come with
+// some success data.
+beforeEach(function() {
+  sinon.stub($, 'ajax').yieldsTo('success', {
+    count: '100',
+    message: 'oh boy, 100 pickles!'
+  });
+});
+
+// Restor jQuery's ajax method to its
+// original state
+afterEach(function() { 
+  $.ajax.restore();
+})
+
+it('should make an ajax call', function(done) {
+  pickleStore.pickles();
+  expect($.ajax.calledOnce).to.be.true;
+  done();
+});
+
+it('should update the count', function(done) {      
+  pickleStore.pickles();
+  expect(pickleStore.count).to.equal(99);
+  done();
+});
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>Failing as expected. Aaaaand we change the expected count to 100, voila! Passing tests again!</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/passing_yield_test.png" title="'Passing test with Sinon's yieldTo'" ></p>
+
+<p>I'm adding the test for the status update as well so our final <code>#pickles</code> spec should look like this:</p>
+
+<p>``` js test.pickles.js
+describe('Pickle Store', function() {
+  describe('#pickles', function() {</p>
+
+<pre><code>// Use Sinon to replace jQuery's ajax method
+// with a spy. This spy will also come with
+// some success data.
+beforeEach(function() {
+  sinon.stub($, 'ajax').yieldsTo('success', {
+    count: '100',
+    message: 'oh boy, 100 pickles!'
+  });
+});
+
+// Restor jQuery's ajax method to its
+// original state
+afterEach(function() { 
+  $.ajax.restore();
+})
+
+it('should make an ajax call', function(done) {
+  pickleStore.pickles();
+  expect($.ajax.calledOnce).to.be.true;
+  done();
+});
+
+it('should update the count', function(done) {      
+  pickleStore.pickles();
+  expect(pickleStore.count).to.equal(100);
+  done();
+});
+
+it('should update the status', function(done) {      
+  pickleStore.pickles();
+  expect(pickleStore.status).to.equal('oh boy, 100 pickles!');
+  done();
+});
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>Now let's test the <code>#add</code> method before calling it a day. This method is interesting because all it can really do is update our status message. However, once it's called the value returned by <code>pickles()</code> should have incremented by whatever amount was passed to <code>add()</code>. Let's start by updating our <code>pickleStore</code> so it properly updates the status message after we've called add.</p>
+
+<p>``` js test.pickles.js
+var pickleStore = {
+  count: 0,
+  status: '',
+  pickles: function() {</p>
+
+<pre><code>var self = this;
+$.ajax({
+  url: 'http://localhost:3000/pickles',
+  dataType: 'json',
+  success: function(data) {
+    self.count = parseInt(data.count);
+    self.status = data.message;
+  }
+});
+</code></pre>
+
+<p>  },
+  add: function(num) {</p>
+
+<pre><code>var self = this;
+$.ajax({
+  url: 'http://localhost:3000/pickles/add/' + num,
+  dataType: 'json',
+  success: function(data) {
+    self.status = data.message; // &lt;-- update the status message!
+  }
+});
+</code></pre>
+
+<p>  }
+};
+```</p>
+
+<p>Now that that's in there we'll write a failing spec.</p>
+
+<p>``` js test.pickles.js
+describe('#add', function() {</p>
+
+<p>  var amount = 11;</p>
+
+<p>  beforeEach(function() {</p>
+
+<pre><code>sinon.stub($, 'ajax').yieldsTo('success', {
+  add: amount,
+  message: 'you added ' + amount + ' pickles to the pickle barrel!'
+});
+</code></pre>
+
+<p>  });</p>
+
+<p>  afterEach(function() {</p>
+
+<pre><code>$.ajax.restore();
+</code></pre>
+
+<p>  });</p>
+
+<p>  it('should update the status with the correct amount', function(done) {</p>
+
+<pre><code>pickleStore.add(amount);
+expect(pickleStore.status).to.equal('you added ' + 99 + ' pickles to the pickle barrel!');
+done();
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p>This is not unlike our previous spec, in fact it does even less since we're not checking count.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/failing_add_test.png" title="'Another failing test.'" ></p>
+
+<p>To make the test pass we change the 99 to <code>amount</code>. I originally wrote the add method thinking I would go back and check the total number of pickles but I've realized now that really that's more of a test for the service and not the front end. The front end shouldn't care if that arithmetic is happening properly, it should just consume data and update its UI. For tomorrow's post I'll try to get an AMD module in here so we can start playing with Backbone again. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Irritated, Antsy</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

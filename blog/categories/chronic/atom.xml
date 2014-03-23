@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Chronic | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/chronic/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Playing with Ruby Dates]]></title>
+    <link href="http://robdodson.github.com/blog/2012/04/28/playing-with-ruby-dates/"/>
+    <updated>2012-04-28T07:20:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/04/28/playing-with-ruby-dates</id>
+    <content type="html"><![CDATA[<p>One of <a href="https://vimeo.com/40633070">my previous projects</a> involved a ton of work using Flash's built in Date object. We ended up rolling our own Calendar library which was both tedious and time consuming to debug. Now that I'm digging into Ruby for my newest project, I wanted to see what features the language has to offer. So far I'm <em>really</em> impressed and that's after only a few hours of exploration. I'll detail some of the tricks I've learned along the way so hopefully other newcomers can benefit.</p>
+
+<!--more-->
+
+
+<h3>Ruby Date Object Basics</h3>
+
+<p>We can start off by firing up IRB and requiring the <code>date</code> class. Let's do a really simple example first and just generate today.</p>
+
+<p>```
+require 'date'</p>
+
+<p>today = Date.today
+ => #&lt;Date: 2012-04-28 ((2456046j,0s,0n),+0s,2299161j)>
+```</p>
+
+<p>Now lets try a bit of Ruby's sugar to generate tomorrow's date.</p>
+
+<p><code>
+tomorrow = today + 1
+ =&gt; #&lt;Date: 2012-04-29 ((2456047j,0s,0n),+0s,2299161j)&gt;
+</code>
+Pretty straightforward, right? Since there is usually more than one way to do something in Ruby we could have achieved the same results using any of the following.</p>
+
+<p>```
+today.succ
+ => #&lt;Date: 2012-04-29 ((2456047j,0s,0n),+0s,2299161j)></p>
+
+<p>today.next
+ => #&lt;Date: 2012-04-29 ((2456047j,0s,0n),+0s,2299161j)></p>
+
+<p>today.next_day
+ => #&lt;Date: 2012-04-29 ((2456047j,0s,0n),+0s,2299161j)>
+```</p>
+
+<p>As <a href="http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby">someone on StackOverflow pointed out</a>: <code>Date</code> objects are also <code>Comparable</code>, so you can construct a <code>Range</code>. If you wanted to collect every day from the previous week into an array you could do the following:
+<code>
+last_week = today - 7
+every_day_last_week = (last_week..today).to_a
+</code></p>
+
+<p>or...</p>
+
+<p><code>
+today.downto(today - 7).to_a
+</code></p>
+
+<p>There are also some cute booleans tossed into the mix for figuring out the day of the week.</p>
+
+<p>```
+today.friday?
+ => false</p>
+
+<p>today.saturday?
+ => true
+```</p>
+
+<h3>How to Use Chronic</h3>
+
+<p><a href="https://github.com/mojombo/chronic/">Chronic</a> is a Ruby natural language date/time parser written by <a href="http://tom.preston-werner.com/">Tom Preston-Werner</a> (<a href="https://twitter.com/#!/mojombo">@mojombo</a>) which takes surprisingly human readable text and converts it to dates.</p>
+
+<p>Covering everything that Chronic supports could take a while so definitely go check out the docs. Below is just a quick example to demonstrate how cool it is.</p>
+
+<p>```
+require 'chronic'</p>
+
+<p>Chronic.parse('yesterday')
+ => 2012-04-27 12:00:00 -0700</p>
+
+<p>Chronic.parse('yesterday').to_date
+ => #&lt;Date: 2012-04-27 ((2456045j,0s,0n),+0s,2299161j)></p>
+
+<p>Chronic.parse('last monday')
+ => 2012-04-23 12:00:00 -0700</p>
+
+<p>Chronic.parse('3 months ago this friday at 3:45pm')
+ => 2012-02-04 15:45:00 -0800
+```</p>
+
+<h3>How to Use Active Support for Dates</h3>
+
+<p>Active Support is a library extracted from Rails which adds a ton of sugar to the Ruby language. As the author's describe it:</p>
+
+<blockquote><p>Active Support is a collection of various utility classes and standard library extensions that were found useful for Rails. All these additions have hence been collected in this bundle as a way to gather all that sugar that makes Ruby sweeter.</p></blockquote>
+
+<p>It's broken into several pieces so you can choose to load only the parts that you'll actually be using. <em>I'm going to write an upcoming article on Active Support. For now we'll just require it all.</em></p>
+
+<p>```
+require 'active_support/all'</p>
+
+<p>t = Date.today
+ => Sat, 28 Apr 2012</p>
+
+<p>t.class
+ => Date
+```</p>
+
+<p>You'll notice that Active Support has changed the way our date's <code>to_s</code> is formatted so it's more human readable. It also added shortcuts for creating Dates on either side of today.</p>
+
+<p>```
+yesterday = Date.yesterday
+ => Fri, 27 Apr 2012</p>
+
+<p>tomorrow = Date.tomorrow
+ => Sun, 29 Apr 2012
+```</p>
+
+<p>Included as well are some nice convenience booleans: <code>past?</code>, <code>today?</code>, and <code>future?</code>
+<code>
+tomorrow.future?
+ =&gt; true
+</code></p>
+
+<p>If you've ever had to write a Calendar that can support weeks, especially those that straddle two different months, you'll appreciate the simplicity of the helpers Active Support adds.</p>
+
+<p>```
+today = Date.today
+ => Sat, 28 Apr 2012</p>
+
+<p>today.beginning_of_week
+ => Mon, 23 Apr 2012</p>
+
+<p>today.next_week
+ => Mon, 30 Apr 2012</p>
+
+<h1>You can also choose to make the week start on an arbitrary day, like Sunday</h1>
+
+<p>today.beginning_of_week(:sunday)
+ => Sun, 22 Apr 2012
+```</p>
+
+<p>We aren't limited to weeks though. Active Support adds methods for days, months and years. For example:</p>
+
+<p><code>
+today.years_ago(10)
+ =&gt; Sun, 28 Apr 2002
+</code></p>
+
+<p>By extending <code>FixNum</code> to support additional Date methods certain operations become much more readable.</p>
+
+<p><code>
+today + 1.year
+ =&gt; Sun, 28 Apr 2013
+</code></p>
+
+<p>These extensions are referred to as <code>durations</code> <a href="http://guides.rubyonrails.org/active_support_core_extensions.html">in the documentation</a>.
+Which brings us back to one of our first examples of finding the date 7 days ago. With Active Support it's as easy as...</p>
+
+<p><code>
+7.days.ago
+ =&gt; 2012-04-21 08:44:02 -0700
+</code></p>
+
+<p>Pretty cool! Active Support adds <em>A LOT</em> more than just Date helpers and I'll try to cover it more in some future articles. Definitely <a href="http://guides.rubyonrails.org/active_support_core_extensions.html">check out the documentation</a> (you can <a href="http://guides.rubyonrails.org/active_support_core_extensions.html#extensions-to-date">skip to the Date section</a> since it's pretty immense).</p>
+
+<p><small>Source:<br />
+<a href="http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby">http://stackoverflow.com/questions/962544/one-line-hash-creation-in-ruby</a>
+<a href="http://www.developer.com/open/article.php/3729206/Telling-Time-with-Ruby.htm">http://www.developer.com/open/article.php/3729206/Telling-Time-with-Ruby.htm</a>
+<a href="http://guides.rubyonrails.org/active_support_core_extensions.html">http://guides.rubyonrails.org/active_support_core_extensions.html</a></small></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

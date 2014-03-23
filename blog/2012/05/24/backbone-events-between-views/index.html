@@ -1,0 +1,376 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Backbone Events: Adding Views to the DOM | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">24 May 2012</span>
+	<h1 class="post-title">Backbone Events: Adding Views to the DOM</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Today I want to figure out what kind of events to use when one of my views is added to the DOM. This can have a lot of ramifications for positioning elements around the view and setting up properties on the view itself.</p>
+
+<!--more-->
+
+
+<h3>View Events and the DOM</h3>
+
+<p>After looking around for a bit I&#8217;ve found this <a href="http://documentcloud.github.com/backbone/#FAQ-events">list of the events that Backbone can dispatch.</a> Nothing in there about render or adding elements to the DOM :(</p>
+
+<p>More searching reveals that almost everyone points to the <a href="http://docs.jquery.com/Plugins/livequery">livequery plugin for jQuery.</a> Livequery seems like a mostly deprecated plugin since jQuery has both <code>.live()</code> and <code>.delegate()</code> methods now. The one exception is that livequery will fire a callback when an element is created.</p>
+
+<p>Another alternative is to fire a custom event from my View&#8217;s render method. While this does seem cleaner than using a plugin unfortunately we might call render over and over again. A middle of the road solution would be to use <code>.one()</code> to bind to the first render event.</p>
+
+<p>In my mind I would like every Backbone View to extend a base class which dispatches a custom <code>addedToDOM</code> event and <code>removedFromDOM</code> event. I&#8217;m not sure what the performance cost of using livequery to do this is but let&#8217;s write it up and maybe we can do a jsPerf later.</p>
+
+<h3>Load a jQuery plugin with AMD</h3>
+
+<p>Let&#8217;s download livequery <a href="https://github.com/brandonaaron/livequery">from the git repo.</a> Now that we have it we&#8217;re in another little dilemma. The boilerplate loads jQuery like an AMD module&#8230;so how do you use a jQuery plugin with AMD?</p>
+
+<p>It&#8217;s very possible this is not the intended method but here&#8217;s how I&#8217;ve gone about solving the problem. Since require.js is only going to load stuff if we specify it as a dependency then we&#8217;ll need to request the plugin just like any other module. If we put the plugin in our <code>assets/js/plugins</code> folder then we&#8217;ll already have a path to <code>plugins</code> provided by <code>config.js</code>.</p>
+
+<figure class='code'><figcaption><span>config.js</span></figcaption><pre><code><span class="nx">require</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+  <span class="c1">// Initialize the application with the main application file</span>
+  <span class="nx">deps</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">],</span>
+
+  <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+    <span class="c1">// JavaScript folders</span>
+    <span class="nx">libs</span><span class="o">:</span> <span class="s2">&quot;../assets/js/libs&quot;</span><span class="p">,</span>
+    <span class="nx">plugins</span><span class="o">:</span> <span class="s2">&quot;../assets/js/plugins&quot;</span><span class="p">,</span> <span class="c1">// &lt;---- !!! look here! </span>
+
+    <span class="c1">// Libraries</span>
+    <span class="nx">jquery</span><span class="o">:</span> <span class="s2">&quot;../assets/js/libs/jquery&quot;</span><span class="p">,</span>
+    <span class="nx">underscore</span><span class="o">:</span> <span class="s2">&quot;../assets/js/libs/underscore&quot;</span><span class="p">,</span>
+    <span class="nx">backbone</span><span class="o">:</span> <span class="s2">&quot;../assets/js/libs/backbone&quot;</span><span class="p">,</span>
+
+    <span class="c1">// Shim Plugin</span>
+    <span class="nx">use</span><span class="o">:</span> <span class="s2">&quot;../assets/js/plugins/use&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nx">use</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">backbone</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">deps</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;use!underscore&quot;</span><span class="p">,</span> <span class="s2">&quot;jquery&quot;</span><span class="p">],</span>
+      <span class="nx">attach</span><span class="o">:</span> <span class="s2">&quot;Backbone&quot;</span>
+    <span class="p">},</span>
+
+    <span class="nx">underscore</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">attach</span><span class="o">:</span> <span class="s2">&quot;_&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Then we can load livequery as if it were any other module. This might seem odd because a dependency gets passed to our pseudo-constructor as an argument:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">define</span><span class="p">([</span>
+  <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+
+  <span class="c1">// Libs</span>
+  <span class="s2">&quot;use!backbone&quot;</span><span class="p">,</span>
+
+  <span class="c1">// Modules</span>
+
+  <span class="c1">// Plugins</span>
+  <span class="s2">&quot;plugins/jquery.livequery&quot;</span>
+<span class="p">],</span>
+
+<span class="kd">function</span><span class="p">(</span><span class="nx">namespace</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">livequery</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// &lt;-- see how livequery is passed</span>
+
+<span class="p">...</span>
+</code></pre></figure>
+
+
+<p>But we&#8217;re not going to use that argument. It&#8217;s just there to make sure that <code>jquery.livequery.js</code> gets added to the page. We&#8217;ll ignore it and use livequery via jquery instead, like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#sections&#39;</span><span class="p">).</span><span class="nx">livequery</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;sections added to DOM!&#39;</span><span class="p">);</span>
+<span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;sections removed from DOM!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Keep in mind that require.js and AMD are just tacking the script elements onto the page. Requiring our plugin in this fashion is no different than tacking a <code>script</code> onto the HTML at runtime.</p>
+
+<p>Here&#8217;s my example.js file <a href="http://robdodson.me/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/">from the last post</a>, now using livequery to listen for when the element is added to and removed from the DOM.</p>
+
+<figure class='code'><figcaption><span>example.js</span></figcaption><pre><code><span class="nx">define</span><span class="p">([</span>
+  <span class="s2">&quot;namespace&quot;</span><span class="p">,</span>
+
+  <span class="c1">// Libs</span>
+  <span class="s2">&quot;use!backbone&quot;</span><span class="p">,</span>
+
+  <span class="c1">// Modules</span>
+
+  <span class="c1">// Plugins</span>
+  <span class="s2">&quot;plugins/jquery.livequery&quot;</span>
+<span class="p">],</span>
+
+<span class="kd">function</span><span class="p">(</span><span class="nx">namespace</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">livequery</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="c1">// Create a new module</span>
+  <span class="kd">var</span> <span class="nx">Example</span> <span class="o">=</span> <span class="nx">namespace</span><span class="p">.</span><span class="nx">module</span><span class="p">();</span>
+
+  <span class="c1">// Example extendings</span>
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Model</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span> <span class="cm">/* ... */</span> <span class="p">});</span>
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Collection</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span> <span class="cm">/* ... */</span> <span class="p">});</span>
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Router</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span> <span class="cm">/* ... */</span> <span class="p">});</span>
+
+  <span class="c1">// This will fetch the tutorial template and render it.</span>
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Tutorial</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">template</span><span class="o">:</span> <span class="s2">&quot;app/templates/example.html&quot;</span><span class="p">,</span>
+
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="c1">// Fetch the template, render it to the View element and call done.</span>
+      <span class="nx">namespace</span><span class="p">.</span><span class="nx">fetchTemplate</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">tmpl</span><span class="p">();</span>
+
+        <span class="c1">// If a done function is passed, call it with the element</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">done</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">done</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Left</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;left-container&#39;</span><span class="p">,</span>
+    <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;container&#39;</span>
+  <span class="p">});</span>
+
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Middle</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;middle-container&#39;</span><span class="p">,</span>
+    <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;container&#39;</span>
+  <span class="p">});</span>
+
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;right-container&#39;</span><span class="p">,</span>
+    <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;container&#39;</span>
+  <span class="p">});</span>
+
+  <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Sections</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span>
+
+    <span class="nx">leftView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+    <span class="nx">middleView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+    <span class="nx">rightView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;click .container&quot;</span><span class="o">:</span>    <span class="s2">&quot;onChildClicked&quot;</span>
+    <span class="p">},</span>
+
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">leftView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Left</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">middleView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Middle</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">rightView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span><span class="p">();</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">leftView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">middleView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rightView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#sections&#39;</span><span class="p">).</span><span class="nx">livequery</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;sections added to DOM!&#39;</span><span class="p">);</span>
+      <span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;sections removed from DOM!&#39;</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="c1">// We should do this work with events instead of methods</span>
+    <span class="nx">setInitialPosition</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span><span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">onChildClicked</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">$target</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">$e</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
+
+      <span class="k">switch</span><span class="p">(</span><span class="nx">$e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s1">&#39;left-container&#39;</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span><span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">});</span>
+          <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;middle-container&#39;</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span><span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">});</span>
+          <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;right-container&#39;</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span><span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">});</span>
+          <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="c1">// Required, return the module for AMD compliance</span>
+  <span class="k">return</span> <span class="nx">Example</span><span class="p">;</span>
+
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>I tried this out by adding and removing the <code>Example.Sections</code> view from the DOM and both console logs fired, so yeah, awesome! In lieu of creating a base class and adding an addedToDOM and removedFromDOM event we can do something like this to achieve that effect:</p>
+
+<figure class='code'><figcaption><span>example.js</span></figcaption><pre><code><span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">leftView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Left</span><span class="p">();</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">middleView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Middle</span><span class="p">();</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">rightView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span><span class="p">();</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">leftView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">middleView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rightView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">);</span> <span class="c1">// make sure all the methods of our object have the right &#39;this&#39;</span>
+
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#sections&#39;</span><span class="p">).</span><span class="nx">livequery</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">onAddedToDOM</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">onRemovedFromDOM</span><span class="p">);</span>
+<span class="p">},</span>
+
+<span class="nx">onAddedToDOM</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;added to DOM!&#39;</span><span class="p">);</span>
+<span class="p">},</span>
+
+<span class="nx">onRemovedFromDOM</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;removed from DOM!&#39;</span><span class="p">);</span>
+<span class="p">},</span>
+</code></pre></figure>
+
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Hot</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Backbone Events: Adding Views to the DOM&amp;url=http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/24/backbone-events-between-views/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

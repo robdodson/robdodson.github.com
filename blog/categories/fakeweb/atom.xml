@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: FakeWeb | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/fakeweb/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 5]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/"/>
+    <updated>2012-05-12T07:02:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5</id>
+    <content type="html"><![CDATA[<p>Last night I got the <code>Crawler</code> passing its test for <code>#get_words_by_selector</code>. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don't know much about Ruby Exceptions I'm doing a little digging...Ruby has both <code>throw</code>/<code>catch</code> and <code>raise</code>/<code>rescue</code> so what's the difference between throw/catch and raise/rescue in Ruby?</p>
+
+<!--more-->
+
+
+<h3>Throwing exceptions for control flow</h3>
+
+<p>There's a great guest post by Avdi Grimm on <a href="http://rubylearning.com/blog/2011/07/12/throw-catch-raise-rescue-im-so-confused/">RubyLearning</a> which covers this topic in depth. To summarize <code>throw</code>/<code>catch</code> is mainly used when doing <em>exceptions as control flow</em>. In other words, if you need to break out of a deeply nested loop or some other expensive operation you can throw an exception symbol which can be caught someone high up the call stack. Initially this rubbed me the wrong way since I know that things like <code>goto</code> and <code>labels</code> are a bad practice. Someone else raised this point in the comments to which Avid responded:</p>
+
+<blockquote><p>There is a fundamental difference between throw/catch and goto. Goto, in languages which support it, pays no attention to the stack. Any resources which were allocated before the goto are simply left dangling unless they are manually cleaned up.</p>
+
+<p>throw/catch, like exception handling, unwinds the stack, triggering ensure blocks along the way. So, for example, if you throw inside an open() {…} block, the open file will be closed on the way up to the catch() block.</p></blockquote>
+
+<h3>Raising exceptions for everything else</h3>
+
+<p>With <code>throw</code>/<code>catch</code> out of the way that leaves <code>raise</code>/<code>rescue</code> to handle everything else. I'm willing to bet that 99% of error code should probably be raising exceptions and throw/catch should only be used in situations where you need the control flow behavior. With that knowledge in hand I need to decide between one of Ruby's built-in Exceptions or defining one of my own. Let's define one of our own so we can get that experience under our belt.</p>
+
+<h3>Creating an exception subclass in Ruby</h3>
+
+<p>One tip I picked up while doing my research into <code>raise</code> and <code>throw</code> is that any exception that doesn't subclass StandardError will not be caught by default. Here's an example to illustrate:</p>
+
+<p>```ruby</p>
+
+<h2>#</h2>
+
+<h1>First we define an exception class which doesn't</h1>
+
+<h1>inherit from StandardError. As a result it won't</h1>
+
+<h1>be caught by a simple rescue. Instead we would</h1>
+
+<h1>need to rescue by its class name</h1>
+
+<h2>#</h2>
+
+<p>class MyBadException &lt; Exception
+end</p>
+
+<p>def miss_bad_exception
+  raise MyBadException.new
+  rescue
+  p "I'll never be called :("
+end</p>
+
+<p>miss_bad_exception
+MyBadException: MyBadException
+  from (irb):4:in <code>miss_bad_exception'
+  from (irb):8
+  from /Users/Rob/.rvm/rubies/ruby-1.9.3-p125/bin/irb:16:in</code><main></p>
+
+<h1>See that calling the method produces an uncaught exception...</h1>
+
+<h2>#</h2>
+
+<h1>Next we'll subclass StandardError. As a result</h1>
+
+<h1>we won't have to explicitly define our class name</h1>
+
+<h1>for a rescue to work.</h1>
+
+<h2>#</h2>
+
+<p>class MyGoodException &lt; StandardError
+end</p>
+
+<p>def save_good_exception
+  raise MyGoodException.new
+  rescue
+  p "I'm saved! My hero!"
+end</p>
+
+<p>save_good_exception
+"I'm saved! My hero!"</p>
+
+<h1>Yay! Our exception was caught!</h1>
+
+<p><code>``
+We'll call our Exception</code>SelectorError` to indicate that the provided selector did not return any results. For reference I often refer to <a href="http://rubylearning.com/satishtalim/ruby_exceptions.html">this chart on RubyLearning</a> when I want to see a list of all the available Exception classes. In our case we'll just inherit from StandardError.</p>
+
+<p><code>ruby tentacles/lib/selection_error.rb
+module Tentacles
+  class SelectionError &lt; StandardError
+  end
+end
+</code>
+I don't think we actually need to do much more than that. The ability to pass a payload message should come from the super class so I think we're good to go. Here's our updated spec:</p>
+
+<p>```ruby
+it "should raise an exception if nothing was returned" do</p>
+
+<pre><code>    expect { @crawler.get_words_by_selector('some-gibberish-selector') }.to raise_error(Tentacles::SelectionError, 'The selector did not return an results!')  
+</code></pre>
+
+<p>end
+<code>``      
+Initially the test fails so now we need to update our</code>Crawler` to check if nothing was returned and raise the custom exception.</p>
+
+<p>Here's our updated <code>Crawler</code> with additional require and updated method.</p>
+
+<p>```ruby tentacles/lib/crawler.rb
+require 'open-uri'
+require 'nokogiri'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  @uri = uri
+  @doc = Nokogiri::HTML(open(@uri))
+  @counts = Hash.new(0)
+end
+
+def get_words_by_selector(selector)
+  entries = doc.css(selector)
+  raise Tentacles::SelectionError, 
+    'The selector did not return an results!' if entries.empty?
+  entries.each do |entry|
+    words = words_from_string(entry.content)
+    count_frequency(words)
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map { |word, count| "#{word}: #{count}"}
+end
+
+def get_metadata_by_selector(selector)
+  # TODO
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>All tests passing, we're good to go :)</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Alert, Awake, Anxious</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed with Tests Pt. 4]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4/"/>
+    <updated>2012-05-11T07:20:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4</id>
+    <content type="html"><![CDATA[<p>Continuing from our <a href="http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/">previous post</a> we're going to keep working on our <code>Crawler</code> and our specs to see if we can start pulling real data from our site.</p>
+
+<!--more-->
+
+
+<p>The first thing I did this morning was to run my tests:
+```
+bundle exec rspec spec/</p>
+
+<p>..............</p>
+
+<p>Finished in 0.01271 seconds
+14 examples, 0 failures
+```
+As someone totally new to TDD/BDD this is kind of an awesome feeling. I left my code for a few days and now I can come back and verify that everything still works. We can take it even further and run rspec with a documentation formatter to get some pretty printed output:</p>
+
+<p>```ruby
+bundle exec rspec spec/ -cf d</p>
+
+<p>Tentacles::Crawler
+  constructors</p>
+
+<pre><code>#from_uri
+  should respond
+  should return an instance
+</code></pre>
+
+<p>  instances</p>
+
+<pre><code>should respond to #get_words_by_selector
+should respond to #get_metadata_by_selector
+</code></pre>
+
+<p>Tentacles::Options
+  should respond to #uri
+  should respond to #post_selector
+  should respond to #metadata_selector
+  #initialize</p>
+
+<pre><code>when parsing the URI
+  when URI is valid
+    should display the right URI
+  when URI is invalid
+    should raise an exception
+  when URI does not contain a scheme
+    should raise an IO exception
+  when URI does not contain a host
+    should raise an IO exception
+</code></pre>
+
+<p>Tentacles::Runner
+  should respond to #run
+  when parsing the config file</p>
+
+<pre><code>should raise an error if the config file is missing
+should raise an error if the config file is invalid
+</code></pre>
+
+<p>Finished in 0.01359 seconds
+14 examples, 0 failures
+```</p>
+
+<p>In rspec the <code>-c</code> flag enables color in the output. The <code>-f</code> flag sets a formatter and <code>d</code> specifies the documentation format.</p>
+
+<p>```bash
+-f, --format FORMATTER           Choose a formatter.</p>
+
+<pre><code>                                   [p]rogress (default - dots)
+                                   [d]ocumentation (group and example names)
+                                   [h]tml
+                                   [t]extmate
+                                   custom formatter class name
+</code></pre>
+
+<p>```</p>
+
+<p>Neat.</p>
+
+<p>In <code>crawler_spec.rb</code> I'm going to add a test that checks to see if our instance has actually stored the content from our mocked web request.</p>
+
+<p>```ruby
+require_relative '../lib/tentacles/crawler'
+require 'fakeweb'</p>
+
+<p>describe Tentacles::Crawler do</p>
+
+<p>  before do</p>
+
+<pre><code># Create a mock options object
+@options = {
+  uri: 'http://robdodson.me', 
+  post_selector: '.entry-content',
+  metadata_selector: '.personal-metadata'
+}
+
+# Create a mock web request
+FakeWeb.register_uri(:get, @options[:uri], :body =&gt; "Hello World! Hello San Francisco!")
+</code></pre>
+
+<p>  end</p>
+
+<p>  describe "constructors" do</p>
+
+<pre><code>describe "#from_uri" do
+  it "should respond" do
+    Tentacles::Crawler.should respond_to(:from_uri)
+  end
+
+  it "should return an instance" do
+    crawler = Tentacles::Crawler.from_uri(@options[:uri])
+    crawler.should be_an_instance_of(Tentacles::Crawler)
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  describe "instances" do</p>
+
+<pre><code>before do
+  @crawler = Tentacles::Crawler.from_uri(@options[:uri])
+end
+
+subject { @crawler }
+
+it { should respond_to(:get_words_by_selector) }
+it { should respond_to(:get_metadata_by_selector) }
+
+context "post-construct" do
+  it "should have the right document" do
+    @crawler.doc.content.should =~ /Hello World! Hello San Francisco!/
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>I want to write a test to parse the content for keywords but I realize now that our FakeWeb request returns a string without any classes or id's. Gotta go back and wrap it in some HTML to match our selectors. So I'm changing the mock web request to look like this:</p>
+
+<p>```ruby</p>
+
+<h1>Create a mock web request</h1>
+
+<pre><code>FakeWeb.register_uri(:get, @options[:uri],
+                     :body =&gt; '&lt;div class="' + @options[:post_selector] + '"&gt;Hello World! Hello San Francisco!&lt;/div&gt;')
+</code></pre>
+
+<p>```</p>
+
+<h3>Hello Hello Hello World!</h3>
+
+<p>After a lot of back and forth I finally get my test to pass. I realize along the way that there are a bunch of things I need to change. For starters having most of my words be the same count doesn't really help me to validate that my keyword counting is working all that well. So I'm changing our FakeWeb request and the subsequent specs which test against it.</p>
+
+<p>```ruby</p>
+
+<h1>Create a mock web request</h1>
+
+<pre><code>FakeWeb.register_uri(:get, @options[:uri],
+                     :body =&gt; '&lt;div class="' + @options[:post_selector].delete(".") + '"&gt;Hello Hello Hello World World Foobar!&lt;/div&gt;')
+</code></pre>
+
+<p>```</p>
+
+<p>```ruby</p>
+
+<pre><code>context "post-construct" do
+  it "should have the right document" do
+    @crawler.doc.content.should =~ /Hello Hello Hello World World Foobar!/
+  end
+end
+</code></pre>
+
+<p>```</p>
+
+<p>Next I need to make sure that my <code>get_words_by_selector</code> method is accepting a selector.</p>
+
+<p>```ruby
+def get_words_by_selector(selector)</p>
+
+<pre><code>  entries = doc.css('div.entry-content')
+  entries.each do |entry|
+    words = words_from_string(entry.content)
+    count_frequency(words)
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map { |word, count| "#{word}: #{count}"}
+end
+</code></pre>
+
+<p>```</p>
+
+<p>I also realize that I'd like my Array of keywords to be in desceding order so I <code>reverse</code> it after the initial sort.</p>
+
+<p>Next I'm going to write the test to verify that we've received a group of words, counted them up and tossed them into an Array in descending order:</p>
+
+<p>```ruby</p>
+
+<pre><code>describe "#get_words_by_selector" do
+  it "should produce an Array of keywords" do
+    expected_array = ['hello: 3', 'world: 2', 'foobar: 1']
+    actual_array = @crawler.get_words_by_selector(@options[:post_selector])
+    actual_array.should eq(expected_array)
+  end
+end
+</code></pre>
+
+<p>```</p>
+
+<p>I actually wrote the test first and did everything else to make it pass. But at this point it should all be passing and we can verify that given a request with the appropriate selector we should be able to build a basic word frequency list. Yay!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Calm, Awake, Curious</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Object Oriented Scraper Backed With Tests Pt. 3]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/"/>
+    <updated>2012-05-08T21:03:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3</id>
+    <content type="html"><![CDATA[<p>I did some cleanup this morning on the <code>Options</code> class and the <code>options_spec</code>, mainly to remove items that seemed like they shouldn't be tested. Here's where I'm currently at:</p>
+
+<!--more-->
+
+
+<p>```ruby tentacles/lib/tentacles/options.rb
+require 'yaml'</p>
+
+<p>module Tentacles
+  class Options</p>
+
+<pre><code>attr_reader :uri
+attr_reader :post_selector
+attr_reader :metadata_selector
+
+def initialize(config)
+  @config = YAML.load(File.open(config))
+
+  @config.each do |key, value|
+    raise IOError, "#{key} is undefined!" if key.nil?
+  end
+
+  @uri = URI.parse(@config["uri"])
+  raise IOError, 'Invalid uri!' if @uri.scheme.nil? || @uri.host.nil?
+
+  @post_selector = @config["post_selector"]
+  @metadata_selector = @config["metadata_selector"]
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/spec/options_spec.rb
+require_relative '../lib/tentacles/options'
+require 'yaml'
+require 'uri'
+require 'helpers'</p>
+
+<p>describe Tentacles::Options do
+  include Helpers</p>
+
+<p>  before do</p>
+
+<pre><code>@options = Tentacles::Options.new(relative_path + '/../lib/tentacles/config.yml')
+</code></pre>
+
+<p>  end</p>
+
+<p>  subject { @options }</p>
+
+<p>  it { should respond_to(:uri) }
+  it { should respond_to(:post_selector) }
+  it { should respond_to(:metadata_selector) }</p>
+
+<p>  describe "#initialize" do</p>
+
+<pre><code>describe "when parsing the URI" do
+
+  context "when URI is valid" do
+    it "should display the right URI" do
+      uri = URI.parse('http://robdodson.me')
+      @options.uri.should eq(uri)
+    end
+  end
+
+  context "when URI is invalid" do
+    it "should raise an exception" do
+      expect { options = Tentacles::Options.new(relative_path + '/mocks/invalid_uri.yml') }.to raise_error(URI::InvalidURIError)
+    end
+  end
+
+  context "when URI does not contain a scheme" do
+    it "should raise an IO exception" do
+      expect { options = Tentacles::Options.new(relative_path + '/mocks/no_scheme_or_host_uri.yml') }.to raise_error(IOError)
+    end
+  end
+
+  context "when URI does not contain a host" do
+    it "should raise an IO exception" do
+      expect { options = Tentacles::Options.new(relative_path + '/mocks/no_scheme_or_host_uri.yml') }.to raise_error(IOError)
+    end
+  end
+end
+</code></pre>
+
+<p>  end
+end
+<code>``
+Previously I was testing against</code>@config = YAML.load(File.open(config))<code>to see if it would throw an error when passed</code>nil<code>or empty string for the argument. I've since realized that's basically testing [Ruby Core](http://www.ruby-doc.org/core-1.9.3/) to see if it's working as described in the docs...which seems silly to me. Now if I were *handling* those exceptions and doing something in response, then yeah, I would want to test it. But since I'm allowing the program to explode if you try to load an empty config file I figure it's best to just let the core or stdlib do their thing and assume that it was well tested. Having said that I think we've got decent coverage on</code>Options<code>and can move back to the</code>Runner<code>and then the</code>Crawler`.</p>
+
+<p>By the way, if you want a more visual representation of our tests you can run <code>bundle exec rspec -f html -o index.html</code> which will generate an html file showing what passed/failed and is still pending.
+<img class="left" src="/images/rspec_tests_visualization.png" title="'RSpec Static Test HTML'" ></p>
+
+<h3>Mocking Nokogiri requests with FakeWeb</h3>
+
+<p>I was curious if it would be possible to mock the Nokogiri requests from our <code>Crawler</code> so I did a bit of googling. It looks like the best options would be either <a href="https://github.com/wycats/artifice">Artifice</a> or <a href="http://fakeweb.rubyforge.org/">FakeWeb</a>. I'm not super familiar with Rack and I don't want to write a separate app just to mock a few calls so I've decided to go with FakeWeb.</p>
+
+<p>First we add it to our Gemfile
+```ruby
+source 'https://rubygems.org'</p>
+
+<p>gem 'rspec', '2.9.0'
+gem 'nokogiri', '~>1.5.2'
+gem 'awesome_print', '~>1.0.2'
+gem 'fakeweb', '~>1.3.0'
+<code>``
+and do the usual</code>bundle install<code>. Next we'll stub out our</code>crawler_spec` and verify that it's at least detecting all the methods on the class.</p>
+
+<p>```ruby tentacles/spec/crawler_spec.rb
+require_relative '../lib/tentacles/crawler'</p>
+
+<p>describe Tentacles::Crawler do</p>
+
+<p>  before do</p>
+
+<pre><code># A mock for our options object
+options = {
+  uri: 'http://robdodson.me', 
+  post_selector: '.entry-content',
+  metadata_selector: '.personal-metadata'
+}
+
+@crawler = Tentacles::Crawler.from_uri(options[:uri])
+</code></pre>
+
+<p>  end</p>
+
+<p>  subject { @crawler }</p>
+
+<p>  it { should respond_to(:get_words_by_selector) }
+  it { should respond_to(:get_metadata_by_selector) }</p>
+
+<p>end
+```</p>
+
+<p>I also want to verify that my class responds to an alternative constructor. Rather than just saying <code>Crawler.new</code> I'd prefer to use <code>Crawler.from_uri</code>. It doesn't serve much of a purpose but I think it's a good exercise. Here's the modified test to support it.</p>
+
+<p>```ruby tentacles/spec/crawler_spec.rb
+require_relative '../lib/tentacles/crawler'</p>
+
+<p>describe Tentacles::Crawler do</p>
+
+<p>  describe "constructors" do</p>
+
+<pre><code>describe "#from_uri" do
+  it "should respond" do
+    Tentacles::Crawler.should respond_to(:from_uri)
+  end
+
+  it "should return an instance" do
+    crawler = Tentacles::Crawler.from_uri('http://robdodson.me')
+    crawler.should be_an_instance_of(Tentacles::Crawler)
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  before do</p>
+
+<pre><code>options = {
+  uri: 'http://robdodson.me', 
+  post_selector: '.entry-content',
+  metadata_selector: '.personal-metadata'
+}
+
+@crawler = Tentacles::Crawler.from_uri(options[:uri])
+</code></pre>
+
+<p>  end</p>
+
+<p>  subject { @crawler }</p>
+
+<p>  it { should respond_to(:get_words_by_selector) }
+  it { should respond_to(:get_metadata_by_selector) }</p>
+
+<p>end
+```</p>
+
+<p>And here is our <code>Crawler</code> class based largely on our original Crawler <a href="http://robdodson.me/blog/2012/05/05/building-a-simple-scraper-with-nokogiri-in-ruby/">from the first post.</a></p>
+
+<p>```ruby tentacles/lib/tentacles/crawler.rb
+require 'open-uri'
+require 'nokogiri'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  @uri = uri
+  @doc = Nokogiri::HTML(open(@uri))
+  @counts = Hash.new(0)
+end
+
+def get_words_by_selector(selector)
+  entries = doc.css('div.entry-content')
+  puts "Parsing #{entries.length} entries"
+  entries.each do |entry|
+    words = words_from_string(entry.content)
+    count_frequency(words)
+  end
+
+  sorted  = @counts.sort_by { |word, count| count }
+  puts sorted.map { |word, count| "#{word}: #{count}"}
+end
+
+def get_metadata_by_selector(selector)
+  # TODO
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+<code>``
+If we run the specs now they *should* pass but they're **EXTREMELY** slow! Just 4 examples takes 6 seconds O_O. Can you spot the source of all that lag? Take a look at what happens inside of</code>Crawler#initialize<code>. Notice how it's creating a new Nokogiri doc every time? Since we have a</code>before` block in our spec that means that each test (after the before) is going out and parsing our website. Let's see if FakeWeb can help us out some.</p>
+
+<p>```ruby tentacles/spec/crawler_spec.rb
+require_relative '../lib/tentacles/crawler'
+require 'fakeweb'</p>
+
+<p>describe Tentacles::Crawler do</p>
+
+<p>  before do</p>
+
+<pre><code># Create a mock options object
+@options = {
+  uri: 'http://robdodson.me', 
+  post_selector: '.entry-content',
+  metadata_selector: '.personal-metadata'
+}
+
+# Create a mock web request
+FakeWeb.register_uri(:get, @options[:uri], :body =&gt; "Hello World! Hello San Francisco!")
+</code></pre>
+
+<p>  end</p>
+
+<p>  describe "constructors" do</p>
+
+<pre><code>describe "#from_uri" do
+  it "should respond" do
+    Tentacles::Crawler.should respond_to(:from_uri)
+  end
+
+  it "should return an instance" do
+    crawler = Tentacles::Crawler.from_uri(@options[:uri])
+    crawler.should be_an_instance_of(Tentacles::Crawler)
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  describe "instances" do</p>
+
+<pre><code>before do
+  @crawler = Tentacles::Crawler.from_uri(@options[:uri])
+end
+
+subject { @crawler }
+
+it { should respond_to(:get_words_by_selector) }
+it { should respond_to(:get_metadata_by_selector) }
+</code></pre>
+
+<p>  end
+end
+```
+While it's not the prettiest test ever written it does get the job done. 0.00359 seconds for 4 examples <em>down from 6 seconds!</em> That's going to wrap it up for tonight. Tomorrow we'll finish off the spec and the implementation and finally get some data coming down from the live site. Until then!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

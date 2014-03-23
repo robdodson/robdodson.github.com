@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Polymer | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/polymer/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
+    <link href="http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/"/>
+    <updated>2013-11-19T09:27:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom</id>
+    <content type="html"><![CDATA[<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
+
+<!-- more -->
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/polymer-fonts-busted.png" title="'Busted Polymer Fonts'" ></p>
+
+<p>uh oh...</p>
+
+<p>At first, I was pretty confused. Why was everything working fine in Chrome, but acting crazy in Canary? I did some digging and manged to turn up <a href="https://groups.google.com/d/msg/polymer-dev/UUwew3x82EU/m9x2qWPi9ZoJ">this thread</a> on the Polymer mailing list.</p>
+
+<h2>The Fix</h2>
+
+<p>I had a bit of an "aha moment" when I remembered that the current version of Chrome doesn't actually hide any styles in the Shadow DOM, so my <code>@font-face</code> rules were ending up in the global scope. Canary, on the other hand, is encapsulating those styles in a shadow boundary and falling prey to an apparent bug.</p>
+
+<p>A simple workaround is to pull your <code>@font-face</code> rules out of the stylesheet for your element, and move them to the top of your import, like so:</p>
+
+<p>```
+&lt;style&gt;
+  @font-face {</p>
+
+<pre><code>font-family: 'FontAwesome';
+src: url('../fonts/fontawesome-webfont.eot?v=4.0.3');
+src: url('../fonts/fontawesome-webfont.eot?#iefix&amp;v=4.0.3') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+font-weight: normal;
+font-style: normal;
+</code></pre>
+
+<p>  }
+&lt;/style&gt;</p>
+
+<p><polymer-element name="semantic-ui-icon" noscript>
+  <template></p>
+
+<pre><code>&lt;link rel="stylesheet" href="./icon.css"&gt;
+&lt;content&gt;&lt;/content&gt;
+</code></pre>
+
+<p>  </template>
+</polymer-element>
+```</p>
+
+<p>I found this approach <a href="http://www.polymer-project.org/docs/polymer/styling.html#making-styles-global">in the Polymer documentation</a>, so I'm hoping it's considered a best practice. You'll also need to do this if you're using <code>@-webkit-keyframes</code> rules.</p>
+
+<p>I hope that clears things up for some of you who may have been stuck. I know it took me a couple days to come up with this solution, so I thought it best to go ahead and post about it :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Cat and the Hat CSS Selectors]]></title>
+    <link href="http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
+    <updated>2013-11-15T11:08:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
+    <content type="html"><![CDATA[<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM's author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That's where the new "cat" and "hat" CSS selectors come in.</p>
+
+<!-- more -->
+
+
+<h2>Support <a href="#" id="support"></a></h2>
+
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v33 or greater.</p>
+
+<p>Also make sure you've enabled <strong>Experimental Web Platform features</strong> in Chrome's <code>chrome://flags</code>.</p>
+
+<h2>The Hat <a href="#" id="the-hat"></a></h2>
+
+<p>The hat selector, a single caret ( ^ ), allows the parent document to pierce the <strong>upper shadow boundary</strong> and style elements that are one shadow root deep. If you have an element that only has one shadow root you can style pretty much anything inside of it using the hat.</p>
+
+<p data-height="268" data-theme-id="0" data-slug-hash="EhIax" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/EhIax'>Shadow DOM "Hat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+
+<h2>The Cat <a href="#" id="the-cat"></a></h2>
+
+<p>The cat, a double caret ( ^^ ) is much more powerful. It allows you to pierce every layer of the shadow DOM, so if you have shadow DOM within shadow DOM (a common occurrence when you nest custom elements) you can style all of them at once.</p>
+
+<p data-height="315" data-theme-id="0" data-slug-hash="wFqJg" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wFqJg'>Shadow DOM "Cat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+
+<h2>Styling Native Elements <a href="#" id="styling-native-elements"></a></h2>
+
+<p><a href="https://twitter.com/Volker_E/status/401202275009310722">@Volker_E asked</a> if the cat and hat selectors could be used to style the shadow DOM of native elements like <code>&lt;video&gt;</code>. As it turns out that <em>does</em> work, which is pretty cool.</p>
+
+<p data-height="268" data-theme-id="0" data-slug-hash="iaJHd" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/iaJHd'>Shadow DOM "Cat" and "Hat" CSS selectors</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Repeating Templates in Polymer]]></title>
+    <link href="http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer/"/>
+    <updated>2013-11-12T15:14:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2013/11/12/repeating-templates-in-polymer</id>
+    <content type="html"><![CDATA[<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
+
+<!-- more -->
+
+
+<h2>Bindings</h2>
+
+<p>Bindings allow you to easily pipe some data into your markup from a JavaScript object of some kind. If you've worked with a library like Mustache or Handlebars before then they should feel familiar.</p>
+
+<p>In Polymer land, the <code>&lt;template&gt;</code> tag has been extended so it supports a few handy binding attributes. These include <code>bind</code>, <code>repeat</code>, <code>if</code>, and <code>ref</code>.</p>
+
+<h2>How Not to Do It</h2>
+
+<p>If you take a look at the Polymer docs on <a href="http://www.polymer-project.org/platform/template.html">template bindings</a> you'll notice that the binding attribute (<code>bind</code>, <code>repeat</code>, etc.) is always located on the first template. For instance:</p>
+
+<p><code>
+&lt;template repeat="&amp;#123;{ collection }}"&gt;
+  Creates an instance with  for every element in the array collection.
+&lt;/template&gt;
+</code></p>
+
+<p>This lead me to believe that I should write my element like this:</p>
+
+<p>```
+<polymer-element name="polymer-letters">
+  <template repeat="&#123;{ letter in letters }}"></p>
+
+<pre><code>&amp;#123;{ letter }}
+</code></pre>
+
+<p>  </template>
+  <script></p>
+
+<pre><code>Polymer('polymer-letters', {
+  letters: ['a', 'b', 'c']
+});
+</code></pre>
+
+<p>  </script>
+</polymer-element>
+```</p>
+
+<p>But unfortunately that does not work <span style="color: grey;">#sadtrombone.</span></p>
+
+<h2>The Right Way</h2>
+
+<p>Polymer uses the first <code>template</code> element to create Shadow DOM, so if you want to use a binding <strong>you'll need to nest it <em>inside</em> another template.</strong></p>
+
+<p>Our updated example would look like this:</p>
+
+<p>```
+<polymer-element name="polymer-letters">
+  <template></p>
+
+<pre><code>&lt;template repeat="&amp;#123;{ letter in letters }}"&gt;
+  &amp;#123;{ letter }}
+&lt;/template&gt;
+</code></pre>
+
+<p>  </template>
+  <script></p>
+
+<pre><code>Polymer('polymer-letters', {
+  letters: ['a', 'b', 'c']
+});
+</code></pre>
+
+<p>  </script>
+</polymer-element>
+```</p>
+
+<p>And here it is running on CodePen:</p>
+
+<p data-height="268" data-theme-id="0" data-slug-hash="wxrqf" data-user="robdodson" data-default-tab="html" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wxrqf'>Polymer Template Bindings</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+
+<p>I mentioned this to Eric Bidelman and he opened <a href="https://github.com/Polymer/docs/issues/191">a ticket to improve the docs</a>, so keep an eye out for that. Hope this helps some of you that may have been stuck :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Web Components Revolution]]></title>
+    <link href="http://robdodson.github.com/blog/2013/10/24/web-components-revolution/"/>
+    <updated>2013-10-24T12:18:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/10/24/web-components-revolution</id>
+    <content type="html"><![CDATA[<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
+
+<br>
+
+
+<h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
+    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <updated>2013-10-02T08:05:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
+
+<p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+
+<!-- more -->
+
+
+<h2>Github</h2>
+
+<p><a href="https://github.com/robdodson/mark-down">If you'd like to follow along you can grab the code from Github.</a></p>
+
+<h2>The Setup</h2>
+
+<p>First things first, we need to download the latest version of Polymer. I like to do this with <a href="http://bower.io">bower</a> and I would encourage you to do so as well. Although it hasn't been discussed much, I think bower is going to be as important to web components as npm and the node_modules folder is to Node.js. When developers can assume the location and version of a dependency then they're able to remove extra work from the consumer's plate. But that's a discussion for another day! For now let's just run</p>
+
+<p><code>
+bower init
+</code></p>
+
+<p>to create our <code>bower.json</code> file.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/bower-init.jpg" title="'bower init is kinda awesome'" ></p>
+
+<p>And we'll want to install our Polymer and Markdown dependencies so</p>
+
+<p><code>
+bower install polymer markdown --save
+</code></p>
+
+<p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
+
+<p>``` html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Markdown Polymer Element&lt;/title&gt;
+
+&lt;!-- Include our Markdown lib --&gt;
+&lt;script src="./lib/markdown.js"&gt;&lt;/script&gt;
+
+&lt;!-- Include Polymer awesomesauce --&gt;
+&lt;script src="./lib/polymer.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Import our polymer elements --&gt;
+&lt;link rel="import" href="./elements/mark-down.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;!-- Test our awesome new tag --&gt;
+&lt;mark-down&gt;&lt;/mark-down&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<h2>The Element</h2>
+
+<p>We'll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
+
+<p>``` html
+<polymer-element name="mark-down">
+  <template></p>
+
+<pre><code>&lt;div id="markdown"&gt;&lt;/div&gt;
+</code></pre>
+
+<p>  </template>
+  <script></p>
+
+<pre><code>Polymer("mark-down");
+</code></pre>
+
+<p>  </script>
+</polymer-element>
+```</p>
+
+<p>Let's walk through this a bit.</p>
+
+<p><code>html
+&lt;polymer-element name="mark-down"&gt;
+</code>
+This line tells Polymer that we'd like to define a new element and its tag name should be <code>mark-down</code>.</p>
+
+<p><code>html
+&lt;template&gt;
+  &lt;div id="markdown"&gt;&lt;/div&gt;
+&lt;/template&gt;
+</code>
+This is our template which Polymer will convert to <a href="/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
+
+<p>``` html</p>
+
+<script>
+  Polymer("mark-down");
+</script>
+
+
+<p>```
+Finally, we call the Polymer constructor and pass it the name of our element. This makes our new tag available so we can start using it in the document. But first we'll need to parse our Markdown into HTML!</p>
+
+<h2>Markdown</h2>
+
+<p>All custom elements have a <code>createdCallback</code> which can be used as a kind of constructor function. Polymer shortens this method name to <code>created</code> but it's essentially the same thing. We'll use the <code>created</code> callback to grab the <code>innerHTML</code> of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.</p>
+
+<p>``` js
+Polymer("mark-down", {
+  created: function() {</p>
+
+<pre><code>var content = this.trim(this.innerHTML);
+var parsed = markdown.toHTML(content);
+this.$.markdown.innerHTML = parsed;
+</code></pre>
+
+<p>  },
+  // Remove excess white space
+  trim: function() { ... }
+});
+```</p>
+
+<p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I'm using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon's Markdown element.</a> Big thanks to Ryan :D</p>
+
+<p><code>js
+created: function() {
+  var content = this.trim(this.innerHTML);
+  ...
+},
+</code></p>
+
+<p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
+
+<p><code>js
+created: function() {
+  ...
+  var parsed = markdown.toHTML(content);
+  this.$.markdown.innerHTML = parsed;
+}
+</code></p>
+
+<h3>Node Finding</h3>
+
+<p>You might notice the funny use of <code>$</code> and think I'm doing something clever with jQuery. What's actually happening is that Polymer creates a map of any element inside of our template with an <code>id</code>. It then stores this map in a <code>$</code> property. So if you're using ids you can quickly access elements with the use of <code>this.$.someId</code>. In the Polymer docs this is referred to as <a href="http://www.polymer-project.org/getting-started.html#automatic-node-finding">automatic node finding.</a></p>
+
+<p><em>But aren't ids an anti-pattern?</em></p>
+
+<p>Although the traditional document model only allows for one id per page, the Shadow DOM creates a kind of clean slate where each element has its own id sandbox. This means we can use an id of <code>#markdown</code> in our element and not worry if the parent document also contains an element with id <code>#markdown</code>. Pretty nifty!</p>
+
+<h2>Test</h2>
+
+<p>The only thing left is for us to throw some Markdown into our tag to test it out.</p>
+
+<p>``` html
+<mark-down>
+  # This is a heading
+  ## This is a subheading</p>
+
+<p>  Here is <strong>more</strong> <em>Markdown!</em></p>
+
+<p>  <code>This is some codez</code></p>
+
+<p>  This <a href="http://robdodson.me">is a link</a>
+</mark-down>
+```</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/markdown-example.jpg" title="'sweet sweet markdown!'" ></p>
+
+<p>Piece O' Cake!</p>
+
+<h2>Moar!</h2>
+
+<p>There's a lot more that we could do, for instance, using something like <code>contenteditable</code> to allow us to toggle back and forth between the source and the rendered content. <a href="https://github.com/robdodson/mark-down">I've posted the code on Github</a> so fork it and go crazy.</p>
+
+<p>Be sure to leave a comment if you want to share your experiments!</p>
+
+<p>Till next time!</p>
+]]></content>
+  </entry>
+  
+</feed>

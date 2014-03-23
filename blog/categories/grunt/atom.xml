@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Grunt | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/grunt/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Asynchronous Grunt Tasks]]></title>
+    <link href="http://robdodson.github.com/blog/2012/11/29/asynchronous-grunt-tasks/"/>
+    <updated>2012-11-29T08:15:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2012/11/29/asynchronous-grunt-tasks</id>
+    <content type="html"><![CDATA[<p><em>Update: Thanks to <a href="https://twitter.com/waynemoir">@waynemoir</a> for updating the example source to work with Grunt ~0.4.</em></p>
+
+<p>After my last post <a href="https://twitter.com/stevensacks">@stevensacks</a> tweeted at me that he was having issues getting node FileSystem commands to work in grunt. After a bit of poking around I noticed that there was no call to grunt's <code>async</code> method, which was probably preventing the process from finishing properly. So today's post is a primer on async grunt processes, and how to make sure your node and grunt syntax is setup correctly.</p>
+
+<!--more-->
+
+
+<h2><a href="https://github.com/robdodson/async-grunt-tasks">Grab the Example Source</a></h2>
+
+<p>I've provided a simple grunt project at the link above. Take a look at the <code>tasks</code> folder and you should see two custom tasks, <code>grunt-read-write-local.js</code> and <code>grunt-read-write-web.js</code>. The former will read a local file and write its contents to a new file. The latter will request a webpage and write its contents to a static file.</p>
+
+<p>There are two asynchronous APIs at play here (Node's and Grunt's) and it's important to understand both.</p>
+
+<p>In Node an async operation will usually provide a callback, such is the case for <a href="http://nodejs.org/api/fs.html#fs_fs_readfile_filename_encoding_callback">fs.readFile</a>, or it will use an event dispatch, for instance in an http request we listen for the <a href="http://nodejs.org/api/http.html#http_event_data">data event.</a></p>
+
+<p>Grunt, on the other hand, uses a token or a kind of promise. You grab a reference to grunt's <code>done</code> function and you wait till your node process has finished before calling it. If you take a look at <code>grunt-read-write-local.js</code> you can see that we first call the async method to let grunt know it needs to wait:</p>
+
+<p><code>js tasks/grunt-read-write-local.js
+var done = this.async();
+</code></p>
+
+<p>and as we finish writing our file we tell grunt that everything completed succesfully and it's ok to carry on:</p>
+
+<p><code>js tasks/grunt-read-write-local.js
+// Write the contents of the target file to the new location
+fs.writeFile(pathToWrite, data, function (err) {
+  if (err) throw err;
+  console.log(pathToWrite + ' saved!');
+  // Tell grunt the async task is complete
+  done();
+});
+</code></p>
+
+<p>We do something similar in our <code>grunt-read-write-web</code> task but this time we work with <a href="http://nodejs.org/api/stream.html#stream_stream">Stream events.</a></p>
+
+<p>``` js tasks/grunt-read-write-web.js
+// Tell grunt this task is asynchronous.
+var done = this.async();</p>
+
+<p>http.get(pathToRead, function(res) {
+  // Pipe the data from the response stream to
+  // a static file.
+  res.pipe(fs.createWriteStream(pathToWrite));
+  // Tell grunt the async task is complete
+  res.on('end', function() {</p>
+
+<pre><code>console.log(pathToWrite + ' saved!');
+done();
+</code></pre>
+
+<p>  });
+}).on('error', function(e) {
+  console.log("Got error: " + e.message);
+  // Tell grunt the async task failed
+  done(false);
+});
+<code>``
+The response returned by an http request implements the [ReadableStream](http://nodejs.org/api/stream.html#stream_readable_stream) interface so it will emit</code>data<code>and</code>end<code>events. Node Streams have a great feature called [pipes](http://nodejs.org/api/stream.html#stream_stream_pipe_destination_options) which handle the work of consuming data events and writing them to a destination. Sexy :) We still listen for the</code>end` event coming from our request so we can notify grunt that the process has finished and it can move on.</p>
+
+<h2><a href="https://github.com/robdodson/async-grunt-tasks">Grab the Example Source</a></h2>
+
+<p>If you want to test it all out make sure you run <code>npm install</code> first to pull down any dependencies. Then kick things off by running <code>grunt</code>. I'm thinking my next post might be all about <a href="http://nodejs.org/api/stream.html#stream_stream">Streams</a> in node since they're such a cool concept. Thanks to <a href="https://twitter.com/maxogden">@maxogden</a> and <a href="https://twitter.com/dominictarr">@dominictarr</a> for their great posts on the subject of streams.</p>
+
+<ul>
+<li><a href="http://maxogden.com/node-streams.html">Node Streams: How do they work? -- Max Ogden</a></li>
+<li><a href="https://gist.github.com/2401787">High Level Style in JavaScript -- Dominic Tarr</a></li>
+</ul>
+
+
+<p>Any questions or comments hit me up in the discussion area below.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A Require.js multi-page shimmed site: How-To]]></title>
+    <link href="http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to/"/>
+    <updated>2012-11-18T13:05:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to</id>
+    <content type="html"><![CDATA[<p>I've been working with RequireJS a lot lately and found it really improves the way I manage my code. I had previous experience with Require in the context of some of my Backbone posts, but I'd never used it on a more traditional multi-page site before. The process of setting up Require on a multi-page site can be pretty confusing, so I thought I would put together this tutorial to help out others who might be stuck.</p>
+
+<!--more-->
+
+
+<h2>Overview</h2>
+
+<p><em>Note: This tutorial assumes you're already familiar with RequireJS and its configuration options. If not, I recommend you <a href="http://requirejs.org/">check out the docs</a> before proceeding</em></p>
+
+<h2><a href="https://github.com/robdodson/requirejs-multipage-shim-boilerplate">Grab the Boilerplate</a></h2>
+
+<p>When building single-page apps, many people choose to compile all of their JavaScript into one file before deploying to production. While this may make the initial download size of the page larger, the hope is that it reduces section-to-section http requests, thus making the overall experience feel snappier and more app-like.</p>
+
+<p>When working with a <em>multi-page site</em>, compiling everything into one file is probably not a good idea. Since you have no guarantee that the user will visit every page, you may be loading unnecessary JavaScript and slowing down the experience. Do you really need to load all of the JavaScript for the <strong>About</strong> page if the user is just visiting the <strong>Contact</strong> page?</p>
+
+<p>The ideal scenario is one in which each page has its own <code>main</code> file that contains page-specific instructions and then a separate (hopefully cached) file that contains all of the commonly used JavaScript libraries.</p>
+
+<p>For example, if you have a page called <strong>About</strong> and a page called <strong>Contact</strong> you would have <code>main-about.js</code> and <code>main-contact.js</code>. Let's say <code>main-about.js</code> and <code>main-contact.js</code> both require <code>'jquery'</code> and <code>'underscore'</code>. We wouldn't want to compile <code>jquery</code> and <code>underscore</code> into each <code>main</code> file because then we're creating unnecessary bloat. Instead, we should create a <code>common.js</code> file which contains <code>jquery</code> and <code>underscore</code> and we'll make sure that this file loads before any of our <code>main-*</code> files. Take a look at this diagram to help it sink in:</p>
+
+<p><strong>OPTIMIZED SCRIPTS</strong>
+```</p>
+
+<h2>common.js</h2>
+
+<p>js/vendor/jquery.js
+js/vendor/underscore.js</p>
+
+<h2>About</h2>
+
+<p>js/common.js
+js/app/main-about.js</p>
+
+<h2>Contact</h2>
+
+<p>js/common.js
+js/app/main-contact.js
+```</p>
+
+<p>By compiling all of those libaries into <code>common.js</code> we're reducing the number of http requests per page. Also, after the first page has loaded, <code>common.js</code> should be available from the browser's cache. Now that you get the general concept, let's take a look at an example.</p>
+
+<h2>Examples!</h2>
+
+<p><a href="https://twitter.com/jrburke">James Burke</a>, author of RequireJS, has done a great job putting together some example projects which show how to effectively structure your project so it can be run through the <a href="http://requirejs.org/docs/optimization.html">r.js optimization tool</a>. The one I typically refer to is the <a href="https://github.com/requirejs/example-multipage-shim">example-multipage-shim.</a> There's also an <a href="https://github.com/requirejs/example-multipage">example-multipage</a>, but I tend to use the shim version because it seems like there's always a few non-AMD scripts that end up in a project.</p>
+
+<p>I've put together my own boilerplate, using Bootstrap 3 and GruntJS, which you guys are free to grab <a href="https://github.com/robdodson/requirejs-multipage-shim-tutorial">here.</a> The rest of this post will walk through this boilerplate.</p>
+
+<h2>Learn you a boilerplate!</h2>
+
+<p>If you've worked with RequireJS on a single page site, you're probably used to defining a script tag that looks like this:</p>
+
+<p>```html</p>
+
+<!--This sets the baseUrl to the "scripts" directory, and
+    loads a script that will have a module ID of 'main'-->
+
+
+<script data-main="scripts/main.js" src="scripts/require.js"></script>
+
+
+<p>```</p>
+
+<p>The <code>data-main</code> attribute is a convenience feature of RequireJS which sets Require's <a href="http://requirejs.org/docs/api.html#config-baseUrl">baseUrl property.</a> You usually put some configuration options in the <code>main</code> file as well, for instance, if you're loading a 3rd party library you might create a <a href="http://requirejs.org/docs/api.html#config-paths">path</a> so you can easily reference it. Since our boilerplate has different <code>main-*</code> files for each page, we're going to put that configuration data into our <code>common.js</code> file instead.</p>
+
+<p><em>Hold on, I thought you said common.js was where we were going to compile all of our libraries?</em></p>
+
+<p>Indeed, you are correct astute reader. But since <code>common.js</code> is going to be loaded before any other required modules, why not put our configuration options in it as well? Here's what the <code>common.js</code> file from our boilerplate looks like:</p>
+
+<p>``` js
+//The build will inline common dependencies into this file.</p>
+
+<p>requirejs.config({
+  baseUrl: './js',
+  paths: {</p>
+
+<pre><code>'jquery': 'vendor/jquery',
+'bootstrap': 'vendor/bootstrap'
+</code></pre>
+
+<p>  },
+  shim: {</p>
+
+<pre><code>'bootstrap': ['jquery']
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>You'll note that we're using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>, which is not AMD compliant out of the box, so we have to <code>shim</code> it. In this case it depends on <code>jquery</code>, so we list that as its only dependency and we're good.</p>
+
+<p>Aside from <code>common.js</code>, you should probably take a look in the <code>app/models</code> directory. I've created two models that extend a <code>BasicModel</code> in order to illustrate that the <code>common.js</code> file isn't only for 3rd party code. <code>common.js</code> is really for any code that's going to be used over and over on your site. We'll toss the <code>BasicModel</code> into <code>common.js</code> during the build process.</p>
+
+<h2>Just hit build already...</h2>
+
+<p>O.K., O.K. I can tell you're ready to see some fireworks. Before we hit build, I want to point out the <code>options.js</code> file. This is where we tell <code>r.js</code> which modules to compile and what each module should include or exclude.</p>
+
+<p>``` js
+module.exports = {
+  appDir: 'www',
+  baseUrl: 'js/',
+  mainConfigFile: 'www/js/common.js',
+  dir: 'www-release',
+  modules: [</p>
+
+<pre><code>{
+  name: 'common',
+  include: [
+    'app/models/basicModel',
+    'jquery',
+    'bootstrap'
+  ]
+},
+{
+  name: 'app/main-about',
+  exclude: ['common']
+},
+{
+  name: 'app/main-contact',
+  exclude: ['common']
+}
+</code></pre>
+
+<p>  ]
+};
+```</p>
+
+<p>You'll note that first we put together our common module, then we tell the subsequent modules to exclude it. When you tell <code>r.js</code> to exclude a module it will find all of the nested dependencies in that module and exclude those as well. This is why we don't need to tell <code>main-about</code> and <code>main-contact</code> to exclude <code>bootstrap</code>. It sees that <code>bootstrap</code> is already in <code>common</code>, so it knows to exclude it.</p>
+
+<p>If you haven't done so already, now is a good time to do an <code>npm install</code>. That should pull down all of the <code>grunt</code> dependencies. Speaking of <code>grunt</code>, you'll need to install that as well if you've never used it <code>npm install -g grunt-cli</code>. You might notice in our <code>Gruntfile.js</code>, we are using a number of tasks from the <a href="https://github.com/gruntjs/grunt-contrib">grunt-contrib</a> library. <code>grunt-contrib</code> is a great resource, and I encourage you to spend some time looking through all of the tasks that fall under its umbrella.</p>
+
+<p>O.K. Ready to rock. Just type <code>grunt</code> to build, or <code>grunt.cmd</code> if you're on Windows (thanks <a href="http://twitter.com/stevensacks">@stevensacks</a>). When you're finished, you should have a new folder called <code>www-release</code>. Check out the <code>build.txt</code> file to see where everything ended up.</p>
+
+<p>```</p>
+
+<h2>css/bootstrap-responsive.css</h2>
+
+<p>css/bootstrap-responsive.css</p>
+
+<h2>css/bootstrap.css</h2>
+
+<p>css/bootstrap.css</p>
+
+<h2>css/style.css</h2>
+
+<p>css/style.css</p>
+
+<h2>js/common.js</h2>
+
+<p>js/common.js
+js/app/models/basicModel.js
+js/vendor/bootstrap.js</p>
+
+<h2>js/app/main-about.js</h2>
+
+<p>js/app/models/aboutModel.js
+js/app/main-about.js</p>
+
+<h2>js/app/main-contact.js</h2>
+
+<p>js/app/models/contactModel.js
+js/app/main-contact.js
+```</p>
+
+<p>If you take a look at the <code>common.js</code> file in <code>www-release</code>, it should look like a big blob of minified code. That's what we want to see. In this case it contains our <code>BasicModel</code>, Twitter Bootstrap, jQuery, and our original configuration code. If you refer to about.html you can see how we control the load order:</p>
+
+<p>``` html</p>
+
+<script src="./js/vendor/require.js"></script>
+
+
+<script type="text/javascript">
+// Load common code that includes config,
+// then load the app logic for this page.
+require(['./js/common'], function (common) {
+  // ./js/common.js sets the baseUrl to be ./js/
+  // You can ask for 'app/main-about' here instead
+  // of './js/app/main-about'
+  require(['app/main-about']);
+});
+</script>
+
+
+<p>```</p>
+
+<p>First, we bring in RequireJS. Then we load <code>common.js</code>, and only <em>after</em> <code>common.js</code> is loaded do we request the page specific code in <code>main-about</code>. If you stick to this structure, you should be able to layer your code so it's easy to manage.</p>
+
+<h2><a href="https://github.com/robdodson/requirejs-multipage-shim-tutorial">Grab the Example Source</a></h2>
+
+<p>Hope you learned something new today. Feedback and suggestions always welcome in the comments below. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Familiar with Backbone Boilerplate]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/17/getting-familiar-with-backbone-boilerplate/"/>
+    <updated>2012-05-17T07:47:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/17/getting-familiar-with-backbone-boilerplate</id>
+    <content type="html"><![CDATA[<p>I have an upcoming project which uses <a href="http://documentcloud.github.com/backbone/">Backbone</a> and <a href="http://nodejs.org/">Node.js</a> so I thought it would be good to blog about the topics (particularly Backbone) for a while to make sure I'm well up to speed.</p>
+
+<!--more-->
+
+
+<p>We're using the <a href="https://github.com/tbranyen/backbone-boilerplate">Backbone Boilerplate</a> to get us started since it includes a bit of file structure and a build process. As they mention in the docs you have to install <a href="https://github.com/cowboy/grunt">Grunt</a> if you want to use the build process they've stubbed out. Grunt is a javascript build tool which uses Node (think Rake in JS).</p>
+
+<p>As a refresher course I'm going to dig into the open-source <a href="http://addyosmani.github.com/backbone-fundamentals/">Backbone Fundamentals book</a> by <a href="http://addyosmani.github.com/backbone-fundamentals/">Addy Osmani</a>.</p>
+
+<p>First thing's first though, after we have nodejs and grunt installed we need to also install the bbb (backbone boilerplate build, I guess?) tool. You can <a href="https://github.com/backbone-boilerplate/grunt-bbb">grab it here.</a></p>
+
+<p>We'll create a new folder for our project and run <code>bbb init</code>. If all goes well it should stub out some project directories and files for us.</p>
+
+<h3>The Backbone Boilerplate templates</h3>
+
+<p>I'll start with the index.html file. It seems like your standard HTML5 doc with the noteable exception that it includes <a href="http://requirejs.org/">require.js</a> at the bottom of the page.</p>
+
+<p>```html
+&lt;!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1"></p>
+
+<p>  <title>Backbone Boilerplate</title></p>
+
+<p>  <!-- Application styles -->
+  <link rel="stylesheet" href="http://robdodson.github.com/assets/css/index.css">
+</head></p>
+
+<p><body>
+  <!-- Main container -->
+  <div role="main" id="main"></div></p>
+
+<p>  <!-- Application source -->
+  <script data-main="app/config" src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+</body>
+</html>
+```
+Require.js is a module and file loader which will help us manage our AMD modules. AMD (which stands for Asynchronous Module Definition) is a specification which details how to break JS down into modules that are loaded in, as needed, at runtime. <a href="http://addyosmani.com/writing-modular-js/">Again we turn to Addy Osmani for a good explanation.</a></p>
+
+<p>If you notice this block:
+```html</p>
+
+<!-- Application source -->
+
+
+<p>  <script data-main="app/config" src="http://robdodson.github.com/assets/js/libs/require.js"></script>
+<code>``
+the</code>data-main<code>attribute in the script tag is telling require.js what to load first. In this case it's the</code>app/config.js<code>file. If you omit the</code>js<code>require will add it for you. If you add the</code>.js` require will respect the path exactly as it was given. This distinction seems kind of trivial here but later on when you start configuring require with baseUrls and whatnot, it becomes more important.</p>
+
+<p>Let's look at that confg file, shall we?</p>
+
+<p>```javascript app/config.js
+// Set the require.js configuration for your application.
+require.config({
+  // Initialize the application with the main application file
+  deps: ["main"],</p>
+
+<p>  paths: {</p>
+
+<pre><code>// JavaScript folders
+libs: "../assets/js/libs",
+plugins: "../assets/js/plugins",
+
+// Libraries
+jquery: "../assets/js/libs/jquery",
+underscore: "../assets/js/libs/underscore",
+backbone: "../assets/js/libs/backbone",
+
+// Shim Plugin
+use: "../assets/js/plugins/use"
+</code></pre>
+
+<p>  },</p>
+
+<p>  use: {</p>
+
+<pre><code>backbone: {
+  deps: ["use!underscore", "jquery"],
+  attach: "Backbone"
+},
+
+underscore: {
+  attach: "_"
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>One of the first things you can do with Require is to pass it a configuration object. The config object <a href="http://requirejs.org/docs/api.html#config">can be used for a ton of bootstrap options</a> like setting paths, requiring other scripts, setting timeouts, etc. The first option we see here is <code>deps: ["main"]</code>. We can infer this is telling require to load our main.js file first. But how does it get the path to main.js? From the docs we see that since we haven't defined a <code>baseUrl</code> property require is using the path from our <code>data-main</code> attribute.</p>
+
+<blockquote><p>If no baseUrl is explicitly set in the configuration, the default value will be the location of the HTML page that loads require.js. If a data-main attribute is used, that path will become the baseUrl.</p></blockquote>
+
+<p>So we know that our baseUrl is <code>app/</code> and anything we require will be relative to that.</p>
+
+<p>Next up we have this block:</p>
+
+<p>```js
+paths: {</p>
+
+<pre><code>// JavaScript folders
+libs: "../assets/js/libs",
+plugins: "../assets/js/plugins",
+
+// Libraries
+jquery: "../assets/js/libs/jquery",
+underscore: "../assets/js/libs/underscore",
+backbone: "../assets/js/libs/backbone",
+
+// Shim Plugin
+use: "../assets/js/plugins/use"
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>The paths property defines paths relative to <code>baseUrl</code>. If we say
+<code>js
+require(["libs/module"])
+</code>
+require.js will look for this <code>libs</code> path and find it in our config file. Most of these make sense till we hit the last line which creates a path for the <code>use</code> plugin.</p>
+
+<p><a href="http://tbranyen.com/post/amdrequirejs-shim-plugin-for-loading-incompatible-javascript">It seems like <code>use</code> was created by Tim Branyen, the author of the Backbone Boilerplate, to help with loading libraries that are non-AMD compliant.</a> Most of the big libraries are currently not AMD compliant (underscore and backbone itself) so this makes sense. So instead of creating a shim for each of those libraries the <code>use</code> plugin <em>should</em> take care of things for us. We can see how it's used further in the config file:</p>
+
+<p>```js
+use: {</p>
+
+<pre><code>backbone: {
+  deps: ["use!underscore", "jquery"],
+  attach: "Backbone"
+},
+
+underscore: {
+  attach: "_"
+}
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Let's start at the bottom so we can see that underscore is defined and mapped to "_". <code>attach</code> is going to take whatever library we're defining and attach it to <code>window</code>. So underscore will be attached as <code>window._</code>. Next we see that backbone is defined and depends on our version of underscore and jquery. Since jquery is AMD compliant we don't need the call to <code>use!</code> but we will need it for underscore. Finally backbone is attached to the window as <code>window.Backbone</code>.</p>
+
+<p>That covers the configuration file. I'll move on to main.js in the next post.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Tired, Lazy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

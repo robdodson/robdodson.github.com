@@ -1,0 +1,354 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>D3 Basics: The Linear Scale | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">04 May 2012</span>
+	<h1 class="post-title">D3 Basics: The Linear Scale</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .label {
+      font-size: 12 px;
+      fill: #FFF;
+    }
+
+    .point {
+      stroke: #666;
+      fill: red;
+    }
+
+  </style>
+</div>
+
+
+<p>In <a href="http://localhost:4000/blog/2012/05/03/d3-basics-an-introduction-to-scales/">the last post</a> we did a basic introduction to the concept of scales in <a href="http://d3js.org/">D3.js</a>. Today we&#8217;ll look at our first scale and write some code to visualize it.</p>
+
+<!--more-->
+
+
+<h3>Linear Scales</h3>
+
+<p>The most basic scale in D3 is the <code>linear scale</code> which maps a continous <code>domain</code> to an output range. To define a linear domain we&#8217;ll need to first come up with a data set. Fibonacci numbers work well, so let&#8217;s declare a variable <code>data</code> like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">];</span>
+</code></pre></figure>
+
+
+<p>The data set will represent our scale&#8217;s input domain. The next step is defining an output range. Since we&#8217;re going to be graphing these numbers we want our range to represent screen coordinates. Let&#8217;s go ahead and declare a <code>width</code> and a <code>height</code> variable and set them to 320 by 150.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">320</span><span class="p">,</span>
+    <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+</code></pre></figure>
+
+
+<p>We now have everything we need to create our first scale.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">data</span><span class="p">)])</span>
+        <span class="p">.</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+</code></pre></figure>
+
+
+<p>D3 methods often return a value of <code>self</code> meaning you can chain method calls onto one another. If you&#8217;re used to jQuery this should be a common idiom for you. You&#8217;ll notice that both the domain and the range functions accept arrays as parameters. Typically the domain only receives two values, the minimum and maximum of our data set. Likewise the range will be given the minimum and maximum of our output space. You could pass in multiple values to create a polylinear scale but that&#8217;s outside the scope of our dicussion today.</p>
+
+<p>In the domain function we&#8217;re using a helper called <code>d3.max</code>. Similar to <code>Math.max</code>, it looks at our data set and figures out what is the largest value. While <code>Math.max</code> only works on two numbers, <code>d3.max</code> will iterate over an entire <code>Array</code> for us.</p>
+
+<p>If you&#8217;ve been following along in your own file you should be able to open your console and type <code>x(8)</code> to get 300.</p>
+
+<p>With just this information alone we have enough to build our first graph.</p>
+
+<!-- D3.js Chart -->
+
+
+<p><small>Fibonacci Sequence Chart 1.0</small></p>
+
+<div id="linear-scale-chart-1"></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  var data = [1, 1, 2, 3, 5, 8];
+  var width = 320
+      height = 150;
+
+  var x = d3.scale.linear()
+          .domain([0, d3.max(data)])
+          .range([0, width]);
+
+  var svg = d3.select('#linear-scale-chart-1').append('svg')
+          .attr('width', width)
+          .attr('height', height)
+          .attr('class', 'chart');
+
+  svg.selectAll('.chart')
+          .data(data)
+        .enter().append('rect')
+          .attr('class', 'bar')
+          //.attr('y', function(d, i) { return i * 20 })
+          .attr('y', function(d, i) { return i * 20; })
+          .attr('width', function(d) { return x(d); })
+          .attr('height', 15);
+
+})();
+</script>
+
+
+
+
+<figure class='code'><figcaption><span>JavaScript</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">320</span>
+    <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">data</span><span class="p">)])</span>
+        <span class="p">.</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+
+<span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="nx">width</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;chart&#39;</span><span class="p">);</span>
+
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">&#39;.chart&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;rect&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">})</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">})</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">);</span>
+</code></pre></figure>
+
+
+
+
+<figure class='code'><figcaption><span>CSS</span></figcaption><pre><code><span class="nc">.chart</span> <span class="p">{</span>
+  <span class="k">font-family</span><span class="o">:</span> <span class="n">Arial</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.bar</span> <span class="p">{</span>
+  <span class="n">fill</span><span class="o">:</span> <span class="nb">steelblue</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<h3>Break It Down</h3>
+
+<p>Let&#8217;s go through the JavaScript piece by piece to outline what happened.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="mi">320</span>
+    <span class="nx">height</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">data</span><span class="p">)])</span>
+        <span class="p">.</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">]);</span>
+</code></pre></figure>
+
+
+<p>The first block should be pretty familar at this point. We&#8217;ve declared our Fibonacci data, our explicit width and height and defined our scale. Nothing new here.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="nx">width</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;chart&#39;</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>In the next section we&#8217;re declaring our <code>SVG</code> element. We use a D3 selection to grab the <code>body</code> tag and we append an <code>svg</code> tag onto it. Since D3 uses method-chaining we can keep assigning attributes to our SVG element. We declare the width and the height to match the explicit values set earlier and finally we give it a class name of <code>chart</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">&#39;.chart&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;rect&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">})</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">})</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>This last section is where it all ties together. Since we stored our SVG element in a variable called <code>svg</code> we&#8217;re able to easily reference it again. We instruct D3 to create a <code>join</code> by calling the <code>data</code> method and passing in our <code>Array</code> of values. When D3 performs a join it steps through each element in the array and attempts to match it to a figure that already exists on the page. If nothing exists it will call the <code>enter</code> function. At this point it steps through the array again, passing the values to us so we can define new shapes. <a href="http://bost.ocks.org/mike/join/">For a much more in-depth explanation of joins refer back to this article.</a></p>
+
+<p>In our case we&#8217;re appending SVG <code>Rects</code> but it could just as easily be circles or other shapes. We give each rect a class of <code>bar</code> so we can style it with CSS. When we declare the <code>y</code> attribute instead of using an explicit value we create an <code>accessor</code>, a little helper function which takes a piece of data and an optional index as its arguments. In this case <code>d</code> will equal subsequent elements in our data array and <code>i</code> will equal their indices. For a much clearer picture of what&#8217;s happening you can change it to read:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;d = data[&#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;] = &#39;</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span> <span class="k">return</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">20</span> <span class="p">})</span>
+</code></pre></figure>
+
+
+<p>which will give you the following output.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">d</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nx">d</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nx">d</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="nx">d</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="nx">d</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nx">d</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span>
+</code></pre></figure>
+
+
+<p>Since we&#8217;re just trying to space out our bars along the y-axis we don&#8217;t really care about the value of <code>d</code>. Instead we&#8217;ll use the index, <code>i</code>, to offset each bar by a value of i * 20.</p>
+
+<p>In the last two lines we&#8217;re going to finally use our linear scale to define our bar&#8217;s width. Here they are again as a refresher.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">})</span>
+<span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>As each element of the array is passed to our width accessor it&#8217;s run through the scale and the output returned. Since 8 is our maximum value it should extend all the way to the end of our range.</p>
+
+<p>The final call is just an explicit height for each bar. Depending on the scale this bit can be automated but for simplicity sake we&#8217;ll just use a hard coded value so we can get something on screen.</p>
+
+<h3>Conclusion</h3>
+
+<p>Now that we&#8217;ve got one scale under our belt the others should be pretty easy to digest. Over the next couple of posts we&#8217;ll focus on ordinal scales followed by time scales. Stay tuned and ping me if you have any questions. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=D3 Basics: The Linear Scale&amp;url=http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

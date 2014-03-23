@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Sublime Text 2 | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/sublime-text-2/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sublime Snippet Basics]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/24/sublime-snippet-basics/"/>
+    <updated>2012-06-24T22:48:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/24/sublime-snippet-basics</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/">Yesterday I covered some tips and tricks</a> I've learned over the past few months of using Sublime. Something I didn't touch on is Sublime's Snippet architecture.</p>
+
+<!--more-->
+
+
+<p>Essentially a snippet is a little piece of code that gets executed when you type some characters and hit the <code>tab</code> key. For instance I have a snippet that spits out <code>console.log()</code> whenever I type <code>lg</code> and press <code>tab</code>. One clever feature of snippets is that they can be bound to a keyboard shortcut if the key binding calls the <code>insert_snippet</code> command and passes the path to the snippet file as an argument. For example:</p>
+
+<p>```json
+{</p>
+
+<pre><code>"keys": ["super+shift+r"], 
+"command": "insert_snippet", 
+"args": { 
+    "name": "Packages/XML/long-tag.sublime-snippet" 
+} 
+</code></pre>
+
+<p>}
+<code>``
+That will tell Sublime that when I press</code>cmd+shift+r<code>it should act as if I triggered the long-tag snippet for XML files. Basically that will let me highlight some text, hit</code>cmd+shift+r` and then I can type some HTML or XML tags to wrap my text. Cool. So let's go about writing our own snippet to learn a bit more about this process.</p>
+
+<h2>Getting Started</h2>
+
+<p>The previously mentioned snippet is great for wrapping an item in HTML/XML tags but it totally breaks if we need to wrap our selection in anything not existing within brackets: <code>&lt;/&gt;</code>. Since I write a lot of Markdown I'm always wrapping text in some kind of markdown syntax, <code>*like this*</code>, but there's no easy way to do this. The aforementioned snippet is close so we're going to copy it and tweak it to do what we need.</p>
+
+<p><a href="http://docs.sublimetext.info/en/latest/reference/snippets.html">The documentation on snippets for Sublime is short and full of good information. I suggest you read it before continuing on.</a></p>
+
+<p>We're going to copy the file located at <code>/Library/Application\ Support/Sublime\ Text\ 2/Packages/XML</code> and move it into our <code>/Packages/User</code> directory. I chose to rename the file to <code>wrap-anything.sublime-snippet</code>. The original snippet looks like this:</p>
+
+<p>```xml
+<snippet></p>
+
+<pre><code>&lt;content&gt;&lt;![CDATA[&lt;${1:p}&gt;${2:$SELECTION}&lt;/${1/([^ ]+).*/$1/}&gt;]]&gt;&lt;/content&gt;
+&lt;tabTrigger&gt;&amp;lt;&lt;/tabTrigger&gt;
+&lt;scope&gt;text.xml&lt;/scope&gt;
+&lt;description&gt;Long Tag&lt;/description&gt;
+</code></pre>
+
+<p></snippet>
+```</p>
+
+<p><code>&lt;content&gt;</code> is where we put everything that's going to be spit out by our snippet when it's executed. Items are wrapped in a <code>CDATA</code> tag so they don't interfere with the rest of the XML.</p>
+
+<p>The first part <code>&lt;${1:p}&gt;</code> outputs a <code>&lt;</code> followed by a variable, <code>$1</code> which has a default value of the letter "p" and it closes with a <code>&gt;</code>. If our snippet only contained this bit of code then when we ran it the output would be <code>&lt;p&gt;</code>.</p>
+
+<p>The second part uses one of the environment variables <a href="http://docs.sublimetext.info/en/latest/reference/snippets.html">talked about in the snippet documentation.</a> <code>$SELECTION</code> will take whatever we've highlighted and make it part of the snippet output. You'll notice this variable is prefixed with a <code>2:</code> meaning it's our second variable and it's default output is going to be whatever was highlighted. The 2 also indicates that if the user hits <code>tab</code> this is the second place they'll go.</p>
+
+<p>The third part contains a block of regex which, I think, just matches whatever the user types after the snippet has executed. My regex sucks so correct me if I'm wrong.</p>
+
+<p><code>&lt;tabTrigger&gt;</code> indicates what character should be typed before hitting <code>tab</code> to fire off the snippet. In this case it's a <code>&lt;</code></p>
+
+<p><code>&lt;scope&gt;</code> defines where the snippet should run I believe.. But I'm not entirely sure. The documentation just says "Scope selector to activate this snippet." I didn't see a text.xml file anywhere in the <code>Packages/XML/</code> folder and I know this snippet works in non-xml files so...yeah...<em>shrug</em></p>
+
+<p><code>&lt;description&gt;</code> lets you describe the thing. duh.</p>
+
+<p>OK let's make our own simplified snippet:</p>
+
+<p>```xml
+<snippet></p>
+
+<pre><code>&lt;content&gt;&lt;![CDATA[${1:`}${2:$SELECTION}${1}]]&gt;&lt;/content&gt;
+&lt;tabTrigger&gt;&lt;/tabTrigger&gt;
+&lt;scope&gt;&lt;/scope&gt;
+&lt;description&gt;Wrap any block of text&lt;/description&gt;
+</code></pre>
+
+<p></snippet>
+```</p>
+
+<p>Our snippet is less sophisticated than the previous one since we've excluded the regex. With the above snippet located in our <code>Packages/User/</code> folder we can tie it to a keyboard shortcut like so:</p>
+
+<p><code>json
+{ "keys": ["super+r"], "command": "insert_snippet", "args": { "name": "Packages/User/wrap-anything.sublime-snippet" } },
+</code></p>
+
+<p>Now when we hit <code>cmd+r</code> it will let us wrap our current selection in whatever we want :)</p>
+
+<p>For good measure here's a really useful console.log snippet that's triggered by typing <code>lg</code> and then pressing <code>tab</code>.</p>
+
+<p>```xml
+<snippet></p>
+
+<pre><code>&lt;content&gt;&lt;![CDATA[console.log(${1});]]&gt;&lt;/content&gt;
+&lt;tabTrigger&gt;lg&lt;/tabTrigger&gt;
+&lt;scope&gt;source.js&lt;/scope&gt;
+&lt;description&gt;console.log()&lt;/description&gt;
+</code></pre>
+
+<p></snippet>
+```</p>
+
+<p>No need to bind this to a keyboard shortcut (unless you want to) because it defines a tab trigger. I know this wasn't super in-depth but hopefully it gives you a little bit of a start. <a href="http://docs.sublimetext.info/en/latest/reference/snippets.html">Read the documentation on snippets</a> and tighten up your regex! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Sublime Text 2 Tips and Shortcuts]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts/"/>
+    <updated>2012-06-23T22:28:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/23/sublime-text-2-tips-and-shortcuts</id>
+    <content type="html"><![CDATA[<p>I've been using Sublime Text 2 for probably two months now and in that time I've discovered tons of useful tricks. I figured I should start writing them down for anyone who might be interested. I'll try to explain the bits that seem esoteric because there are a lot of cool commands which only work in certain contexts.</p>
+
+<!--more-->
+
+
+<h2>Finding your preferences</h2>
+
+<p>One of the first things you want to do with Sublime is to find your User key bindings. They're located under <code>Sublime Text 2 &gt; Preferences &gt; Key Bindings - User</code></p>
+
+<p>Sublime Text is very DIY so there isn't a fancy GUI to help you change keyboard shortcuts. Instead you use the preference file to override the default shortcuts. Like a lot of things in Sublime, this can at first seem annoying and non-intuitive. That is, until you realize that by doing it this way Sublime has actually given you the power to make <em>extremely</em> awesome key bindings. Take some time to look around in this file. I still only understand a fraction of what all it does but the little bits I learn here and there give me all sorts of ideas for new shortcuts. Just remember, if you want to change a keyboard shortcut you should do it in the User's key bindings and not the Default key bindings.</p>
+
+<p><strong>Pro Tip:</strong> If you ever want to change a keyboard shortcut but can't figure out what command is currently running open up Sublime's built in terminal with <code>ctrl+`</code> then type <code>sublime.log_commands(True)</code>. Now when you execute your command from the menu you should see its name show up in the console. Just remember to turn logging off when you're done :)</p>
+
+<h2>Sublime Package Control</h2>
+
+<p>If you only follow one piece of my advice make it this: <a href="http://wbond.net/sublime_packages/package_control">Install Sublime Package Control.</a></p>
+
+<p>Package Control makes it extremely easy to manage your Sublime plugins. It also helps with discovering new ones, which is nice. Just install it if you haven't already, it's impossible to live without.</p>
+
+<h2>Setting up a command line shortcut</h2>
+
+<p>I highly recommend setting up a symlink so you can easily open things with Sublime. <a href="http://www.sublimetext.com/docs/2/osx_command_line.html">This article details how to go about it on OSX.</a></p>
+
+<p>CLI FTW!</p>
+
+<h2>The Command Palette</h2>
+
+<p>OK, so hopefully you've setup Sublime Package Control. Maybe you've even installed some plugins. It's time for you to meet the Command Palette then. <code>cmd+shift+p</code> will open up the window and from here you can execute just about any command either native to Sublime or part of a plugin. It is super useful for all those things you don't run often enough to turn into full blown keyboard shortcuts. It's also useful if you know the name of a command but can't remember what section of the menu it lives under.</p>
+
+<h2>Goto Anything...</h2>
+
+<p>So you want to fly around your project like a ninja on methamphetamines, eh? Then the shortcut you want is <code>cmd+p</code>. Once you've opened the dialog try typing a filename. Useful right? But wait, there's more...</p>
+
+<p>If you preface what you're typing with a <code>@</code> it will look for "symbols" in the current file. Ex: <code>@foobar</code>. But just typing <code>@</code> will give you a nice file outline. The definition of what a symbol is depends on the file-type. In a Markdown file, for instance, it will list every header. In a JavaScript or Ruby file it will list every method of an object.</p>
+
+<p>One last trick. If instead of an <code>@</code> you preface things with an <code>:</code> you can type a line number instead and hit enter to jump to that point. Ex: <code>:415</code></p>
+
+<p>There are other keyboard shortcuts for jumping to a line and going to a symbol but why bother when you can just use <code>cmd+p</code> and some easy prefixing.</p>
+
+<h2>Splitting the editor windows</h2>
+
+<p>OK this one is also important and I can't recommend it enough. <strong>Learn to split your editor windows.</strong> I never used this feature in previous IDEs and now I wonder how I ever lived without it. Whether you have a unit test in one window and an implementation in the other, or some HTML and CSS, this feature is just always handy.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/sublime-split-panes.png" title="'Split windows in Sublime'" ></p>
+
+<p>I <em>live</em> in split panes. They've changed my workflow significantly for the better. Less time switching between files and finding your place is an incredible advantage. You can access them through <code>View &gt; Layouts</code>. It will behoove you to learn these keyboard shortcuts. Also learn the shortcuts for <code>View &gt; Focus Group</code> and <code>View &gt; Move File to Group</code>.</p>
+
+<h2>Selections</h2>
+
+<p>There are some neat selections which come in handy depending on your context. Personally I use Expand Selection to Tag, <code>cmd+shift+a</code> quite frequently when writing HTML. I also use Expand Selection to Line, <code>cmd+L</code> and Expand Selection to Word, <code>cmd+D</code> a lot.</p>
+
+<h2>Selections with Multiple Cursors</h2>
+
+<p>Multiple cursors... It's one of those things you didn't realize you needed until suddenly you had it and you were all like "WHAAAAAAAAT!"</p>
+
+<p>There are a handful of ways to activate multiple cursors in Sublime. Hitting <code>cmd+D</code> to select multiples of the same word will put us into a multi-cursor context.</p>
+
+<p>Another way to go about it is to highlight a block of text and hit <code>cmd+shift+L</code> which will split each line into its own selection. This is extremely useful when editing HTML where often times you have repeating elements and you want to tweak a class name on all of them.</p>
+
+<p>You can also just hold <code>cmd</code> and click around your file to add more cursors. Or you can hold <code>ctrl+shift</code> and tap either the up or down arrows to add a new cursor in that direction.</p>
+
+<h2>Moving Lines</h2>
+
+<p><code>Edit &gt; Line &gt; Swap Line Up</code></p>
+
+<p><code>Edit &gt; Line &gt; Swap Line Down</code></p>
+
+<p><code>Edit &gt; Line &gt; Duplicate Line</code></p>
+
+<p>Learn em. Love em. I changed my keyboard shortcut for these so I can't recall what it is by default. Regardless I think I use these three commands more than any other so I would say if you only learn three shortcuts, make it these three.</p>
+
+<p><strong>Pro Tip:</strong> If you want to duplicate a block of code highlight it and hit <code>cmd+L</code> to select the new line before you hit <code>cmd+shift+D</code>. This way your duplicated block will appear on a new line, rather than next to the previous block of code.</p>
+
+<h2>Wrap your lines</h2>
+
+<p>If you've installed the <a href="https://github.com/SublimeText/Tag">Tag plugin</a> you should have some extra line wrapping methods. I would also recommend you install <a href="https://bitbucket.org/sublimator/sublime-2-zencoding">ZenCoding</a>. I'm suggesting this for two reasons:</p>
+
+<ol>
+<li>You get awesome new features...</li>
+<li>I can't remember if what I'm about to say is native to Sublime or part of a plugin.</li>
+</ol>
+
+
+<p>OK with that out of the way...</p>
+
+<p>Let's say you're working on some HTML and you have a block of text that you'd like to wrap in a <code>p</code> tag. No problemo! Highlight the text and hit <code>ctrl+shift+w</code> or <code>Edit &gt; Tag &gt; Wrap Selection in Tag</code>. There's a more advanced versions that comes with the ZenCoding plugin which lets you do really elaborate wrappings. I believe the keyboard shortcut for that is <code>ctrl+alt+w</code>. Personally I dislike using the <code>ctrl</code> key on my Mac laptop so I changed both of those keyboard shortcuts to the following:</p>
+
+<p>```
+{ "keys": ["super+shift+r"], "command": "insert_snippet", "args": { "name": "Packages/XML/long-tag.sublime-snippet" } },
+{ "keys": ["alt+shift+r"], "command": "wrap_zen_as_you_type",
+"context": [</p>
+
+<pre><code>{
+  "operand": "text.html, text.xml",
+  "operator": "equal",
+  "match_all": true,
+  "key": "selector"
+}
+</code></pre>
+
+<p>  ]
+}
+<code>``
+You'll notice that instead of just using a</code>wrap_in_tag<code>command name the first entry actually calls another command,</code>insert_snippet<code>and passes it an argument:</code>Packages/XML/long-tag.sublime.snippet` which is the location of a snippet file. Pretty cool trick!</p>
+
+<p>Also note that Sublime uses the term "super" to refer to the command key</p>
+
+<h2>Bookmarks!</h2>
+
+<p>If you're like me then you lose your place in large files. That's where bookmarks can be a big help. <code>cmd+F2</code> will add a new bookmark on the page. The bookmark is tied to the line so if you use the move line up/down commands it will move the bookmark as well (nice). To cycle through your bookmarks just hit F2. The rest of the bookmark commands are located in <code>Goto &gt; Bookmarks</code>. Take note of the one that says <code>Select All Bookmarks</code> which will basically let you do a multi-selection on all of the lines you've already bookmarked.</p>
+
+<h2>Marks</h2>
+
+<p>Marks are very similar to bookmarks but they serve a different purpose. They're located in <code>Edit &gt; Mark</code> and their keyboard shortcuts are a little weird because you need to hit <code>cmd+K</code> and then a secondary shortcut like <code>cmd+space</code>. I find myself using Marks a few times a day to do large selections. For instance if you have a big block of HTML it can be very tricky to stay inside the proper scope if you're trying to delete all the contents of a very high level container. With Marks you can just put a mark on the opening line of the container, hit <code>cmd+shift+a</code> to select down to the bottom of the tag, and then hit <code>cmd+K, cmd+a</code> to select everything back to your previous mark. Marks can also be used to swap lines of text but I've never needed to do that in practice.</p>
+
+<h2>Hide the Sidebar</h2>
+
+<p>To hide the sidebar hit <code>cmd+K, cmd+B</code>. Since I work on a laptop I often hide the sidebar to give myself that extra 100px of reading space.</p>
+
+<h2>Turn off Minimap</h2>
+
+<p>Do you guys use that minimap thing in the top corner of the editor windows? I find it <em>incredibly</em> distracting and it also takes up screen space. To disable it go to <code>View &gt; Hide Minimap</code>.</p>
+
+<h2>Saving a project</h2>
+
+<p>This one might be obvious for many of you but it wasn't something I was really taking advantage of until recently. Once you have a folder open it can be beneficial to save it as a project via the <code>Project &gt; Save Project As...</code> command. Save the project files in the root of your app and then whenever you do <code>Project &gt; Recent Projects...</code> it will open everything up with all your windows just as you left them.</p>
+
+<p>To switch between projects use <code>ctrl+cmd+p</code>.</p>
+
+<h2>Some awesome plugins</h2>
+
+<p>Sublime is all about plugins so here's a list of some of my favorites. Once you have Package Control installed you can just hit <code>cmd+shift+p</code> and type <code>discover</code>, then hit enter which will take you to a page listing tons of plugins. Try out some (or all) of the ones below. They're great :D</p>
+
+<ul>
+<li>AdvancedNewFile</li>
+<li>HtmlTidy</li>
+<li>Nettuts+ Fetch</li>
+<li>Prefixr</li>
+<li>RubyTest</li>
+<li>Shell Turtlestein</li>
+<li>SideBarEnhancements</li>
+<li>sublime-github</li>
+<li>Sublime-JSHint</li>
+<li>SublimeCodeIntel</li>
+<li>Tag</li>
+<li>ZenCoding</li>
+</ul>
+
+
+<h2>Convert Case</h2>
+
+<p>If you highlight some text you can use <code>cmd+K, cmd+U</code> to uppercase it. Likewise you can use <code>cmd+K, cmd+L</code> to lowercase it.</p>
+
+<h2>Spell Check :)</h2>
+
+<p>Finally I wouldn't be much of a blogger if I didn't point out the spell check feature. Hit <code>F6</code> to check your current file. Once you've turned it on the spell checker will stay on until you hit <code>F6</code> again.</p>
+
+<h2>Hack the Planet!</h2>
+
+<p>We've only really scratched the surface of what Sublime is capable of. In the future I'd like to write more about its awesome Macros, Snippets and Plugin architecture. Till then, have fun hacking. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Lazy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

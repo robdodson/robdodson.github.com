@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby Gems | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/ruby-gems/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Messing around with Gems]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/12/messing-around-with-gems/"/>
+    <updated>2012-06-12T22:22:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/12/messing-around-with-gems</id>
+    <content type="html"><![CDATA[<p>I want to work on a code generation tool, similar to the one offered up by Rails. However my Ruby-fu is a bit rusty at the moment so this might be an interesting struggle.</p>
+
+<!--more-->
+
+
+<p>The first thing I'm going to do is create a new gemset with rvm. Our gem is going to be called <code>r2</code> after the much beloved R2D2 so we'll also call our gemset <code>r2</code>.</p>
+
+<p><code>
+rvm gemset create r2
+rvm use 1.9.3@r2
+</code></p>
+
+<p>Ugh after spending about an 2 hours fucking around with bundler I'm getting nowhere. I'll have to pick this up tomorrow. :\ #WorstPostEver</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/sadness.jpg" title="'sadness'" ></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Cranky</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 8</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

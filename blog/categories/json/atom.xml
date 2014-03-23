@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: JSON | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/json/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Outputting JSON from Ruby]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby/"/>
+    <updated>2012-06-18T08:19:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/">Last night</a> I got the scraper to write an output.txt file which listed all the contents of <code>words_by_selector</code>. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.</p>
+
+<!--more-->
+
+
+<h2>Updating our tests</h2>
+
+<p>Our current test for <code>words_by_selector</code> looks like this:</p>
+
+<p><code>ruby spec/crawler_spec.rb
+it "should produce the correct Array of keywords" do
+  expected_array = ['hello: 3', 'world: 2', 'foobar: 1']
+  actual_array = @crawler.words_by_selector(@options[:post_selector], @options[:ignored_post_selector])
+  actual_array.should eq(expected_array)
+end
+</code>
+We're going to need to break that sucker so it'll produce something more like this:</p>
+
+<p>``` ruby spec/crawler_spec.rb
+it "should produce the correct Hash of keywords" do
+  expected_hash = {</p>
+
+<pre><code>  word_count: [
+    {
+      word: 'hello',
+      count: 3
+    },
+    {
+      word: 'world',
+      count: 2
+    },
+    {
+      word: 'foobar',
+      count: 1
+    },
+  ]
+}
+</code></pre>
+
+<p>  actual_hash = @crawler.words_by_selector(@options[:post_selector], @options[:ignored_post_selector])
+  actual_hash.should eq(expected_hash)
+end
+```</p>
+
+<p>And we update <code>words_by_selector</code> to look like this:</p>
+
+<p>``` ruby tentacles/lib/tentacles/crawler.rb
+def words_by_selector(selector, ignored_selector = nil)
+  node = nodes_by_selector(selector).first
+  if ignored_selector</p>
+
+<pre><code>ignored = node.css(ignored_selector)
+ignored.remove()
+</code></pre>
+
+<p>  end
+  words = words_from_string(node.content)
+  count_frequency(words)</p>
+
+<p>  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map! do |word, count|</p>
+
+<pre><code>{ word: word, count: count }
+</code></pre>
+
+<p>  end
+  { word_count: sorted }
+end
+```</p>
+
+<p>Our new test should pass. Feel free to flip one of the numbers in the expected_hash to 99 or something to see it fail.</p>
+
+<p>Now let's make sure the runner takes the content out of the crawler and writes it to a JSON file.</p>
+
+<p>``` ruby spec/runner_spec.rb
+it "should create a directory for our output" do
+  @runner.run
+  Dir.exists?('../../output').should be_true
+end</p>
+
+<p>it "should output the correct JSON" do
+  @runner.run
+  File.open("../../output/word_count.json") do |file|</p>
+
+<pre><code>file.each_line do |line|
+  puts line
+end
+</code></pre>
+
+<p>  end
+end
+```
+And in runner.rb...</p>
+
+<p>``` ruby tentacles/lib/tentacles/runner.rb
+def run    <br/>
+  @crawler = Tentacles::Crawler.from_uri(@options.uri)
+  output = @crawler.words_by_selector(@options.post_selector, 'ul:last-child')</p>
+
+<p>  Dir.mkdir('../../output') unless Dir.exists?('../../output')</p>
+
+<p>  File.open("../../output/word_count.json", "w") do |file|</p>
+
+<pre><code>file.puts JSON.pretty_generate(output)
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>And there we go. Our first decent output from the crawler :D -Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

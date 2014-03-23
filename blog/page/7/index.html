@@ -1,0 +1,357 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="home-template">
+  <header id="site-head" style="background-image: url(/images/water.jpg)">
+  <div class="vertical">
+    <div id="site-head-content" class="inner">
+      <h1 class="blog-title"><a class="no-rollover" href="/">Rob Dodson talks internets</a></h1>
+      <h2 class="blog-description"></h2>
+    </div>
+  </div>
+</header>
+  <main class="content" role="main">
+    
+
+
+
+    <article class="post">
+	
+		
+		<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	
+	<header class="post-header">
+		<span class="post-meta">23 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/23/failing-at-ruby/">
+			
+				Failing at Ruby</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>I&#8217;m just getting my ass kicked by Ruby tonight so I don&#8217;t have much to show. Trying to just get my metadata scraping to output something currently looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;open-uri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;nokogiri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;mechanize&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;selection_error&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Crawler</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:doc</span>
+
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">from_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="kp">new</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="c1"># Create a new instance of Mechanize and grab our page</span>
+      <span class="vi">@agent</span> <span class="o">=</span> <span class="no">Mechanize</span><span class="o">.</span><span class="n">new</span>
+
+      <span class="vi">@uri</span> <span class="o">=</span> <span class="n">uri</span>
+      <span class="vi">@page</span> <span class="o">=</span> <span class="vi">@agent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="vi">@uri</span><span class="p">)</span>
+      <span class="vi">@counts</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">words_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">ignored_selector</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="c1"># Get all the links on the page</span>
+      <span class="n">post_links</span> <span class="o">=</span> <span class="vi">@page</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">find_all</span> <span class="p">{</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+      <span class="c1"># Get rid of the first anchor since it&#39;s the site header</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">shift</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">click</span>
+        <span class="vi">@doc</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">parser</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+          <span class="k">if</span> <span class="n">ignored_selector</span>
+            <span class="n">ignored</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">ignored_selector</span><span class="p">)</span>
+            <span class="n">ignored</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+          <span class="k">end</span>
+          <span class="n">words</span> <span class="o">=</span> <span class="n">words_from_string</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+          <span class="n">count_frequency</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">sorted</span> <span class="o">=</span> <span class="vi">@counts</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="o">|</span> <span class="n">count</span> <span class="p">}</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">reverse!</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">map!</span> <span class="k">do</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="o">|</span>
+        <span class="p">{</span> <span class="n">word</span><span class="p">:</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="n">count</span> <span class="p">}</span>
+      <span class="k">end</span>
+      <span class="p">{</span> <span class="n">word_count</span><span class="p">:</span> <span class="n">sorted</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">metadata_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span> <span class="n">posts</span><span class="p">:</span> <span class="o">[]</span> <span class="p">}</span>
+
+      <span class="c1"># Get all the links on the page</span>
+      <span class="n">post_links</span> <span class="o">=</span> <span class="vi">@page</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">find_all</span> <span class="p">{</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+      <span class="c1"># Get rid of the first anchor since it&#39;s the site header</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">shift</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">click</span>
+        <span class="vi">@doc</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">parser</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="vi">@doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+        <span class="n">post_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">post_data</span><span class="o">[</span><span class="ss">:date</span><span class="o">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">date</span><span class="p">:</span> <span class="n">time</span><span class="o">[</span><span class="s1">&#39;datetime&#39;</span><span class="o">]</span> <span class="p">}</span>
+        <span class="n">post_data</span><span class="o">[</span><span class="ss">:stats</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+          <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">child</span><span class="o">|</span>
+            <span class="n">post_data</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">push</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">metadata</span><span class="o">[</span><span class="ss">:posts</span><span class="o">].</span><span class="n">push</span><span class="p">(</span><span class="n">post_data</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="nb">p</span> <span class="n">metadata</span>
+    <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">nodes</span> <span class="o">=</span> <span class="vi">@doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">SelectionError</span><span class="p">,</span>
+        <span class="s1">&#39;The selector did not return an results!&#39;</span> <span class="k">if</span> <span class="n">nodes</span><span class="o">.</span><span class="n">empty?</span>
+      <span class="n">nodes</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">words_from_string</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">downcase</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/[\w&#39;]+/</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">count_frequency</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">word</span> <span class="k">in</span> <span class="n">word_list</span>
+        <span class="vi">@counts</span><span class="o">[</span><span class="n">word</span><span class="o">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+      <span class="vi">@counts</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Really ugly code that still doesn&#8217;t work. My biggest problem with Ruby is that I don&#8217;t have very good debugging tools and that frustrates the shit out of me. I&#8217;m so used to the visual debuggers in the Chrome Dev tools that doing everything with <code>p</code> or <code>puts</code> is just soul-crushing.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">22 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/22/wrapping-up-the-word-count-spider/">
+			
+				Wrapping Up the Word Count Spider</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>Yeesh, I gotta stop writing so late at night&#8230; Last night I was trying to get my spider to follow all the links on the blog&#8217;s archive page and then sum up all the words from every post. Unfortunately I was way too tired to get that to actually work. Tonight I finished that step of the process but it required some ugly code and refactoring our unit tests. Without further adieu&#8230;</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">21 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/21/quick-spider-example/">
+			
+				Quick Spider Example</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;mechanize&#39;</span>
+
+<span class="c1"># Create a new instance of Mechanize and grab our page</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="no">Mechanize</span><span class="o">.</span><span class="n">new</span>
+<span class="n">page</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://robdodson.me/blog/archives/&#39;</span><span class="p">)</span>
+
+
+
+<span class="c1"># Find all the links on the page that are contained within</span>
+<span class="c1"># h1 tags.</span>
+<span class="n">post_links</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">find_all</span> <span class="p">{</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+<span class="n">post_links</span><span class="o">.</span><span class="n">shift</span>
+
+
+
+<span class="c1"># Follow each link and print out its title</span>
+<span class="n">post_links</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">click</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">parser</span>
+    <span class="nb">p</span> <span class="n">doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;.entry-title&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Having a horrible time getting anything to run tonight. The code from above is a continuation from yesterday&#8217;s post except this time we&#8217;re finding every link on the page, then following that link and spitting out its title. Using this formula you could build something entirely recursive which acts as a full blown spider.</p>
+
+<p>Unfortunately getting this to integrate into the existing app is not working for me tonight. Coding anything after 11 pm is usually a bad call, so I&#8217;m going to shut it down and try again in the morning.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Annoyed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">20 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/">
+			
+				Crawling Pages With Mechanize and Nokogiri</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>Short post tonight because I spent so much time figuring out the code. It&#8217;s late and my brain is firing on about 1 cylinder so it took longer than I expected to get everything working.</p>
+
+<p>The scraper that I&#8217;m building is supposed to work like a spider and crawl of the pages of my blog. I wasn&#8217;t sure what the best way to do that was so I started Googling and came up with <a href="http://mechanize.rubyforge.org/">Mechanize.</a> There are other tools built on top of Mechanize, like <a href="https://github.com/felipecsl/wombat">Wombat</a>, but since my task is so simple I figured I could just write everything I needed with Mechanize and Nokogiri. It&#8217;s usually a better idea to work with simple tools when you&#8217;re first grasping concepts so you don&#8217;t get lost in the weeds of some high powered framework.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">18 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/18/outputting-json-from-ruby/">
+			
+				Outputting JSON From Ruby</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p><a href="http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/">Last night</a> I got the scraper to write an output.txt file which listed all the contents of <code>words_by_selector</code>. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">17 Jun 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/">
+			
+				Object Oriented Scraper Backed With Tests Pt&#8230;9?</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>I just spent a few hours talking to my friend <a href="http://derekbradley.com/">Derek</a>(<a href="https://twitter.com/#!/derekebradley">@derekebradley</a>) about Ruby and it occured to me that I never finished this scraper project. We got awfully far with it but then it kind of died on the vine. <a href="http://robdodson.me/blog/2012/05/06/object-oriented-scraper-backed-with-tests/">Thankfully,</a> <a href="http://robdodson.me/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/">I</a> <a href="http://robdodson.me/blog/2012/05/08/object-oriented-scraper-backed-with-tests-pt-3/">wrote</a> <a href="http://robdodson.me/blog/2012/05/11/object-oriented-scraper-backed-with-tests-pt-4/">it</a> <a href="http://robdodson.me/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/">all</a> <a href="http://robdodson.me/blog/2012/05/13/object-oriented-scraper-backed-with-tests-pt-6/">down.</a> <a href="http://robdodson.me/blog/2012/05/15/object-oriented-scraper-backed-with-tests-pt-7/">down.</a> <a href="http://robdodson.me/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/">down.</a></p>
+
+<p>The fact of the matter is I didn&#8217;t know where to take the data. I didn&#8217;t have a design or a layout that I could put it all into. I want to change all that. I want to turn this into something useful. But first I have to make sense of all the code that was written so many weeks ago.</p>
+
+
+	</section>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+        <a class="newer-posts" href="/blog/page/6/">← Newer Posts</a>
+    
+    <span class="page-number">Page 7 of 16</span>
+    
+        <a class="older-posts" href="/blog/page/8/">Older Posts →</a>
+    
+</nav>
+  </main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

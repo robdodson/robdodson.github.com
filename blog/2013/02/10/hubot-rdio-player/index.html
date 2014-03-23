@@ -1,0 +1,221 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>hubot rdio player | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">10 Feb 2013</span>
+	<h1 class="post-title">Hubot Rdio Player</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>hubot. How on Earth did we exist without you? Really I feel like I can demarcate my life into two phases: the time before hubot, and all the awesomeness after. For those not in the know, <a href="http://hubot.github.com/">hubot is an amazing chatbot created by the team at Github.</a> Out of the box he has a ton of cool features but once you start digging into <a href="http://hubot-script-catalog.herokuapp.com/">the hubot scripts catalog</a> things get WAY more interesting.</p>
+
+<p>One of the most exciting projects is <a href="http://zachholman.com/talk/play/">play</a>, a combination iTunes remote and streaming music player. Play lets you broadcast music to everyone on your team and allows anyone in the chatroom to dictate what goes into the queue. Personally, I don&#8217;t use iTunes all that much, opting instead to use <a href="http://www.rdio.com/">rdio</a> for all my music needs. I figured, wouldn&#8217;t it be cool if hubot could do all the same stuff he does for play&#8230;but with rdio! So that&#8217;s what I set out to build.</p>
+
+<!--more-->
+
+
+<h2>A call for help!</h2>
+
+<p>Let me start by saying that this project is <strong>extremely</strong> rough. I didn&#8217;t intend to release it in this state but I figure the best (and fastest) way to improve it is by opening it up for others to use. The Backbone code is grizzly, the Express code is gnarly, and the things I&#8217;m doing with OAuth might be downright illegal (I&#8217;m an OAuth newb). But—and this is extremely important—it is <strong>super</strong> stable (much to my amazement). My team and I have run it for about 2 weeks and never once managed to crash it. Never needed a reboot or any kind of reset. So while the code might make your face melt, just think of it kinda like the walking dead. The unstoppable, bloodthirsty walking dead. You can hit it with a shovel, poke it in the eye, whatever! It&#8217;ll keep on truckin&#8217;</p>
+
+<h2>Grab the project</h2>
+
+<p>OK let&#8217;s get started. This is going to be a bulleted list kind of thing cuz I&#8217;m sleepy and there&#8217;s about a million steps. Brevity, people!</p>
+
+<ul>
+<li><a href="https://github.com/robdodson/hubot-rdio">Find the project here.</a></li>
+<li><code>git clone https://github.com/robdodson/hubot-rdio.git</code></li>
+</ul>
+
+
+<h2>Register with rdio</h2>
+
+<ul>
+<li>Go <a href="http://developer.rdio.com/docs/read/rest/oauth">here</a></li>
+<li>Register</li>
+<li>Get a consumer key and consumer secret</li>
+<li>Add the secret and key to <code>app.js</code></li>
+<li>Go <a href="https://github.com/rdio/hello-web-playback/blob/master/token.js">here</a></li>
+<li>Read the instructions</li>
+<li>Use <a href="https://github.com/rdio/rdio-python">rdio-python</a> to generate a playback token (I&#8217;ve found this to be a little flaky. If it doesn&#8217;t work for you let me know).</li>
+<li>Add playback token to <code>public/js/modules/rdio.js</code> in the <code>flashvars</code> object.</li>
+</ul>
+
+
+<h2>Create your site on Heroku</h2>
+
+<ul>
+<li>Follow <a href="https://devcenter.heroku.com/articles/quickstart">the Heroku quickstart</a> if you&#8217;ve never used Heroku before.</li>
+<li>Create a new site on Heroku with <code>heroku create</code></li>
+<li>Copy the path to your new heroku site, it will look like: zen-jargon-1234.herokuapp.com</li>
+<li>Add the path to your site in <code>app.js</code> where it says HEROKU_URL</li>
+<li>Add just the domain to <code>public/js/modules/rdio.js</code> in the <code>flashvars</code> object.</li>
+<li>Push your site up to Heroku <code>git push heroku master</code></li>
+<li>Scale the process <code>heroku ps:scale web=1</code></li>
+</ul>
+
+
+<h2>Add the script to hubot</h2>
+
+<ul>
+<li>Copy the <code>hubot/scripts/rdio.coffee</code> file into your hubot&#8217;s <code>scripts</code> folder. Normally you would just install the script from the catalog but I haven&#8217;t submitted yet because it&#8217;s still very rough.</li>
+<li>You&#8217;ll need to add 3 environment variables to your hubot
+
+<ul>
+<li>HUBOT_RDIO_URL</li>
+<li>HUBOT_RDIO_TOKEN</li>
+<li>HUBOT_RDIO_SECRET</li>
+</ul>
+</li>
+<li>HUBOT_RDIO_URL is just the path address of your app on heroku (http://zen-jargon-1234.herokuapp.com)</li>
+<li>HUBOT_RDIO_TOKEN and HUBOT_RDIO_SECRET are the two parts of your OAuth token. I&#8217;ve left two <code>console.logs</code> for you in <code>app.js</code> at lines 341 and 342. If you go to your app on Heroku and login the console should spit out your OAuth token and secret. Add those to hubot and then remove the <code>logs</code> from <code>app.js</code>.</li>
+<li>Push everything to your hubot server</li>
+</ul>
+
+
+<p>To test that everything is working open up your heroku app in Chrome and login. You should see an empty player. From Campfire, tell hubot: <code>hubot play artist deadmau5</code>. Wait a few seconds and the player should fire up. If not, check your terminal or your browser console to see if there are any errors.</p>
+
+<h2>Fire up Nicecast</h2>
+
+<ul>
+<li>You&#8217;ll need to purchase Nicecast in order to stream, you can <a href="http://www.rogueamoeba.com/nicecast/">buy it here.</a></li>
+<li>Click on <code>Source</code> and choose Chrome or whatever browser you&#8217;re running.</li>
+<li>Depending on your machine you&#8217;ll probably want to click on <code>Quality</code> and turn it down. On my Macbook Air I have it set to the 3rd lowest tick.</li>
+<li>Click <code>Start Broadcast</code> and Nicecast will tell you it has to restart your browser (lame). Restart the browser, login again and instruct hubot to start playing some music.</li>
+<li>Click the <code>Share</code> tab</li>
+<li>Copy the link to the .m3u file.</li>
+<li>Pass around the .m3u link to your officemates. The easiest way to tune in is with iTunes. Just do File > Open Stream or Advanced > Open Stream and paste in the link.</li>
+<li>Dance</li>
+</ul>
+
+
+<p>Holy shit that&#8217;s a lot of steps! Hopefully it all worked, if not <em>please</em> log an issue. kthnxbye</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=hubot rdio player&amp;url=http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Foundation | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/foundation/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building a Responsive Grid with Foundation]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/"/>
+    <updated>2012-06-10T20:24:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation</id>
+    <content type="html"><![CDATA[<p>Yesterday I introduced <a href="http://smacss.com/">SMACSS</a> and did my best to give a high level overview of its main ideas. I'm using it on my current project and I'm really enjoying it so far. There's just something about having things codified by someone with more experience that gives me immense comfort. When I feel confused I can refer back to those docs and sort out what would be the best path. Standing on the shoulders of giants and all that jazz ;)</p>
+
+<p>Today I want to talk about a CSS framework called <a href="http://foundation.zurb.com/">Foundation</a>, written by the team at <a href="http://www.zurb.com/">ZURB.</a> Unlike SMACSS, Foundation is an actual library of modular code ready to help you quickly prototype your project. The two aren't mutually exclusive. You might think of Foundation as a shiny new toolbox but SMACSS is going to be your 'How To' manual, helping you implement all the new goodes that Foundation has to offer.</p>
+
+<!--more-->
+
+
+<p>I'm sure many of you have heard of <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> which is very similar and somewhat more popular than Foundation. I chose to use Foundation for this post because Bootstrap feels bloated to me, and I also didn't want to have to do everything in <a href="http://lesscss.org/">LESS.</a> Don't get me wrong, I loves me some LESS and some <a href="http://sass-lang.com/">SASS</a>, but not everyone is comfortable with those tools and it's already a big ask to ramp up on a new CSS framework.</p>
+
+<p>Since it's a little late in the evening I'm just going to dip my toe into some of what Foundation has to offer by quickly mocking up a very simple layout using their responsive grids.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_mockup.png" title="'Our very basic responsive layout'" ></p>
+
+<p>Obviously nothing fancy, the main bits I want to explore are how easy it is to lay items out using the grid and how does it react on the iPhone.</p>
+
+<h2>Everything in its place</h2>
+
+<p>The first thing you should do, if you haven't already is to go to <a href="http://foundation.zurb.com/">the Foundation site</a> and download the package.</p>
+
+<p>Let's make a new folder with an index.html file and bring over the javascripts and stylesheets folders from the Foundation package. Just to start out your new index.html file should look something like this:</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+<head></p>
+
+<pre><code>&lt;meta charset="utf-8" /&gt;
+
+&lt;!-- Set the viewport width to device width for mobile --&gt;
+&lt;meta name="viewport" content="width=device-width" /&gt;
+
+&lt;title&gt;Responsive Grid Prototype&lt;/title&gt;
+
+&lt;!-- Included CSS Files --&gt;
+&lt;link rel="stylesheet" href="stylesheets/foundation.css"&gt;
+&lt;link rel="stylesheet" href="stylesheets/app.css"&gt;
+
+&lt;script src="javascripts/modernizr.foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;!-- container --&gt;
+&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;header class="twelve columns"&gt;
+            &lt;p&gt;HEADER&lt;/p&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- container --&gt;
+
+
+&lt;!-- Included JS Files --&gt;
+&lt;script src="javascripts/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="javascripts/foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html>
+```</p>
+
+<p>Couple that with the <code>app.css</code> file, like so:</p>
+
+<p>``` css stylesheets/app.css
+html, body {</p>
+
+<pre><code>color: #FFF;
+font-family: Helvetica, sans-serif;
+font-size: 30px;
+</code></pre>
+
+<p>}</p>
+
+<p>header {</p>
+
+<pre><code>background: #CCC;
+height: 100px;
+text-align: center;
+</code></pre>
+
+<p>}
+<code>``
+That should give us our roughed out grey header area. If we examine our HTML a few items should jump out. Mainly that we're using classes like</code>.container<code>,</code>.row<code>and</code>.twelve .columns`. These are all part of Foundation's grid system which seperates major sections into subcategories to help with organization and layout. The documentation explains it better than I can:</p>
+
+<blockquote><p>The grid is built around three key elements: containers, rows, and columns. Containers create base padding for the page; rows create a max-width and contain the columns; and columns create the final structure.</p></blockquote>
+
+<p>Since Foundation uses a twelve column grid system, specifying that an item is <code>.twelve .columns</code> means it will stretch to be the full width of its row. By default a row's maximum width is 980px but we can change this if we want in the <code>foundation.css</code> file.</p>
+
+<p>``` css stylesheets/foundation.css
+.row { width: 100%; max-width: 980px; min-width: 727px; margin: 0 auto; }</p>
+
+<pre><code>/* To fix the grid into a certain size, set max-width to width */
+</code></pre>
+
+<p>```</p>
+
+<p>With that knowledge we can go ahead and quickly mock up the other sections of our page.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+<head></p>
+
+<pre><code>&lt;meta charset="utf-8" /&gt;
+
+&lt;!-- Set the viewport width to device width for mobile --&gt;
+&lt;meta name="viewport" content="width=device-width" /&gt;
+
+&lt;title&gt;Responsive Grid Prototype&lt;/title&gt;
+
+&lt;!-- Included CSS Files --&gt;
+&lt;link rel="stylesheet" href="stylesheets/foundation.css"&gt;
+&lt;link rel="stylesheet" href="stylesheets/app.css"&gt;
+
+&lt;script src="javascripts/modernizr.foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;!-- container --&gt;
+&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;header class="twelve columns"&gt;
+            &lt;p&gt;HEADER&lt;/p&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="main eight columns"&gt;
+            &lt;p&gt;MAIN&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;aside class="four columns hide-on-phones"&gt;
+            &lt;p&gt;ASIDE&lt;/p&gt;
+        &lt;/aside&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;footer class="twelve columns"&gt;
+            &lt;p&gt;FOOTER&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- container --&gt;
+
+
+&lt;!-- Included JS Files --&gt;
+&lt;script src="javascripts/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="javascripts/foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html>
+```</p>
+
+<p>And we'll need to update the CSS to match.</p>
+
+<p>``` css app.css
+html, body {</p>
+
+<pre><code>color: #FFF;
+font-family: Helvetica, sans-serif;
+font-size: 30px;
+</code></pre>
+
+<p>}</p>
+
+<p>header, .main, aside, footer {</p>
+
+<pre><code>margin-top: 20px;
+background: #CCC;
+height: 100px;
+text-align: center;
+</code></pre>
+
+<p>}
+```</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_layout_basic.png" title="'Our basic layout'" ></p>
+
+<p>That wasn't so hard was it?</p>
+
+<p>Let's throw in some dummy copy to make our columns expand so we can get closer to our original comp. For that we'll turn to <a href="http://baconipsum.com">Bacon Ipsum</a></p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+<head></p>
+
+<pre><code>&lt;meta charset="utf-8" /&gt;
+
+&lt;!-- Set the viewport width to device width for mobile --&gt;
+&lt;meta name="viewport" content="width=device-width" /&gt;
+
+&lt;title&gt;Responsive Grid Prototype&lt;/title&gt;
+
+&lt;!-- Included CSS Files --&gt;
+&lt;link rel="stylesheet" href="stylesheets/foundation.css"&gt;
+&lt;link rel="stylesheet" href="stylesheets/app.css"&gt;
+
+&lt;script src="javascripts/modernizr.foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;!-- container --&gt;
+&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;header class="twelve columns"&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="main eight columns"&gt;
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;aside class="four columns"&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="#"&gt;First Item&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Second Item&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Third Item&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Fourth Item&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/aside&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;footer class="twelve columns"&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- container --&gt;
+
+
+&lt;!-- Included JS Files --&gt;
+&lt;script src="javascripts/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="javascripts/foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html>
+```</p>
+
+<p>While that expands everything nicely I'd like to add some padding to the mix. But as soon as I try to pad my <code>.main</code> div everything explodes! Turns out we need to make sure we're using <code>box-sizing: border-box</code> otherwise the padding will expand our columns and destroy our grid. For a deeper explanation of <code>box-sizing: border-box</code> checkout <a href="http://paulirish.com/2012/box-sizing-border-box-ftw/">this great post by Paul Irish.</a> With that addition our CSS should now look like this:</p>
+
+<p>``` css stylesheets/app.css
+* {</p>
+
+<pre><code>box-sizing: border-box;
+</code></pre>
+
+<p>}</p>
+
+<p>html, body {</p>
+
+<pre><code>font-family: Helvetica, sans-serif;
+</code></pre>
+
+<p>}</p>
+
+<p>header, .main, aside, footer {</p>
+
+<pre><code>margin-top: 20px;
+background: #CCC;
+</code></pre>
+
+<p>}</p>
+
+<p>header, footer {</p>
+
+<pre><code>height: 100px;
+</code></pre>
+
+<p>}</p>
+
+<p>.main, aside {</p>
+
+<pre><code>padding: 50px;
+</code></pre>
+
+<p>}
+```</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_layout_ipsum.png" title="'Responsive layout with lorem ipsum'" ></p>
+
+<h2>Making friends with mobile</h2>
+
+<p>Well I'm sure if you've made it to this point you're ready to see how this all works on an iPhone. A quick test you can perform is to just narrow your browser window until it is only about 300px wide (the iPhone has a roughly 320px display area, I believe). As you do so the columns should narrow, reflowing their content as they do so. Eventually our <code>aside</code> will <em>pop</em> from its current position and line up underneath our <code>.main</code> content.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_linear.png" title="'Linear flow with Foundation'" ></p>
+
+<p>But what if we don't want the sidebar to appear on a mobile phone? Perhaps we just want to show the <code>.main</code> content if the screen is too narrow. Easy! Foundation provides <a href="http://foundation.zurb.com/docs/layout.php">some nice helper classes</a> which we can use to toggle elements on or off depending on the device. We'll just add a <code>.hide-on-phones</code> class to our aside</p>
+
+<p><code>html
+&lt;aside class="four columns hide-on-phones"&gt;
+</code></p>
+
+<p>and...<em>voila!</em> The <code>aside</code> disappears on small screens!</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_hide_on_phones.png" title="'Hiding the aside'" ></p>
+
+<p>Nice and simple, yeah? If you'd like to checkout the project running live you can <a href="http://robdodson.s3-website-us-east-1.amazonaws.com/tutorials/building-a-responsive-grid-with-foundation/index.html">follow this link</a>. Resize your browser or hit it with an iPhone to see it do its magic. Also you can <a href="https://github.com/robdodson/foundation-grid-tutorial">grab the source code off of Github.</a> Enjoy! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Relaxed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

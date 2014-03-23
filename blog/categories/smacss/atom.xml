@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: SMACSS | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/smacss/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Let's Talk SMACSS, Man]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/"/>
+    <updated>2012-06-09T21:03:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss</id>
+    <content type="html"><![CDATA[<p>In an effort to further my understanding of CSS best practices I've ended up with two sort of looming frameworks: <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> After reading up on both I feel more drawn toward SMACSS, most likely because it features a lumberjack on its site. I want to give a quick summary of what SMACSS has to offer. In so doing I'm going to borrow liberally from the documentation and then explain my thinking as it relates to certain passages. Cool? OK.</p>
+
+<!--more-->
+
+
+<h2>The Skinny</h2>
+
+<p>The ideas behind SMACSS were fostered over time by its creator, Jonathan Snook, who has worked on tons of sites, most notably YAHOO! Mail's latest redesign. SMACSS is not a library of ready-made code that you can just download like <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a> or <a href="http://foundation.zurb.com/">ZURB's Foundation.</a> Instead it is a collection of design ideas and suggestions codefied in an easy to read ebook. Think of it as a tool to help you decide <em>how</em> you're going to write your CSS, rather than something which will write your CSS for you.</p>
+
+<p>The Core of the book, which is what I'm going to focus on today, is separated by stylesheet: Base Rules, Layout Rules, Module Rules, State Rules, and Theme Rules.</p>
+
+<h2>Base Rules</h2>
+
+<blockquote><p>Base rules are the defaults. They are almost exclusively single element selectors but it could include attribute selectors, pseudo-class selectors, child selectors or sibling selectors. Essentially, a base style says that wherever this element is on the page, it should look like this. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p><a href="http://www.stubbornella.org/content/">Nicole Sullivan</a>, creator of OOCSS, suggests that we start with the smallest possible elements of our site and design up from there. In the SMACSS philosophy this process would start with our <code>base.css</code> file. Think of it as the place where we define the absolute most basic styles any element on our site can have.</p>
+
+<p>``` css base.css
+body, form {</p>
+
+<pre><code>margin: 0;
+padding: 0;
+</code></pre>
+
+<p>}</p>
+
+<p>a {</p>
+
+<pre><code>color: #039;
+</code></pre>
+
+<p>}</p>
+
+<p>a:hover {</p>
+
+<pre><code>color: #03F;    
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The idea is to give us a decent, even playing field where all of our core pieces are ready to be used in whatever fashion we see fit. You might find that you enjoy adding your css reset or normalization to a base.css file but personally I like to keep my reset separate to reduce clutter.</p>
+
+<h2>Layout Rules</h2>
+
+<blockquote><p>Layout rules divide the page into sections. Layouts hold one or more modules together. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>Your layout rules are where prototypes start to come to life. Every site can be broken down into two very broad layers. The first is the scaffolding of the page and the second is the modules which live in the scaffolding.</p>
+
+<p>To understand scaffolding, try looking at a website like <a href="http://www.cnn.com/">CNN</a> and unfocusing your eyes. Once you're ignoring the words and pictures you should be able to easily describe the major areas of content: the header, the primary content, sidebars, etc. The rules which govern the positioning of those elements should live in <code>layout.css</code>.</p>
+
+<p>``` css layout.css</p>
+
+<h1>header, #article, #footer {</h1>
+
+<pre><code>width: 960px;
+margin: auto;
+</code></pre>
+
+<p>}</p>
+
+<h1>article {</h1>
+
+<pre><code>border: solid #CCC;
+border-width: 1px 0 0;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>It's also a good place to put other generalized layout styles which might be used elsewhere in your site. For instance, a horizontal list for menu items or breadcrumbs:</p>
+
+<p>``` css layout.css
+.h-list {</p>
+
+<pre><code>margin: 0;
+padding: 0;
+list-style-type: none;
+</code></pre>
+
+<p>}
+.h-list > li {</p>
+
+<pre><code>display: inline-block;
+margin: 0 10px 0 0; 
+
+/* IE7 hack to mimic inline-block on block elements */
+*display: inline;
+*zoom: 1;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>These styles don't care about the color or background or any other specifics of their elements. They only care about how those elements will be layed out in space.</p>
+
+<h2>Module Rules</h2>
+
+<blockquote><p>Modules are the reusable, modular parts of our design. They are the callouts, the sidebar sections, the product lists and so on. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>The module rules are where the majority of your site code will go, as this sheet defines all the little inhabitants of that second layer I mentioned, the modules <em>inside</em> the scaffolding. Each module should be able to stand on its own, and as such, it might be a good idea to design them first in a separate file so there is no temptation to leverage styles already on the page. Once your module is complete you can drop it into your document and it <em>should</em> play nice with everyone else.</p>
+
+<p>Each module will typically start with a class name, and all subsequent selectors should work from this point down. Or if our module is going to be rather complex we can namespace our selectors. For instance:</p>
+
+<p>``` css modules.css</p>
+
+<p>.pod {</p>
+
+<pre><code>width: 100%
+</code></pre>
+
+<p>}</p>
+
+<p>.pod > h3 {</p>
+
+<pre><code>color: #F00;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em> Or... </em>/</p>
+
+<p>.pod-title {</p>
+
+<pre><code>color: #F00;
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<p>Whether you use descendant selectors or namespaced clases is really up to you and how complex your modules get. You definitely don't want to end up with classitis. The advantage to using <code>.pod-title</code> is that it doesn't tie us to an <code>h3</code>, however your markup might become a total mess if every single element requires its own class. Balance is key.</p>
+
+<h3>Subclassing Modules</h3>
+
+<p>One very important concept to keep in mind is that of subclassing modules. Imagine a scenario where you have a widget which exists in your primary content area. One day your boss tells you to move it into the sidebar, and once it's there 99% of the styles should look the same, except the widget will now be about 3/4ths of its normal width and its text should be red instead of blue. Your first inclination might be to move the code for the widget into the sidebar and then to do something like this:</p>
+
+<p>``` css modules.css
+/*</p>
+
+<p>DON'T DO THIS!</p>
+
+<p>*/</p>
+
+<p>.widget {</p>
+
+<pre><code>width: 100px;
+</code></pre>
+
+<p>}</p>
+
+<p>.widget .widget-title {</p>
+
+<pre><code>color: #00F;
+</code></pre>
+
+<p>}</p>
+
+<h1>sidebar .widget {</h1>
+
+<pre><code>width: 75px;
+</code></pre>
+
+<p>}</p>
+
+<h1>sidebar .widget .widget-title {</h1>
+
+<pre><code>width: 75px;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>By leveraging the parent context we've now locked ourselves into a specificity war. Any change to our second widget requires the <code>#sidebar</code> id, which also means that this second widget cannot live anywhere else. Rather than using the parent we should consider the widget that lives in the sidebar as an <em>extension</em> of our original object.</p>
+
+<p>``` css modules.css
+.widget {</p>
+
+<pre><code>width: 100px;
+</code></pre>
+
+<p>}</p>
+
+<p>.widget .widget-title {</p>
+
+<pre><code>color: #00F;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em> Our Subclass </em>/
+.widget-constrained {</p>
+
+<pre><code>width: 75px;
+</code></pre>
+
+<p>}</p>
+
+<p>.widget-constrained .widget-title {</p>
+
+<pre><code>color: #F00;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>To use a subclass we should apply both the original and the subclass styles to our element:</p>
+
+<p>``` html</p>
+
+<div class="widget widget-constrained">...</div>
+
+
+<p>```</p>
+
+<p>The benefit of doing it this way is that the styles are easier to read and also more flexible. Since there's no parent coupling our <code>widget-constrained</code> can be used in the sidebar, footer, modals, or anywhere else you'd like.</p>
+
+<h2>State Rules</h2>
+
+<blockquote><p>State rules are ways to describe how our modules or layouts will look when in a particular state. Is it hidden or expanded? Is it active or inactive? They are about describing how a module or layout looks on screens that are smaller or bigger. They are also about describing how a module might look in different views like the home page or the inside page. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>The best example of what should go into a <code>states.css</code> is the classic error state.</p>
+
+<p>``` css states.css
+.is-error {</p>
+
+<pre><code>border: 1px solid red;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Really anything that would potentially be added with JavaScript to illustrate a change in a module's state would be a good candidate. Some other ones that come to mind are <code>is-hidden</code> or <code>is-pressed</code>.</p>
+
+<p>One rather sticky point to the whole idea of a <code>states.css</code> is that most of the states would need to either rely on being loaded after all your other stylesheets or have an <code>!important</code> added to them. I think for a lot of folks that is a dealbreaker, although in my opinion, if used properly, those few !importants can be very useful. For instance, if we add an <code>is-hidden</code> state to one of our elements I think it's perfectly ok to <code>!important</code> the <code>display: none</code>.</p>
+
+<h3>Module States</h3>
+
+<p>An alternative to using <code>!important</code> all over the place is the idea of module states. So rather than <code>.is-pressed</code> in our <code>states.css</code> we would have <code>.is-btn-pressed</code> next to our <code>.btn</code> module in <code>modules.css</code>. I like this approach a lot and think it solves many of the places where <code>states.css</code> feels too general.</p>
+
+<h2>Theme Rules</h2>
+
+<blockquote><p>Theme rules are similar to state rules in that they describe how modules or layouts might look. Most sites don’t require a layer of theming but it is good to be aware of it.</p></blockquote>
+
+<p>The primary consideration for theme rules are when your site is able to be reskinned and also if the typography can be changed.</p>
+
+<p>Skinning a new module with a <code>theme.css</code> might look something like this:</p>
+
+<p>``` css
+/<em> in modules.css </em>/
+.mod {</p>
+
+<pre><code>border: 1px solid;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em> in theme.css </em>/
+.mod {</p>
+
+<pre><code>border-color: blue;
+</code></pre>
+
+<p>}
+<code>``
+Likewise if you need to switch to a different font or size, here is where you would do that. To be honest I don't currently need to make any of my projects skinnable so I haven't explored the ideas around</code>theme.css` all that much, but I do think it's a good idea to keep in the back of your hat.</p>
+
+<h2>Wrap it up!</h2>
+
+<p>That does it for tonight. Hopefully you're a little more enlightened with regards to SMACSS. Definitely <a href="http://smacss.com/">checkout the SMACSS site</a> and grab the book. And as always please feel free to leave comments and feedback. Thanks! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Anxious</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CSS Semantics: Best Practices]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/09/css-semantics/"/>
+    <updated>2012-06-09T07:19:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/09/css-semantics</id>
+    <content type="html"><![CDATA[<p>CSS is, for me, one of the most challenging and nerve wracking aspects of my job. With most programming languages there are frameworks and guides and heuristics that all make up a suite of best practices. CSS doesn't <em>really</em> have anything like this and as a result it's kind of a mish-mash of good rules to follow, definite don'ts, and lots and lots of grey area. Since I'm starting a new CSS heavy project, and because I want to further my own understanding in this realm, I'm going to spend a few posts exploring the topic of what makes good, maintainable CSS. Along the way I'm also going to point out a few frameworks that I've been looking at, in particular <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> But lets kick things off with a discussion of what it means to write good, semantic CSS selectors and we'll follow up with frameworks in our next post.</p>
+
+<!--more-->
+
+
+<h2>Define Semantic</h2>
+
+<p>When I was trolling the interwebs for talks on writing large-scale maintainable CSS I somehow managed to come across <a href="http://css-tricks.com/semantic-class-names/">this article on css-tricks comparing the semantics of various css selectors.</a> After reading it I had this weird feeling like maybe I haven't been putting as much thought into my css selectors as I should. My selectors need to be highly semantic, but what does that really <em>mean?</em></p>
+
+<p>Trying to look up the definition of "semantic" is kind of a fun, albeit a slightly annoying task since most definitions look like this:</p>
+
+<p><em>Of, relating to, or according to the science of semantics.</em></p>
+
+<p>Well...thanks. <a href="http://www.wordnik.com/words/semantic">The wonderful Wordnik site has a great list of definitions</a> the most useful of which is probably this:</p>
+
+<p><em>Reflecting intended structure and meaning.</em></p>
+
+<p>So a semantic CSS selector should reflect the intended structure or meaning of the element it is applied to. Hmm...that's still a rather broad definition but at least we have a starting point. If I have a <code>div</code> that holds a bunch of news articles there's probably a gradient of increasingly more semantic names I could use for it.</p>
+
+<p>``` html</p>
+
+<div class="container"></div>
+
+
+
+
+<div class="article-box"></div>
+
+
+
+
+<div class="newsstand"></div>
+
+
+<p>```</p>
+
+<p>On the far end of the spectrum, <code>container</code> is about as generic as you can get and basically restates that something is a <code>div</code>. While I've been guilty of doing this in the past, if you're saying a containing HTML Element is a 'container' you're restating the obvious and should probably work on improving the name.</p>
+
+<p><code>article-box</code> is much more descriptive than just <code>container</code> so I'd say it has a higher semantic "score". But there is the potential for some semantic weirdness here, for instance, if we decide at a later date that we want our articles to be contained in a horizontal list it might make less sense to call it an "article-<em>box</em>". So maybe <code>article-container</code> is semantically similar but also a bit more flexible?</p>
+
+<p>Finally we have <code>newsstand</code> which is highly semantic and probably my favorite of the bunch. <code>newsstand</code> describes what our element <em>is</em> but it doesn't bother delving into how our element works. As a result <code>newsstand</code> can work however we want, it can be list like, or grid like, tabular, etc and it won't matter. You might argue that this would be a good place to use an ID instead of a class but that decision should be weighed carefully. You have to make sure that 3 months or a year from now there isn't the potential of having two newsstands on the same page.</p>
+
+<h3>If we only worked on contived examples...</h3>
+
+<p>Of course there's a litany of cases where highly semantic naming just doesn't quite cut it. Often times we're given a layout which has a few primary areas (columns, headers, footer) and the designer is putting all sorts of content into those divisions. On one page it could be news articles, then a list of search results, then a directory of users, and so on. I would argue that for major layout elements it's ok to use less semantic names, and in fact this is probably a good idea. So things like <code>column_1</code>, <code>flex-box</code>, <code>constrained-container</code>, are all specifying, at varying degrees, what the element is doing. They are less semantically rich than, say, <code>rolodex</code> or <code>id-badge</code>, but that's because their very intention is to be generic.</p>
+
+<h3>What about helpers?</h3>
+
+<p><em>Preface: I know about SASS and LESS. Let's pretend they don't exist for a moment :D</em></p>
+
+<p>Here is an area where I recently got very tripped up and I'm still not entirely sure what the best approach might be. Let's say you have a brand color, something like Facebook's blue, and you need to apply it to all sorts of different and unrelated elements. If you're like me then your brain starts thinking, "Well, that blue value is essentially a variable that I'd like to reuse. Maybe I should just make a helper style for it..." and so you produce something like this in a helpers.css file:</p>
+
+<p>``` css helpers.css
+.light-blue {</p>
+
+<pre><code>#00C
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now our HTML has little <code>light-blue</code>s sprinkled on top of it and we don't have to worry about declaring that same blue value over and over again in our styles. But what happens when our company decides to rebrand and now our primary color is a bright red? Uh oh...You definitely don't want to have to change HTML <em>and</em> CSS just to update a color.</p>
+
+<p><a href="http://css-tricks.com/semantic-class-names/#comment-102571">Neal G on CSS-Tricks made a very good comment regarding this scenario:</a></p>
+
+<blockquote><p>Perhaps an easier way to explain semantic CSS is simply, don’t name your classes or ids anything related to a CSS property. A property could be color, font-family, float, border, background etc.</p></blockquote>
+
+<p><a href="http://www.webdesignerdepot.com/2009/05/10-best-css-practices-to-improve-your-code/">Also from the Web Designer Depot</a></p>
+
+<blockquote><p>Name your elements based on what they are, not what they look like. For example, .comment-blue is much less versatile than .comment-beta, and .post-largefont is more limiting than .post-title.</p></blockquote>
+
+<p>Perhaps a better helper would have been <code>.brand-color</code> but again this is a contrived example. What about all the <em>other</em> colors on the site. And what about helpers that wrap commonly used styles like <code>float: left</code> and <code>clear: both</code>?</p>
+
+<p>The debate is pretty hot and heavy <a href="http://css-tricks.com/semantic-class-names">on the css-tricks article.</a> Just seach for the word 'float' and you'll see some pretty interesting discussions on it. My opinion is that you probably don't want to tack a bunch of <code>.bright-red</code> or <code>.larger</code> classes everywhere but at the same time something like <code>.float-right</code> can be extremely useful and <a href="http://css-tricks.com/semantic-class-names/#comment-102906">in some cases forcing semantics into a design can actually make things worse</a> especially for <a href="http://css-tricks.com/semantic-class-names/#comment-103076">less technically inclined clients.</a></p>
+
+<p>As a bit of a homework assignment I would recommend looking into a few of the resources I'm posting below. Obviouslyl take everything with a grain of salt, there isn't any true gospel for CSS so do what works best for you. I'll cover OOCSS and SMACSS in my next post, till then, thanks for reading! - Rob</p>
+
+<p><a href="http://css-tricks.com/semantic-class-names/">What Makes For a Semantic Class Name?</a></p>
+
+<p><a href="http://www.stubbornella.org/content/2011/04/28/our-best-practices-are-killing-us/">Our Best Practices Are Killing Us</a></p>
+
+<p><a href="https://github.com/styleguide/css">Github CSS Style Guide</a></p>
+
+<p><a href="https://github.com/csswizardry/CSS-Guidelines/blob/master/CSS%20Guidelines.md">CSS Wizardry: CSS Guidelines</a></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Annoyed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

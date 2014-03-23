@@ -1,0 +1,295 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Managing Your Backbone Views with the State Pattern | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">02 Jun 2012</span>
+	<h1 class="post-title">Managing Your Backbone Views With the State Pattern</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><a href="http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/">Yesterday I wrote a post to illustrate the concepts behind the State pattern</a> (one of my all time favorite tools). If you&#8217;re new to this pattern and haven&#8217;t read my previous post I suggest you start there and read this one after you&#8217;ve had a chance to play around with the ideas.</p>
+
+<!--more-->
+
+
+<p>I wanted to write about this pattern in the context of a Backbone app because I think there&#8217;s a lot of value in exploring different ways to manage our Views and Models. Here&#8217;s an example Video Player in which several State objects inherit from a common ancestor, <code>BaseState</code>. I chose to make <code>BaseState</code> extend <code>Backbone.Model</code> because it seemed like the best fit for this kind of thing, although typically when I implement this pattern in other languages I just use generic Objects. I would have done that here but Backbone&#8217;s <code>extend</code> functionality makes the code so much cleaner.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">BaseState</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">owner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">owner</span> <span class="o">=</span> <span class="nx">owner</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="nx">enter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Implement me in your state objects</span>
+  <span class="p">},</span>
+  <span class="nx">execute</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Implement me in your state objects</span>
+  <span class="p">},</span>
+  <span class="nx">play</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;changing to the playing state...&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">changeState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">playing</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">stop</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;changing to the stopping state...&#39;</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">changeState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">stopping</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">pause</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;changing to the pausing state...&#39;</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">changeState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">pausing</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">exit</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Implement me in your state objects</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">PlayingState</span> <span class="o">=</span> <span class="nx">BaseState</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">execute</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;playing the video!&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">play</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;already playing!&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">StoppingState</span> <span class="o">=</span> <span class="nx">BaseState</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">enter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;we have entered the stopping state...&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">execute</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;stopping the video...&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">stop</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;already stopped!&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">PausingState</span> <span class="o">=</span> <span class="nx">BaseState</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">execute</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;pausing the video.&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">pause</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;already paused!&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p></p>
+
+<p>Every state inherits from <code>BaseState</code> which means they all create a reference to an <code>owner</code> object in their <code>initialize</code> methods. The <code>owner</code> is going to be our actual <code>VideoPlayer</code> object. Rather than having <code>videoPlayer.play</code> lead to some big weird conditional:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">play</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="s1">&#39;playing&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="s1">&#39;stopped&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// play the video</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="s1">&#39;paused&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// unpause and play</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>we&#8217;re instead going to delegate the work to our State objects. They&#8217;ll handle switching from one State to the next and so long as we provide the exact same public API methods in each, they should be interchangeable. Inheriting from the same BaseState ensures that all of the States have the same public methods and each State can choose how or if it wants to override them. In our example the <code>StoppingState</code> overrides the <code>enter</code> method to display some text as we&#8217;re transitioning into this state. Again, you can override some or all of the methods, <code>enter</code> and <code>exit</code> are great for building up/tearing down anything that our state might need and <code>execute</code> is where the main work of our state should happen.</p>
+
+<p>Let&#8217;s take a look at the <code>VideoPlayer</code> which is a <code>Backbone.View</code> that will leverage our State objects:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">VideoPlayer</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">states</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlayingState</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">stopping</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">StoppingState</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">pausing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PausingState</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">changeState</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">states</span><span class="p">.</span><span class="nx">pausing</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">play</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+  <span class="p">},</span>
+  <span class="nx">stop</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+  <span class="p">},</span>
+  <span class="nx">pause</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+  <span class="p">},</span>
+  <span class="nx">changeState</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Make sure the current state wasn&#39;t passed in</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">!==</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Make sure the current state exists before</span>
+      <span class="c1">// calling exit() on it</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">enter</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">execute</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>You&#8217;ll notice that <code>VideoPlayer</code> instantiates its own State objects when it is first created. Then whenever we call one of its public methods the call is delegated to whichever state object is currently residing in <code>this.state</code>.</p>
+
+<p>Let&#8217;s instantiate a new VideoPlayer to see it in action:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">videoPlayer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VideoPlayer</span><span class="p">();</span>
+
+<span class="o">=&gt;</span> <span class="s1">&#39;pausing the video.&#39;</span>
+
+
+<span class="nx">videoPlayer</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+
+<span class="o">=&gt;</span> <span class="s1">&#39;changing to the playing state...&#39;</span>
+<span class="o">=&gt;</span> <span class="s1">&#39;playing the video!&#39;</span>
+
+<span class="nx">videoPlayer</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+
+<span class="o">=&gt;</span> <span class="s1">&#39;already playing!&#39;</span>
+
+
+<span class="nx">videoPlayer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+
+<span class="o">=&gt;</span> <span class="s1">&#39;changing to the stopping state...&#39;</span>
+<span class="o">=&gt;</span> <span class="s1">&#39;we have entered the stopping state...&#39;</span>
+<span class="o">=&gt;</span> <span class="s1">&#39;stopping the video...&#39;</span>
+</code></pre></figure>
+
+
+<p>Hopefully this gives you some food for thought the next time you&#8217;re trying to wrangle some unwieldy component. I cannot count how many times I&#8217;ve used this pattern in other languages to tidy up and organize my code. I&#8217;m looking forward to working with it again in Backbone and I&#8217;d love to hear anyone&#8217;s take on how this can be tweaked or improved. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Focused, Hurried</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Managing Your Backbone Views with the State Pattern&amp;url=http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

@@ -54,16 +54,16 @@
 </div>
 	
 	<header class="post-header">
-		<span class="post-meta">19 Nov 2013</span>
+		<span class="post-meta">23 May 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/">
+			<a href="/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/">
 			
-				@font-face Doesn&#8217;t Work in the Shadow DOM</a>
+				How Do You Switch Between Views in Backbone</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
+		<p>I&#8217;m going to try to approach some of my future articles as more of a question/answer setup so they don&#8217;t turn into these sprawling tutorials. Today I want to focus on moving between views in Backbone.js. I&#8217;m starting with some very simple templates and three views: LeftView, MiddleView, RightView. To do this quickly we&#8217;ll make it so each view is essentially a big button which, when clicked on, should animate to the middle of the screen.</p>
 
 
 	</section>
@@ -73,16 +73,66 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">15 Nov 2013</span>
+		<span class="post-meta">22 May 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/15/the-cat-and-the-hat-css-selectors/">
+			<a href="/blog/2012/05/22/css3-transitions-with-gfx/">
 			
-				The Cat and the Hat CSS Selectors</a>
+				CSS3 Transitions With GFX</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
+		<p>CSS3 is a rather verbose tool especially when it comes to transitions and animations. I want to see if there&#8217;s a way to clean a lot of that up with either a SASS mixin or a jQuery library like <a href="http://maccman.github.com/gfx/">gfx.</a></p>
+
+<p>We&#8217;ll try to do something simple at first to recreate an animation like the one we have below.</p>
+
+<p><small>Rollover the grey area to activate it.</small></p>
+
+<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+    .container {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      background-color: #CCC;
+    }
+
+    #example1 .container:hover .widget {
+      background-color: red;
+      left: 200px;
+      top: 200px;
+    }
+
+    #example1 .widget {
+      background-color: black;
+      left: 10px;
+      position: absolute;
+      top: 10px;
+      width: 20px;
+      height: 20px;
+      -webkit-transition: background-color 1s linear, left 1s, top 2s;
+      -moz-transition: background-color 1s linear, left 1s, top 2s;
+      -ms-transition: background-color 1s linear, left 1s, top 2s;
+      -o-transition: background-color 1s linear, left 1s, top 2s;
+      transition: background-color 1s linear, left 1s, top 2s;
+    }
+  </style>
+</div>
+
+
+
+
+<div id="example1">
+  <div class="container">
+      <div class="widget"></div>
+  </div>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+</div>
+
+
+
 
 
 	</section>
@@ -92,16 +142,16 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">12 Nov 2013</span>
+		<span class="post-meta">21 May 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/12/repeating-templates-in-polymer/">
+			<a href="/blog/2012/05/21/exploring-the-backbone-router-and-history-api/">
 			
-				Repeating Templates in Polymer</a>
+				Exploring the Backbone Router and History API</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
+		<p>I want to talk a bit more about the Backbone Router because I think it&#8217;s one of the first pieces of the framework that people run up against that deviates from the standard MVC setup.</p>
 
 
 	</section>
@@ -111,41 +161,16 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">24 Oct 2013</span>
+		<span class="post-meta">20 May 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/10/24/web-components-revolution/">
+			<a href="/blog/2012/05/20/some-more-backbone-dot-js-basics/">
 			
-				Web Components Revolution</a>
+				Some More Backbone.js Basics</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
-
-<br>
-
-
-<h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
-
-	</section>
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">02 Oct 2013</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2013/10/02/creating-a-markdown-tag-with-polymer/">
-			
-				Creating a Markdown Tag With Polymer</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>Ah Markdown&#8230; Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress&#8217; HTML mode, too limiting. Markdown changed all of that for me and I think it&#8217;s high time we make it a full fledged member of our developer toolbox.</p>
-
-<p>So today I&#8217;m going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+		<p>Here are some quick Backbone snippets to help visualize concepts. I&#8217;ll move around fairly quickly so if you&#8217;re interested in going more in-depth then checkout the documentation.</p>
 
 
 	</section>
@@ -155,16 +180,37 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">16 Sep 2013</span>
+		<span class="post-meta">19 May 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/09/16/the-art-of-fear-blogging/">
+			<a href="/blog/2012/05/19/my-first-chain/">
 			
-				The Art of Fear Blogging</a>
+				My First Chain</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>Years ago <a href="http://www.radiolab.org/2011/mar/08/you-v-you/">I heard a radio story about a woman hopelessly addicted to cigarettes.</a> Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.</p>
+		<p>Back in April I was reading hacker news when I came across a blog posted titled <a href="http://japhr.blogspot.com/2012/04/366-or-how-i-tricked-myself-into-being.html">&#8216;366 or How I Tricked Myself into Being Awesome&#8217;</a>. It was written by a fellow named Chris Strom. It was written on blogspot. It was mostly unstyled.</p>
+
+<p>Chris wrote every single day for 366 days and in so doing self-published three books on programming languages that he knew nothing about. His post was to champion that milestone. At the time I read it and thought, &#8220;I can totally do this,&#8221; meaning if I follow the steps that Chris has outlined I can potentially trick myself into becoming a blogger.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">18 May 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/05/18/backbone-boilerplate-playing-with-require-dot-js/">
+			
+				Backbone Boilerplate: Playing With Require.js</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>I want to keep playing with require.js and AMD modules today so I can really internalize the concepts around them. I&#8217;m going to go through the examples in <a href="http://requirejs.org/docs/api.html#jsfiles">the require documentation</a> starting with loading regular scripts and then defining modules and loading those.</p>
 
 
 	</section>
@@ -172,9 +218,11 @@
 
 <nav class="pagination" role="pagination">
     
-    <span class="page-number">Page 1 of 16</span>
+        <a class="newer-posts" href="/blog/page/11/">← Newer Posts</a>
     
-        <a class="older-posts" href="/blog/page/2/">Older Posts →</a>
+    <span class="page-number">Page 12 of 16</span>
+    
+        <a class="older-posts" href="/blog/page/13/">Older Posts →</a>
     
 </nav>
   </main>

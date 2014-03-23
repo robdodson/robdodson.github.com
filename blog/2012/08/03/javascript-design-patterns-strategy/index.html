@@ -1,0 +1,331 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>JavaScript Design Patterns: Strategy | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">03 Aug 2012</span>
+	<h1 class="post-title">JavaScript Design Patterns: Strategy</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>The Strategy pattern is one of my personal favorites and you&#8217;ve probably seen or used it in some fashion without even knowing it. Its primary purpose is to help you separate the parts of an object which are subject to change from the rest of the static bits. Using Strategy objects versus subclasses can often result in much more flexible code since you&#8217;re creating a suite of easily swappable algorithms.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<blockquote><p>Define a family of algorithms, encapsulate each one, and make them interchangeable. Strategy lets the algorithm vary independently from clients that use it.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote>
+
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Policy</li>
+</ul>
+
+
+<h2>Contrived Example Time!</h2>
+
+<p>Let&#8217;s say you&#8217;re making a game and you have a Character class. This game has all sorts of different terrain types so your character can run through open fields, walk slowly through swamps or swim under the ocean. Since you don&#8217;t know what kind of other terrains the game designer is going to think up you decide that it would be a bad idea to give each character <code>run</code>, <code>walk</code>, and <code>swim</code> methods. After all, what if suddenly the character needs to <code>fly</code> or <code>crawl</code>? What if they&#8217;re wounded and they need to <code>limp</code>? This situation could potentially get out of hand very fast&#8230;</p>
+
+<p>There&#8217;s a good chance you&#8217;ve seen or written code like this before:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">function</span> <span class="nx">move</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;walking&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// do some walk animation</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;running&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// do some running animation</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">state</span> <span class="o">===</span> <span class="s1">&#39;swimming&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// do some swimming animation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>When you see a big conditional like that or a switch statement it&#8217;s time to stop and wonder if there&#8217;s a better way. For instance if we need to subclass our Character we&#8217;re going to have to override that big conditional. What if we only want to replace the <code>swimming</code> bit? We&#8217;ll have to copy and paste the code from the super class for <code>walking</code> and <code>running</code> and then write new code specifically for <code>swimming</code>. And of course if <code>walking</code> and <code>running</code> ever change we&#8217;re totally screwed.</p>
+
+<h3>We need a Strategy to deal with this</h3>
+
+<p>Ok so we know that our character is going to be a real contortionist and need to run and jump and crab-walk all over the place. What if we took the code that made her run and we put it in its own object? How about we just define a Class for movements and we do this for all the different kinds of motion? Then when we need to move our Character we&#8217;ll just tell it to defer to one of these Movement objects.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Movement</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Movement</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">execute</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">running</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Movement</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Hey I&#39;m running!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">walking</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Movement</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Just walking along...&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Now when we want to tell our character to move in a different way we&#8217;ll just update which Movement object its currently referencing.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">function</span> <span class="nx">changeMovementType</span><span class="p">(</span><span class="nx">movement</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">movement</span> <span class="o">=</span> <span class="nx">movement</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">move</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">movement</span><span class="p">.</span><span class="nx">execute</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>In practice you might have something that looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">running</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Movement</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Hey I&#39;m running!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">walking</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Movement</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Just walking along...&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Create a hero and walk through a peaceful forest...</span>
+
+<span class="kd">var</span> <span class="nx">hero</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Character</span><span class="p">();</span>
+<span class="nx">hero</span><span class="p">.</span><span class="nx">changeMovementType</span><span class="p">(</span><span class="nx">walking</span><span class="p">);</span>
+<span class="nx">hero</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span>
+
+<span class="c1">// ... OH NO MOTHERFUCKIN&#39; DINOSAURS!!!</span>
+
+<span class="nx">hero</span><span class="p">.</span><span class="nx">changeMovementType</span><span class="p">(</span><span class="nx">running</span><span class="p">);</span>
+<span class="nx">hero</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span>
+</code></pre></figure>
+
+
+<p>Now it&#8217;s easy for us to add as many different kinds of motion as our little game designer can dream up. Want to give the character gas-powered robotic legs? No problem!</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">robotlegs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Movement</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Cruisin for oil...Look out humans!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">hero</span><span class="p">.</span><span class="nx">changeMovementType</span><span class="p">(</span><span class="nx">robotlegs</span><span class="p">);</span>
+<span class="nx">hero</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span>
+</code></pre></figure>
+
+
+<h2>When to use it</h2>
+
+<p>When you have a part of your Class that&#8217;s subject to change frequently or perhaps you have many related subclasses which only differ in behavior it&#8217;s often a good time to consider using a Strategy pattern.</p>
+
+<p>Another benefit of the Strategy pattern is that it can hide complex logic or data that the client doesn&#8217;t need to know about.</p>
+
+<h2>The Painting App</h2>
+
+<p>For a real world example of when to use Strategy objects consider your typical painting program. Often times you will offer a variety of different brush types to your user but you don’t want to have to change the fundamentals of how a mark shows up on screen every time the user decides to switch from a round to a square brush. Why not wrap those specific implementations in their own brush objects and later on when the user clicks to draw something to screen we’ll just defer to one of those brushes.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Grab a reference to the canvas and the drawing context</span>
+<span class="nx">$canvas</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#painter&#39;</span><span class="p">);</span>
+<span class="nx">context</span> <span class="o">=</span> <span class="nx">$canvas</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+
+<span class="c1">// Define our brush strategy objects</span>
+<span class="nx">brushes</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">outline</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">draw</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">context</span><span class="p">.</span><span class="nx">strokeRect</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">offsetLeft</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">offsetTop</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+      <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">square</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">draw</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">context</span><span class="p">.</span><span class="nx">fillRect</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">offsetLeft</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">offsetTop</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+      <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">circle</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">draw</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">context</span><span class="p">.</span><span class="nx">arc</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">offsetLeft</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">offsetTop</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+          <span class="nx">context</span><span class="p">.</span><span class="nx">fill</span><span class="p">();</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">...</span> <span class="p">.</span>
+
+<span class="nx">brush</span> <span class="o">=</span> <span class="nx">brushes</span><span class="p">.</span><span class="nx">square</span><span class="p">;</span>
+</code></pre></figure>
+
+
+<p>Here we see that <code>brushes.outline</code>, <code>brushes.square</code>, and <code>brushes.circle</code> each implement a consistent interface for the <code>draw</code> call. However their exact implementation changes from one brush to the next. <code>brushes.outline</code> will only draw the stroke of a rectangle, whereas <code>brushes.square</code> and <code>brushes.circle</code> will fill their respective shapes in. Elsewhere in the program we set our initial brush to a default of brushes.square. When the users presses their mouse and moves it around screen we can defer to whichever Strategy the brush object is currently referencing:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Listen for mouse events on the canvas</span>
+<span class="nx">$canvas</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mousedown&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">isDrawing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseup mouseleave&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">isDrawing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mousemove&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">isDrawing</span><span class="p">)</span> <span class="p">{</span>
+          <span class="c1">// Defer drawing to a Strategy object</span>
+          <span class="nx">brush</span><span class="p">.</span><span class="nx">draw</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+      <span class="p">}</span>
+  <span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Again notice that <code>.on('mousemove')</code> we first check to see if it’s ok to draw something and then defer to whichever Strategy is currently being referenced. Using this approach we can add limitless new brush types to the <code>brushes</code> object and easily change how our program performs at runtime. Be sure to check out the live example and the source for the full application.</p>
+
+<h3><a href="http://robdodson.s3.amazonaws.com/javascript-design-patterns/strategy/painter/index.html">Live Example</a></h3>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/strategy/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li>Flyweight: Strategy objects often make good flyweights.</li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=JavaScript Design Patterns: Strategy&amp;url=http://robdodson.github.com/blog/2012/08/03/javascript-design-patterns-strategy/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/08/03/javascript-design-patterns-strategy/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/08/03/javascript-design-patterns-strategy/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/08/03/javascript-design-patterns-strategy/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/08/03/javascript-design-patterns-strategy/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

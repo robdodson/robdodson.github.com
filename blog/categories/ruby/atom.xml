@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Failing at Ruby]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/"/>
+    <updated>2012-06-23T01:08:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/23/failing-at-ruby</id>
+    <content type="html"><![CDATA[<p>I'm just getting my ass kicked by Ruby tonight so I don't have much to show. Trying to just get my metadata scraping to output something currently looks like this:</p>
+
+<p>``` ruby
+require 'open-uri'
+require 'nokogiri'
+require 'mechanize'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  # Create a new instance of Mechanize and grab our page
+  @agent = Mechanize.new
+
+  @uri = uri
+  @page = @agent.get(@uri)
+  @counts = Hash.new(0)
+end
+
+def words_by_selector(selector, ignored_selector = nil)
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # Get rid of the first anchor since it's the site header
+  post_links.shift 
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      if ignored_selector
+        ignored = node.css(ignored_selector)
+        ignored.remove()
+      end
+      words = words_from_string(node.content)
+      count_frequency(words)
+    end
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map! do |word, count|
+    { word: word, count: count }
+  end
+  { word_count: sorted }
+end
+
+def metadata_by_selector(selector)
+  metadata = { posts: [] }
+
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # Get rid of the first anchor since it's the site header
+  post_links.shift
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    time = @doc.css('time')[0]
+    post_data = {}
+    post_data[:date] = { date: time['datetime'] }
+    post_data[:stats] = []
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      node.children.each do |child|
+        post_data[:stats].push(child.content)
+      end                
+    end
+    metadata[:posts].push(post_data)
+  end
+  p metadata
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def nodes_by_selector(selector)
+  nodes = @doc.css(selector)
+  raise Tentacles::SelectionError, 
+    'The selector did not return an results!' if nodes.empty?
+  nodes
+end 
+
+def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Really ugly code that still doesn't work. My biggest problem with Ruby is that I don't have very good debugging tools and that frustrates the shit out of me. I'm so used to the visual debuggers in the Chrome Dev tools that doing everything with <code>p</code> or <code>puts</code> is just soul-crushing.</p>
+
+<!--more-->
+
+
+<p>Right now my biggest problem is that data isn't being returned from the spider for whatever reason. This is especially annoying because the operation takes a while to run... I should slim it down but my brain is too tired to re-write the code. I'm kind of hoping for a lucky break. Advice to anyone just starting out in programming, do not do exactly what I'm doing right now.</p>
+
+<p>Ok so after getting my ass totally handed to me by Ruby here's a working version of the spider that grabs the proper metadata.</p>
+
+<p>``` ruby
+require 'open-uri'
+require 'nokogiri'
+require 'mechanize'
+require_relative 'selection_error'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  # Create a new instance of Mechanize and grab our page
+  @agent = Mechanize.new
+
+  @uri = uri
+  @page = @agent.get(@uri)
+  @counts = Hash.new(0)
+end
+
+def words_by_selector(selector, ignored_selector = nil)
+  # # Get all the links on the page
+  # post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # # Get rid of the first anchor since it's the site header
+  # post_links.shift 
+  # post_links.each do |link|
+  #   post = link.click
+  #   @doc = post.parser
+  #   nodes = nodes_by_selector(selector)
+  #   nodes.each do |node|
+  #     if ignored_selector
+  #       ignored = node.css(ignored_selector)
+  #       ignored.remove()
+  #     end
+  #     words = words_from_string(node.content)
+  #     count_frequency(words)
+  #   end
+  # end
+
+  # sorted = @counts.sort_by { |word, count| count }
+  # sorted.reverse!
+  # sorted.map! do |word, count|
+  #   { word: word, count: count }
+  # end
+  # { word_count: sorted }
+end
+
+def metadata_by_selector(selector)
+  metadata = { posts: [] }
+  puts 'starting'
+  p metadata
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  # Get rid of the first anchor since it's the site header
+  post_links.shift
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    time = @doc.css('time')[0]
+    post_data = {}
+    post_data[:date] = time['datetime']
+    post_data[:stats] = []
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      node.children.each do |child|
+        unless child.content.chomp.empty?
+          post_data[:stats].push(child.content)
+        end
+      end                
+    end
+    metadata[:posts].push(post_data)
+    puts 'post added'
+    p metadata
+  end
+  puts 'returning'
+  p metadata
+  metadata
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def nodes_by_selector(selector)
+  nodes = @doc.css(selector)
+  # raise Tentacles::SelectionError, 
+  #   'The selector did not return an results!' if nodes.empty?
+  nodes
+end 
+
+def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+<code>``
+I had to comment out the</code>Tentacles::SelectionError` because it was throwing and saying it wasn't getting any content with a selector even though it was. Not sure wtf is going on there but I'm sure it has to do with the fact that it's 1:30 a.m. I have a rule that nothing good happens after 11pm when it comes to coding. Tonight has lived up to that. Anyway the above should put out a hash which when converted to JSON looks like this:</p>
+
+<p>``` json
+{
+  "posts": [</p>
+
+<pre><code>{
+  "date": "2012-06-22T00:31:00-07:00",
+  "stats": [
+    "Time: 12:31 am",
+    "Mood: Tired",
+    "Sleep: 6",
+    "Hunger: 0",
+    "Coffee: 1"
+  ]
+},
+{
+  "date": "2012-06-21T01:27:00-07:00",
+  "stats": [
+    "Time: 1:28 am",
+    "Mood: Tired, Annoyed",
+    "Sleep: 6",
+    "Hunger: 0",
+    "Coffee: 1"
+  ]
+},
+{
+  "date": "2012-06-20T00:09:00-07:00",
+  "stats": [
+    "Time: 12:10 am",
+    "Mood: Tired, Introspective",
+    "Sleep: 4.5",
+    "Hunger: 2",
+    "Coffee: 1"
+  ]
+},
+</code></pre>
+
+<p>... .
+```
+I'm pretty certain I could have done this with Node in a fraction of the time if only because Node is much easier to debug with Chrome Dev tools using node-inspector. While I love the Ruby language I definitely do not like debugging it...</p>
+
+<p>Tomorrow I might write some JS to give my brain a break. I'm thoroughly pissed off at Ruby for the evening. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Pissed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Wrapping up the Word Count Spider]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/22/wrapping-up-the-word-count-spider/"/>
+    <updated>2012-06-22T00:31:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/22/wrapping-up-the-word-count-spider</id>
+    <content type="html"><![CDATA[<p>Yeesh, I gotta stop writing so late at night... Last night I was trying to get my spider to follow all the links on the blog's archive page and then sum up all the words from every post. Unfortunately I was way too tired to get that to actually work. Tonight I finished that step of the process but it required some ugly code and refactoring our unit tests. Without further adieu...</p>
+
+<!--more-->
+
+
+<p>```ruby tentacles/lib/tentacles/runner.b
+require 'yaml'
+require 'json'
+require_relative 'options'
+require_relative 'crawler'</p>
+
+<p>module Tentacles
+  class Runner</p>
+
+<pre><code>def initialize(config)
+  @options = Tentacles::Options.new(config)
+  @path = File.dirname(__FILE__) + '/../../output/'
+  @filename = 'word_count.json'
+end
+
+def run      
+  @crawler = Tentacles::Crawler.from_uri(@options.uri)
+  output = @crawler.words_by_selector(@options.post_selector, @options.ignored_post_selector)
+
+  Dir.mkdir(@path) unless Dir.exists?(@path)
+
+  File.open(@path + @filename, "w") do |file|
+    file.puts JSON.pretty_generate(output)
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>```ruby tentacles/lib/tentacles/crawler.rb
+require 'open-uri'
+require 'nokogiri'
+require 'mechanize'</p>
+
+<p>module Tentacles
+  class Crawler</p>
+
+<pre><code>attr_reader :doc
+
+def self.from_uri(uri)
+  new(uri)
+end
+
+def initialize(uri)
+  # Create a new instance of Mechanize and grab our page
+  @agent = Mechanize.new
+
+  @uri = uri
+  @page = @agent.get(@uri)
+  @counts = Hash.new(0)
+end
+
+def words_by_selector(selector, ignored_selector = nil)
+  # Get all the links on the page
+  post_links = @page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+  post_links.shift # Get rid of the first anchor since it's the site header
+  post_links.each do |link|
+    post = link.click
+    @doc = post.parser
+    nodes = nodes_by_selector(selector)
+    nodes.each do |node|
+      if ignored_selector
+        ignored = node.css(ignored_selector)
+        ignored.remove()
+      end
+      words = words_from_string(node.content)
+      count_frequency(words)
+    end
+  end
+
+  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map! do |word, count|
+    { word: word, count: count }
+  end
+  { word_count: sorted }
+end
+
+def metadata_by_selector(selector)
+  node = nodes_by_selector(selector).first
+  metadata = {}
+  node.children.each do |child|
+    child.content
+  end      
+end
+</code></pre>
+
+<p>  private</p>
+
+<pre><code>def nodes_by_selector(selector)
+  nodes = @doc.css(selector)
+  raise Tentacles::SelectionError, 
+    'The selector did not return an results!' if nodes.empty?
+  nodes
+end 
+
+def words_from_string(string)
+  string.downcase.scan(/[\w']+/)
+end
+
+def count_frequency(word_list)
+  for word in word_list
+    @counts[word] += 1
+  end
+  @counts
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>One of the first things I realized what that my paths to the output folder were getting all weird depending on the context in which I was running my tests. So I switched to using Ruby's <code>__FILE__</code> to create paths relative to our crawler. <code>words_by_selector</code> is kind of gross with some nested iterators but whatever, it works. We will probably need to refactor it when we get the metadata spider working. For now I'm just glad that it actually visits all the pages and produces the right output.</p>
+
+<p>```ruby spec/runner_spec.rb
+require_relative '../lib/tentacles/runner'
+require 'helpers'
+require 'fakeweb'</p>
+
+<p>describe Tentacles::Runner do
+  include Helpers</p>
+
+<p>  before do</p>
+
+<pre><code>@runner = Tentacles::Runner.new(relative_path + '/../lib/tentacles/config.yml')
+
+# Create a mock options object
+@options = {
+  uri: 'http://robdodson.me/blog/archives',
+  post_selector: '.entry-content',
+  ignored_post_selector: 'ul:last-child',
+  metadata_selector: '.entry-content ul:last-child'
+}
+@path = File.dirname(__FILE__) + '/../output/'
+@filename = 'word_count.json' 
+</code></pre>
+
+<p>  end</p>
+
+<p>  subject { @runner }</p>
+
+<p>  it { should respond_to(:run) }</p>
+
+<p>  describe "when parsing the config file" do</p>
+
+<pre><code>it "should raise an error if the config file is missing" do
+  expect { runner = Tentacles::Runner.new('') }.to raise_error(Errno::ENOENT)
+  expect { runner = Tentacles::Runner.new(nil) }.to raise_error(TypeError)
+end
+
+it "should raise an error if the config file is invalid" do
+  expect { runner = Tentacles::Runner.new(relative_path + '/mocks/invalid_yaml.yml') }.to raise_error(Psych::SyntaxError)
+end
+
+it "should create a directory for our output" do
+  @runner.run
+  Dir.exists?(@path).should be_true
+end
+
+it "should output the correct JSON" do
+  @runner.run
+  File.open(@path + @filename) do |file|
+    file.each_line do |line|
+      puts line
+    end
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Our spec also needed updating so it could find the output directory properly. One downside to our current hacked-together setup is that I haven't produced a proper mock for things so the test takes FOREVER to run. Something like 30+ seconds because it's actually crawling our site instead of just hitting a dummy file. Definitely need to fix that at some point :)</p>
+
+<p>But once we get it all working the output from robdodson.me ends up looking like this:</p>
+
+<p>```
+{
+  "word_count": [</p>
+
+<pre><code>{
+  "word": "the",
+  "count": 1678
+},
+{
+  "word": "to",
+  "count": 1548
+},
+{
+  "word": "a",
+  "count": 1023
+},
+{
+  "word": "i",
+  "count": 792
+},
+{
+  "word": "it",
+  "count": 730
+},
+{
+  "word": "and",
+  "count": 718
+},
+{
+  "word": "this",
+  "count": 661
+},
+{
+  "word": "of",
+  "count": 658
+},
+{
+  "word": "you",
+  "count": 640
+},
+{
+  "word": "that",
+  "count": 585
+},
+{
+  "word": "we",
+  "count": 569
+}
+</code></pre>
+
+<p>... .
+```
+We can use that JSON to start graphing which I'll hopefully have time to get into before going to Europe. We shall seeeeee. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Quick Spider Example]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/21/quick-spider-example/"/>
+    <updated>2012-06-21T01:27:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/21/quick-spider-example</id>
+    <content type="html"><![CDATA[<p>``` ruby
+require 'mechanize'</p>
+
+<h1>Create a new instance of Mechanize and grab our page</h1>
+
+<p>agent = Mechanize.new
+page = agent.get('http://robdodson.me/blog/archives/')</p>
+
+<h1>Find all the links on the page that are contained within</h1>
+
+<h1>h1 tags.</h1>
+
+<p>post_links = page.links.find_all { |l| l.attributes.parent.name == 'h1' }
+post_links.shift</p>
+
+<h1>Follow each link and print out its title</h1>
+
+<p>post_links.each do |link|</p>
+
+<pre><code>post = link.click
+doc = post.parser
+p doc.css('.entry-title').text
+</code></pre>
+
+<p>end
+```
+Having a horrible time getting anything to run tonight. The code from above is a continuation from yesterday's post except this time we're finding every link on the page, then following that link and spitting out its title. Using this formula you could build something entirely recursive which acts as a full blown spider.</p>
+
+<p>Unfortunately getting this to integrate into the existing app is not working for me tonight. Coding anything after 11 pm is usually a bad call, so I'm going to shut it down and try again in the morning.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Annoyed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Crawling pages with Mechanize and Nokogiri]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri/"/>
+    <updated>2012-06-20T00:09:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/20/crawling-pages-with-mechanize-and-nokogiri</id>
+    <content type="html"><![CDATA[<p>Short post tonight because I spent so much time figuring out the code. It's late and my brain is firing on about 1 cylinder so it took longer than I expected to get everything working.</p>
+
+<p>The scraper that I'm building is supposed to work like a spider and crawl of the pages of my blog. I wasn't sure what the best way to do that was so I started Googling and came up with <a href="http://mechanize.rubyforge.org/">Mechanize.</a> There are other tools built on top of Mechanize, like <a href="https://github.com/felipecsl/wombat">Wombat</a>, but since my task is so simple I figured I could just write everything I needed with Mechanize and Nokogiri. It's usually a better idea to work with simple tools when you're first grasping concepts so you don't get lost in the weeds of some high powered framework.</p>
+
+<!--more-->
+
+
+<p>Since it's late I'll let the code do the talking:</p>
+
+<p>``` ruby crawler.rb
+require 'mechanize'</p>
+
+<h1>Create a new instance of Mechanize and grab our page</h1>
+
+<p>agent = Mechanize.new
+page = agent.get('http://robdodson.me/blog/archives/')</p>
+
+<h1>Find all the links on the page that are contained within</h1>
+
+<h1>h1 tags.</h1>
+
+<p>post_links = page.links.find_all { |l| l.attributes.parent.name == 'h1' }</p>
+
+<h1>Click on one of our post links and store the response</h1>
+
+<p>post = post_links[1].click
+doc = page.parser # Same as Nokogiri::HTML(page.body)
+p doc
+```</p>
+
+<p>This code is hopefully easy enough to digest. After I get the page I find all of the links which are wrapped inside of an <code>h1</code>. Just as an example I <code>click</code> a link from the list using Array syntax and store the response in another var. You <em>could</em> click all of the links by iterating through the post_links object, and that's what we'll tackle tomorrow. For now I just follow 1 link and use a convenience method to parse the page with Nokogiri. After that we have a Nokogiri <code>doc</code> ready to be manipulated however we see fit.</p>
+
+<p><a href="https://gist.github.com/2958538">Here's a link to the Gist</a> if you'd like to tweak or play with the code. Pop it into <code>irb</code> and give it a shot. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Introspective</li>
+    <li>Sleep: 4.5</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Outputting JSON from Ruby]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby/"/>
+    <updated>2012-06-18T08:19:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/18/outputting-json-from-ruby</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/17/object-oriented-scraper-backed-with-tests-pt-dot-dot-dot-9/">Last night</a> I got the scraper to write an output.txt file which listed all the contents of <code>words_by_selector</code>. Today I want to make it write to JSON instead of plain text and I want to back it with some tests.</p>
+
+<!--more-->
+
+
+<h2>Updating our tests</h2>
+
+<p>Our current test for <code>words_by_selector</code> looks like this:</p>
+
+<p><code>ruby spec/crawler_spec.rb
+it "should produce the correct Array of keywords" do
+  expected_array = ['hello: 3', 'world: 2', 'foobar: 1']
+  actual_array = @crawler.words_by_selector(@options[:post_selector], @options[:ignored_post_selector])
+  actual_array.should eq(expected_array)
+end
+</code>
+We're going to need to break that sucker so it'll produce something more like this:</p>
+
+<p>``` ruby spec/crawler_spec.rb
+it "should produce the correct Hash of keywords" do
+  expected_hash = {</p>
+
+<pre><code>  word_count: [
+    {
+      word: 'hello',
+      count: 3
+    },
+    {
+      word: 'world',
+      count: 2
+    },
+    {
+      word: 'foobar',
+      count: 1
+    },
+  ]
+}
+</code></pre>
+
+<p>  actual_hash = @crawler.words_by_selector(@options[:post_selector], @options[:ignored_post_selector])
+  actual_hash.should eq(expected_hash)
+end
+```</p>
+
+<p>And we update <code>words_by_selector</code> to look like this:</p>
+
+<p>``` ruby tentacles/lib/tentacles/crawler.rb
+def words_by_selector(selector, ignored_selector = nil)
+  node = nodes_by_selector(selector).first
+  if ignored_selector</p>
+
+<pre><code>ignored = node.css(ignored_selector)
+ignored.remove()
+</code></pre>
+
+<p>  end
+  words = words_from_string(node.content)
+  count_frequency(words)</p>
+
+<p>  sorted = @counts.sort_by { |word, count| count }
+  sorted.reverse!
+  sorted.map! do |word, count|</p>
+
+<pre><code>{ word: word, count: count }
+</code></pre>
+
+<p>  end
+  { word_count: sorted }
+end
+```</p>
+
+<p>Our new test should pass. Feel free to flip one of the numbers in the expected_hash to 99 or something to see it fail.</p>
+
+<p>Now let's make sure the runner takes the content out of the crawler and writes it to a JSON file.</p>
+
+<p>``` ruby spec/runner_spec.rb
+it "should create a directory for our output" do
+  @runner.run
+  Dir.exists?('../../output').should be_true
+end</p>
+
+<p>it "should output the correct JSON" do
+  @runner.run
+  File.open("../../output/word_count.json") do |file|</p>
+
+<pre><code>file.each_line do |line|
+  puts line
+end
+</code></pre>
+
+<p>  end
+end
+```
+And in runner.rb...</p>
+
+<p>``` ruby tentacles/lib/tentacles/runner.rb
+def run    <br/>
+  @crawler = Tentacles::Crawler.from_uri(@options.uri)
+  output = @crawler.words_by_selector(@options.post_selector, 'ul:last-child')</p>
+
+<p>  Dir.mkdir('../../output') unless Dir.exists?('../../output')</p>
+
+<p>  File.open("../../output/word_count.json", "w") do |file|</p>
+
+<pre><code>file.puts JSON.pretty_generate(output)
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>And there we go. Our first decent output from the crawler :D -Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

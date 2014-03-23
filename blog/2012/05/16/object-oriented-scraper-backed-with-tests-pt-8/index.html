@@ -1,0 +1,330 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Object Oriented Scraper Backed with Tests Pt. 8 | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">16 May 2012</span>
+	<h1 class="post-title">Object Oriented Scraper Backed With Tests Pt. 8</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Yesterday&#8217;s I refactored my specs and crawler to support ignoring selections. While I started parsing the metadata I quickly realized that certain bits were rather specific and needed to have custom parsing methods. Today I&#8217;m going to write some format objects to help with all that.</p>
+
+<!--more-->
+
+
+<p>Our metadata on the page looks like this:</p>
+
+<figure class='code'><pre><code>Time: 7:42 am
+Mood: Awake, Alert, Focused
+Sleep: 6
+Hunger: 0
+Coffee: 0</code></pre></figure>
+
+
+<p>Sleep, hunger and coffee are all floats, so one object could be just <code>FloatFormat</code>. Mood should produce an <code>Array</code> of objects so we could have a <code>CollectionFormat</code>. Finally time is going to combine the time listed in the metadata and the post date. We&#8217;ll make a <code>DateTimeFormat</code> for that. These could all be methods of one big Format object as well but experience tells me that you need to be careful of monolithic actors that consume tons of different data types and spit out results. Those classes have a tendency to bloat very easily as project requirements change. I think it&#8217;s better to produce classes which can be extended or abstracted as needs arise.</p>
+
+<p>So we know <em>who</em> is going to format but we still don&#8217;t know <em>how</em>. I think I&#8217;d like to build a manifest which matches the metadata category to a format. Maybe something like this?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="p">{</span>
+  <span class="s1">&#39;Time&#39;</span>    <span class="o">=&gt;</span> <span class="no">DateTimeFormat</span><span class="p">,</span>
+  <span class="s1">&#39;Mood&#39;</span>    <span class="o">=&gt;</span> <span class="no">CollectionFormat</span><span class="p">,</span>
+  <span class="s1">&#39;Sleep&#39;</span>   <span class="o">=&gt;</span> <span class="no">FloatFormat</span><span class="p">,</span>
+  <span class="s1">&#39;Hunger&#39;</span>  <span class="o">=&gt;</span> <span class="no">FloatFormat</span><span class="p">,</span>
+  <span class="s1">&#39;Coffee&#39;</span>  <span class="o">=&gt;</span> <span class="no">FloatFormat</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>I could probably look at each item and &#8220;detect&#8221; what kind of format it needs but I&#8217;d rather be explicit. If, for instance, I want to add another format, it&#8217;s a lot easier to just change my manifest file vs. hacking on some detection scheme. I think we can just produce this manifest file in YAML and load it in at runtime. One thing I don&#8217;t like about this approach is that it specifically names our format classes. You could generalize it so that it just matches a category to the desired output data, for instance <code>'Coffee' =&gt; Float</code> but then you run into problems with flexibility. What if Coffee still needed to output a float but had to go through a different Format than Hunger or Sleep? With that in mind we&#8217;ll stick to the plan already laid out.</p>
+
+<figure class='code'><figcaption><span>tentacles/lib/tentacles/formats.yml</span></figcaption><pre><code><span class="l-Scalar-Plain">time</span><span class="p-Indicator">:</span>     <span class="l-Scalar-Plain">DateTimeFormat</span>
+<span class="l-Scalar-Plain">mood</span><span class="p-Indicator">:</span>     <span class="l-Scalar-Plain">CollectionFormat</span>
+<span class="l-Scalar-Plain">sleep</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">FloatFormat</span>
+<span class="l-Scalar-Plain">hunger</span><span class="p-Indicator">:</span>   <span class="l-Scalar-Plain">FloatFormat</span>
+<span class="l-Scalar-Plain">coffee</span><span class="p-Indicator">:</span>   <span class="l-Scalar-Plain">FloatFormat</span>
+</code></pre></figure>
+
+
+<h3>The Format object</h3>
+
+<p>I would love it if I could use the Format object as a module and just call a method on it from Crawler. It might look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="k">def</span> <span class="nf">metadata_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+  <span class="n">node</span> <span class="o">=</span> <span class="n">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span><span class="o">.</span><span class="n">first</span>
+  <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">child</span><span class="o">|</span>
+    <span class="no">Tentacles</span><span class="o">::</span><span class="no">Format</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>The only problem is <code>Format</code> needs to load in and parse its formats.yml file before it&#8217;s any good to us. There&#8217;s some interesting talk of the <a href="http://www.subelsky.com/2008/05/using-rubys-autoload-method-to.html">Module#autoload method</a> but that&#8217;s not quite what I need&#8230;</p>
+
+<p>Seems like I can&#8217;t find any good documentation on this so instead we&#8217;ll make it an instance of the class. Also I&#8217;m lazy so I&#8217;m going to have that instance load its own formats.yml file. Normally I like to only have one entry point for configuration files but&#8230;whatever.</p>
+
+<h3>How do I convert a string into a class name in Ruby?</h3>
+
+<p>Well we know we can load our YAML file but all of our format classes are going to come in as strings. I did some digging to figure out how to convert the string into an actual class that can then be instantiated. If you just want to convert a String into a class you can use <code>Object.const_get('Foobar').new</code> but that&#8217;s not going to work for us since our code is wrapped in a module. To convert a string into a module class we&#8217;ll need to use the name of our module: <code>Tentacles.const_get('DateTimeFormat').new</code>.</p>
+
+<p>With that in mind I want to spec out a simple test that passes in string of metadata and receives a printed notification that the right formatter has been created. We&#8217;ll then refactor it to actually use the formatter on the string.</p>
+
+<figure class='code'><figcaption><span>tentacles/spec/format_spec.rb</span></figcaption><pre><code><span class="n">require_relative</span> <span class="s1">&#39;../lib/tentacles/format&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;../lib/tentacles/date_time_format&#39;</span>
+
+<span class="n">describe</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Format</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">&quot;when asked to parse some metadata&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should create the right formatter&quot;</span> <span class="k">do</span>
+      <span class="vi">@format</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Format</span><span class="o">.</span><span class="n">new</span>
+      <span class="vi">@format</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Time: 8:03 am&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_an_instance_of</span><span class="p">(</span><span class="no">Tentacles</span><span class="o">::</span><span class="no">DateTimeFormat</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+
+
+<figure class='code'><figcaption><span>tentacles/lib/format.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;date_time_format&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Format</span>
+    <span class="k">def</span> <span class="nf">initialize</span>
+      <span class="vi">@categories</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/formats.yml&#39;</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+      <span class="n">category</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+      <span class="n">category</span><span class="o">.</span><span class="n">downcase!</span>
+      <span class="no">Tentacles</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span><span class="vi">@categories</span><span class="o">[</span><span class="n">category</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">new</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+
+
+<figure class='code'><figcaption><span>tentacles/lib/date_time_format.rb</span></figcaption><pre><code><span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">DateTimeFormat</span>
+    <span class="k">def</span> <span class="nf">initialize</span>
+      <span class="nb">puts</span> <span class="s1">&#39;DateTimeFormat created!&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Now let&#8217;s take it a step further so we can convert an actual time into a DateTime object. Here&#8217;s our updated spec:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">require_relative</span> <span class="s1">&#39;../lib/tentacles/format&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;date&#39;</span>
+
+<span class="n">describe</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Format</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">&quot;when asked to parse some metadata&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should create the right formatter&quot;</span> <span class="k">do</span>
+      <span class="vi">@format</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Format</span><span class="o">.</span><span class="n">new</span>
+      <span class="vi">@format</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Time: 8:03 am&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_an_instance_of</span><span class="p">(</span><span class="no">Date</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>To pull this off we&#8217;ll need the help of at least 2 new gems: <a href="http://rubygems.org/gems/chronic">Chronic</a> and <a href="http://rubygems.org/gems/activesupport">ActiveSupport</a>. Chronic is a natural language parser which can convert strings into useable timestamps. ActiveSupport is a library of extensions originally created for Rails which have been abstracted into a general purpose toolset. We&#8217;re going to combine these two gems to turn the phrase &#8220;8:03 am&#8221; into a Ruby DateTime.</p>
+
+<p>Gotta first update the Gemfile with our new dependencies and run <code>bundle install</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+
+<span class="n">gem</span> <span class="s1">&#39;rspec&#39;</span><span class="p">,</span> <span class="s1">&#39;2.9.0&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;nokogiri&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt;1.5.2&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;awesome_print&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt;1.0.2&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;fakeweb&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt;1.3.0&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;chronic&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 0.6.7&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;activesupport&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 3.2.3&#39;</span>
+</code></pre></figure>
+
+
+<p>Next we bang out a quick parse method inside of DateTimeFormat. Our Tentacles::Format is going to delegate its parse call to whichever subordinate formatter it creates. Code speaks louder than words:</p>
+
+<figure class='code'><figcaption><span>tentacles/lib/tentacles/format.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;date_time_format&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Format</span>
+    <span class="k">def</span> <span class="nf">initialize</span>
+      <span class="vi">@categories</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/formats.yml&#39;</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="c1"># Create a formatter based on the content of the passed</span>
+    <span class="c1"># in data. Delegate the parse call to this new formatter</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+      <span class="n">category</span><span class="p">,</span> <span class="o">*</span><span class="n">content</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+      <span class="n">category</span><span class="o">.</span><span class="n">downcase!</span>
+      <span class="n">formatter</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span><span class="vi">@categories</span><span class="o">[</span><span class="n">category</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">formatter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+
+
+<figure class='code'><figcaption><span>tentacles/lib/tentacles/date_time_format.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;chronic&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;active_support/core_ext/string/conversions.rb&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">DateTimeFormat</span>
+    <span class="k">def</span> <span class="nf">initialize</span>
+      <span class="nb">puts</span> <span class="s1">&#39;DateTimeFormat created!&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+      <span class="no">Chronic</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">to_datetime</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>With all that in place our test should pass. Nice!!!!!! We&#8217;re well on our way to processing the remaining metadata. Tomorrow I&#8217;ll whip up our other formats and figure out how to pull the date out of a blog post so we can combine that with the time to get a proper DateTime.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Alert, Focused</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Object Oriented Scraper Backed with Tests Pt. 8&amp;url=http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/16/object-oriented-scraper-backed-with-tests-pt-8/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

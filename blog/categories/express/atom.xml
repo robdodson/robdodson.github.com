@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: express | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/express/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[hubot rdio player]]></title>
+    <link href="http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player/"/>
+    <updated>2013-02-10T15:24:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2013/02/10/hubot-rdio-player</id>
+    <content type="html"><![CDATA[<p>hubot. How on Earth did we exist without you? Really I feel like I can demarcate my life into two phases: the time before hubot, and all the awesomeness after. For those not in the know, <a href="http://hubot.github.com/">hubot is an amazing chatbot created by the team at Github.</a> Out of the box he has a ton of cool features but once you start digging into <a href="http://hubot-script-catalog.herokuapp.com/">the hubot scripts catalog</a> things get WAY more interesting.</p>
+
+<p>One of the most exciting projects is <a href="http://zachholman.com/talk/play/">play</a>, a combination iTunes remote and streaming music player. Play lets you broadcast music to everyone on your team and allows anyone in the chatroom to dictate what goes into the queue. Personally, I don't use iTunes all that much, opting instead to use <a href="http://www.rdio.com/">rdio</a> for all my music needs. I figured, wouldn't it be cool if hubot could do all the same stuff he does for play...but with rdio! So that's what I set out to build.</p>
+
+<!--more-->
+
+
+<h2>A call for help!</h2>
+
+<p>Let me start by saying that this project is <strong>extremely</strong> rough. I didn't intend to release it in this state but I figure the best (and fastest) way to improve it is by opening it up for others to use. The Backbone code is grizzly, the Express code is gnarly, and the things I'm doing with OAuth might be downright illegal (I'm an OAuth newb). But—and this is extremely important—it is <strong>super</strong> stable (much to my amazement). My team and I have run it for about 2 weeks and never once managed to crash it. Never needed a reboot or any kind of reset. So while the code might make your face melt, just think of it kinda like the walking dead. The unstoppable, bloodthirsty walking dead. You can hit it with a shovel, poke it in the eye, whatever! It'll keep on truckin'</p>
+
+<h2>Grab the project</h2>
+
+<p>OK let's get started. This is going to be a bulleted list kind of thing cuz I'm sleepy and there's about a million steps. Brevity, people!</p>
+
+<ul>
+<li><a href="https://github.com/robdodson/hubot-rdio">Find the project here.</a></li>
+<li><code>git clone https://github.com/robdodson/hubot-rdio.git</code></li>
+</ul>
+
+
+<h2>Register with rdio</h2>
+
+<ul>
+<li>Go <a href="http://developer.rdio.com/docs/read/rest/oauth">here</a></li>
+<li>Register</li>
+<li>Get a consumer key and consumer secret</li>
+<li>Add the secret and key to <code>app.js</code></li>
+<li>Go <a href="https://github.com/rdio/hello-web-playback/blob/master/token.js">here</a></li>
+<li>Read the instructions</li>
+<li>Use <a href="https://github.com/rdio/rdio-python">rdio-python</a> to generate a playback token (I've found this to be a little flaky. If it doesn't work for you let me know).</li>
+<li>Add playback token to <code>public/js/modules/rdio.js</code> in the <code>flashvars</code> object.</li>
+</ul>
+
+
+<h2>Create your site on Heroku</h2>
+
+<ul>
+<li>Follow <a href="https://devcenter.heroku.com/articles/quickstart">the Heroku quickstart</a> if you've never used Heroku before.</li>
+<li>Create a new site on Heroku with <code>heroku create</code></li>
+<li>Copy the path to your new heroku site, it will look like: zen-jargon-1234.herokuapp.com</li>
+<li>Add the path to your site in <code>app.js</code> where it says HEROKU_URL</li>
+<li>Add just the domain to <code>public/js/modules/rdio.js</code> in the <code>flashvars</code> object.</li>
+<li>Push your site up to Heroku <code>git push heroku master</code></li>
+<li>Scale the process <code>heroku ps:scale web=1</code></li>
+</ul>
+
+
+<h2>Add the script to hubot</h2>
+
+<ul>
+<li>Copy the <code>hubot/scripts/rdio.coffee</code> file into your hubot's <code>scripts</code> folder. Normally you would just install the script from the catalog but I haven't submitted yet because it's still very rough.</li>
+<li>You'll need to add 3 environment variables to your hubot
+
+<ul>
+<li>HUBOT_RDIO_URL</li>
+<li>HUBOT_RDIO_TOKEN</li>
+<li>HUBOT_RDIO_SECRET</li>
+</ul>
+</li>
+<li>HUBOT_RDIO_URL is just the path address of your app on heroku (http://zen-jargon-1234.herokuapp.com)</li>
+<li>HUBOT_RDIO_TOKEN and HUBOT_RDIO_SECRET are the two parts of your OAuth token. I've left two <code>console.logs</code> for you in <code>app.js</code> at lines 341 and 342. If you go to your app on Heroku and login the console should spit out your OAuth token and secret. Add those to hubot and then remove the <code>logs</code> from <code>app.js</code>.</li>
+<li>Push everything to your hubot server</li>
+</ul>
+
+
+<p>To test that everything is working open up your heroku app in Chrome and login. You should see an empty player. From Campfire, tell hubot: <code>hubot play artist deadmau5</code>. Wait a few seconds and the player should fire up. If not, check your terminal or your browser console to see if there are any errors.</p>
+
+<h2>Fire up Nicecast</h2>
+
+<ul>
+<li>You'll need to purchase Nicecast in order to stream, you can <a href="http://www.rogueamoeba.com/nicecast/">buy it here.</a></li>
+<li>Click on <code>Source</code> and choose Chrome or whatever browser you're running.</li>
+<li>Depending on your machine you'll probably want to click on <code>Quality</code> and turn it down. On my Macbook Air I have it set to the 3rd lowest tick.</li>
+<li>Click <code>Start Broadcast</code> and Nicecast will tell you it has to restart your browser (lame). Restart the browser, login again and instruct hubot to start playing some music.</li>
+<li>Click the <code>Share</code> tab</li>
+<li>Copy the link to the .m3u file.</li>
+<li>Pass around the .m3u link to your officemates. The easiest way to tune in is with iTunes. Just do File > Open Stream or Advanced > Open Stream and paste in the link.</li>
+<li>Dance</li>
+</ul>
+
+
+<p>Holy shit that's a lot of steps! Hopefully it all worked, if not <em>please</em> log an issue. kthnxbye</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

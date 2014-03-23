@@ -1,0 +1,387 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Some More Backbone.js Basics | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">20 May 2012</span>
+	<h1 class="post-title">Some More Backbone.js Basics</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Here are some quick Backbone snippets to help visualize concepts. I&#8217;ll move around fairly quickly so if you&#8217;re interested in going more in-depth then checkout the documentation.</p>
+
+<!--more-->
+
+
+<h3>Events</h3>
+
+<p>Backbone events are pretty straightforward. To create a pub/sub relationship you use the <code>on</code> and <code>off</code> methods of <code>Backbone.Events</code>:</p>
+
+<p>In the above example you could make <code>dispatcher</code> into an AMD module and load the dependency with Require.js, something <a href="http://robdodson.me/blog/2012/05/18/backbone-boilerplate-playing-with-require-dot-js/">I&#8217;ve covered in a previous post.</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">dispatcher</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">dispatcher</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">receiver</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Start listening for the &#39;hello&#39; event from the dispatcher.</span>
+        <span class="c1">// When we hear the &#39;hello&#39; event we&#39;ll run a function</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">sayHello</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hello!&#39;</span><span class="p">);</span>
+        <span class="c1">// Kill the listener so we only get called once</span>
+        <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">receiver</span><span class="p">.</span><span class="nx">initialize</span><span class="p">();</span>
+<span class="nx">dispatcher</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+<span class="nx">dispatcher</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<h3>Models</h3>
+
+<p>Backbone models are interesting because they implement explicit <code>get</code> and <code>set</code> methods. When you change a property with the get and set methods it will fire off an event. Here&#8217;s a fiddle showing how to model a <code>Book</code>. We&#8217;ll change the author and the DOM will reflect this update.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/robdodson/dC5GD/1/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+
+<p>If your model implements an <code>initialize</code> function it will be called as soon as the object is created. In other words, its a constructor. If you pass a hash to the model&#8217;s constructor it will set those attributes on itself. The hash and any additional arguments will also be passed to <code>initialize</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Define an initialize function for our book</span>
+<span class="c1">// Initialize will be called anytime we say new Book()</span>
+<span class="kd">var</span> <span class="nx">Book</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">// You can pass in a hash to set initial values on the model</span>
+<span class="c1">// The hash and any additional arguments will also be passed</span>
+<span class="c1">// to the initialize function</span>
+<span class="nx">book</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Book</span><span class="p">({</span>
+    <span class="nx">author</span><span class="o">:</span> <span class="s1">&#39;Hunter S. Thompson&#39;</span><span class="p">,</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Fear and Loating in Las Vegas&#39;</span>
+<span class="p">},</span> <span class="s1">&#39;hello world!&#39;</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">book</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">));</span>
+</code></pre></figure>
+
+
+<h4>Poor man&#8217;s data-binding</h4>
+
+<p>Now that we have a basic understanding of models we can write our own simple binding setup. This example presumes we have an <code>#author</code> and a <code>#title</code> element somewhere on our page.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Book</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span>
+
+<span class="nx">book</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Book</span><span class="p">({</span>
+    <span class="nx">author</span><span class="o">:</span> <span class="s1">&#39;Hunter S. Thompson&#39;</span><span class="p">,</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Fear and Loating in Las Vegas&#39;</span>
+<span class="p">});</span>
+
+<span class="c1">// Listen for any change event coming from the model.</span>
+<span class="c1">// When any attribute changes we&#39;ll tell our elements to</span>
+<span class="c1">// automatically update.</span>
+<span class="nx">book</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#author&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">book</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">));</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#title&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">book</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+
+<span class="nx">book</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;Mickey Mouse&#39;</span><span class="p">);</span>
+<span class="nx">book</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;Everyone Poops&#39;</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<h4>Backbone.sync</h4>
+
+<p>To mess around with saving data we&#8217;ll need to alter <code>Backbone.sync</code>.</p>
+
+<blockquote><p>Backbone.sync is the function that Backbone calls every time it attempts to read or save a model to the server. By default, it uses (jQuery/Zepto).ajax to make a RESTful JSON request and returns a jqXHR. You can override it in order to use a different persistence strategy, such as WebSockets, XML transport, or Local Storage.</p></blockquote>
+
+<p>Backbone will decide whether a save call should perform a create with <code>HTTP POST</code> or an update <code>HTTP PUT</code> based on whether or not our model has an id attribute already.</p>
+
+<p>Here&#8217;s an example from the Backbone docs which overrides the sync functionality and fakes a request to a server.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">Backbone</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">method</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">model</span><span class="p">));</span>
+  <span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// This line is crucial!</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">book</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">({</span>
+  <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;The Rough Riders&quot;</span><span class="p">,</span>
+  <span class="nx">author</span><span class="o">:</span> <span class="s2">&quot;Theodore Roosevelt&quot;</span>
+<span class="p">});</span>
+
+<span class="nx">book</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+<span class="c1">// create: {&quot;title&quot;:&quot;The Rough Riders&quot;,&quot;author&quot;:&quot;Theodore Roosevelt&quot;}</span>
+
+<span class="nx">book</span><span class="p">.</span><span class="nx">save</span><span class="p">({</span><span class="nx">author</span><span class="o">:</span> <span class="s2">&quot;Teddy&quot;</span><span class="p">});</span>
+<span class="c1">// update: {&quot;title&quot;:&quot;The Rough Riders&quot;,&quot;author&quot;:&quot;Teddy&quot;}</span>
+</code></pre></figure>
+
+
+<p>​If we don&#8217;t give our model an <code>id</code> on line 3 then Backbone has no way of knowing if the model has been previously saved or not. It will keep doing create/POST until it receives that id.</p>
+
+<h3>Collections</h3>
+
+<p>If you don&#8217;t want to setup a server but you do want to play around with saving models and collections you can use <a href="https://github.com/jeromegn/Backbone.localStorage">the Backbone LocalStorage adapter written by Jerome Gravel-Niquet</a>. After you&#8217;ve included the js file in your code somewhere you can use it like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Book</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span>
+
+<span class="kd">var</span> <span class="nx">Books</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">model</span><span class="o">:</span> <span class="nx">Book</span><span class="p">,</span>
+    <span class="nx">localStorage</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">(</span><span class="s2">&quot;Books&quot;</span><span class="p">)</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">library</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Books</span><span class="p">();</span>
+<span class="nx">library</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;sync&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;sync succesful!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">othello</span> <span class="o">=</span> <span class="nx">library</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+  <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Othello&quot;</span><span class="p">,</span>
+  <span class="nx">author</span><span class="o">:</span> <span class="s2">&quot;William Shakespeare&quot;</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>To <code>fetch</code> the models in the collection at a later point you can do the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Book</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span>
+
+<span class="kd">var</span> <span class="nx">Books</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">model</span><span class="o">:</span> <span class="nx">Book</span><span class="p">,</span>
+    <span class="nx">localStorage</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">(</span><span class="s2">&quot;Books&quot;</span><span class="p">)</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">library</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Books</span><span class="p">();</span>
+<span class="nx">library</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">library</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>The docs mention that you shouldn&#8217;t use this to initialize your collections. Instead you should <a href="http://documentcloud.github.com/backbone/#FAQ-bootstrap">bootstrap your app</a> at page load. Here&#8217;s the passage:</p>
+
+<blockquote><p>Note that fetch should not be used to populate collections on page load — all models needed at load time should already be bootstrapped in to place. fetch is intended for lazily-loading models for interfaces that are not needed immediately: for example, documents with collections of notes that may be toggled open and closed.</p></blockquote>
+
+<h3>Routers</h3>
+
+<p>Routers are used to map URLs to actions. If you&#8217;re using the Backbone Boilerplate you should see this block of code in your main.js.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Defining the application router, you can attach sub routers here.</span>
+<span class="kd">var</span> <span class="nx">Router</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;:hash&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nx">index</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">tutorial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Tutorial</span><span class="p">();</span>
+
+    <span class="c1">// Attach the tutorial to the DOM</span>
+    <span class="nx">tutorial</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#main&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+
+      <span class="c1">// Fix for hashes in pushState and hash fragment</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">hash</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">route</span><span class="p">.</span><span class="nx">_alreadyTriggered</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Reset to home, pushState support automatically converts hashes</span>
+        <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+
+        <span class="c1">// Trigger the default browser behavior</span>
+        <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">;</span>
+
+        <span class="c1">// Set an internal flag to stop recursive looping</span>
+        <span class="nx">route</span><span class="p">.</span><span class="nx">_alreadyTriggered</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>One gotcha is that the definition of <code>":hash": "index"</code> will send any route that follows the base domain to the index function. For instance if you did the following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;:hash&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span>
+    <span class="s2">&quot;search&quot;</span><span class="o">:</span> <span class="s2">&quot;search&quot;</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+
+  <span class="nx">search</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time to search!&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Instead of the search function running what will actually happen is mysite.com/search will be converted into mysite.com/#search and the word <code>search</code> will be sent to the index function to supply the <code>hash</code> argument. To fix this you&#8217;ll need to remove the <code>":hash": "index"</code> route.</p>
+
+<h3>Views</h3>
+
+<p>Views can either work with existing DOM elements or create new ones. Here&#8217;s a very basic fiddle in which a BodyView is created to wrap our <code>body</code> tag and BoxView is appended to it. We add a little jQuery animation to show the process in action.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/robdodson/rJEkv/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+
+<p>You&#8217;ll often want to link a view&#8217;s render method up to a model&#8217;s change event so the two will stay in sync. Here&#8217;s a quick and dirty example showing how to bind in this fashion.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Book</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span>
+
+<span class="kd">var</span> <span class="nx">BookView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;book-view&#39;</span><span class="p">,</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+    <span class="p">},</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; by &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">outliers</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Book</span><span class="p">({</span>
+    <span class="nx">author</span><span class="o">:</span> <span class="s1">&#39;Malcolm Gladwell&#39;</span><span class="p">,</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Outliers&#39;</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">bookView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BookView</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span> <span class="nx">outliers</span><span class="p">});</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">bookView</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+
+<span class="nx">outliers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;Mickey Mouse&#39;</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>Instead of throwing your HTML into the render method as a String it&#8217;s advised that you use some kind of templating library. Underscore templates seem like a good place to start but Backbone is designed to be template agnostic so you could easily switch to Mustache/Handelbars or HAML if you want. Tomorrow I&#8217;ll look into displaying some content using an Underscore template linked up to a model. Till then.. :D</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Some More Backbone.js Basics&amp;url=http://robdodson.github.com/blog/2012/05/20/some-more-backbone-dot-js-basics/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/20/some-more-backbone-dot-js-basics/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/20/some-more-backbone-dot-js-basics/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/20/some-more-backbone-dot-js-basics/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/20/some-more-backbone-dot-js-basics/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

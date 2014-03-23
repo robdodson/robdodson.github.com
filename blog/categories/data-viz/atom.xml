@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Data Viz | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/data-viz/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[D3 Basics: The Linear Scale]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale/"/>
+    <updated>2012-05-04T07:21:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/04/d3-basics-the-linear-scale</id>
+    <content type="html"><![CDATA[<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .label {
+      font-size: 12 px;
+      fill: #FFF;
+    }
+
+    .point {
+      stroke: #666;
+      fill: red;
+    }
+
+  </style>
+</div>
+
+
+<p>In <a href="http://localhost:4000/blog/2012/05/03/d3-basics-an-introduction-to-scales/">the last post</a> we did a basic introduction to the concept of scales in <a href="http://d3js.org/">D3.js</a>. Today we'll look at our first scale and write some code to visualize it.</p>
+
+<!--more-->
+
+
+<h3>Linear Scales</h3>
+
+<p>The most basic scale in D3 is the <code>linear scale</code> which maps a continous <code>domain</code> to an output range. To define a linear domain we'll need to first come up with a data set. Fibonacci numbers work well, so let's declare a variable <code>data</code> like so:</p>
+
+<p><code>js
+var data = [1, 1, 2, 3, 5, 8];
+</code></p>
+
+<p>The data set will represent our scale's input domain. The next step is defining an output range. Since we're going to be graphing these numbers we want our range to represent screen coordinates. Let's go ahead and declare a <code>width</code> and a <code>height</code> variable and set them to 320 by 150.</p>
+
+<p>```js
+var width = 320,</p>
+
+<pre><code>height = 150;
+</code></pre>
+
+<p>```</p>
+
+<p>We now have everything we need to create our first scale.
+```js
+var x = d3.scale.linear()</p>
+
+<pre><code>    .domain([0, d3.max(data)])
+    .range([0, width]);
+</code></pre>
+
+<p>```</p>
+
+<p>D3 methods often return a value of <code>self</code> meaning you can chain method calls onto one another. If you're used to jQuery this should be a common idiom for you. You'll notice that both the domain and the range functions accept arrays as parameters. Typically the domain only receives two values, the minimum and maximum of our data set. Likewise the range will be given the minimum and maximum of our output space. You could pass in multiple values to create a polylinear scale but that's outside the scope of our dicussion today.</p>
+
+<p>In the domain function we're using a helper called <code>d3.max</code>. Similar to <code>Math.max</code>, it looks at our data set and figures out what is the largest value. While <code>Math.max</code> only works on two numbers, <code>d3.max</code> will iterate over an entire <code>Array</code> for us.</p>
+
+<p>If you've been following along in your own file you should be able to open your console and type <code>x(8)</code> to get 300.</p>
+
+<p>With just this information alone we have enough to build our first graph.</p>
+
+<!-- D3.js Chart -->
+
+
+<p><small>Fibonacci Sequence Chart 1.0</small></p>
+
+<div id="linear-scale-chart-1"></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  var data = [1, 1, 2, 3, 5, 8];
+  var width = 320
+      height = 150;
+
+  var x = d3.scale.linear()
+          .domain([0, d3.max(data)])
+          .range([0, width]);
+
+  var svg = d3.select('#linear-scale-chart-1').append('svg')
+          .attr('width', width)
+          .attr('height', height)
+          .attr('class', 'chart');
+
+  svg.selectAll('.chart')
+          .data(data)
+        .enter().append('rect')
+          .attr('class', 'bar')
+          //.attr('y', function(d, i) { return i * 20 })
+          .attr('y', function(d, i) { return i * 20; })
+          .attr('width', function(d) { return x(d); })
+          .attr('height', 15);
+
+})();
+</script>
+
+
+<p>```js JavaScript
+var data = [1, 1, 2, 3, 5, 8];
+var width = 320</p>
+
+<pre><code>height = 150;
+</code></pre>
+
+<p>var x = d3.scale.linear()</p>
+
+<pre><code>    .domain([0, d3.max(data)])  
+    .range([0, width]);
+</code></pre>
+
+<p>var svg = d3.select('body').append('svg')</p>
+
+<pre><code>    .attr('width', width)
+    .attr('height', height)
+    .attr('class', 'chart');
+</code></pre>
+
+<p>svg.selectAll('.chart')</p>
+
+<pre><code>    .data(data)
+  .enter().append('rect')
+    .attr('class', 'bar')
+    .attr('y', function(d, i) { return i * 20 })
+    .attr('width', function(d) { return x(d); })
+    .attr('height', 15);
+</code></pre>
+
+<p>```</p>
+
+<p>```css CSS
+.chart {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+}</p>
+
+<p>.bar {
+  fill: steelblue;
+}
+```</p>
+
+<h3>Break It Down</h3>
+
+<p>Let's go through the JavaScript piece by piece to outline what happened.</p>
+
+<p>```js
+var data = [1, 1, 2, 3, 5, 8];
+var width = 320</p>
+
+<pre><code>height = 150;
+</code></pre>
+
+<p>var x = d3.scale.linear()</p>
+
+<pre><code>    .domain([0, d3.max(data)])
+    .range([0, width]);
+</code></pre>
+
+<p>```</p>
+
+<p>The first block should be pretty familar at this point. We've declared our Fibonacci data, our explicit width and height and defined our scale. Nothing new here.</p>
+
+<p>```js
+var svg = d3.select('body').append('svg')</p>
+
+<pre><code>    .attr('width', width)
+    .attr('height', height)
+    .attr('class', 'chart');
+</code></pre>
+
+<p>```</p>
+
+<p>In the next section we're declaring our <code>SVG</code> element. We use a D3 selection to grab the <code>body</code> tag and we append an <code>svg</code> tag onto it. Since D3 uses method-chaining we can keep assigning attributes to our SVG element. We declare the width and the height to match the explicit values set earlier and finally we give it a class name of <code>chart</code>.</p>
+
+<p>```js
+svg.selectAll('.chart')</p>
+
+<pre><code>    .data(data)
+  .enter().append('rect')
+    .attr('class', 'bar')
+    .attr('y', function(d, i) { return i * 20 })
+    .attr('width', function(d) { return x(d); })
+    .attr('height', 15);
+</code></pre>
+
+<p>```</p>
+
+<p>This last section is where it all ties together. Since we stored our SVG element in a variable called <code>svg</code> we're able to easily reference it again. We instruct D3 to create a <code>join</code> by calling the <code>data</code> method and passing in our <code>Array</code> of values. When D3 performs a join it steps through each element in the array and attempts to match it to a figure that already exists on the page. If nothing exists it will call the <code>enter</code> function. At this point it steps through the array again, passing the values to us so we can define new shapes. <a href="http://bost.ocks.org/mike/join/">For a much more in-depth explanation of joins refer back to this article.</a></p>
+
+<p>In our case we're appending SVG <code>Rects</code> but it could just as easily be circles or other shapes. We give each rect a class of <code>bar</code> so we can style it with CSS. When we declare the <code>y</code> attribute instead of using an explicit value we create an <code>accessor</code>, a little helper function which takes a piece of data and an optional index as its arguments. In this case <code>d</code> will equal subsequent elements in our data array and <code>i</code> will equal their indices. For a much clearer picture of what's happening you can change it to read:
+<code>js
+.attr('y', function(d, i) { console.log('d = data[' + i + '] = ', d); return i * 20 })
+</code>
+which will give you the following output.
+<code>js
+d = data[0] = 1
+d = data[1] = 1
+d = data[2] = 2
+d = data[3] = 3
+d = data[4] = 5
+d = data[5] = 8
+</code></p>
+
+<p>Since we're just trying to space out our bars along the y-axis we don't really care about the value of <code>d</code>. Instead we'll use the index, <code>i</code>, to offset each bar by a value of i * 20.</p>
+
+<p>In the last two lines we're going to finally use our linear scale to define our bar's width. Here they are again as a refresher.
+<code>js
+.attr('width', function(d) { return x(d); })
+.attr('height', 15);
+</code>
+As each element of the array is passed to our width accessor it's run through the scale and the output returned. Since 8 is our maximum value it should extend all the way to the end of our range.</p>
+
+<p>The final call is just an explicit height for each bar. Depending on the scale this bit can be automated but for simplicity sake we'll just use a hard coded value so we can get something on screen.</p>
+
+<h3>Conclusion</h3>
+
+<p>Now that we've got one scale under our belt the others should be pretty easy to digest. Over the next couple of posts we'll focus on ordinal scales followed by time scales. Stay tuned and ping me if you have any questions. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[D3 Basics: An Introduction To Scales]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/03/d3-basics-an-introduction-to-scales/"/>
+    <updated>2012-05-03T10:04:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/03/d3-basics-an-introduction-to-scales</id>
+    <content type="html"><![CDATA[<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+</div>
+
+
+
+
+<!-- Global Variables: -->
+
+
+<script type="text/javascript">
+
+  var data = [1, 1, 2, 3, 5, 8];
+
+  var margin = {top: 40, right: 40, bottom: 40, left: 40},
+      width = $('.entry-content').width(),
+      height = 300;
+
+  $(window).resize(function() {
+    width = $('.entry-content').width();
+  });
+
+</script>
+
+
+<p>After selections, scales are probably the most frequently used element in D3 because they faciliate such great control over data and screen space. I want to spend several posts documenting how scales work to help out anyone who is struggling with the concept. We'll start with a high level overview of what a scale is in D3 and then explore the individual objects to learn their nuances.</p>
+
+<!--more-->
+
+
+<h3>What Are D3 Scales?</h3>
+
+<p>Essentially a scale is a convenience function for mapping input data to an output range, typically x/y positions or width/height. Scales can also be used to link data to arbitrary values like categories or days of the week, or to quantize data into "buckets".</p>
+
+<p>There are two universal properties for any scale: the <code>domain</code> and the <code>range</code>. The <code>domain</code> serves as the input for your graph while the <code>range</code> represents the output.</p>
+
+<h4>Domain</h4>
+
+<p>Since the <code>domain</code> corresponds to our graph's input it can be either <em>continuous</em> or <em>discrete</em>. You might think of a continous data set as any number from 1 to infinity while a discrete set would be every <code>Date</code> from January 1, 2012 to January 10, 2012. The takeaway is that continous data is essentially unbounded and discrete data is finite and easily quantified.</p>
+
+<h4>Range</h4>
+
+<p>The <code>range</code> defines the potential output that the scale can generate. Values from the domain are mapped to values in the range. Let's look at two examples to help clarify.</p>
+
+<p>Say you have an <em>identity scale</em>, meaning whatever value you use for input will also be returned as the output. We'll call the scale <code>x</code>. If <code>x</code> has an input <code>domain</code> of 0 - 100 and an output <code>range</code> of 0 - 100, then your <code>scale of 1</code> will be 1. Your <code>scale of 50</code> will be 50. Here's another way to write it:</p>
+
+<p><code>javascript
+x(50) // returns 50
+</code></p>
+
+<p>Now let's change the scale a bit. Let's say that <code>x</code> still has an input <code>domain</code> of 0 - 100 but now it has an output <code>range</code> of <code>0 - 10</code>. What do you think our <code>scale of 50</code> will return? ... If you guessed 5 then you are the smart! Because we limited our potential output down to any number between 0 and 10 it narrowed the mapping from our <code>domain</code> to our <code>range</code>. Being able to expand or contract this mapping is the main value in using a D3 scale. If it's still not quite sinking in check out this great visual from <a href="http://www.jeromecukier.net/">Jerome Cukier</a> (<a href="https://twitter.com/#!/jcukier">@jcukier</a>).</p>
+
+<p><img class="center" src="http://www.jeromecukier.net/wp-content/uploads/2011/08/d3scale1.png" title="'An example of how scales work'" ></p>
+
+<p>Jerome has <a href="http://www.jeromecukier.net/blog/2011/08/11/d3-scales-and-color/">an excelent blog post</a> covering scales in D3 which inspired me to write my own post. Definitely read his as well! I feel like a great way to learn something is to not only read about it a bunch but to write about it. Hearing different views on the same topic often helps me solidify a concept.</p>
+
+<h3>Class Work Time</h3>
+
+<!-- D3.js -->
+
+
+<script type='text/javascript'>
+
+var x = d3.scale.linear()
+    .domain([0, 100])
+    .range([0, 10]);
+
+</script>
+
+
+<p>I've included <code>d3</code> on the page so you can play around with it. Go ahead, bust open your developer tools or firebug and type <code>d3</code> into the console. It should return an Object full of methods.</p>
+
+<p>Let's do some experiments with our <code>x</code> scale from earlier. Type the following to see what you get.</p>
+
+<p><code>javascript
+x(0);
+x(25);
+x(99);
+x(100);
+</code></p>
+
+<p>In D3 a scale is both a <code>Function</code> and an <code>Object</code>. You can invoke a scale by using parenthesis: <code>x(100)</code> or you can set a property to change its behavior: <code>x.range([0, 1000])</code>. Let's try that! In the console type:</p>
+
+<p><code>javascript
+x.range([0, 1000]);
+</code></p>
+
+<p>Our scale's range used to be 0 - 10. Now that we've changed it to 0 - 1000, what do you think <code>x(100)</code> will equal? Keep in mind that 100 is the highest value in our domain. If you're not sure try it in the console. Actually try it in the console regardless of how sure you are! The console is cool as shit!</p>
+
+<h3>To Be Continued...</h3>
+
+<p>Scales are a huge topic so we'll stop here for now. In the next post we'll talk about <code>linear</code>, <code>time</code> and <code>ordinal</code> scales; once you've mastered them everything else becomes a lot easier. Stay tuned :)</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[D3.js and Octopress]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/"/>
+    <updated>2012-05-02T07:20:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress</id>
+    <content type="html"><![CDATA[<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+</div>
+
+
+
+
+<!-- Global Variables and Handlers: -->
+
+
+<script type="text/javascript">
+
+  var data = [1, 1, 2, 3, 5, 8];
+
+  var margin = {top: 40, right: 40, bottom: 40, left: 40},
+      width = $('.entry-content').width(),
+      height = 300;
+
+  $(window).resize(function() {
+    width = $('.entry-content').width();
+  });
+
+</script>
+
+
+<p>This morning I was hoping to cover some of the basics of using D3.js. Along the way I realized I really wanted people to be able to see the graphs on the blog itself. I <em>could</em> have used JSFiddle, but I didn't like all that chrome repeated across the page. So I came up with my own solution with a little bit of hacking :)</p>
+
+<!--more-->
+
+
+<p>I'll have to save the basics for tomorrow since I've already spent way too much time just getting this setup. But I will offer a brief explanation of D3 and how I got it working on Octopress.</p>
+
+<h3>What is D3.js?</h3>
+
+<p>D3 (formerly Protovis) is a library written by <a href="http://bost.ocks.org/mike/">Mike Bostock</a> (<a href="https://twitter.com/#!/mbostock">@mbostock</a>) which allows you to easily manipulate a DOM using data sets. While the implications of that statement are somewhat vague, D3 is generally used for doing data visualizations primarily in SVG. D3 can also work with regular DOM nodes however SVG is often the best tool to use if you're trying to draw a graph of some kind.</p>
+
+<p>As a quick demo, here's a bar chart which visualizes an <code>Array</code> of Fibonacci numbers: <code>[1, 1, 2, 3, 5, 8]</code></p>
+
+<!-- D3.js Chart -->
+
+
+<div id='chart-1'></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  function draw() {
+    
+    $('#chart-1').empty();
+
+    var x = d3.scale.linear()
+        .domain([0, d3.max(data)])
+        .range([0, width - margin.left - margin.right]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(data.length))
+        .rangeRoundBands([height - margin.top - margin.bottom, 0], 0.2);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickPadding(8);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .tickPadding(8)
+        .tickSize(0);
+
+    var svg = d3.select('#chart-1').append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'chart')
+      .append('g')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+    svg.selectAll('.chart')
+        .data(data)
+      .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('y', function(d, i) { return y(i) })
+        .attr('width', x)
+        .attr('height', y.rangeBand());
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + y.rangeExtent()[1] + ')')
+        .call(xAxis);
+
+    svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+      .selectAll('text')
+        .text(function(d) { return String.fromCharCode(d + 65); });
+    
+  }
+
+  draw();
+
+  $(window).resize(function() {
+    draw();
+  });
+
+})();
+</script>
+
+
+<p>Break open your developer tools and inspect the graph above. You'll notice that it's just SVG elements. For many the 2 best aspects of D3 are 1) That it works with regular SVG elements and 2) That it doesn't wrap that functionality in arbitrary objects which require a lot of configuration. This second aspect is where many graphing libraries fall short. As Justin Palmer (<a href="https://twitter.com/#!/caged">@Caged</a>) <a href="http://dealloc.me/2011/06/24/d3-is-not-a-graphing-library.html">points out on his blog</a>:</p>
+
+<blockquote><p>As long as you stay within the confines of the template, it’s simple, but, anytime you want customize a specific aspect of the original template, more configuration options are added to the library. You should avoid “design by configuration.”</p></blockquote>
+
+<p>D3 handles this by dumping the idea of templated visuals. There is no <code>makeBarGraph()</code> function in D3; instead you work directly with your data and the SVG elements. Essentially what you see is what you get, which can make the initial learning curve pretty steep. But because it's so non-prescriptive you can build just about anything with it.</p>
+
+<h3>How do you integrate D3 and Octopress?</h3>
+
+<p>Since I want to write several more posts on D3 I figured it'd be good if I setup my own little system to help me generate most of the boilerplate. If you're lazy and want to skip to the end <a href="https://github.com/robdodson/octopress-templates">here's a link to the template.</a></p>
+
+<h4>Requiring D3</h4>
+
+<p>If you inspect the page you'll see that starting at the top of this post I'm requiring d3.js. There's a good chance I'll move that over into the site's header so it isn't required every time but if you're just doing a one off then that should be fine. Normally it's a good idea to require your javascript at the end of your page but I want to wrap all of my graphs in self-executing functions so they can seal their scope (and also because I'm lazy and want to use the same boilerplate stub code in each). As a result if you don't require d3 before the functions execute it'll throw an error.</p>
+
+<p>I chose to put a copy of d3 into my Octopress <code>source/javascripts</code> so it would get compiled with the rest of my assets and deployed. If you'd prefer you can also grab D3 from the site.</p>
+
+<p>```html</p>
+
+<script src="http://d3js.org/d3.v2.js"></script>
+
+
+<p>```</p>
+
+<h4>Adding the CSS</h4>
+
+<p>The next step is to add some CSS. Getting a <code>style</code> tag into the post ended up being trickier than I had first thought because Markdown strips out <code>style</code> tags. As a result every time I generate the site the CSS dissapears. The work around is to wrap the <code>style</code> tag in a <code>div</code> and put that at the top of the post.</p>
+
+<p>Here are the basic styles I'm using:</p>
+
+<p>```html</p>
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      margin-top: -40px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+</div>
+
+
+<p>```</p>
+
+<h4>Margins and Resizing</h4>
+
+<p>Now that we have D3 included on the page and our CSS styles are being respected it's time to setup some useful defaults in another <code>script</code> tag. Typically I'll define the dimensions of my graph area as well as any margins that I might want to use.</p>
+
+<p>If I'm going to use the same data set throughout I might put that in as well so I don't have to declare it over and over again. In our case the array of Fibonacci numbers is there.</p>
+
+<p>```html</p>
+
+<!-- Global Variables and Handlers: -->
+
+
+<script type="text/javascript">
+
+  var data = [1, 1, 2, 3, 5, 8];
+
+  var margin = {top: 40, right: 40, bottom: 40, left: 40},
+      width = $('.entry-content').width(),
+      height = 300;
+
+  $(window).resize(function() {
+    width = $('.entry-content').width();
+  });
+
+</script>
+
+
+<p>```</p>
+
+<p>The margin object can be really helpful when you're trying to move things around. For instance, to send something to the bottom of your graph you can just say <code>height - margin.top - margin.bottom</code>.</p>
+
+<p>You'll notice that rather than giving it an explicit width I'm using jQuery to find our containing element's width. I'm trying to keep in line with the responsiveness of the Octopress theme so setting the width to match our containing element prevents the graph from breaking out if the user starts off with a small window.</p>
+
+<p>I'm also including a handler for the <code>window</code> resize event. Whenever the user changes the size of their browser we'll update our global width variable and tell all of the dependent graphs to redraw themselves.</p>
+
+<h4>Our First Graph!</h4>
+
+<p>Finally I create a <code>div</code> to contain our visualization. Beneath the <code>div</code> I've included another script tag with a self-executing function. When run, the function will grab its sibling and populate it with an SVG element. Here's the code (don't freak out when you see it all, we'll go over what everything does in a later post).</p>
+
+<p>```html</p>
+
+<!-- D3.js Chart -->
+
+
+<div id='chart-1'></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  function draw() {
+    
+    $('#chart-1').empty();
+
+    var x = d3.scale.linear()
+        .domain([0, d3.max(data)])
+        .range([0, width - margin.left - margin.right]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(data.length))
+        .rangeRoundBands([height - margin.top - margin.bottom, 0], 0.2);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickPadding(8);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .tickPadding(8)
+        .tickSize(0);
+
+    var svg = d3.select('#chart-1').append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'chart')
+      .append('g')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+    svg.selectAll('.chart')
+        .data(data)
+      .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('y', function(d, i) { return y(i) })
+        .attr('width', x)
+        .attr('height', y.rangeBand());
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + y.rangeExtent()[1] + ')')
+        .call(xAxis);
+
+    svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+      .selectAll('text')
+        .text(function(d) { return String.fromCharCode(d + 65); });
+    
+  }
+
+  draw();
+
+  $(window).resize(function() {
+    draw();
+  });
+
+})();
+</script>
+
+
+<p><code>``
+After we declare the self-executing function we include another function called</code>draw<code>. Using a separate function lets us later *redraw* the graph if the user resizes their browser. This also works on the iPhone when the user changes from portrait to landscape mode. Inside of</code>draw<code>we first make sure that the containing div is empty (otherwise we'd end up drawing graphs on top of one another). You can skip most of the D3 code—we'll cover that over the next couple of days—but take a look at the last few lines where we call</code>draw()<code>and add another handler for</code>window.resize<code>. Whenever the user changes their browser size our global</code>width` value will be updated, then our graphs will redraw themselves using this new width.</p>
+
+<p>At the moment you need to add this handler to each of your visualizations. Not terrible but not very DRY either. I think in a future iteration I'll add a queue which holds a reference to each <code>draw</code> instance and calls them in sync. For now this is the quick and dirty way to get a graph up on Octopress. <a href="https://github.com/robdodson/octopress-templates">You can download the entire post template from Github.</a> Enjoy!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

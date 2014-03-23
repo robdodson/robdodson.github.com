@@ -1,0 +1,418 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Deploying Your First Node.js and Socket.io App to Heroku | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">04 Jun 2012</span>
+	<h1 class="post-title">Deploying Your First Node.js and Socket.io App to Heroku</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><em>Update: This page has been translated into <a href="http://www.webhostinghub.com/support/es/misc/implementando-tus-primeras-aplicaciones">Spanish</a> by Maria Ramos.</em></p>
+
+<p>At my office we like to shoot each other from across the room with Nerf guns. In an effort to actually remain productive we&#8217;ve implemented a rule that whenever you get shot you&#8217;re dead for 1 hour. But that hour can be a little tricky to keep track of between players. Who&#8217;s dead and who isn&#8217;t? Am I about to be shot right now??</p>
+
+<p>In an effort to keep track of things (and also because I need to write a blog post) I decided to start working on a little <a href="http://nodejs.org/">Node.js</a> and <a href="http://socket.io/">Socket.io</a> app. In this first post I&#8217;m just going to get things setup and deploy them to Heroku. Hopefully tomorrow we can work on implementing the actual timers. If you&#8217;ve never worked with Heroku before <a href="https://devcenter.heroku.com/articles/quickstart">you&#8217;ll need to follow their getting started guide</a> to make sure you have all the proper command line tools. Don&#8217;t worry, it&#8217;s really easy and their documentation is <strong>awesome</strong>.</p>
+
+<!--more-->
+
+
+<h3>Express it!</h3>
+
+<p>To start us off we&#8217;ll use <a href="http://expressjs.com/">Express</a> since it provides a nice, <a href="http://www.sinatrarb.com/">Sinatra</a> like layer on top of Node. If you haven&#8217;t installed Node yet you can do it from the <a href="http://nodejs.org/">Node.js</a> site. The installer will also include <code>npm</code> which is Node&#8217;s package manager. Following the instructions on the <a href="http://expressjs.com/">Express</a> site you should be able to just type:</p>
+
+<figure class='code'><pre><code>npm install -g express</code></pre></figure>
+
+
+<p>Now that you have Express installed you can use it to create a new project.</p>
+
+<figure class='code'><pre><code>express defcon</code></pre></figure>
+
+
+<p>
+I&#8217;m calling my project <code>defcon</code> because I luvz <a href="http://en.wikipedia.org/wiki/WarGames">WarGames</a>. You can call yours whatever you&#8217;d like :)</p>
+
+<p>Next we need to <code>cd</code> into the defcon folder so we can install Socket.io and our other dependencies. There&#8217;s a version of Socket.io designed to work with Express so we&#8217;ll install that one.</p>
+
+<figure class='code'><pre><code>npm install -d  # install Express dependencies
+npm install socket.io express</code></pre></figure>
+
+
+<p>We&#8217;ll also need to add socket.io to our <code>package.json</code> which is similar to a <code>Gemfile</code> if you&#8217;re coming from Ruby, or just a big list of file dependencies if you&#8217;re coming from something else :D When you distribute your app other developers can just run &#8216;npm install -d&#8217; and it will add all of the modules listed to their project. Heroku will also use our <code>package.json</code> when we push our app to their servers. I&#8217;m also going to replace the <a href="http://jade-lang.com/">Jade</a> rendering engine with <a href="http://embeddedjs.com/">EJS</a> since it&#8217;s easier for me to work with.</p>
+
+<figure class='code'><figcaption><span>package.json</span></figcaption><pre><code><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;defcon&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;private&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;express&quot;</span><span class="o">:</span> <span class="s2">&quot;~2.5.8&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;ejs&quot;</span><span class="o">:</span> <span class="s2">&quot;~0.7.1&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;socket.io&quot;</span><span class="o">:</span> <span class="s2">&quot;~0.9.6&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;engines&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;node&quot;</span><span class="o">:</span> <span class="s2">&quot;0.6.x&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>The tilde <code>~</code> character tells NPM that it&#8217;s ok to install this version of our module, or anything less than the next highest version number. So the following are equivalent: <code>"~1.2" = "&gt;=1.2.0 &lt;2.0.0"</code>. This is typically a good practice with modules because you&#8217;d like to receive bug fixes and patches but you don&#8217;t want to let your app potentially download a v2 of some library which breaks the API.</p>
+
+<p>Run <code>npm install -d</code> again to make sure that <code>ejs</code> and anything else you&#8217;ve added are properly installed. Open up your app.js file that Express provided for you. We&#8217;ll need to change a lot of stuff so it&#8217;s probably easiest for you to just copy and paste this one that I&#8217;ve already prepared. Paste it into a new file if you&#8217;d like so you can compare all the differences.</p>
+
+<figure class='code'><figcaption><span>app.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">),</span>
+    <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">logger</span><span class="p">()),</span>
+    <span class="nx">io</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;socket.io&#39;</span><span class="p">).</span><span class="nx">listen</span><span class="p">(</span><span class="nx">app</span><span class="p">),</span>
+    <span class="nx">routes</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./routes&#39;</span><span class="p">);</span>
+
+<span class="c1">// Configuration</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;views&#39;</span><span class="p">,</span> <span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/views&#39;</span><span class="p">);</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;view engine&#39;</span><span class="p">,</span> <span class="s1">&#39;ejs&#39;</span><span class="p">);</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">bodyParser</span><span class="p">());</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">methodOverride</span><span class="p">());</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nx">router</span><span class="p">);</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="kr">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/public&#39;</span><span class="p">));</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="s1">&#39;development&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">errorHandler</span><span class="p">({</span> <span class="nx">dumpExceptions</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">showStack</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}));</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="s1">&#39;production&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">errorHandler</span><span class="p">());</span>
+<span class="p">});</span>
+
+<span class="c1">// Heroku won&#39;t actually allow us to use WebSockets</span>
+<span class="c1">// so we have to setup polling instead.</span>
+<span class="c1">// https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku</span>
+<span class="nx">io</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">io</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;transports&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;xhr-polling&quot;</span><span class="p">]);</span>
+  <span class="nx">io</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;polling duration&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Routes</span>
+
+<span class="kd">var</span> <span class="nx">port</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PORT</span> <span class="o">||</span> <span class="mi">5000</span><span class="p">;</span> <span class="c1">// Use the port that Heroku provides or default to 5000</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Express server listening on port %d in %s mode&quot;</span><span class="p">,</span> <span class="nx">app</span><span class="p">.</span><span class="nx">address</span><span class="p">().</span><span class="nx">port</span><span class="p">,</span> <span class="nx">app</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">env</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nx">routes</span><span class="p">.</span><span class="nx">index</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">status</span> <span class="o">=</span> <span class="s2">&quot;All is well.&quot;</span><span class="p">;</span>
+
+<span class="nx">io</span><span class="p">.</span><span class="nx">sockets</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">io</span><span class="p">.</span><span class="nx">sockets</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">status</span><span class="o">:</span> <span class="nx">status</span> <span class="p">});</span> <span class="c1">// note the use of io.sockets to emit but socket.on to listen</span>
+  <span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;reset&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">status</span> <span class="o">=</span> <span class="s2">&quot;War is imminent!&quot;</span><span class="p">;</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">sockets</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">status</span><span class="o">:</span> <span class="nx">status</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>In my views folder I&#8217;ve created a <code>layout.ejs</code>&#8230;</p>
+
+<figure class='code'><figcaption><span>views/layout.ejs </span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Title<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;description&quot;</span> <span class="na">content=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;author&quot;</span> <span class="na">content=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+
+    <span class="c">&lt;!-- HTML5 shim, for IE6-8 support of HTML elements --&gt;</span>
+    <span class="c">&lt;!--[if lt IE 9]&gt;</span>
+<span class="c">      &lt;script src=&quot;http://html5shim.googlecode.com/svn/trunk/html5.js&quot;&gt;&lt;/script&gt;</span>
+<span class="c">    &lt;![endif]--&gt;</span>
+
+    <span class="c">&lt;!-- styles --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot;/css/main.css&quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="err">&lt;</span>%- body %&gt;
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/socket.io/socket.io.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/js/libs/jquery.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/js/main.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>and an <code>index.ejs</code>.</p>
+
+<figure class='code'><figcaption><span>views/index.ejs</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;status&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">&quot;reset&quot;</span><span class="nt">&gt;</span>Reset!<span class="nt">&lt;/button&gt;</span>
+</code></pre></figure>
+
+
+<p>If you&#8217;d like you can open up <code>routes/index.js</code> and look around but you don&#8217;t need to. It should render <code>layout.ejs</code> and <code>index.ejs</code> by default.</p>
+
+<p>A few more items to go&#8230;We need to add a copy of <a href="http://jquery.com/">jQuery</a> to our <code>public</code> folder and also a <code>main.js</code> file. I&#8217;ve renamed the structure to look like this:</p>
+
+<figure class='code'><figcaption><span>views/index.ejs</span></figcaption><pre><code>public
+|
+|_ css
+|_ img
+|_ js
+    |_ libs
+        |_ jquery.js
+    |_ plugins
+    |_ main.js
+</code></pre></figure>
+
+
+<p>I guess that&#8217;s just a habit of using Backbone Boilerplate all the time :) Here&#8217;s what <code>main.js</code> should look like:</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hostname</span><span class="p">);</span>
+
+<span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#status&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#reset&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;reset&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>It&#8217;s important to note the line that says <code>var socket = io.connect(window.location.hostname);</code>. In the socket.io docs they usually tell you to connect to <code>localhost</code> but since we&#8217;re on heroku we&#8217;ll need to instead connect to whatever our custom domain is.</p>
+
+<h3>Cross your fingers</h3>
+
+<p>At this point we should be ready to test everything. From the root of your project run <code>node app.js</code>. If all goes well you should see something like this:</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code>   <span class="nx">info</span>  <span class="o">-</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">io</span> <span class="nx">started</span>
+<span class="nx">Express</span> <span class="nx">server</span> <span class="nx">listening</span> <span class="nx">on</span> <span class="nx">port</span> <span class="mi">5000</span> <span class="k">in</span> <span class="nx">development</span> <span class="nx">mode</span>
+</code></pre></figure>
+
+
+<p>If not leave me a comment and I&#8217;ll see if I can help you debug it. However let&#8217;s assume that everything DID go well for you and now you&#8217;re ready to connect to the local version of your app. Point your browser to http://localhost:5000 and you should see something like this:</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/all_is_well_with_sockets.png" title="'All is well with Socket.io'" ></p>
+
+<p>Now open another browser window and also point it at localhost:5000. In one of the windows click the button that says <code>Reset</code> which should change the copy in <em>both</em> windows to &#8216;War is imminent!&#8217;</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/war_is_imminent_sockets.png" title="'War is Immentin with Socket.io'" ></p>
+
+<h3>Git&#8217;er done!</h3>
+
+<p>Alright we should have a functioning app at this point so let&#8217;s put this baby into Git.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">git</span> <span class="nx">init</span>
+<span class="nx">echo</span> <span class="s1">&#39;node_modules&#39;</span> <span class="o">&gt;&gt;</span> <span class="p">.</span><span class="nx">gitignore</span>
+</code></pre></figure>
+
+
+<p>We&#8217;ll ignore the node_modules directory so Heroku can create its own version. Heroku requires that we deploy our app from Git which is kind of an awesome practice. We&#8217;ll also need to define a <code>Procfile</code> which will list the processes that our app can run.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">touch</span> <span class="nx">Procfile</span>
+<span class="nx">echo</span> <span class="s1">&#39;web: node app.js&#39;</span> <span class="o">&gt;&gt;</span> <span class="nx">Procfile</span>
+</code></pre></figure>
+
+
+<p>To verify that our <code>Procfile</code> is working we can use Heroku&#8217;s built in utility called <code>foreman</code>.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">$</span> <span class="nx">foreman</span> <span class="nx">start</span>
+
+<span class="mi">23</span><span class="o">:</span><span class="mi">47</span><span class="o">:</span><span class="mi">32</span> <span class="nx">web</span><span class="p">.</span><span class="mi">1</span>     <span class="o">|</span> <span class="nx">started</span> <span class="kd">with</span> <span class="nx">pid</span> <span class="mi">53197</span>
+<span class="mi">23</span><span class="o">:</span><span class="mi">47</span><span class="o">:</span><span class="mi">32</span> <span class="nx">web</span><span class="p">.</span><span class="mi">1</span>     <span class="o">|</span> <span class="nx">info</span><span class="o">:</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">io</span> <span class="nx">started</span>
+<span class="mi">23</span><span class="o">:</span><span class="mi">47</span><span class="o">:</span><span class="mi">32</span> <span class="nx">web</span><span class="p">.</span><span class="mi">1</span>     <span class="o">|</span> <span class="nx">Express</span> <span class="nx">server</span> <span class="nx">listening</span> <span class="nx">on</span> <span class="nx">port</span> <span class="mi">5000</span> <span class="k">in</span> <span class="nx">development</span> <span class="nx">mode</span>
+</code></pre></figure>
+
+
+<p>Point your browser to <code>localhost:5000</code> to verify that things are still working. If everything looks good we&#8217;re ready to commit to git.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">git</span> <span class="nx">add</span> <span class="p">.</span>
+<span class="nx">git</span> <span class="nx">commit</span> <span class="o">-</span><span class="nx">m</span> <span class="s1">&#39;initial commit&#39;</span>
+</code></pre></figure>
+
+
+<h3>Deploy to Heroku</h3>
+
+<p>Now that our app is safely tucked away in git it&#8217;s time to fire up a new Heroku instance.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">$</span> <span class="nx">heroku</span> <span class="nx">create</span> <span class="o">--</span><span class="nx">stack</span> <span class="nx">cedar</span>
+</code></pre></figure>
+
+
+<p>Heroku will do the work of setting up a new <code>git remote</code> for us to push our app to.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">$</span> <span class="nx">git</span> <span class="nx">push</span> <span class="nx">heroku</span> <span class="nx">master</span>
+</code></pre></figure>
+
+
+<p>We&#8217;ll need to scale our web process before we can use the app.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">$</span> <span class="nx">heroku</span> <span class="nx">ps</span><span class="o">:</span><span class="nx">scale</span> <span class="nx">web</span><span class="o">=</span><span class="mi">1</span>
+</code></pre></figure>
+
+
+<p>To see which processes are running on Heroku you can use the <code>heroku ps</code> command.</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">$</span> <span class="nx">heroku</span> <span class="nx">ps</span>
+
+<span class="nx">Process</span>       <span class="nx">State</span>               <span class="nx">Command</span>
+<span class="o">------------</span>  <span class="o">------------------</span>  <span class="o">--------------------------------------------</span>
+<span class="nx">web</span><span class="p">.</span><span class="mi">1</span>         <span class="nx">up</span> <span class="k">for</span> <span class="mi">10</span><span class="nx">s</span>          <span class="nx">node</span> <span class="nx">app</span><span class="p">.</span><span class="nx">js</span>
+</code></pre></figure>
+
+
+<p>With everything setup we should be able to run <code>heroku open</code> which will fire up our browser and direct it to an instance of our app. There seems to be a fair bit of latency so it can take several seconds for the initial status of &#8216;All is well&#8217; to show up. If you see the Reset button with nothing above it give it around 10 seconds to see if it eventually updates. Open another browser window and point it at the Heroku domain in the address bar. If you press the Reset button in one window it should immediately update in the next one.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/heroku_war_is_imminent.png" title="'Heroku: War is Imminent'" ></p>
+
+<h3>Wrapping up</h3>
+
+<p>Well I hope you enjoyed this brief tour of Socket.io and Heroku. Before we sign off let&#8217;s make sure to turn off the running process on our Heroku instance:</p>
+
+<figure class='code'><figcaption><span>public/js/main.js</span></figcaption><pre><code><span class="nx">$</span> <span class="nx">heroku</span> <span class="nx">ps</span><span class="o">:</span><span class="nx">scale</span> <span class="nx">web</span><span class="o">=</span><span class="mi">0</span>
+</code></pre></figure>
+
+
+<p>If all went well you should have a decent starting point to build your own Socket.io app. If you&#8217;re still having trouble checkout some of the great documentation from Heroku and/or leave a comment:</p>
+
+<p><a href="https://devcenter.heroku.com/articles/nodejs">https://devcenter.heroku.com/articles/nodejs</a></p>
+
+<p><a href="https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku">https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku</a></p>
+
+<p>Good Luck! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Antsy</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Deploying Your First Node.js and Socket.io App to Heroku&amp;url=http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/04/deploying-your-first-node-dot-js-and-socket-dot-io-app-to-heroku/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

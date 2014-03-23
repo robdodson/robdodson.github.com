@@ -1,0 +1,419 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>D3.js and Octopress | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">02 May 2012</span>
+	<h1 class="post-title">D3.js and Octopress</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+</div>
+
+
+
+
+<!-- Global Variables and Handlers: -->
+
+
+<script type="text/javascript">
+
+  var data = [1, 1, 2, 3, 5, 8];
+
+  var margin = {top: 40, right: 40, bottom: 40, left: 40},
+      width = $('.entry-content').width(),
+      height = 300;
+
+  $(window).resize(function() {
+    width = $('.entry-content').width();
+  });
+
+</script>
+
+
+<p>This morning I was hoping to cover some of the basics of using D3.js. Along the way I realized I really wanted people to be able to see the graphs on the blog itself. I <em>could</em> have used JSFiddle, but I didn&#8217;t like all that chrome repeated across the page. So I came up with my own solution with a little bit of hacking :)</p>
+
+<!--more-->
+
+
+<p>I&#8217;ll have to save the basics for tomorrow since I&#8217;ve already spent way too much time just getting this setup. But I will offer a brief explanation of D3 and how I got it working on Octopress.</p>
+
+<h3>What is D3.js?</h3>
+
+<p>D3 (formerly Protovis) is a library written by <a href="http://bost.ocks.org/mike/">Mike Bostock</a> (<a href="https://twitter.com/#!/mbostock">@mbostock</a>) which allows you to easily manipulate a DOM using data sets. While the implications of that statement are somewhat vague, D3 is generally used for doing data visualizations primarily in SVG. D3 can also work with regular DOM nodes however SVG is often the best tool to use if you&#8217;re trying to draw a graph of some kind.</p>
+
+<p>As a quick demo, here&#8217;s a bar chart which visualizes an <code>Array</code> of Fibonacci numbers: <code>[1, 1, 2, 3, 5, 8]</code></p>
+
+<!-- D3.js Chart -->
+
+
+<div id='chart-1'></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  function draw() {
+    
+    $('#chart-1').empty();
+
+    var x = d3.scale.linear()
+        .domain([0, d3.max(data)])
+        .range([0, width - margin.left - margin.right]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(data.length))
+        .rangeRoundBands([height - margin.top - margin.bottom, 0], 0.2);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickPadding(8);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .tickPadding(8)
+        .tickSize(0);
+
+    var svg = d3.select('#chart-1').append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'chart')
+      .append('g')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+    svg.selectAll('.chart')
+        .data(data)
+      .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('y', function(d, i) { return y(i) })
+        .attr('width', x)
+        .attr('height', y.rangeBand());
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + y.rangeExtent()[1] + ')')
+        .call(xAxis);
+
+    svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+      .selectAll('text')
+        .text(function(d) { return String.fromCharCode(d + 65); });
+    
+  }
+
+  draw();
+
+  $(window).resize(function() {
+    draw();
+  });
+
+})();
+</script>
+
+
+<p>Break open your developer tools and inspect the graph above. You&#8217;ll notice that it&#8217;s just SVG elements. For many the 2 best aspects of D3 are 1) That it works with regular SVG elements and 2) That it doesn&#8217;t wrap that functionality in arbitrary objects which require a lot of configuration. This second aspect is where many graphing libraries fall short. As Justin Palmer (<a href="https://twitter.com/#!/caged">@Caged</a>) <a href="http://dealloc.me/2011/06/24/d3-is-not-a-graphing-library.html">points out on his blog</a>:</p>
+
+<blockquote><p>As long as you stay within the confines of the template, it’s simple, but, anytime you want customize a specific aspect of the original template, more configuration options are added to the library. You should avoid “design by configuration.”</p></blockquote>
+
+<p>D3 handles this by dumping the idea of templated visuals. There is no <code>makeBarGraph()</code> function in D3; instead you work directly with your data and the SVG elements. Essentially what you see is what you get, which can make the initial learning curve pretty steep. But because it&#8217;s so non-prescriptive you can build just about anything with it.</p>
+
+<h3>How do you integrate D3 and Octopress?</h3>
+
+<p>Since I want to write several more posts on D3 I figured it&#8217;d be good if I setup my own little system to help me generate most of the boilerplate. If you&#8217;re lazy and want to skip to the end <a href="https://github.com/robdodson/octopress-templates">here&#8217;s a link to the template.</a></p>
+
+<h4>Requiring D3</h4>
+
+<p>If you inspect the page you&#8217;ll see that starting at the top of this post I&#8217;m requiring d3.js. There&#8217;s a good chance I&#8217;ll move that over into the site&#8217;s header so it isn&#8217;t required every time but if you&#8217;re just doing a one off then that should be fine. Normally it&#8217;s a good idea to require your javascript at the end of your page but I want to wrap all of my graphs in self-executing functions so they can seal their scope (and also because I&#8217;m lazy and want to use the same boilerplate stub code in each). As a result if you don&#8217;t require d3 before the functions execute it&#8217;ll throw an error.</p>
+
+<p>I chose to put a copy of d3 into my Octopress <code>source/javascripts</code> so it would get compiled with the rest of my assets and deployed. If you&#8217;d prefer you can also grab D3 from the site.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://d3js.org/d3.v2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<h4>Adding the CSS</h4>
+
+<p>The next step is to add some CSS. Getting a <code>style</code> tag into the post ended up being trickier than I had first thought because Markdown strips out <code>style</code> tags. As a result every time I generate the site the CSS dissapears. The work around is to wrap the <code>style</code> tag in a <code>div</code> and put that at the top of the post.</p>
+
+<p>Here are the basic styles I&#8217;m using:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div&gt;</span>
+  <span class="nt">&lt;style </span><span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nc">.chart</span> <span class="p">{</span>
+      <span class="k">font-family</span><span class="o">:</span> <span class="n">Arial</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+      <span class="k">margin-top</span><span class="o">:</span> <span class="m">-40px</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nc">.bar</span> <span class="p">{</span>
+      <span class="n">fill</span><span class="o">:</span> <span class="nb">steelblue</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span> <span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+      <span class="n">fill</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+      <span class="n">stroke</span><span class="o">:</span> <span class="m">#000</span><span class="p">;</span>
+      <span class="n">shape</span><span class="o">-</span><span class="n">rendering</span><span class="o">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></figure>
+
+
+<h4>Margins and Resizing</h4>
+
+<p>Now that we have D3 included on the page and our CSS styles are being respected it&#8217;s time to setup some useful defaults in another <code>script</code> tag. Typically I&#8217;ll define the dimensions of my graph area as well as any margins that I might want to use.</p>
+
+<p>If I&#8217;m going to use the same data set throughout I might put that in as well so I don&#8217;t have to declare it over and over again. In our case the array of Fibonacci numbers is there.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c">&lt;!-- Global Variables and Handlers: --&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+
+  <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">];</span>
+
+  <span class="kd">var</span> <span class="nx">margin</span> <span class="o">=</span> <span class="p">{</span><span class="nx">top</span><span class="o">:</span> <span class="mi">40</span><span class="p">,</span> <span class="nx">right</span><span class="o">:</span> <span class="mi">40</span><span class="p">,</span> <span class="nx">bottom</span><span class="o">:</span> <span class="mi">40</span><span class="p">,</span> <span class="nx">left</span><span class="o">:</span> <span class="mi">40</span><span class="p">},</span>
+      <span class="nx">width</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.entry-content&#39;</span><span class="p">).</span><span class="nx">width</span><span class="p">(),</span>
+      <span class="nx">height</span> <span class="o">=</span> <span class="mi">300</span><span class="p">;</span>
+
+  <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">resize</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">width</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.entry-content&#39;</span><span class="p">).</span><span class="nx">width</span><span class="p">();</span>
+  <span class="p">});</span>
+
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>The margin object can be really helpful when you&#8217;re trying to move things around. For instance, to send something to the bottom of your graph you can just say <code>height - margin.top - margin.bottom</code>.</p>
+
+<p>You&#8217;ll notice that rather than giving it an explicit width I&#8217;m using jQuery to find our containing element&#8217;s width. I&#8217;m trying to keep in line with the responsiveness of the Octopress theme so setting the width to match our containing element prevents the graph from breaking out if the user starts off with a small window.</p>
+
+<p>I&#8217;m also including a handler for the <code>window</code> resize event. Whenever the user changes the size of their browser we&#8217;ll update our global width variable and tell all of the dependent graphs to redraw themselves.</p>
+
+<h4>Our First Graph!</h4>
+
+<p>Finally I create a <code>div</code> to contain our visualization. Beneath the <code>div</code> I&#8217;ve included another script tag with a self-executing function. When run, the function will grab its sibling and populate it with an SVG element. Here&#8217;s the code (don&#8217;t freak out when you see it all, we&#8217;ll go over what everything does in a later post).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c">&lt;!-- D3.js Chart --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&#39;chart-1&#39;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&#39;text/javascript&#39;</span><span class="nt">&gt;</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="kd">function</span> <span class="nx">draw</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#chart-1&#39;</span><span class="p">).</span><span class="nx">empty</span><span class="p">();</span>
+
+    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">data</span><span class="p">)])</span>
+        <span class="p">.</span><span class="nx">range</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nx">width</span> <span class="o">-</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">left</span> <span class="o">-</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">right</span><span class="p">]);</span>
+
+    <span class="kd">var</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">ordinal</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">domain</span><span class="p">(</span><span class="nx">d3</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">rangeRoundBands</span><span class="p">([</span><span class="nx">height</span> <span class="o">-</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">top</span> <span class="o">-</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">bottom</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.2</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">tickPadding</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">yAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">y</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">tickPadding</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">tickSize</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;#chart-1&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="nx">width</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;chart&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;translate(&#39;</span> <span class="o">+</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">left</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">top</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
+
+    <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">&#39;.chart&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">enter</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;rect&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">y</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">})</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">.</span><span class="nx">rangeBand</span><span class="p">());</span>
+
+    <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;x axis&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;translate(0, &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">.</span><span class="nx">rangeExtent</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+
+    <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;y axis&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">yAxis</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(</span><span class="nx">d</span> <span class="o">+</span> <span class="mi">65</span><span class="p">);</span> <span class="p">});</span>
+
+  <span class="p">}</span>
+
+  <span class="nx">draw</span><span class="p">();</span>
+
+  <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">resize</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">draw</span><span class="p">();</span>
+  <span class="p">});</span>
+
+<span class="p">})();</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>After we declare the self-executing function we include another function called <code>draw</code>. Using a separate function lets us later <em>redraw</em> the graph if the user resizes their browser. This also works on the iPhone when the user changes from portrait to landscape mode. Inside of <code>draw</code> we first make sure that the containing div is empty (otherwise we&#8217;d end up drawing graphs on top of one another). You can skip most of the D3 code—we&#8217;ll cover that over the next couple of days—but take a look at the last few lines where we call <code>draw()</code> and add another handler for <code>window.resize</code>. Whenever the user changes their browser size our global <code>width</code> value will be updated, then our graphs will redraw themselves using this new width.</p>
+
+<p>At the moment you need to add this handler to each of your visualizations. Not terrible but not very DRY either. I think in a future iteration I&#8217;ll add a queue which holds a reference to each <code>draw</code> instance and calls them in sync. For now this is the quick and dirty way to get a graph up on Octopress. <a href="https://github.com/robdodson/octopress-templates">You can download the entire post template from Github.</a> Enjoy!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=D3.js and Octopress&amp;url=http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Shadow DOM: Styles (cont.) | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">29 Aug 2013</span>
+	<h1 class="post-title">Shadow DOM: Styles (Cont.)</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>In <a href="/blog/2013/08/28/shadow-dom-styles/">yesterday&#8217;s post</a> we covered the basics of working with styles in Shadow DOM. But we&#8217;ve only just scratched the surface! Today we&#8217;ll continue from where we left off and explore how to work with <strong>distributed nodes</strong> and how to poke holes in our components so the outside world can reach in and customize &#8216;em.</p>
+
+<!--more-->
+
+
+<p><em>Before we get started I wanted to thank Eric Bidelman for his <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/">amazing article on styling the Shadow DOM</a>. Most of this article is my interpretation of his post. Definitely go read <a href="http://www.html5rocks.com/en/tutorials/#webcomponents">everything on HTML5 Rocks that pertains to Web Components</a> when you get a chance.</em></p>
+
+<h2>Support <a href="#" id="support"></a></h2>
+
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v31 or greater.</p>
+
+<p>Also make sure you&#8217;ve enabled the following in Chrome&#8217;s <code>about:flags</code>.</p>
+
+<p>√ Experimental Web Platform features<br>
+√ Experimental JavaScript<br></p>
+
+<p><em>I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)</em></p>
+
+<h2>Codez! <a href="#" id="codez"></a></h2>
+
+<p>I&#8217;ve created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I&#8217;ll link to the sketch so you can quickly try things out.</p>
+
+<h2>Distributed Nodes <a href="#" id="distributed-nodes"></a></h2>
+
+<h3>Sketch 9: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/09-styling-distributed-nodes">styling-distributed-nodes</a></h3>
+
+<p>From reading various blog posts I learned that when working with the shadow DOM you should make sure to keep your content separate from your presentation. In other words, if you have a button that&#8217;s going to display some text, that text should come from the page and not be buried in a shadow DOM template. Contents which come from the page and are added to the shadow DOM using the <code>&lt;content&gt;</code> tag are know as <strong>distributed nodes</strong>.</p>
+
+<p>Initially I struggled to understand how it was possible to style these distributed nodes. I kept writing my CSS like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;some-shadow-host&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;button&gt;</span>Hello World!<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;template&gt;</span>
+  <span class="nt">&lt;style&gt;</span>
+    <span class="nd">:host</span> <span class="p">{</span>
+      <span class="o">...</span>
+    <span class="p">}</span>
+
+    <span class="nt">button</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+  <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></figure>
+
+
+<p>Thinking that if <code>button</code> came from the shadow host I should be able to just style it once it was inside my <code>&lt;content&gt;</code> tag. But that&#8217;s not quite how things work. Instead, distributed nodes need to be styled with the <code>::content</code> pseudo selector. This actually makes sense because we might want buttons inside of our shadow template to be styled differently from buttons which appear inside of our <code>&lt;content&gt;</code> tags.</p>
+
+<p>Let&#8217;s look at an exmaple:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;widget&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;button&gt;</span>Distributed Awesomesauce<span class="nt">&lt;/button&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;widget-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="o">:</span><span class="nd">:content</span> <span class="o">&gt;</span> <span class="nt">button</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+        <span class="k">color</span><span class="o">:</span> <span class="nb">white</span><span class="p">;</span>
+        <span class="k">background</span><span class="o">:</span> <span class="nb">tomato</span><span class="p">;</span>
+        <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+        <span class="k">border</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+        <span class="k">padding</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.widget&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.widget-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-distributed.jpg" title="'Styling distributed shadow DOM nodes'" ></p>
+
+<p>Here we&#8217;re pulling in the <code>button</code> from our <code>.widget</code> shadow host and tossing it into our <code>&lt;content&gt;</code> tag. Using the <code>::content</code> pseudo selector, we target the <code>button</code> as a child with <code>&gt;</code> and set our fancy pants styles.</p>
+
+<h3>Syntax Changes</h3>
+
+<p>In previous versions of Chrome the syntax for styling distributed nodes looked like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>content::-webkit-distributed(<span class="nt">&lt;selector&gt;</span>)
+</code></pre></figure>
+
+
+<p>But this style is being deprecated. As of today (August 29, 2013) <code>::content</code> is the proper syntax.</p>
+
+<h2>Parts <a href="#" id="parts"></a></h2>
+
+<h3>Sketch 10: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/10-styling-parts">styling-parts</a></h3>
+
+<p>Up to this point we&#8217;ve celebrated the encapsulation benefits of the shadow DOM but sometimes you want to poke a few holes in the shadow boundary so the user can style your component.</p>
+
+<p>Let&#8217;s say you&#8217;re creating a sign in form. Inside of your template you&#8217;ve defined the text size for the inputs but you&#8217;d like the user to be able to change this so it fits better with her site. Using the <code>::part</code> pseudo selector and <code>part</code> attribute we can expose any fields we want, thereby giving the user total freedom to override our defaults if they so choose.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;head&gt;</span>
+  <span class="nt">&lt;style&gt;</span>
+    <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">username</span><span class="o">),</span>
+    <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">password</span><span class="o">)</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+      <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="nb">red</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">btn</span><span class="o">)</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;sign-up&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;sign-up-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="nt">div</span><span class="o">[</span><span class="nt">part</span><span class="o">=</span><span class="s2">&quot;username&quot;</span><span class="o">],</span>
+      <span class="nt">div</span><span class="o">[</span><span class="nt">part</span><span class="o">=</span><span class="s2">&quot;password&quot;</span><span class="o">]</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;username&quot;</span> <span class="na">part=</span><span class="s">&quot;username&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;password&quot;</span> <span class="na">id=</span><span class="s">&quot;password&quot;</span> <span class="na">part=</span><span class="s">&quot;password&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;password&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">part=</span><span class="s">&quot;btn&quot;</span><span class="nt">&gt;</span>Sign Up!<span class="nt">&lt;/button&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.sign-up&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.sign-up-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-part.jpg" title="'Styling a shadow DOM part'" ></p>
+
+<p>There are three important bits of syntax I want to point out in this example.</p>
+
+<p>The first is <em>how</em> we specify that an element is going to be a <code>part</code>. We do this through the use of the <code>part</code> attribute.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;username&quot;</span> <span class="na">part=</span><span class="s">&quot;username&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;</span>
+</code></pre></figure>
+
+
+<p>Next we specify a default style for this <code>part</code> using an attribute selector inside of our template.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;style&gt;</span>
+  <span class="nt">div</span><span class="o">[</span><span class="nt">part</span><span class="o">=</span><span class="s2">&quot;username&quot;</span><span class="o">],</span>
+  <span class="nt">div</span><span class="o">[</span><span class="nt">part</span><span class="o">=</span><span class="s2">&quot;password&quot;</span><span class="o">]</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+</code></pre></figure>
+
+
+<p>Finally, we reach into the shadow DOM with the <code>::part</code> pseudo selector to override the style defaults.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;style&gt;</span>
+  <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">username</span><span class="o">),</span>
+  <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">password</span><span class="o">)</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+    <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="nb">red</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">btn</span><span class="o">)</span> <span class="p">{</span>
+    <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+</code></pre></figure>
+
+
+<h3>Syntax Changes</h3>
+
+<p>In previous versions of Chrome the <code>part</code> attribute was known as <code>pseudo</code>. A <code>pseudo</code> attribute would need to be prefixed with an <code>x-</code> and selecting the <code>pseudo</code> attribute looked like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>.foo::x-slider-thumb {
+  background-color: blue;
+}
+</code></pre></figure>
+
+
+<p>This syntax is now deprecated and you should use <code>part</code> and <code>::part</code> instead.</p>
+
+<h2>Variables <a href="#" id="variables"></a></h2>
+
+<h3>Sketch 11: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/11-styling-with-variables">styling-with-variables</a></h3>
+
+<p>Working with all of these hard coded styles is making my inner nerd sad. If you&#8217;ve been spoiled by LESS or SCSS, like I have, then you&#8217;ll quickly be longing for variables to hold all of your configurable values. Thankfully CSS3 variables are supported by the shadow DOM so let&#8217;s look at how we can tidy things up a bit.</p>
+
+<p>We&#8217;ll use our previous example but this time we&#8217;ll work a little variable magic on it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;head&gt;</span>
+  <span class="nt">&lt;style&gt;</span>
+    <span class="nc">.sign-up</span> <span class="p">{</span>
+      <span class="n">var</span><span class="o">-</span><span class="n">type</span><span class="o">-</span><span class="k">size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">username</span><span class="o">),</span>
+    <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">password</span><span class="o">)</span> <span class="p">{</span>
+      <span class="n">var</span><span class="o">-</span><span class="n">borders</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="nb">red</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;sign-up&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;sign-up-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+      <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">username</span><span class="o">),</span>
+      <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">password</span><span class="o">)</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="n">var</span><span class="p">(</span><span class="n">type</span><span class="o">-</span><span class="k">size</span><span class="p">);</span>
+        <span class="k">border</span><span class="o">:</span> <span class="n">var</span><span class="p">(</span><span class="n">borders</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="nc">.sign-up</span><span class="o">:</span><span class="nd">:part</span><span class="o">(</span><span class="nt">btn</span><span class="o">)</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="o">:</span> <span class="n">var</span><span class="p">(</span><span class="n">type</span><span class="o">-</span><span class="k">size</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;username&quot;</span> <span class="na">part=</span><span class="s">&quot;username&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;password&quot;</span> <span class="na">id=</span><span class="s">&quot;password&quot;</span> <span class="na">part=</span><span class="s">&quot;password&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;password&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">part=</span><span class="s">&quot;btn&quot;</span><span class="nt">&gt;</span>Sign Up!<span class="nt">&lt;/button&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.sign-up&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.sign-up-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-part.jpg" title="'Styling a shadow DOM part'" ></p>
+
+<p>We should wind up with the exact same output but things are a bit cleaner now.</p>
+
+<p>Personally I&#8217;m not a fan of the CSS3 variable syntax but if you want to go preprocessor free I think it&#8217;s your best bet.</p>
+
+<h2>Inheriting and Resetting Styles <a href="#" id="inheriting-and-resetting-styles"></a></h2>
+
+<h3>Sketch 12: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/shadow-dom/12-inheriting-and-resetting-styles">inheriting-and-resetting-styles</a></h3>
+
+<h3>Applying Author Styles</h3>
+
+<p>If your component contains text or other inheritable properties you may want it to match the page that&#8217;s hosting it. This is where <code>applyAuthorStyles</code> comes in to play. By setting <code>applyAuthorStyles</code> to <code>true</code> you&#8217;re telling the document that it&#8217;s ok for the user&#8217;s CSS to bleed through and affect your component. This is great for things like typography where you want your component to use the same font families and header sizes as the parent document.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;head&gt;</span>
+  <span class="nt">&lt;style&gt;</span>
+    <span class="nt">body</span> <span class="p">{</span>
+      <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="n">Arial</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nt">h2</span> <span class="p">{</span>
+      <span class="k">text-decoration</span><span class="o">:</span> <span class="k">underline</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">18px</span><span class="p">;</span>
+      <span class="k">font-weight</span><span class="o">:</span> <span class="k">bold</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+  <span class="nt">&lt;h2&gt;</span>This h2 is NOT in the shadow DOM<span class="nt">&lt;/h2&gt;</span>
+  <span class="nt">&lt;p&gt;</span>Neither is this paragraph<span class="nt">&lt;/p&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;article&quot;</span><span class="nt">&gt;</span>Some interesting article content<span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;template</span> <span class="na">class=</span><span class="s">&quot;article-template&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h2&gt;</span>An Article Header<span class="nt">&lt;/h2&gt;</span>
+    <span class="nt">&lt;p&gt;&lt;content&gt;&lt;/content&gt;&lt;/p&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.article&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">applyAuthorStyles</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="c1">// Note that you can also reset styles on a per &lt;shadow&gt; or</span>
+    <span class="c1">// per &lt;content&gt; basis</span>
+    <span class="c1">// http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-shadow-resetstyles</span>
+    <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.article-template&#39;</span><span class="p">);</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">template</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-author-styles.jpg" title="'Applying author styles'" ></p>
+
+<p>If we take a look at the CSS we can see that the user has directly styled all <code>h2</code>&#8217;s and <code>p</code>&#8217;s. Also everything on the page should inherit a <code>font-family</code> of Helvetica. By using <code>applyAuthorStyles</code> we&#8217;ve allowed the direct styles <em>and</em> the inherited <code>font-family</code> to bleed through.</p>
+
+<h3>Reseting Inheritance</h3>
+
+<p>In some cases we may wish to only allow the direct styles while resetting anything that would be inherited. Using the example above that would mean excluding the <code>font-family</code> of Helvetica which is inherited from the <code>body</code> style. To reset style inheritance we use the aptly named <code>resetStyleInheritance</code> method.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;script&gt;</span>
+  <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.article&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+  <span class="nx">root</span><span class="p">.</span><span class="nx">resetStyleInheritance</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// &lt;-- get rid of anything inherited</span>
+  <span class="nx">root</span><span class="p">.</span><span class="nx">applyAuthorStyles</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.article-template&#39;</span><span class="p">);</span>
+  <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nx">template</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-reset-inheritance.jpg" title="'Reset style inheritance'" ></p>
+
+<p>Now our component reverts to the default <code>font-family</code> of Times New Roman while still allowing direct author styles on <code>h2</code> and <code>p</code>. <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#style-inherit-cheetsheet">Eric Bidelman&#8217;s great post on Shadow DOM 201 has a handy cheat sheet</a> so you can sort out when you want to use <code>applyAuthorStyles</code> and when you want to use <code>resetStyleInheritance</code>.</p>
+
+<h2>Conclusion <a href="#" id="conclusion"></a></h2>
+
+<p>If you&#8217;ve read over <a href="/blog/2013/08/28/shadow-dom-styles/">the last post</a> and this one then you now know as much about styling the shadow DOM as I do. But we haven&#8217;t even talked about JavaScript yet! We&#8217;ll save that for tomorrow&#8217;s post :) As always if you have questions <a href="http://twitter.com/rob_dodson">hit me up on twitter</a> or leave a comment. Thanks!</p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Shadow DOM: Styles (cont.)&amp;url=http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/08/29/shadow-dom-styles-cont-dot/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

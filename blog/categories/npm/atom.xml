@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: NPM | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/npm/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Publish your Node Library to NPM]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/"/>
+    <updated>2012-06-16T23:06:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm</id>
+    <content type="html"><![CDATA[<p>Alright, <a href="http://robdodson.me/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/">contuing from yesterday</a> we want to take our little Node module and make it available to the world as a really awesome command line tool.</p>
+
+<!--more-->
+
+
+<p>The first thing we need to do is register an NPM account.</p>
+
+<p><code>npm adduser</code></p>
+
+<p>Fill in your credentials and it should be ready to go.</p>
+
+<p>If we have any dependencies they should be added to our <code>package.json</code> file. Our simple <code>compliment</code> program doesn't need any extra libraries but we'll add <code>xml2json</code> just to demonstrate how it's done.</p>
+
+<p>``` js package.json
+{</p>
+
+<pre><code>"name": "compliment",
+"version": "0.0.1",
+"description": "Tell us how awesome we are.",
+"preferGlobal": "true",
+"bin": { "compliment": "compliment.js" },
+"author": "Rob Dodson",
+"dependencies": {
+    "xml2json": "0.2.4"
+},
+"engines": { "node": "*" }
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Since we've changed our <code>package.json</code> we need to run <code>npm link</code> again to install the dependency. After that you should have a <code>node_modules/</code> folder in your project root.</p>
+
+<p>Let's put this baby under version control!</p>
+
+<p><code>
+git init
+echo node_modules/ &gt;&gt; .gitignore # node_modules should be installed by npm
+git add .
+git commit -am 'Initial commit'
+</code></p>
+
+<p>Final step: <code>npm publish</code></p>
+
+<h1>BOOMJAMS! We have us an npm module! - Rob</h1>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Hyper</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to Run a Node Script from the Command Line]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/"/>
+    <updated>2012-06-15T19:46:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line</id>
+    <content type="html"><![CDATA[<p>This post is going to be short and sweet because I have to help my lady pack for her big trip to Germany. Over the past few days I've been messing around with command line tools written in Ruby so today I decided to give it a shot in Node.</p>
+
+<!--more-->
+
+
+<p>We're going to start small in this first post and just get a little script running. After that we'll step it up so it can be distributed using NPM, <a href="http://robdodson.me/blog/2012/06/14/how-to-write-a-command-line-ruby-gem/">just like we did with our previous Ruby gem.</a></p>
+
+<h2>First write some codez</h2>
+
+<p>Make a new directory called <code>compliment</code> and create two files inside of it: <code>comliment.js</code> and <code>package.json</code>.</p>
+
+<p>In <code>compliment.js</code> we're just going to print out some kind words.</p>
+
+<p>``` js compliment/compliment.js</p>
+
+<h1>! /usr/bin/env node</h1>
+
+<p>console.log('you. are. AWESOME!');
+```</p>
+
+<p>Simple enough right? Just make sure you include that shebang up at the top which directs the system to use Node to execute our script.</p>
+
+<h2>Package it up</h2>
+
+<p>Ok now that we have our little script we'll give its <code>package.json</code> some love.</p>
+
+<p>``` js compliment/package.json
+{</p>
+
+<pre><code>"name": "compliment",
+"version": "0.0.1",
+"description": "Tell us how awesome we are.",
+"preferGlobal": "true",
+"bin": { "compliment": "compliment.js" },
+"author": "Rob Dodson",
+"engines": { "node": "*" }
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Most of that should be self explanatory. The key aspect is the <code>bin</code> section where you tell it to translate <code>compliment</code> into <code>compliment.js</code>. To install it all we have to do is run <code>npm link</code>. After you've done that you should be able to type <code>compliment</code> and hear how awesome you are!</p>
+
+<p>Keep in mind this isn't distributable just yet, we'll work on that tomorrow. Till then have fun playing with your new powers :D</p>
+
+<ul>
+<li>Rob</li>
+</ul>
+
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,489 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Mocking Requests with Mocha, Chai and Sinon | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">28 May 2012</span>
+	<h1 class="post-title">Mocking Requests With Mocha, Chai and Sinon</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><a href="http://robdodson.me/blog/2012/05/27/testing-backbone-boilerplate-with-mocha-and-chai/">After a bit of a rocky start yesterday</a> I&#8217;ve finally got Mocha and Chai running in the browser which is great. Today I&#8217;d like to test out some of the async functionality of Mocha. This seems to be the big selling point for most people so we&#8217;ll kick the tires a bit.</p>
+
+<!--more-->
+
+
+<h3>Basic Async Tests with Mocha and Chai</h3>
+
+<p>I wrote a little Node service that we&#8217;ll consume for testing purposes. This is my first <a href="http://nodejs.org/">Node</a> and <a href="http://expressjs.com/">Express</a> app so apologies if it&#8217;s lamesauce. I used the <code>express</code> command to boilerplate a project called <code>pickles</code> with some very basic routes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Routes</span>
+
+<span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Welcome to the Pickle Store!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/pickles&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span>
+    <span class="nx">count</span><span class="o">:</span> <span class="nx">count</span><span class="p">,</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;oh boy, &#39;</span> <span class="o">+</span> <span class="nx">count</span> <span class="o">+</span> <span class="s1">&#39; pickles!&#39;</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/pickles/add/:num&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">count</span> <span class="o">+=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">num</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">num</span><span class="p">,</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;you added &#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span> <span class="s1">&#39; pickles to the pickle barrel!&#39;</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Express server listening on port %d in %s mode&quot;</span><span class="p">,</span> <span class="nx">app</span><span class="p">.</span><span class="nx">address</span><span class="p">().</span><span class="nx">port</span><span class="p">,</span> <span class="nx">app</span><span class="p">.</span><span class="nx">settings</span><span class="p">.</span><span class="nx">env</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>We&#8217;ll need to make sure our node service is running for our tests to work and all of our URLs will point at localhost:3000. Obviously you wouldn&#8217;t want this for a production setting but it&#8217;ll be fine for demonstration purposes.</p>
+
+<p>Here is our really simple Mocha spec. We&#8217;re actually creating a <code>pickelStore</code> object in the spec file itself so we can test against it.</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">expect</span> <span class="o">=</span> <span class="nx">chai</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">pickleStore</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">pickles</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles&#39;</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">},</span>
+  <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles/add/&#39;</span> <span class="o">+</span> <span class="nx">num</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Pickle Store&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#pickles&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>I just want to see if the ajax methods will run and hit our Node service but I&#8217;m running into the following issue in Chrome:</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="nx">XMLHttpRequest</span> <span class="nx">cannot</span> <span class="nx">load</span> <span class="nx">http</span><span class="o">:</span><span class="c1">//localhost:3000/pickles. Origin null is not allowed by Access-Control-Allow-Origin.</span>
+</code></pre></figure>
+
+
+<p>Bummer&#8230; :(</p>
+
+<p>OK, what&#8217;s going on here&#8230; To StackOverflow! <a href="http://stackoverflow.com/questions/8456538/origin-null-is-not-allowed-by-access-control-allow-origin/8456586#8456586">Aaaand we have our response.</a> After a bit of googling I came across <a href="http://www.stoimen.com/blog/2010/11/19/diving-into-node-js-very-first-app/">this post</a> which mentions adding <code>res.header('Access-Control-Allow-Origin', '*');</code> to my Node responses. That does the trick. I also found <a href="http://www.stoimen.com/blog/2010/11/19/diving-into-node-js-very-first-app/">this post</a> which describes setting up <a href="https://developer.mozilla.org/en/http_access_control">CORS</a> with Express.</p>
+
+<p>OK hopefully we&#8217;re done with Node for now. I don&#8217;t want this to turn into a node tutorial&#8230; Let&#8217;s see if we can get the tests to perform using Mocha. We&#8217;ll need some way to mock and spy on the ajax because I don&#8217;t want to test the data coming from the actual service. I&#8217;ve realized I want to <em>simulate</em> the service for client-side Mocha tests. In a future tutorial I&#8217;ll test the service itself using the Node aspect of Mocha. Kind of silly to lead off this way but whatever, moving on!</p>
+
+<h3>Enter Sinon.js</h3>
+
+<p>I&#8217;m going to use <a href="http://sinonjs.org/">Sinon.js</a> to help me mock, stub, fake, spy and do whatever the heck else I need to make sure my client code is solid. After downloading the js file for Sinon you can just add it to our test/index.html under the line where we added mocha.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+  <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;title&gt;</span>Mocha Tests<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;mocha/mocha.css&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;../assets/js/libs/jquery.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;chai/chai.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;mocha/mocha.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;sinon/sinon.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script&gt;</span><span class="nx">mocha</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="s1">&#39;bdd&#39;</span><span class="p">);</span><span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;test.pickles.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">mocha</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span>
+    <span class="p">})</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;mocha&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Now we can use Sinon in our <code>test.pickles.js</code> file to get a handled on our ajax. Let&#8217;s first test that an ajax call is made when we run the <code>pickles()</code> method of the <code>pickleStore</code> object. We&#8217;ll make sure this first test fails, then we&#8217;ll change the spec to make it pass.</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">expect</span> <span class="o">=</span> <span class="nx">chai</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">pickleStore</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">pickles</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles&#39;</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">},</span>
+  <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles/add/&#39;</span> <span class="o">+</span> <span class="nx">num</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Pickle Store&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#pickles&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// Use Sinon to replace jQuery&#39;s ajax method</span>
+    <span class="c1">// with a spy.</span>
+    <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">sinon</span><span class="p">.</span><span class="nx">spy</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="s1">&#39;ajax&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Restor jQuery&#39;s ajax method to its</span>
+    <span class="c1">// original state</span>
+    <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">restore</span><span class="p">();</span>
+    <span class="p">})</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should make an ajax call&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">calledOnce</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="kc">false</span><span class="p">;</span> <span class="c1">// see if the spy WASN&#39;T called</span>
+      <span class="nx">done</span><span class="p">();</span> <span class="c1">// let Mocha know we&#39;re done async testing</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/first_failing_ajax_test.png" title="'Our first failing test with Mocha, Chai and Sinon. Yay!'" ></p>
+
+<p>Changing this line <code>expect($.ajax.calledOnce).to.be.false;</code> from <code>false</code> to <code>true</code> should make our test pass. Yay, first async test in the bag! Next let&#8217;s try to fake a response from the server. But I&#8217;m realizing that the succesful server response should <em>do</em> something to my pickleStore object, otherwise why do I care about the data? So I&#8217;m going to update pickelStore with the following success callback on its pickles method:</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">pickleStore</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">count</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+  <span class="nx">pickles</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles&#39;</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">count</span><span class="p">);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">status</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">},</span>
+  <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles/add/&#39;</span> <span class="o">+</span> <span class="nx">num</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">...</span> <span class="p">.</span>
+</code></pre></figure>
+
+
+<p>Now we can test what happens after the server sends a succesful response. But how do we get that response and how do we force the success callback? For that we&#8217;ll need to use Sinon&#8217;s <code>stub.yieldsTo</code> method. It&#8217;s mentioned in <a href="http://sinonjs.org/docs/#stubs">the docs on this page</a> if you scroll down. <code>yieldsTo</code> lets us direct the path of our spy so it will not only pretend to be jQuery&#8217;s <code>ajax</code> method, but it will also force itself into the <code>success</code> callback with an optional hash of parameters which simulate our service response. Sweet! We&#8217;ll have to revise the <code>beforeEach</code> in our spec though otherwise Sinon will complain that we&#8217;re wrapping <code>ajax</code> twice. The updated spec should look like this. Again, take note that we&#8217;re going to make it fail first by expecting a count of 99 pickles instead of 100.</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="p">...</span> <span class="p">.</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Pickle Store&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#pickles&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// Use Sinon to replace jQuery&#39;s ajax method</span>
+    <span class="c1">// with a spy. This spy will also come with</span>
+    <span class="c1">// some success data.</span>
+    <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">sinon</span><span class="p">.</span><span class="nx">stub</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="s1">&#39;ajax&#39;</span><span class="p">).</span><span class="nx">yieldsTo</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">count</span><span class="o">:</span> <span class="s1">&#39;100&#39;</span><span class="p">,</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;oh boy, 100 pickles!&#39;</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Restor jQuery&#39;s ajax method to its</span>
+    <span class="c1">// original state</span>
+    <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">restore</span><span class="p">();</span>
+    <span class="p">})</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should make an ajax call&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">calledOnce</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="kc">true</span><span class="p">;</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should update the count&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">pickleStore</span><span class="p">.</span><span class="nx">count</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="mi">99</span><span class="p">);</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Failing as expected. Aaaaand we change the expected count to 100, voila! Passing tests again!</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/passing_yield_test.png" title="'Passing test with Sinon's yieldTo'" ></p>
+
+<p>I&#8217;m adding the test for the status update as well so our final <code>#pickles</code> spec should look like this:</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Pickle Store&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#pickles&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// Use Sinon to replace jQuery&#39;s ajax method</span>
+    <span class="c1">// with a spy. This spy will also come with</span>
+    <span class="c1">// some success data.</span>
+    <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">sinon</span><span class="p">.</span><span class="nx">stub</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="s1">&#39;ajax&#39;</span><span class="p">).</span><span class="nx">yieldsTo</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">count</span><span class="o">:</span> <span class="s1">&#39;100&#39;</span><span class="p">,</span>
+        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;oh boy, 100 pickles!&#39;</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Restor jQuery&#39;s ajax method to its</span>
+    <span class="c1">// original state</span>
+    <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">restore</span><span class="p">();</span>
+    <span class="p">})</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should make an ajax call&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">calledOnce</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">be</span><span class="p">.</span><span class="kc">true</span><span class="p">;</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should update the count&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">pickleStore</span><span class="p">.</span><span class="nx">count</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should update the status&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">pickles</span><span class="p">();</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">pickleStore</span><span class="p">.</span><span class="nx">status</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="s1">&#39;oh boy, 100 pickles!&#39;</span><span class="p">);</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Now let&#8217;s test the <code>#add</code> method before calling it a day. This method is interesting because all it can really do is update our status message. However, once it&#8217;s called the value returned by <code>pickles()</code> should have incremented by whatever amount was passed to <code>add()</code>. Let&#8217;s start by updating our <code>pickleStore</code> so it properly updates the status message after we&#8217;ve called add.</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">pickleStore</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">count</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+  <span class="nx">pickles</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles&#39;</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">count</span><span class="p">);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">},</span>
+  <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;http://localhost:3000/pickles/add/&#39;</span> <span class="o">+</span> <span class="nx">num</span><span class="p">,</span>
+      <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span> <span class="c1">// &lt;-- update the status message!</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></figure>
+
+
+<p>Now that that&#8217;s in there we&#8217;ll write a failing spec.</p>
+
+<figure class='code'><figcaption><span>test.pickles.js</span></figcaption><pre><code><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#add&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">amount</span> <span class="o">=</span> <span class="mi">11</span><span class="p">;</span>
+
+  <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">sinon</span><span class="p">.</span><span class="nx">stub</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span> <span class="s1">&#39;ajax&#39;</span><span class="p">).</span><span class="nx">yieldsTo</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">add</span><span class="o">:</span> <span class="nx">amount</span><span class="p">,</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;you added &#39;</span> <span class="o">+</span> <span class="nx">amount</span> <span class="o">+</span> <span class="s1">&#39; pickles to the pickle barrel!&#39;</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">.</span><span class="nx">restore</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should update the status with the correct amount&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">pickleStore</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">amount</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">pickleStore</span><span class="p">.</span><span class="nx">status</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="s1">&#39;you added &#39;</span> <span class="o">+</span> <span class="mi">99</span> <span class="o">+</span> <span class="s1">&#39; pickles to the pickle barrel!&#39;</span><span class="p">);</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>This is not unlike our previous spec, in fact it does even less since we&#8217;re not checking count.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/failing_add_test.png" title="'Another failing test.'" ></p>
+
+<p>To make the test pass we change the 99 to <code>amount</code>. I originally wrote the add method thinking I would go back and check the total number of pickles but I&#8217;ve realized now that really that&#8217;s more of a test for the service and not the front end. The front end shouldn&#8217;t care if that arithmetic is happening properly, it should just consume data and update its UI. For tomorrow&#8217;s post I&#8217;ll try to get an AMD module in here so we can start playing with Backbone again. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Irritated, Antsy</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Mocking Requests with Mocha, Chai and Sinon&amp;url=http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/28/mocking-requests-with-mocha-chai-and-sinon/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

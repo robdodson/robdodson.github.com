@@ -1,0 +1,403 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Failing at Ruby | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">23 Jun 2012</span>
+	<h1 class="post-title">Failing at Ruby</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>I&#8217;m just getting my ass kicked by Ruby tonight so I don&#8217;t have much to show. Trying to just get my metadata scraping to output something currently looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;open-uri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;nokogiri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;mechanize&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;selection_error&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Crawler</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:doc</span>
+
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">from_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="kp">new</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="c1"># Create a new instance of Mechanize and grab our page</span>
+      <span class="vi">@agent</span> <span class="o">=</span> <span class="no">Mechanize</span><span class="o">.</span><span class="n">new</span>
+
+      <span class="vi">@uri</span> <span class="o">=</span> <span class="n">uri</span>
+      <span class="vi">@page</span> <span class="o">=</span> <span class="vi">@agent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="vi">@uri</span><span class="p">)</span>
+      <span class="vi">@counts</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">words_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">ignored_selector</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="c1"># Get all the links on the page</span>
+      <span class="n">post_links</span> <span class="o">=</span> <span class="vi">@page</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">find_all</span> <span class="p">{</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+      <span class="c1"># Get rid of the first anchor since it&#39;s the site header</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">shift</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">click</span>
+        <span class="vi">@doc</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">parser</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+          <span class="k">if</span> <span class="n">ignored_selector</span>
+            <span class="n">ignored</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">ignored_selector</span><span class="p">)</span>
+            <span class="n">ignored</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+          <span class="k">end</span>
+          <span class="n">words</span> <span class="o">=</span> <span class="n">words_from_string</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+          <span class="n">count_frequency</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">sorted</span> <span class="o">=</span> <span class="vi">@counts</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="o">|</span> <span class="n">count</span> <span class="p">}</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">reverse!</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">map!</span> <span class="k">do</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="o">|</span>
+        <span class="p">{</span> <span class="n">word</span><span class="p">:</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="n">count</span> <span class="p">}</span>
+      <span class="k">end</span>
+      <span class="p">{</span> <span class="n">word_count</span><span class="p">:</span> <span class="n">sorted</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">metadata_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span> <span class="n">posts</span><span class="p">:</span> <span class="o">[]</span> <span class="p">}</span>
+
+      <span class="c1"># Get all the links on the page</span>
+      <span class="n">post_links</span> <span class="o">=</span> <span class="vi">@page</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">find_all</span> <span class="p">{</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+      <span class="c1"># Get rid of the first anchor since it&#39;s the site header</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">shift</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">click</span>
+        <span class="vi">@doc</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">parser</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="vi">@doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+        <span class="n">post_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">post_data</span><span class="o">[</span><span class="ss">:date</span><span class="o">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">date</span><span class="p">:</span> <span class="n">time</span><span class="o">[</span><span class="s1">&#39;datetime&#39;</span><span class="o">]</span> <span class="p">}</span>
+        <span class="n">post_data</span><span class="o">[</span><span class="ss">:stats</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+          <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">child</span><span class="o">|</span>
+            <span class="n">post_data</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">push</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">metadata</span><span class="o">[</span><span class="ss">:posts</span><span class="o">].</span><span class="n">push</span><span class="p">(</span><span class="n">post_data</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="nb">p</span> <span class="n">metadata</span>
+    <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">nodes</span> <span class="o">=</span> <span class="vi">@doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">SelectionError</span><span class="p">,</span>
+        <span class="s1">&#39;The selector did not return an results!&#39;</span> <span class="k">if</span> <span class="n">nodes</span><span class="o">.</span><span class="n">empty?</span>
+      <span class="n">nodes</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">words_from_string</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">downcase</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/[\w&#39;]+/</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">count_frequency</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">word</span> <span class="k">in</span> <span class="n">word_list</span>
+        <span class="vi">@counts</span><span class="o">[</span><span class="n">word</span><span class="o">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+      <span class="vi">@counts</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Really ugly code that still doesn&#8217;t work. My biggest problem with Ruby is that I don&#8217;t have very good debugging tools and that frustrates the shit out of me. I&#8217;m so used to the visual debuggers in the Chrome Dev tools that doing everything with <code>p</code> or <code>puts</code> is just soul-crushing.</p>
+
+<!--more-->
+
+
+<p>Right now my biggest problem is that data isn&#8217;t being returned from the spider for whatever reason. This is especially annoying because the operation takes a while to run&#8230; I should slim it down but my brain is too tired to re-write the code. I&#8217;m kind of hoping for a lucky break. Advice to anyone just starting out in programming, do not do exactly what I&#8217;m doing right now.</p>
+
+<p>Ok so after getting my ass totally handed to me by Ruby here&#8217;s a working version of the spider that grabs the proper metadata.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;open-uri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;nokogiri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;mechanize&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;selection_error&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Crawler</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:doc</span>
+
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">from_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="kp">new</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="c1"># Create a new instance of Mechanize and grab our page</span>
+      <span class="vi">@agent</span> <span class="o">=</span> <span class="no">Mechanize</span><span class="o">.</span><span class="n">new</span>
+
+      <span class="vi">@uri</span> <span class="o">=</span> <span class="n">uri</span>
+      <span class="vi">@page</span> <span class="o">=</span> <span class="vi">@agent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="vi">@uri</span><span class="p">)</span>
+      <span class="vi">@counts</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">words_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">ignored_selector</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="c1"># # Get all the links on the page</span>
+      <span class="c1"># post_links = @page.links.find_all { |l| l.attributes.parent.name == &#39;h1&#39; }</span>
+      <span class="c1"># # Get rid of the first anchor since it&#39;s the site header</span>
+      <span class="c1"># post_links.shift </span>
+      <span class="c1"># post_links.each do |link|</span>
+      <span class="c1">#   post = link.click</span>
+      <span class="c1">#   @doc = post.parser</span>
+      <span class="c1">#   nodes = nodes_by_selector(selector)</span>
+      <span class="c1">#   nodes.each do |node|</span>
+      <span class="c1">#     if ignored_selector</span>
+      <span class="c1">#       ignored = node.css(ignored_selector)</span>
+      <span class="c1">#       ignored.remove()</span>
+      <span class="c1">#     end</span>
+      <span class="c1">#     words = words_from_string(node.content)</span>
+      <span class="c1">#     count_frequency(words)</span>
+      <span class="c1">#   end</span>
+      <span class="c1"># end</span>
+
+      <span class="c1"># sorted = @counts.sort_by { |word, count| count }</span>
+      <span class="c1"># sorted.reverse!</span>
+      <span class="c1"># sorted.map! do |word, count|</span>
+      <span class="c1">#   { word: word, count: count }</span>
+      <span class="c1"># end</span>
+      <span class="c1"># { word_count: sorted }</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">metadata_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span> <span class="n">posts</span><span class="p">:</span> <span class="o">[]</span> <span class="p">}</span>
+      <span class="nb">puts</span> <span class="s1">&#39;starting&#39;</span>
+      <span class="nb">p</span> <span class="n">metadata</span>
+      <span class="c1"># Get all the links on the page</span>
+      <span class="n">post_links</span> <span class="o">=</span> <span class="vi">@page</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">find_all</span> <span class="p">{</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+      <span class="c1"># Get rid of the first anchor since it&#39;s the site header</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">shift</span>
+      <span class="n">post_links</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">click</span>
+        <span class="vi">@doc</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">parser</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="vi">@doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+        <span class="n">post_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">post_data</span><span class="o">[</span><span class="ss">:date</span><span class="o">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">[</span><span class="s1">&#39;datetime&#39;</span><span class="o">]</span>
+        <span class="n">post_data</span><span class="o">[</span><span class="ss">:stats</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+          <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">child</span><span class="o">|</span>
+            <span class="k">unless</span> <span class="n">child</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">chomp</span><span class="o">.</span><span class="n">empty?</span>
+              <span class="n">post_data</span><span class="o">[</span><span class="ss">:stats</span><span class="o">].</span><span class="n">push</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">metadata</span><span class="o">[</span><span class="ss">:posts</span><span class="o">].</span><span class="n">push</span><span class="p">(</span><span class="n">post_data</span><span class="p">)</span>
+        <span class="nb">puts</span> <span class="s1">&#39;post added&#39;</span>
+        <span class="nb">p</span> <span class="n">metadata</span>
+      <span class="k">end</span>
+      <span class="nb">puts</span> <span class="s1">&#39;returning&#39;</span>
+      <span class="nb">p</span> <span class="n">metadata</span>
+      <span class="n">metadata</span>
+    <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">nodes_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">nodes</span> <span class="o">=</span> <span class="vi">@doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="c1"># raise Tentacles::SelectionError, </span>
+      <span class="c1">#   &#39;The selector did not return an results!&#39; if nodes.empty?</span>
+      <span class="n">nodes</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">words_from_string</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">downcase</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/[\w&#39;]+/</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">count_frequency</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">word</span> <span class="k">in</span> <span class="n">word_list</span>
+        <span class="vi">@counts</span><span class="o">[</span><span class="n">word</span><span class="o">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+      <span class="vi">@counts</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>I had to comment out the <code>Tentacles::SelectionError</code> because it was throwing and saying it wasn&#8217;t getting any content with a selector even though it was. Not sure wtf is going on there but I&#8217;m sure it has to do with the fact that it&#8217;s 1:30 a.m. I have a rule that nothing good happens after 11pm when it comes to coding. Tonight has lived up to that. Anyway the above should put out a hash which when converted to JSON looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="p">{</span>
+  <span class="nt">&quot;posts&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2012-06-22T00:31:00-07:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;stats&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Time: 12:31 am&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mood: Tired&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sleep: 6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hunger: 0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Coffee: 1&quot;</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2012-06-21T01:27:00-07:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;stats&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Time: 1:28 am&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mood: Tired, Annoyed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sleep: 6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hunger: 0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Coffee: 1&quot;</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2012-06-20T00:09:00-07:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;stats&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Time: 12:10 am&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mood: Tired, Introspective&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sleep: 4.5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hunger: 2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Coffee: 1&quot;</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+<span class="err">...</span> <span class="err">.</span>
+</code></pre></figure>
+
+
+<p>I&#8217;m pretty certain I could have done this with Node in a fraction of the time if only because Node is much easier to debug with Chrome Dev tools using node-inspector. While I love the Ruby language I definitely do not like debugging it&#8230;</p>
+
+<p>Tomorrow I might write some JS to give my brain a break. I&#8217;m thoroughly pissed off at Ruby for the evening. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Pissed</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Failing at Ruby&amp;url=http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/23/failing-at-ruby/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

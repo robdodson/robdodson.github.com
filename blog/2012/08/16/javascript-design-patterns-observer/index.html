@@ -1,0 +1,410 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>JavaScript Design Patterns: Observer | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">16 Aug 2012</span>
+	<h1 class="post-title">JavaScript Design Patterns: Observer</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>Observer is one of the most popular design patterns and chances are you&#8217;re probably already using it. If you&#8217;ve ever written an event listener with <code>addEventListener</code> or used one of jQuery&#8217;s many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc&#8230; then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn&#8217;t care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<blockquote><p>Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote>
+
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Dependents</li>
+<li>Publish-Subscribe</li>
+</ul>
+
+
+<h2>When to use it</h2>
+
+<ul>
+<li><p>When the state or actions of one object depends on the state or actions of another object.</p></li>
+<li><p>When changing one object necessitates a change to an unknown number of <em>other</em> objects.</p></li>
+<li><p>When an object should be able to notify other objects of changes without knowing anything about these other objects.</p></li>
+</ul>
+
+
+<h2>Pros and Cons</h2>
+
+<ul>
+<li><p><strong>Pro:</strong> Very loose coupling between objects.</p></li>
+<li><p><strong>Pro:</strong> The ability to broadcast changes and updates.</p></li>
+<li><p><strong>Con:</strong> Potentially unexpected updates and sequencing issues.</p></li>
+</ul>
+
+
+<h2>The Many Faces of Observer</h2>
+
+<p>Because of its popularity the Observer pattern often goes by a few different names. The primary objects are the <strong>Subject</strong> and the <strong>Observers</strong> though sometimes they are referred to as <strong>Publisher</strong>/<strong>Subscribers</strong> or <strong>Event Dispatcher</strong>/<strong>Listeners</strong>. Although you can definitely split hairs regarding the actual implementation of this pattern, in essence we&#8217;re usually talking about the same thing. When the Subject&#8217;s state changes it sends out notifications, unaware of who its Observers are. The Observers, in turn, perform some action in response to this update.</p>
+
+<p>I&#8217;m going to heavily quote (*cough* <em>plagiarize</em> *cough*) the wonderful <a href="http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752">JavaScript Patterns by Stoyan Stefanov</a> to sum up all the parts of an Observer/Pub-Sub relationship:</p>
+
+<p><em>&#8220;The publisher object needs to have a property <code>subscribers</code> that is an array storing all subscribers. The act of subscription is merely adding to this array. When an event occurs, the publisher loops through the list of subscribers and notifies them. The notification means calling a method of the subscriber object. Therefore, when subscribing, the subscriber provides one of its methods to the publisher’s subscribe() method.</em></p>
+
+<p><em>The publisher can also provide unsubscribe(), which means removing from the array of subscribers. The last important method of the publisher is publish(), which will call the subscribers’ methods.&#8221;</em></p>
+
+<p>Here is Stoyan&#8217;s Pub/Sub implementation. Note that the <code>on</code> function accepts a <code>context</code> argument which allows you to set the handler&#8217;s context and in turn, the value of <code>this</code>. We&#8217;ll discuss this a bit more later.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">publisher</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">subscribers</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">any</span><span class="o">:</span> <span class="p">[]</span> <span class="c1">// event type: subscribers</span>
+    <span class="p">},</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;any&#39;</span><span class="p">;</span>
+        <span class="nx">fn</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">fn</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">fn</span> <span class="o">:</span> <span class="nx">context</span><span class="p">[</span><span class="nx">fn</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;undefined&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">({</span> <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="o">:</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span> <span class="p">});</span>
+    <span class="p">},</span>
+    <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">visitSubscribers</span><span class="p">(</span><span class="s1">&#39;unsubscribe&#39;</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">fire</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">publication</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">visitSubscribers</span><span class="p">(</span><span class="s1">&#39;publish&#39;</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">publication</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">visitSubscribers</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">arg</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">pubtype</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;any&#39;</span><span class="p">,</span>
+            <span class="nx">subscribers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">pubtype</span><span class="p">],</span>
+            <span class="nx">i</span><span class="p">,</span>
+            <span class="nx">max</span> <span class="o">=</span> <span class="nx">subscribers</span> <span class="o">?</span> <span class="nx">subscribers</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">max</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">action</span> <span class="o">===</span> <span class="s1">&#39;publish&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Call our observers, passing along arguments</span>
+                <span class="err"> </span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">arg</span> <span class="o">&amp;&amp;</span> <span class="nx">subscribers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">subscribers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></figure>
+
+
+<p>In practice using the <code>publisher</code> might look something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">function</span> <span class="nx">handleLogin</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;we haz a users!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">publisher</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;login.complete&#39;</span><span class="p">,</span> <span class="nx">handleLogin</span><span class="p">);</span>
+
+<span class="c1">// ... .</span>
+<span class="c1">// Elaborate user login process...</span>
+
+<span class="nx">publisher</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;login.complete&#39;</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<h2>Mind the Context</h2>
+
+<p>In JavaScript the keyword <code>this</code> in a function will refer to the context in which the function was called. Sometimes functions are global and sometimes they&#8217;re part of a larger Object. Here&#8217;s a brief example to clarify:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">foobar</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">doWork</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;doing some work...&#39;</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">foobar</span><span class="p">.</span><span class="nx">doWork</span><span class="p">();</span> <span class="c1">// `this` will refer to foobar</span>
+
+<span class="kd">var</span> <span class="nx">doWorkClone</span> <span class="o">=</span> <span class="nx">foobar</span><span class="p">.</span><span class="nx">doWork</span><span class="p">;</span>
+<span class="nx">doWorkClone</span><span class="p">();</span> <span class="c1">// `this` will refer to window</span>
+
+<span class="kd">var</span> <span class="nx">workClones</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="nx">workClones</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">foobar</span><span class="p">.</span><span class="nx">doWork</span><span class="p">);</span>
+<span class="nx">workClones</span><span class="p">[</span><span class="mi">0</span><span class="p">]();</span> <span class="c1">// `this` will refer to the workClones Array</span>
+</code></pre></figure>
+
+
+<p>The first time we call <code>doWork</code> we do so in the <em>context</em> of the <code>foobar</code> object: <code>foobar.doWork()</code>. As a result the term <code>this</code> inside of the <code>doWork</code> method will refer to <code>foobar</code>.</p>
+
+<p>The second time we call <code>doWork</code> we do so by referencing the method through a variable. We&#8217;re calling <code>doWork</code> using that variable&#8217;s <em>context</em>. But the variable is a global variable, it&#8217;s just hanging out on the page! As a result <code>this</code> will refer to <code>window</code>.</p>
+
+<p>In the third example we&#8217;re stuffing <code>doWork</code> into an array, then referencing it by index, then calling it. In this <em>context</em> <code>doWork</code> is scoped to the <code>workClones</code> Array, since it&#8217;s also an Object. A little confusing I know.</p>
+
+<p>So why do I care?</p>
+
+<p>Well if you go back and look at the <code>publisher</code> example you&#8217;ll notice that we pass a function reference to be called whenever the Subject sends out a notification. In our case it looks like this: <code>publisher.subscribe('login.complete', handleLogin);</code> If <code>handleLogin</code> needs to use <code>this</code> we might be in a world of hurt because <code>publisher</code> is going to call <code>handleLogin</code> using itself as the value of <code>this</code>. Uh oh!</p>
+
+<h2>Preserving Context in Observer</h2>
+
+<p>JavaScript&#8217;s context switching can be really bizarre if you&#8217;ve never had to manage it before. To mitigate this problem we have a handful of useful strategies.</p>
+
+<p>The first one, which is demonstrated in the <code>publisher</code>, is to pass along a <code>context</code> whenever we subscribe a function. This is the third argument to our <code>publisher</code>&#8217;s <code>on</code> method.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;any&#39;</span><span class="p">;</span>
+        <span class="nx">fn</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">fn</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">fn</span> <span class="o">:</span> <span class="nx">context</span><span class="p">[</span><span class="nx">fn</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;undefined&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">({</span> <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="o">:</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span> <span class="p">});</span>
+    <span class="p">},</span>
+</code></pre></figure>
+
+
+<p>By storing the <code>context</code> we ensure that when it&#8217;s time to call our function, we can do so in the correct context with the correct value for <code>this</code>. We do this through the use of JavaScript&#8217;s <code>call</code> method which allows us to define in which context a function should execute.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">subscribers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">context</span><span class="p">,</span> <span class="nx">arg</span><span class="p">);</span>
+</code></pre></figure>
+
+
+<p>This can be a very powerful feature especially for utility functions. Checkout the MDN docs for a deeper understanding of <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/call">call</a> and its cousin <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/apply">apply.</a></p>
+
+<p>But what if you&#8217;re not using our <code>publisher</code> example? What if you&#8217;re using a slightly more popular library like jQuery to manage your events? Maybe you have some code that looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Substitute `on` for `click` or `delegate` or `live` or</span>
+<span class="c1">// whatever else you&#39;re using :)</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.login-button&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// tell the app the user is trying to log in!</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Well in this case we might have to use a different approach. As anyone who&#8217;s used jQuery knows, the value of <code>this</code> in our handler function is going to refer to the DOM element that jQuery selected. Sometimes that&#8217;s really useful but other times, like in this case, it isn&#8217;t going to do us much good.</p>
+
+<h3>Closures</h3>
+
+<p>Closures are a powerful feature of ECMAScript and they&#8217;re especially useful when passing around functions. The best definition I&#8217;ve found for a closure comes from <a href="http://jibbering.com/faq/notes/closures/">this article:</a></p>
+
+<blockquote><p>The simple explanation of a Closure is that ECMAScript allows inner functions; function definitions and function expressions that are inside the function bodies of other functions. And that those inner functions are allowed access to all of the local variables, parameters and declared inner functions within their outer function(s).</p></blockquote>
+
+<p>So let&#8217;s see that in action.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">loginController</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.login-button&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">handleLogin</span><span class="p">();</span> <span class="c1">// use self as a stand in for `this` </span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+    <span class="nx">handleLogin</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;handling login!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>In the above example the var <code>self</code> exists in a kind of interesting limbo: it is part of <code>loginController's</code> <code>init</code> method and also part of the function registered as the <code>on('click')</code> handler. As a result, when the function is executed, <code>self</code> is still in the context of the <code>loginController</code> object and thus logs <code>handling login!</code></p>
+
+<p>Awesome! We&#8217;ve solved the issue of preserving scope, right? Well, yes but it&#8217;s not our only option. Many people (myself included) find it annoying to sprinkle <code>var self = this</code> all over their app. To mitigate things we also have <code>Function.bind</code>.</p>
+
+<h3>Bindings</h3>
+
+<p>The addition of <code>Function.bind</code> in ECMAScript 5 allows us to specify in which context a function should be called, in other words, <em>binding</em> that function (and the value of <code>this</code>) to a particular context. Let&#8217;s see it in action:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;My Awesome Widget!&#39;</span><span class="p">,</span>
+    <span class="nx">sayName</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">nameFunc</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">sayName</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">widget</span><span class="p">);</span>
+<span class="nx">nameFunc</span><span class="p">();</span> <span class="c1">// outputs: &#39;My Awesome Widget!&#39;</span>
+</code></pre></figure>
+
+
+<p>Calling <code>Function.bind</code> will actually create a closure preserving whatever scope we&#8217;ve passed in. It returns a clone of our original function but this time it is bound to a particular context. In the above example it&#8217;s bound to the <code>widget</code> object. While it&#8217;s cleaner than our original closure example we&#8217;re still in a dilemma because we want <code>sayName</code> to ALWAYS be called in the context of <code>widget</code>. How about something like this instead: <code>widget.sayName = widget.sayName.bind(widget);</code> Hey, now we&#8217;re talking! By overwriting our function and binding it to our <code>widget</code> object we&#8217;ve gotten very close to how classical languages like Java and Actionscript handle scope! This means it&#8217;s easy to both subscribe and unsubscribe our method, safe in the knowledge that it will always use the proper scope. If you&#8217;re lazy (like me) take some time to research <a href="http://underscorejs.org/">Underscore.js</a> which provides both <a href="http://underscorejs.org/#bind">bind</a> and <a href="http://underscorejs.org/#bindAll">bindAll</a> functions to ease the process of connecting your methods to their parent objects.</p>
+
+<p>I&#8217;ll save you the speech on treating JavaScript like other languages except to say anytime you&#8217;re writing code to make one language act like another you should obviously research whether that&#8217;s the best course of action or not. In my experience I&#8217;ve found that binding observers can make writing event listeners much cleaner but your mileage may vary and comments/feedback are always welcome :D</p>
+
+<p>Also if you want to read more on <code>Function.bind</code> you can do so <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind">here on MDN.</a></p>
+
+<h2>The Push and Pull Model</h2>
+
+<p>Typically when you create a Subject/Observer relationship you&#8217;ll want the Subject to send along additional information during its event dispatch. The amount of information can vary widely. Sometimes you&#8217;ll want to send a lot of information and other times you&#8217;ll want the observers to receive the event and then query for more information. When you&#8217;re sending a lot of information it&#8217;s referred to as the <em>push model</em> and when the Observers should query for more information it&#8217;s referred to as the <em>pull model</em>. The Gang of Four describe the differences between the two:</p>
+
+<blockquote><p>The pull model emphasizes the subject’s ignorance of its observers, whereas the push model assumes subjects know something about their observers’ needs. The push model might make observers less reusable, because Subject classes make assumptions about Observer classes that might not always be true. On the other hand, the pull model may be inefficient, because Observer classes must ascertain what changed without help from the Subject.</p></blockquote>
+
+<p>There&#8217;s no right or wrong approach but it is good to understand the differences between the two.</p>
+
+<h2>PubSub and Observer mixins</h2>
+
+<p>If you want a quick, easy to use event dispatcher the <a href="https://github.com/mroderick/PubSubJS">PubSubJS</a> library does a wonderful job of providing an easy to use event dispatcher. It also includes a jQuery plugin variant if that&#8217;s more your style. If you&#8217;re looking for something a little less global and a bit more OO checkout this utility function from <a href="http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752">JavaScript Patterns</a> which mixes-in the <code>publisher</code> to other objects.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">function</span> <span class="nx">makePublisher</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span><span class="err">   </span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">publisher</span><span class="p">)</span> <span class="p">{</span><span class="err">     </span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">publisher</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">publisher</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">publisher</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span><span class="err">     </span>
+        <span class="p">}</span><span class="err">   </span>
+    <span class="p">}</span>
+    <span class="nx">o</span><span class="p">.</span><span class="nx">subscribers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">any</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/observer/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li>Promise: A Promise is an observable token given from one object to another. Promises wrap an operation and notify their observers when the operation either succeeds or fails.</li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=JavaScript Design Patterns: Observer&amp;url=http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/08/16/javascript-design-patterns-observer/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

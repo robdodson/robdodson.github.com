@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Underscore | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/underscore/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <updated>2012-05-30T08:53:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
+
+<!--more-->
+
+
+<p>Since I'm using Backbone Boilerplate I've gotten used to having my template loading method already stubbed out for me. Here's the one they use:</p>
+
+<p>``` js
+fetchTemplate: function(path, done) {
+  var JST = window.JST = window.JST || {};
+  var def = new $.Deferred();</p>
+
+<p>  // Should be an instant synchronous way of getting the template, if it
+  // exists in the JST object.
+  if (JST[path]) {</p>
+
+<pre><code>if (_.isFunction(done)) {
+  done(JST[path]);
+}
+
+return def.resolve(JST[path]);
+</code></pre>
+
+<p>  }</p>
+
+<p>  // Fetch it asynchronously if not available from JST, ensure that
+  // template requests are never cached and prevent global ajax event
+  // handlers from firing.
+  $.ajax({</p>
+
+<pre><code>url: path,
+type: "get",
+dataType: "text",
+cache: false,
+global: false,
+
+success: function(contents) {
+  JST[path] = _.template(contents);
+
+  // Set the global JST cache and return the template
+  if (_.isFunction(done)) {
+    done(JST[path]);
+  }
+
+  // Resolve the template deferred
+  def.resolve(JST[path]);
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Ensure a normalized return value (Promise)
+  return def.promise();
+}
+```</p>
+
+<p>Not having previous experience working with <a href="http://api.jquery.com/category/deferred-object/">jQuery.Deferred</a> I was initially put-off by the idea of just copy/pasting this function over to him, especially since I couldn't explain what was going on. I knew that I probably wanted to use Deferreds and Promises but I wasn't sure how best to explain the concepts nor did this method seem to do much in the way of loading JSON, it was just for loading templates. Since my friend only wanted to load 1 template and 1 JSON file I thought it best for us to start small, and to write something that we could easily debug. Knowing I wanted to use Deferreds I found <a href="http://msdn.microsoft.com/en-us/magazine/gg723713.aspx">this wonderful article by Addy Osmani and Julian Aubourg</a> detailing how Deferreds work. It is VERY comprehensive and for our purposes I only needed to read the first few paragraphs before I had enough to start.</p>
+
+<p>In a nutshell deferreds are objects which contain promises (also objects). Promises can be in various states, <code>pending</code>, <code>resolved</code> or <code>rejected</code>. Once you have a deferred (or it's promise) you can hook functions on to it so when it changes from a <code>pending</code> to <code>resolved</code> state all those functions fire. It's actually the promise that changes state but you can use the deferred like a promise because in most cases it will just proxy the calls to its promise object. Using deferreds can be nice for several reasons. For starters, you can avoid the jQuery <em>pyramid of doom</em></p>
+
+<p>``` js</p>
+
+<p>// NOOOOOOoooooooooo</p>
+
+<p>$.ajax({
+  url: 'foo.php',
+  success: function() {</p>
+
+<pre><code>$.ajax({
+  url: 'bar.php',
+  success: function() {
+    $.ajax({
+      url: 'baz.php',
+      success: function() {
+        ...
+      }
+    })
+  }
+})
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>```</p>
+
+<p>Secondly your deferreds/promises are little tokens that you can hand out from your services so other actors don't have to get all up in your ajax guts. Someone makes an API request, you give em a token, when it resolves they play with the data.</p>
+
+<p>``` js
+function doSomethingWithHugeData(data) {
+  console.log("man, look at all these 1's and 0's!");
+}</p>
+
+<p>var dfd = myService.getSomeHugeData();
+dfd.done(doSomethingWithHugeData);
+```</p>
+
+<p>This is a much nicer approach than passing in a callback that your service will need to execute whenever it finishes getting its data. Your service shouldn't care about your callbacks. It should care about getting data and letting people know when that data's been got! :D</p>
+
+<h3>But I digress...</h3>
+
+<p>We were <em>trying</em> to load some JSON and a template, so let's get back to the task at hand. Since we know that we have two ajax calls, one for the JSON and one for the template, and we know that we don't really want to do anything till both of these calls have completed we've got a perfect use case for <a href="http://api.jquery.com/jQuery.when/">$.when</a>. <code>when</code> accepts a list of deferreds/promises and acts as one big deferred, waiting for all of its children to resolve before it resolves. This is a nice way to build a sequencer. In our case we're going to take  two ajax calls and toss them into <code>$.when</code>. When it resolves we'll use <code>$.then</code> to tell it what our success and failure callbacks should be.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Deferred Sandbox&lt;/title&gt;
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="underscore.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;div id="main"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  $(function() {
+
+    function successFunc(jsonRes, templateRes) {
+      var json = _.first(jsonRes);
+      var template = _.first(templateRes);
+      var compiled = _.template(template, json);
+      $('#main').html(compiled);
+    }
+
+    function failureFunc() {
+      console.log('fail whale!');
+    }
+
+    $.when(
+      $.ajax("person.json"),
+      $.ajax("person.template.html")
+    ).then(successFunc, failureFunc);
+
+  });
+&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>In our case everything is in the same folder as index.html so there's no need for any paths. Keep in mind that in most (all?) browsers you'll need to be running a local server for the above code to actually work. In Chrome, at least, you can't run an html file from file:// and have it load external resources, it'll complain that the access-origin is not allowed.</p>
+
+<p>Let me take a moment to explain <code>$.then</code> a little bit. We know that <code>$.ajax</code> returns a deferred, and that the deferred's promise can be in three states: <code>pending</code>, <code>resolved</code>, <code>rejected</code>. So if we did something like this:</p>
+
+<p><code>js
+var dfd = $.ajax('foobar.php');
+</code></p>
+
+<p><code>dfd</code> would be a deferred object with a <code>pending</code> promise. Deferred's let us link methods up to them for when their state changes. These methods are: <code>done()</code>, <code>fail()</code>, <code>always()</code>, <code>progress()</code>, and <code>then()</code>. There are more but <a href="http://api.jquery.com/category/deferred-object/">I'll let the documentation explain them.</a> <code>done()</code> and <code>fail()</code> each accept either a single callback or an array of callbacks to be fired when the deferred changes to either the <code>resolved</code> or <code>rejected</code> state.</p>
+
+<p>``` js
+function successFunc() {
+  console.log('success! do stuff with data!');
+}</p>
+
+<p>function failureFunc() {
+  console.log('failure! um...give up!');
+}</p>
+
+<p>var service = {
+  getJSON: function() {</p>
+
+<pre><code>return $.ajax('person.json');
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>service.getJSON()
+.done(successFunc)
+.fail(failureFunc);</p>
+
+<p>```</p>
+
+<p><code>always()</code> fires its callbacks regardless of whether the deferred was <code>resolved</code> or <code>rejected</code>. This might be a good place to put any cleanup code. <code>progress()</code> is fired during any progress events that the process might emit. Finally there's <code>then()</code> which is what we're using in our template example. <code>then()</code> is essentially shorthand for <code>done()</code> and <code>fail()</code> so you can pass it two callbacks or two arrays of success/fail callbacks.</p>
+
+<p>Hopefully that's helpful for you all and you can go back and clean up some of those pyramids that might be lingering in your code. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Reserved, Sedate</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: R.js | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/r-js/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A Require.js multi-page shimmed site: How-To]]></title>
+    <link href="http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to/"/>
+    <updated>2012-11-18T13:05:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2012/11/18/a-require-dot-js-multipage-shimmed-site-how-to</id>
+    <content type="html"><![CDATA[<p>I've been working with RequireJS a lot lately and found it really improves the way I manage my code. I had previous experience with Require in the context of some of my Backbone posts, but I'd never used it on a more traditional multi-page site before. The process of setting up Require on a multi-page site can be pretty confusing, so I thought I would put together this tutorial to help out others who might be stuck.</p>
+
+<!--more-->
+
+
+<h2>Overview</h2>
+
+<p><em>Note: This tutorial assumes you're already familiar with RequireJS and its configuration options. If not, I recommend you <a href="http://requirejs.org/">check out the docs</a> before proceeding</em></p>
+
+<h2><a href="https://github.com/robdodson/requirejs-multipage-shim-boilerplate">Grab the Boilerplate</a></h2>
+
+<p>When building single-page apps, many people choose to compile all of their JavaScript into one file before deploying to production. While this may make the initial download size of the page larger, the hope is that it reduces section-to-section http requests, thus making the overall experience feel snappier and more app-like.</p>
+
+<p>When working with a <em>multi-page site</em>, compiling everything into one file is probably not a good idea. Since you have no guarantee that the user will visit every page, you may be loading unnecessary JavaScript and slowing down the experience. Do you really need to load all of the JavaScript for the <strong>About</strong> page if the user is just visiting the <strong>Contact</strong> page?</p>
+
+<p>The ideal scenario is one in which each page has its own <code>main</code> file that contains page-specific instructions and then a separate (hopefully cached) file that contains all of the commonly used JavaScript libraries.</p>
+
+<p>For example, if you have a page called <strong>About</strong> and a page called <strong>Contact</strong> you would have <code>main-about.js</code> and <code>main-contact.js</code>. Let's say <code>main-about.js</code> and <code>main-contact.js</code> both require <code>'jquery'</code> and <code>'underscore'</code>. We wouldn't want to compile <code>jquery</code> and <code>underscore</code> into each <code>main</code> file because then we're creating unnecessary bloat. Instead, we should create a <code>common.js</code> file which contains <code>jquery</code> and <code>underscore</code> and we'll make sure that this file loads before any of our <code>main-*</code> files. Take a look at this diagram to help it sink in:</p>
+
+<p><strong>OPTIMIZED SCRIPTS</strong>
+```</p>
+
+<h2>common.js</h2>
+
+<p>js/vendor/jquery.js
+js/vendor/underscore.js</p>
+
+<h2>About</h2>
+
+<p>js/common.js
+js/app/main-about.js</p>
+
+<h2>Contact</h2>
+
+<p>js/common.js
+js/app/main-contact.js
+```</p>
+
+<p>By compiling all of those libaries into <code>common.js</code> we're reducing the number of http requests per page. Also, after the first page has loaded, <code>common.js</code> should be available from the browser's cache. Now that you get the general concept, let's take a look at an example.</p>
+
+<h2>Examples!</h2>
+
+<p><a href="https://twitter.com/jrburke">James Burke</a>, author of RequireJS, has done a great job putting together some example projects which show how to effectively structure your project so it can be run through the <a href="http://requirejs.org/docs/optimization.html">r.js optimization tool</a>. The one I typically refer to is the <a href="https://github.com/requirejs/example-multipage-shim">example-multipage-shim.</a> There's also an <a href="https://github.com/requirejs/example-multipage">example-multipage</a>, but I tend to use the shim version because it seems like there's always a few non-AMD scripts that end up in a project.</p>
+
+<p>I've put together my own boilerplate, using Bootstrap 3 and GruntJS, which you guys are free to grab <a href="https://github.com/robdodson/requirejs-multipage-shim-tutorial">here.</a> The rest of this post will walk through this boilerplate.</p>
+
+<h2>Learn you a boilerplate!</h2>
+
+<p>If you've worked with RequireJS on a single page site, you're probably used to defining a script tag that looks like this:</p>
+
+<p>```html</p>
+
+<!--This sets the baseUrl to the "scripts" directory, and
+    loads a script that will have a module ID of 'main'-->
+
+
+<script data-main="scripts/main.js" src="scripts/require.js"></script>
+
+
+<p>```</p>
+
+<p>The <code>data-main</code> attribute is a convenience feature of RequireJS which sets Require's <a href="http://requirejs.org/docs/api.html#config-baseUrl">baseUrl property.</a> You usually put some configuration options in the <code>main</code> file as well, for instance, if you're loading a 3rd party library you might create a <a href="http://requirejs.org/docs/api.html#config-paths">path</a> so you can easily reference it. Since our boilerplate has different <code>main-*</code> files for each page, we're going to put that configuration data into our <code>common.js</code> file instead.</p>
+
+<p><em>Hold on, I thought you said common.js was where we were going to compile all of our libraries?</em></p>
+
+<p>Indeed, you are correct astute reader. But since <code>common.js</code> is going to be loaded before any other required modules, why not put our configuration options in it as well? Here's what the <code>common.js</code> file from our boilerplate looks like:</p>
+
+<p>``` js
+//The build will inline common dependencies into this file.</p>
+
+<p>requirejs.config({
+  baseUrl: './js',
+  paths: {</p>
+
+<pre><code>'jquery': 'vendor/jquery',
+'bootstrap': 'vendor/bootstrap'
+</code></pre>
+
+<p>  },
+  shim: {</p>
+
+<pre><code>'bootstrap': ['jquery']
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>You'll note that we're using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>, which is not AMD compliant out of the box, so we have to <code>shim</code> it. In this case it depends on <code>jquery</code>, so we list that as its only dependency and we're good.</p>
+
+<p>Aside from <code>common.js</code>, you should probably take a look in the <code>app/models</code> directory. I've created two models that extend a <code>BasicModel</code> in order to illustrate that the <code>common.js</code> file isn't only for 3rd party code. <code>common.js</code> is really for any code that's going to be used over and over on your site. We'll toss the <code>BasicModel</code> into <code>common.js</code> during the build process.</p>
+
+<h2>Just hit build already...</h2>
+
+<p>O.K., O.K. I can tell you're ready to see some fireworks. Before we hit build, I want to point out the <code>options.js</code> file. This is where we tell <code>r.js</code> which modules to compile and what each module should include or exclude.</p>
+
+<p>``` js
+module.exports = {
+  appDir: 'www',
+  baseUrl: 'js/',
+  mainConfigFile: 'www/js/common.js',
+  dir: 'www-release',
+  modules: [</p>
+
+<pre><code>{
+  name: 'common',
+  include: [
+    'app/models/basicModel',
+    'jquery',
+    'bootstrap'
+  ]
+},
+{
+  name: 'app/main-about',
+  exclude: ['common']
+},
+{
+  name: 'app/main-contact',
+  exclude: ['common']
+}
+</code></pre>
+
+<p>  ]
+};
+```</p>
+
+<p>You'll note that first we put together our common module, then we tell the subsequent modules to exclude it. When you tell <code>r.js</code> to exclude a module it will find all of the nested dependencies in that module and exclude those as well. This is why we don't need to tell <code>main-about</code> and <code>main-contact</code> to exclude <code>bootstrap</code>. It sees that <code>bootstrap</code> is already in <code>common</code>, so it knows to exclude it.</p>
+
+<p>If you haven't done so already, now is a good time to do an <code>npm install</code>. That should pull down all of the <code>grunt</code> dependencies. Speaking of <code>grunt</code>, you'll need to install that as well if you've never used it <code>npm install -g grunt-cli</code>. You might notice in our <code>Gruntfile.js</code>, we are using a number of tasks from the <a href="https://github.com/gruntjs/grunt-contrib">grunt-contrib</a> library. <code>grunt-contrib</code> is a great resource, and I encourage you to spend some time looking through all of the tasks that fall under its umbrella.</p>
+
+<p>O.K. Ready to rock. Just type <code>grunt</code> to build, or <code>grunt.cmd</code> if you're on Windows (thanks <a href="http://twitter.com/stevensacks">@stevensacks</a>). When you're finished, you should have a new folder called <code>www-release</code>. Check out the <code>build.txt</code> file to see where everything ended up.</p>
+
+<p>```</p>
+
+<h2>css/bootstrap-responsive.css</h2>
+
+<p>css/bootstrap-responsive.css</p>
+
+<h2>css/bootstrap.css</h2>
+
+<p>css/bootstrap.css</p>
+
+<h2>css/style.css</h2>
+
+<p>css/style.css</p>
+
+<h2>js/common.js</h2>
+
+<p>js/common.js
+js/app/models/basicModel.js
+js/vendor/bootstrap.js</p>
+
+<h2>js/app/main-about.js</h2>
+
+<p>js/app/models/aboutModel.js
+js/app/main-about.js</p>
+
+<h2>js/app/main-contact.js</h2>
+
+<p>js/app/models/contactModel.js
+js/app/main-contact.js
+```</p>
+
+<p>If you take a look at the <code>common.js</code> file in <code>www-release</code>, it should look like a big blob of minified code. That's what we want to see. In this case it contains our <code>BasicModel</code>, Twitter Bootstrap, jQuery, and our original configuration code. If you refer to about.html you can see how we control the load order:</p>
+
+<p>``` html</p>
+
+<script src="./js/vendor/require.js"></script>
+
+
+<script type="text/javascript">
+// Load common code that includes config,
+// then load the app logic for this page.
+require(['./js/common'], function (common) {
+  // ./js/common.js sets the baseUrl to be ./js/
+  // You can ask for 'app/main-about' here instead
+  // of './js/app/main-about'
+  require(['app/main-about']);
+});
+</script>
+
+
+<p>```</p>
+
+<p>First, we bring in RequireJS. Then we load <code>common.js</code>, and only <em>after</em> <code>common.js</code> is loaded do we request the page specific code in <code>main-about</code>. If you stick to this structure, you should be able to layer your code so it's easy to manage.</p>
+
+<h2><a href="https://github.com/robdodson/requirejs-multipage-shim-tutorial">Grab the Example Source</a></h2>
+
+<p>Hope you learned something new today. Feedback and suggestions always welcome in the comments below. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

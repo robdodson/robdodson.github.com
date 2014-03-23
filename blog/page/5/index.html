@@ -54,16 +54,16 @@
 </div>
 	
 	<header class="post-header">
-		<span class="post-meta">19 Nov 2013</span>
+		<span class="post-meta">02 Oct 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/19/at-font-face-doesnt-work-in-shadow-dom/">
+			<a href="/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache/">
 			
-				@font-face Doesn&#8217;t Work in the Shadow DOM</a>
+				Virtual Host in Mountain Lion With Apache</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I was building custom elements with Polymer the other day, and I thought it would be cool to include Font Awesome for some sweet icon goodness. Everything was going great, until I switched over to Canary to check my work.</p>
+		<p>If you&#8217;re using Mountain Lion and have the need to setup a vhost it can be a little tricky to get the ball rolling. I&#8217;m going to do my best to detail the process that I use to set everything up. Hopefully you can use these same steps to square aware your system.</p>
 
 
 	</section>
@@ -73,16 +73,18 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">15 Nov 2013</span>
+		<span class="post-meta">03 Sep 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/15/the-cat-and-the-hat-css-selectors/">
+			<a href="/blog/2012/09/03/javascript-design-patterns-factory/">
 			
-				The Cat and the Hat CSS Selectors</a>
+				JavaScript Design Patterns: Factory</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>Factories encapsulate and separate object creation from the rest of your code. In situations where the creation of an object can be complex or subject to change a factory can act as a nice buffer to help keep things tidy. Without proper planning Factories can lead to class explosions; as a result the pattern can be both a blessing and a curse depending on how it&#8217;s used.</p>
 
 
 	</section>
@@ -92,16 +94,18 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">12 Nov 2013</span>
+		<span class="post-meta">30 Aug 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/11/12/repeating-templates-in-polymer/">
+			<a href="/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">
 			
-				Repeating Templates in Polymer</a>
+				JavaScript Design Patterns: Decorator Update</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
+		<p><a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">Yesterday&#8217;s post</a> drew a lot of traffic from Reddit and with it came some really good feedback. If you haven&#8217;t read the <a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">previous post</a> please do so first and then come back here.</p>
+
+<p>I want to go through some of what was said so I can refine my examples and also clear up any confusion.</p>
 
 
 	</section>
@@ -111,41 +115,20 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">24 Oct 2013</span>
+		<span class="post-meta">27 Aug 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/10/24/web-components-revolution/">
+			<a href="/blog/2012/08/27/javascript-design-patterns-decorator/">
 			
-				Web Components Revolution</a>
+				JavaScript Design Patterns: Decorator</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
 
-<br>
+<p><a href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">Update: Part 2 has been posted!</a></p>
 
-
-<h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
-
-	</section>
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">02 Oct 2013</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2013/10/02/creating-a-markdown-tag-with-polymer/">
-			
-				Creating a Markdown Tag With Polymer</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>Ah Markdown&#8230; Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress&#8217; HTML mode, too limiting. Markdown changed all of that for me and I think it&#8217;s high time we make it a full fledged member of our developer toolbox.</p>
-
-<p>So today I&#8217;m going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+<p>A Decorator is an object which adds functionality to another object dynamically. It can be used to enhance the behavior of an object without requiring the author to reopen its class. While Decorators might feel a little weird to implement in static languages they&#8217;re extremely simple in JavaScript due to the ease with which JS passes around functions and handles dynamic types.</p>
 
 
 	</section>
@@ -155,16 +138,39 @@
     <article class="post">
 	
 	<header class="post-header">
-		<span class="post-meta">16 Sep 2013</span>
+		<span class="post-meta">16 Aug 2012</span>
 		<h2 class="post-title">
 			
-			<a href="/blog/2013/09/16/the-art-of-fear-blogging/">
+			<a href="/blog/2012/08/16/javascript-design-patterns-observer/">
 			
-				The Art of Fear Blogging</a>
+				JavaScript Design Patterns: Observer</a>
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>Years ago <a href="http://www.radiolab.org/2011/mar/08/you-v-you/">I heard a radio story about a woman hopelessly addicted to cigarettes.</a> Although she tried numerous times to quit, the temptation always won out. So she devised a plan. She told her best friend that if she ever caught her smoking again, she would have to send $5,000 to the Ku Klux Klan. Her best friend, acting as the enforcer, would hold her to it.</p>
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>Observer is one of the most popular design patterns and chances are you&#8217;re probably already using it. If you&#8217;ve ever written an event listener with <code>addEventListener</code> or used one of jQuery&#8217;s many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc&#8230; then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn&#8217;t care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">10 Aug 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/08/10/javascript-design-patterns-iterator/">
+			
+				JavaScript Design Patterns: Iterator</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>If you&#8217;re coming from Ruby or Java you probably think of an Iterator as an object which gives you a consistent interface for traversing a collection of some kind. If you&#8217;re coming from JavaScript or Actionscript you probably just think of an iterator as the <code>i</code> value in a <code>for</code> loop. The term has mixed meanings but in this case we&#8217;re refering to the former, an object which gives us a consistent interface for iterating over a collection of some kind. If you&#8217;ve never used them before that might seem kind of silly. &#8220;If I need to loop over something I&#8217;m just going to loop over it!&#8221; For many use cases that&#8217;s totally fine. Where Iterator objects are useful is in situations where you might need to loop in an async fashion (stopping and restarting) or if you want to preclude an object from knowing too much about the inner workings of a collection.</p>
 
 
 	</section>
@@ -172,9 +178,11 @@
 
 <nav class="pagination" role="pagination">
     
-    <span class="page-number">Page 1 of 16</span>
+        <a class="newer-posts" href="/blog/page/4/">← Newer Posts</a>
     
-        <a class="older-posts" href="/blog/page/2/">Older Posts →</a>
+    <span class="page-number">Page 5 of 16</span>
+    
+        <a class="older-posts" href="/blog/page/6/">Older Posts →</a>
     
 </nav>
   </main>

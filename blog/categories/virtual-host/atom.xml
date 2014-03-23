@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Virtual Host | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/virtual-host/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Virtual Host in Mountain Lion with Apache]]></title>
+    <link href="http://robdodson.github.com/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache/"/>
+    <updated>2012-10-02T23:16:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/10/02/virtual-host-in-mountain-lion-with-apache</id>
+    <content type="html"><![CDATA[<p>If you're using Mountain Lion and have the need to setup a vhost it can be a little tricky to get the ball rolling. I'm going to do my best to detail the process that I use to set everything up. Hopefully you can use these same steps to square aware your system.</p>
+
+<!--more-->
+
+
+<h2>Command Line Fu!</h2>
+
+<p>Ok we're going to pretty much do everything in Terminal so if that scares you now might be a good time to install <a href="http://www.mamp.info/en/index.html">MAMP</a> instead ;)</p>
+
+<h2>Step 1: Enable httpd-vhosts.conf</h2>
+
+<p>OK first thing to do is navigate to your apache installation and open it up in your text editor of choice.</p>
+
+<p><code>
+cd /etc/apache2
+mate httpd.conf // you can use anything to open it up: vim, nano, etc.
+</code></p>
+
+<p>You're looking for the line:</p>
+
+<p>```</p>
+
+<h1>Include /private/etc/apache2/extra/httpd-vhosts.conf</h1>
+
+<p>```</p>
+
+<p>Remove the <code>#</code> to uncomment it.</p>
+
+<p>It might be wrapped in a block that looks like this:</p>
+
+<p><code>
+&lt;IfDefine WEBSHARING_ON&gt;
+...
+&lt;/IfDefine&gt;
+</code></p>
+
+<p>Comment out those lines using <code>#</code>. We want our httpd-vhosts file to always be loaded. It should look kind of like this:</p>
+
+<p>```</p>
+
+<h1><IfDefine WEBSHARING_ON></h1>
+
+<p>... a bunch of stuff ...</p>
+
+<p>Include /private/etc/apache2/extra/httpd-vhosts.conf</p>
+
+<p>... a buncha other stuff ...</p>
+
+<h1></IfDefine></h1>
+
+<p>```</p>
+
+<h2>Step 2: Enable PHP</h2>
+
+<p>In the <code>httpd.conf</code> file search for this line:</p>
+
+<p>```</p>
+
+<h1>LoadModule php5_module libexec/apache2/libphp5.so</h1>
+
+<p><code>``
+Remove the</code>#` so PHP will be enabled.</p>
+
+<h2>Step 3: Add a vhost</h2>
+
+<p>OK let's add our first vhost.</p>
+
+<p><code>
+mate /etc/apache2/extra/httpd-vhosts.conf
+</code></p>
+
+<p>This is your list of virtual hosts. There should be some example vhosts in here. Let's create a new one:</p>
+
+<p>```
+<VirtualHost *:80></p>
+
+<pre><code>ServerName mysite.dev
+DocumentRoot "/Users/Rob/Developer/mysite"
+&lt;Directory "/Users/Rob/Developer/mysite"&gt;
+    DirectoryIndex index.php index.html
+    AllowOverride all
+    Options -MultiViews
+    Order allow,deny
+    Allow from all
+&lt;/Directory&gt;
+</code></pre>
+
+<p></VirtualHost>
+<code>``
+There are a few other options you can use but I'm ignoring them for now.</code>ServerName<code>is what we'll be typing into our browser address bar.</code>DocumentRoot<code>and</code>Directory<code>point to the location of the project files on our hard drive. Note that</code>DirectoryIndex` will check for index.php first and then check for index.html. If you want to just use .html you can remove the bit about index.php</p>
+
+<h2>Step 4: Add the vhost to your hosts file</h2>
+
+<p>Next let's add our new host to our hosts file.</p>
+
+<p><code>
+mate /etc/hosts
+</code></p>
+
+<p>You should see a line that looks like this:</p>
+
+<p><code>
+127.0.0.1 localhost
+</code></p>
+
+<p>Add this line underneath so it looks like this:</p>
+
+<p><code>
+127.0.0.1 localhost
+127.0.0.1 mysite.dev
+</code></p>
+
+<h2>Step 5: Restart Apache</h2>
+
+<p>OK let's reboot apache!</p>
+
+<p><code>
+sudo apachectl restart
+</code></p>
+
+<h2>Step 6: Cross your fingers!</h2>
+
+<p>Head over to your browser and try it out. Make sure you use <code>http://</code> at the beginning or it will just try to google your hostname.</p>
+
+<p><code>
+http://mysite.dev
+</code></p>
+
+<p>With any luck you should see your site! If everything worked go back to terminal and paste in this line:</p>
+
+<p><code>
+sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist
+</code>
+That will tell apache to start whenever the system starts. A word of warning: Whenever you change anything in httpd.conf, httpd-vhosts.conf or your hosts file you'll have to restart apache with <code>sudo apachectl restart</code> otherwise your changes won't show up in the browser.</p>
+
+<p>Good Luck!</p>
+]]></content>
+  </entry>
+  
+</feed>

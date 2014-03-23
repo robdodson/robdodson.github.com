@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Talks | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/talks/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Web Components Revolution]]></title>
+    <link href="http://robdodson.github.com/blog/2013/10/24/web-components-revolution/"/>
+    <updated>2013-10-24T12:18:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/10/24/web-components-revolution</id>
+    <content type="html"><![CDATA[<p>The slides from my talk and workshop titled Web Components Revolution are now live! Please be sure to view them using Chrome Canary and follow the instructions to enable any flags that you might need in order to properly experience native Web Components. The talk and the workshop were serious labors of love and I hope you all enjoy the slides :)</p>
+
+<br>
+
+
+<h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Scared Shitless]]></title>
+    <link href="http://robdodson.github.com/blog/2013/07/29/scared-shitless/"/>
+    <updated>2013-07-29T08:51:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/07/29/scared-shitless</id>
+    <content type="html"><![CDATA[<p>I just saw this awesome talk by <a href="http://www.43folders.com/">Merlin Mann</a> (<a href="https://twitter.com/hotdogsladies">@hotdogsladies</a>) titled <strong>Scared Shitless</strong>.</p>
+
+<iframe width="560" height="315" src="http://robdodson.github.com//www.youtube.com/embed/Lk0hSeQ5s_k" frameborder="0" allowfullscreen></iframe>
+
+
+<p>If there's something you want to do but you've been too scared to do it maybe you should watch this. Get a little courage. Get some gumption! And do the damn thing! ROOOOOAAAAR!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RequireJS -- Embracing the Awesomness of AMD Modules]]></title>
+    <link href="http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules/"/>
+    <updated>2013-03-21T21:57:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules</id>
+    <content type="html"><![CDATA[<p>Over the past few weeks I put together this talk for my team at GE to help get everyone on the same page with AMD modules. I figured it'd be cool if I removed any GE specific stuff and open sourced the presentation, so here it is!</p>
+
+<p>The video is around 35 minutes long and there's a slide deck available on Github that has clickable links and whatnot. Enjoy!</p>
+
+<iframe width="420" height="315" src="http://www.youtube.com/embed/vWGuaZOTR4U" frameborder="0" allowfullscreen></iframe>
+
+
+<p><a href="https://github.com/robdodson/requirejs-presentation">Slidedeck on Github</a></p>
+]]></content>
+  </entry>
+  
+</feed>

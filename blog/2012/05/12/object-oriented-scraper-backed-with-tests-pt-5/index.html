@@ -1,0 +1,289 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Object Oriented Scraper Backed with Tests Pt. 5 | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">12 May 2012</span>
+	<h1 class="post-title">Object Oriented Scraper Backed With Tests Pt. 5</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Last night I got the <code>Crawler</code> passing its test for <code>#get_words_by_selector</code>. This morning I realize that when someone sends in a junk selector I want to raise an exception of some kind. Since I don&#8217;t know much about Ruby Exceptions I&#8217;m doing a little digging&#8230;Ruby has both <code>throw</code>/<code>catch</code> and <code>raise</code>/<code>rescue</code> so what&#8217;s the difference between throw/catch and raise/rescue in Ruby?</p>
+
+<!--more-->
+
+
+<h3>Throwing exceptions for control flow</h3>
+
+<p>There&#8217;s a great guest post by Avdi Grimm on <a href="http://rubylearning.com/blog/2011/07/12/throw-catch-raise-rescue-im-so-confused/">RubyLearning</a> which covers this topic in depth. To summarize <code>throw</code>/<code>catch</code> is mainly used when doing <em>exceptions as control flow</em>. In other words, if you need to break out of a deeply nested loop or some other expensive operation you can throw an exception symbol which can be caught someone high up the call stack. Initially this rubbed me the wrong way since I know that things like <code>goto</code> and <code>labels</code> are a bad practice. Someone else raised this point in the comments to which Avid responded:</p>
+
+<blockquote><p>There is a fundamental difference between throw/catch and goto. Goto, in languages which support it, pays no attention to the stack. Any resources which were allocated before the goto are simply left dangling unless they are manually cleaned up.</p>
+
+<p>throw/catch, like exception handling, unwinds the stack, triggering ensure blocks along the way. So, for example, if you throw inside an open() {…} block, the open file will be closed on the way up to the catch() block.</p></blockquote>
+
+<h3>Raising exceptions for everything else</h3>
+
+<p>With <code>throw</code>/<code>catch</code> out of the way that leaves <code>raise</code>/<code>rescue</code> to handle everything else. I&#8217;m willing to bet that 99% of error code should probably be raising exceptions and throw/catch should only be used in situations where you need the control flow behavior. With that knowledge in hand I need to decide between one of Ruby&#8217;s built-in Exceptions or defining one of my own. Let&#8217;s define one of our own so we can get that experience under our belt.</p>
+
+<h3>Creating an exception subclass in Ruby</h3>
+
+<p>One tip I picked up while doing my research into <code>raise</code> and <code>throw</code> is that any exception that doesn&#8217;t subclass StandardError will not be caught by default. Here&#8217;s an example to illustrate:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">###</span>
+<span class="c1"># First we define an exception class which doesn&#39;t</span>
+<span class="c1"># inherit from StandardError. As a result it won&#39;t</span>
+<span class="c1"># be caught by a simple rescue. Instead we would</span>
+<span class="c1"># need to rescue by its class name</span>
+<span class="c1">###</span>
+<span class="k">class</span> <span class="nc">MyBadException</span> <span class="o">&lt;</span> <span class="no">Exception</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">miss_bad_exception</span>
+  <span class="k">raise</span> <span class="no">MyBadException</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">rescue</span>
+  <span class="nb">p</span> <span class="s2">&quot;I&#39;ll never be called :(&quot;</span>
+<span class="k">end</span>
+
+<span class="n">miss_bad_exception</span>
+<span class="no">MyBadException</span><span class="p">:</span> <span class="no">MyBadException</span>
+  <span class="n">from</span> <span class="p">(</span><span class="n">irb</span><span class="p">):</span><span class="mi">4</span><span class="ss">:in</span> <span class="sb">`miss_bad_exception&#39;</span>
+<span class="sb">  from (irb):8</span>
+<span class="sb">  from /Users/Rob/.rvm/rubies/ruby-1.9.3-p125/bin/irb:16:in `</span><span class="o">&lt;</span><span class="n">main</span><span class="o">&gt;</span>
+
+<span class="c1"># See that calling the method produces an uncaught exception...</span>
+
+
+<span class="c1">###</span>
+<span class="c1"># Next we&#39;ll subclass StandardError. As a result</span>
+<span class="c1"># we won&#39;t have to explicitly define our class name</span>
+<span class="c1"># for a rescue to work.</span>
+<span class="c1">###</span>
+<span class="k">class</span> <span class="nc">MyGoodException</span> <span class="o">&lt;</span> <span class="no">StandardError</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">save_good_exception</span>
+  <span class="k">raise</span> <span class="no">MyGoodException</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">rescue</span>
+  <span class="nb">p</span> <span class="s2">&quot;I&#39;m saved! My hero!&quot;</span>
+<span class="k">end</span>
+
+<span class="n">save_good_exception</span>
+<span class="s2">&quot;I&#39;m saved! My hero!&quot;</span>
+
+<span class="c1"># Yay! Our exception was caught!</span>
+</code></pre></figure>
+
+
+<p>We&#8217;ll call our Exception <code>SelectorError</code> to indicate that the provided selector did not return any results. For reference I often refer to <a href="http://rubylearning.com/satishtalim/ruby_exceptions.html">this chart on RubyLearning</a> when I want to see a list of all the available Exception classes. In our case we&#8217;ll just inherit from StandardError.</p>
+
+<figure class='code'><figcaption><span>tentacles/lib/selection_error.rb</span></figcaption><pre><code><span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">SelectionError</span> <span class="o">&lt;</span> <span class="no">StandardError</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>I don&#8217;t think we actually need to do much more than that. The ability to pass a payload message should come from the super class so I think we&#8217;re good to go. Here&#8217;s our updated spec:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">it</span> <span class="s2">&quot;should raise an exception if nothing was returned&quot;</span> <span class="k">do</span>
+        <span class="n">expect</span> <span class="p">{</span> <span class="vi">@crawler</span><span class="o">.</span><span class="n">get_words_by_selector</span><span class="p">(</span><span class="s1">&#39;some-gibberish-selector&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Tentacles</span><span class="o">::</span><span class="no">SelectionError</span><span class="p">,</span> <span class="s1">&#39;The selector did not return an results!&#39;</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>    <br/>
+Initially the test fails so now we need to update our <code>Crawler</code> to check if nothing was returned and raise the custom exception.</p>
+
+<p>Here&#8217;s our updated <code>Crawler</code> with additional require and updated method.</p>
+
+<figure class='code'><figcaption><span>tentacles/lib/crawler.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;open-uri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;nokogiri&#39;</span>
+<span class="n">require_relative</span> <span class="s1">&#39;selection_error&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Crawler</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:doc</span>
+
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">from_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="kp">new</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+      <span class="vi">@uri</span> <span class="o">=</span> <span class="n">uri</span>
+      <span class="vi">@doc</span> <span class="o">=</span> <span class="no">Nokogiri</span><span class="o">::</span><span class="no">HTML</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="vi">@uri</span><span class="p">))</span>
+      <span class="vi">@counts</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get_words_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="n">entries</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">SelectionError</span><span class="p">,</span>
+        <span class="s1">&#39;The selector did not return an results!&#39;</span> <span class="k">if</span> <span class="n">entries</span><span class="o">.</span><span class="n">empty?</span>
+      <span class="n">entries</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">entry</span><span class="o">|</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">words_from_string</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">count_frequency</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">sorted</span> <span class="o">=</span> <span class="vi">@counts</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="o">|</span> <span class="n">count</span> <span class="p">}</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">reverse!</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">count</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get_metadata_by_selector</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+      <span class="c1"># TODO</span>
+    <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">words_from_string</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">downcase</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/[\w&#39;]+/</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">count_frequency</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">word</span> <span class="k">in</span> <span class="n">word_list</span>
+        <span class="vi">@counts</span><span class="o">[</span><span class="n">word</span><span class="o">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">end</span>
+      <span class="vi">@counts</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>All tests passing, we&#8217;re good to go :)</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Alert, Awake, Anxious</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 3</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Object Oriented Scraper Backed with Tests Pt. 5&amp;url=http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/12/object-oriented-scraper-backed-with-tests-pt-5/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

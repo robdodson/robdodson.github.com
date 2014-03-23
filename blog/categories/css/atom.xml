@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CSS | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/css/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Cat and the Hat CSS Selectors]]></title>
+    <link href="http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
+    <updated>2013-11-15T11:08:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
+    <content type="html"><![CDATA[<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM's author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That's where the new "cat" and "hat" CSS selectors come in.</p>
+
+<!-- more -->
+
+
+<h2>Support <a href="#" id="support"></a></h2>
+
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v33 or greater.</p>
+
+<p>Also make sure you've enabled <strong>Experimental Web Platform features</strong> in Chrome's <code>chrome://flags</code>.</p>
+
+<h2>The Hat <a href="#" id="the-hat"></a></h2>
+
+<p>The hat selector, a single caret ( ^ ), allows the parent document to pierce the <strong>upper shadow boundary</strong> and style elements that are one shadow root deep. If you have an element that only has one shadow root you can style pretty much anything inside of it using the hat.</p>
+
+<p data-height="268" data-theme-id="0" data-slug-hash="EhIax" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/EhIax'>Shadow DOM "Hat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+
+<h2>The Cat <a href="#" id="the-cat"></a></h2>
+
+<p>The cat, a double caret ( ^^ ) is much more powerful. It allows you to pierce every layer of the shadow DOM, so if you have shadow DOM within shadow DOM (a common occurrence when you nest custom elements) you can style all of them at once.</p>
+
+<p data-height="315" data-theme-id="0" data-slug-hash="wFqJg" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wFqJg'>Shadow DOM "Cat" CSS selector</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+
+<h2>Styling Native Elements <a href="#" id="styling-native-elements"></a></h2>
+
+<p><a href="https://twitter.com/Volker_E/status/401202275009310722">@Volker_E asked</a> if the cat and hat selectors could be used to style the shadow DOM of native elements like <code>&lt;video&gt;</code>. As it turns out that <em>does</em> work, which is pretty cool.</p>
+
+<p data-height="268" data-theme-id="0" data-slug-hash="iaJHd" data-user="robdodson" data-default-tab="css" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/iaJHd'>Shadow DOM "Cat" and "Hat" CSS selectors</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
+
+
+<script async src="http://robdodson.github.com//codepen.io/assets/embed/ei.js"></script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[nth-child is weird]]></title>
+    <link href="http://robdodson.github.com/blog/2013/08/04/nth-child-is-weird/"/>
+    <updated>2013-08-04T10:55:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/08/04/nth-child-is-weird</id>
+    <content type="html"><![CDATA[<p>I ran into a CSS bug today and it brought up an interesting (and important) question: What's the difference between <code>nth-child</code> and <code>nth-of-type</code>?</p>
+
+<!--more-->
+
+
+<h2>Comparing two things or one</h2>
+
+<p>Take a look at this sample code to get a feel for what we're talking about.</p>
+
+<p>``` html</p>
+
+<div>
+  <p>This paragraph is not green :(</p>
+  <p>This paragraph is green!</p>
+</div>
+
+
+<p>```</p>
+
+<p><code>css
+p:nth-child(2) {
+  background-color: green;
+}
+</code></p>
+
+<p>You'll notice that we're setting our second <code>p</code> element to have a <code>background-color</code> of <code>green</code>. To do this we use <code>p:nth-child(2)</code>. I think the way most people (myself included) would read that selector is "select the second child paragraph". But if we change the markup to look like this:</p>
+
+<p>``` html</p>
+
+<div>
+  <h1>Hello World!</h1>
+  <p>This paragraph is not green :(</p>
+  <p>This paragraph is green!</p>
+</div>
+
+
+<p><code>``
+Suddenly our green background moves to the wrong element. What gives?! As it turns out,</code>nth-child` counts all child elements regardless of what tag they are using.</p>
+
+<p>As <a href="http://css-tricks.com/the-difference-between-nth-child-and-nth-of-type/">Chris Coyier puts it on CSS-Tricks.</a></p>
+
+<p><blockquote><p>Our :nth-child selector, in "Plain English," means select an element <em>if</em>:</p></p><p><p>It is a paragraph element<br/>It is the second child of a parent</p></blockquote></p>
+
+<p>Since we've added another child in the form of an <code>h1</code> tag, we need to now say <code>p:nth-child(3)</code> if we want to select the same element. In my mind that makes the <code>nth-child</code> tag extremely brittle and somewhat counterintuitive.</p>
+
+<p>Thankfully there's an alternative in form of the <code>nth-of-type</code> selector.</p>
+
+<p><code>css
+p:nth-of-type(2) {
+  background-color: green;
+}
+</code></p>
+
+<p>Again, quoting <a href="http://css-tricks.com/the-difference-between-nth-child-and-nth-of-type/">Mr. Coyier</a>:</p>
+
+<p><blockquote><p>Our :nth-of-type selector, in "Plain English," means:</p></p><p><p>Select the second paragraph child of a parent</p></blockquote></p>
+
+<p>So <code>nth-of-type</code> gives us the functionality we were originally looking for and doesn't require us to change our markup if we add additional child elements which use different tags. That's pretty sweet. I wonder why I don't see <code>nth-of-type</code> used as often? It looks like they're both supported in Chrome/FF and IE9+. Maybe it's because <code>nth-child</code> initially seems easier to reason about although in actuality it's a little more complex.</p>
+
+<p>If you want to play around with the idea <a href="http://codepen.io/robdodson/pen/GzuKH">I've put together a codepen.</a> Enjoy!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building a Responsive Grid with Foundation]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation/"/>
+    <updated>2012-06-10T20:24:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/10/building-a-responsive-grid-with-foundation</id>
+    <content type="html"><![CDATA[<p>Yesterday I introduced <a href="http://smacss.com/">SMACSS</a> and did my best to give a high level overview of its main ideas. I'm using it on my current project and I'm really enjoying it so far. There's just something about having things codified by someone with more experience that gives me immense comfort. When I feel confused I can refer back to those docs and sort out what would be the best path. Standing on the shoulders of giants and all that jazz ;)</p>
+
+<p>Today I want to talk about a CSS framework called <a href="http://foundation.zurb.com/">Foundation</a>, written by the team at <a href="http://www.zurb.com/">ZURB.</a> Unlike SMACSS, Foundation is an actual library of modular code ready to help you quickly prototype your project. The two aren't mutually exclusive. You might think of Foundation as a shiny new toolbox but SMACSS is going to be your 'How To' manual, helping you implement all the new goodes that Foundation has to offer.</p>
+
+<!--more-->
+
+
+<p>I'm sure many of you have heard of <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> which is very similar and somewhat more popular than Foundation. I chose to use Foundation for this post because Bootstrap feels bloated to me, and I also didn't want to have to do everything in <a href="http://lesscss.org/">LESS.</a> Don't get me wrong, I loves me some LESS and some <a href="http://sass-lang.com/">SASS</a>, but not everyone is comfortable with those tools and it's already a big ask to ramp up on a new CSS framework.</p>
+
+<p>Since it's a little late in the evening I'm just going to dip my toe into some of what Foundation has to offer by quickly mocking up a very simple layout using their responsive grids.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_mockup.png" title="'Our very basic responsive layout'" ></p>
+
+<p>Obviously nothing fancy, the main bits I want to explore are how easy it is to lay items out using the grid and how does it react on the iPhone.</p>
+
+<h2>Everything in its place</h2>
+
+<p>The first thing you should do, if you haven't already is to go to <a href="http://foundation.zurb.com/">the Foundation site</a> and download the package.</p>
+
+<p>Let's make a new folder with an index.html file and bring over the javascripts and stylesheets folders from the Foundation package. Just to start out your new index.html file should look something like this:</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+<head></p>
+
+<pre><code>&lt;meta charset="utf-8" /&gt;
+
+&lt;!-- Set the viewport width to device width for mobile --&gt;
+&lt;meta name="viewport" content="width=device-width" /&gt;
+
+&lt;title&gt;Responsive Grid Prototype&lt;/title&gt;
+
+&lt;!-- Included CSS Files --&gt;
+&lt;link rel="stylesheet" href="stylesheets/foundation.css"&gt;
+&lt;link rel="stylesheet" href="stylesheets/app.css"&gt;
+
+&lt;script src="javascripts/modernizr.foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;!-- container --&gt;
+&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;header class="twelve columns"&gt;
+            &lt;p&gt;HEADER&lt;/p&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- container --&gt;
+
+
+&lt;!-- Included JS Files --&gt;
+&lt;script src="javascripts/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="javascripts/foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html>
+```</p>
+
+<p>Couple that with the <code>app.css</code> file, like so:</p>
+
+<p>``` css stylesheets/app.css
+html, body {</p>
+
+<pre><code>color: #FFF;
+font-family: Helvetica, sans-serif;
+font-size: 30px;
+</code></pre>
+
+<p>}</p>
+
+<p>header {</p>
+
+<pre><code>background: #CCC;
+height: 100px;
+text-align: center;
+</code></pre>
+
+<p>}
+<code>``
+That should give us our roughed out grey header area. If we examine our HTML a few items should jump out. Mainly that we're using classes like</code>.container<code>,</code>.row<code>and</code>.twelve .columns`. These are all part of Foundation's grid system which seperates major sections into subcategories to help with organization and layout. The documentation explains it better than I can:</p>
+
+<blockquote><p>The grid is built around three key elements: containers, rows, and columns. Containers create base padding for the page; rows create a max-width and contain the columns; and columns create the final structure.</p></blockquote>
+
+<p>Since Foundation uses a twelve column grid system, specifying that an item is <code>.twelve .columns</code> means it will stretch to be the full width of its row. By default a row's maximum width is 980px but we can change this if we want in the <code>foundation.css</code> file.</p>
+
+<p>``` css stylesheets/foundation.css
+.row { width: 100%; max-width: 980px; min-width: 727px; margin: 0 auto; }</p>
+
+<pre><code>/* To fix the grid into a certain size, set max-width to width */
+</code></pre>
+
+<p>```</p>
+
+<p>With that knowledge we can go ahead and quickly mock up the other sections of our page.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+<head></p>
+
+<pre><code>&lt;meta charset="utf-8" /&gt;
+
+&lt;!-- Set the viewport width to device width for mobile --&gt;
+&lt;meta name="viewport" content="width=device-width" /&gt;
+
+&lt;title&gt;Responsive Grid Prototype&lt;/title&gt;
+
+&lt;!-- Included CSS Files --&gt;
+&lt;link rel="stylesheet" href="stylesheets/foundation.css"&gt;
+&lt;link rel="stylesheet" href="stylesheets/app.css"&gt;
+
+&lt;script src="javascripts/modernizr.foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;!-- container --&gt;
+&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;header class="twelve columns"&gt;
+            &lt;p&gt;HEADER&lt;/p&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="main eight columns"&gt;
+            &lt;p&gt;MAIN&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;aside class="four columns hide-on-phones"&gt;
+            &lt;p&gt;ASIDE&lt;/p&gt;
+        &lt;/aside&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;footer class="twelve columns"&gt;
+            &lt;p&gt;FOOTER&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- container --&gt;
+
+
+&lt;!-- Included JS Files --&gt;
+&lt;script src="javascripts/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="javascripts/foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html>
+```</p>
+
+<p>And we'll need to update the CSS to match.</p>
+
+<p>``` css app.css
+html, body {</p>
+
+<pre><code>color: #FFF;
+font-family: Helvetica, sans-serif;
+font-size: 30px;
+</code></pre>
+
+<p>}</p>
+
+<p>header, .main, aside, footer {</p>
+
+<pre><code>margin-top: 20px;
+background: #CCC;
+height: 100px;
+text-align: center;
+</code></pre>
+
+<p>}
+```</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_layout_basic.png" title="'Our basic layout'" ></p>
+
+<p>That wasn't so hard was it?</p>
+
+<p>Let's throw in some dummy copy to make our columns expand so we can get closer to our original comp. For that we'll turn to <a href="http://baconipsum.com">Bacon Ipsum</a></p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+<head></p>
+
+<pre><code>&lt;meta charset="utf-8" /&gt;
+
+&lt;!-- Set the viewport width to device width for mobile --&gt;
+&lt;meta name="viewport" content="width=device-width" /&gt;
+
+&lt;title&gt;Responsive Grid Prototype&lt;/title&gt;
+
+&lt;!-- Included CSS Files --&gt;
+&lt;link rel="stylesheet" href="stylesheets/foundation.css"&gt;
+&lt;link rel="stylesheet" href="stylesheets/app.css"&gt;
+
+&lt;script src="javascripts/modernizr.foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;!-- container --&gt;
+&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;header class="twelve columns"&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="main eight columns"&gt;
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+
+            &lt;p&gt;Tri-tip prosciutto drumstick ham hock chicken t-bone, pastrami salami boudin shankle. Short ribs pastrami pancetta bresaola drumstick tail. Meatloaf turducken fatback pork loin, ribeye bresaola t-bone capicola tenderloin drumstick pancetta. Kielbasa jerky pastrami shank andouille leberkas drumstick. Sirloin pastrami shankle cow. Kielbasa hamburger meatball shoulder jowl pork loin. Short ribs bacon t-bone, chuck jerky turkey ham hock salami leberkas ham speck.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;aside class="four columns"&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="#"&gt;First Item&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Second Item&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Third Item&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Fourth Item&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/aside&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+        &lt;footer class="twelve columns"&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- container --&gt;
+
+
+&lt;!-- Included JS Files --&gt;
+&lt;script src="javascripts/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="javascripts/foundation.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html>
+```</p>
+
+<p>While that expands everything nicely I'd like to add some padding to the mix. But as soon as I try to pad my <code>.main</code> div everything explodes! Turns out we need to make sure we're using <code>box-sizing: border-box</code> otherwise the padding will expand our columns and destroy our grid. For a deeper explanation of <code>box-sizing: border-box</code> checkout <a href="http://paulirish.com/2012/box-sizing-border-box-ftw/">this great post by Paul Irish.</a> With that addition our CSS should now look like this:</p>
+
+<p>``` css stylesheets/app.css
+* {</p>
+
+<pre><code>box-sizing: border-box;
+</code></pre>
+
+<p>}</p>
+
+<p>html, body {</p>
+
+<pre><code>font-family: Helvetica, sans-serif;
+</code></pre>
+
+<p>}</p>
+
+<p>header, .main, aside, footer {</p>
+
+<pre><code>margin-top: 20px;
+background: #CCC;
+</code></pre>
+
+<p>}</p>
+
+<p>header, footer {</p>
+
+<pre><code>height: 100px;
+</code></pre>
+
+<p>}</p>
+
+<p>.main, aside {</p>
+
+<pre><code>padding: 50px;
+</code></pre>
+
+<p>}
+```</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_layout_ipsum.png" title="'Responsive layout with lorem ipsum'" ></p>
+
+<h2>Making friends with mobile</h2>
+
+<p>Well I'm sure if you've made it to this point you're ready to see how this all works on an iPhone. A quick test you can perform is to just narrow your browser window until it is only about 300px wide (the iPhone has a roughly 320px display area, I believe). As you do so the columns should narrow, reflowing their content as they do so. Eventually our <code>aside</code> will <em>pop</em> from its current position and line up underneath our <code>.main</code> content.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_linear.png" title="'Linear flow with Foundation'" ></p>
+
+<p>But what if we don't want the sidebar to appear on a mobile phone? Perhaps we just want to show the <code>.main</code> content if the screen is too narrow. Easy! Foundation provides <a href="http://foundation.zurb.com/docs/layout.php">some nice helper classes</a> which we can use to toggle elements on or off depending on the device. We'll just add a <code>.hide-on-phones</code> class to our aside</p>
+
+<p><code>html
+&lt;aside class="four columns hide-on-phones"&gt;
+</code></p>
+
+<p>and...<em>voila!</em> The <code>aside</code> disappears on small screens!</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/responsive_hide_on_phones.png" title="'Hiding the aside'" ></p>
+
+<p>Nice and simple, yeah? If you'd like to checkout the project running live you can <a href="http://robdodson.s3-website-us-east-1.amazonaws.com/tutorials/building-a-responsive-grid-with-foundation/index.html">follow this link</a>. Resize your browser or hit it with an iPhone to see it do its magic. Also you can <a href="https://github.com/robdodson/foundation-grid-tutorial">grab the source code off of Github.</a> Enjoy! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Relaxed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Let's Talk SMACSS, Man]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss/"/>
+    <updated>2012-06-09T21:03:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/09/lets-talk-smacss</id>
+    <content type="html"><![CDATA[<p>In an effort to further my understanding of CSS best practices I've ended up with two sort of looming frameworks: <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> After reading up on both I feel more drawn toward SMACSS, most likely because it features a lumberjack on its site. I want to give a quick summary of what SMACSS has to offer. In so doing I'm going to borrow liberally from the documentation and then explain my thinking as it relates to certain passages. Cool? OK.</p>
+
+<!--more-->
+
+
+<h2>The Skinny</h2>
+
+<p>The ideas behind SMACSS were fostered over time by its creator, Jonathan Snook, who has worked on tons of sites, most notably YAHOO! Mail's latest redesign. SMACSS is not a library of ready-made code that you can just download like <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a> or <a href="http://foundation.zurb.com/">ZURB's Foundation.</a> Instead it is a collection of design ideas and suggestions codefied in an easy to read ebook. Think of it as a tool to help you decide <em>how</em> you're going to write your CSS, rather than something which will write your CSS for you.</p>
+
+<p>The Core of the book, which is what I'm going to focus on today, is separated by stylesheet: Base Rules, Layout Rules, Module Rules, State Rules, and Theme Rules.</p>
+
+<h2>Base Rules</h2>
+
+<blockquote><p>Base rules are the defaults. They are almost exclusively single element selectors but it could include attribute selectors, pseudo-class selectors, child selectors or sibling selectors. Essentially, a base style says that wherever this element is on the page, it should look like this. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p><a href="http://www.stubbornella.org/content/">Nicole Sullivan</a>, creator of OOCSS, suggests that we start with the smallest possible elements of our site and design up from there. In the SMACSS philosophy this process would start with our <code>base.css</code> file. Think of it as the place where we define the absolute most basic styles any element on our site can have.</p>
+
+<p>``` css base.css
+body, form {</p>
+
+<pre><code>margin: 0;
+padding: 0;
+</code></pre>
+
+<p>}</p>
+
+<p>a {</p>
+
+<pre><code>color: #039;
+</code></pre>
+
+<p>}</p>
+
+<p>a:hover {</p>
+
+<pre><code>color: #03F;    
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The idea is to give us a decent, even playing field where all of our core pieces are ready to be used in whatever fashion we see fit. You might find that you enjoy adding your css reset or normalization to a base.css file but personally I like to keep my reset separate to reduce clutter.</p>
+
+<h2>Layout Rules</h2>
+
+<blockquote><p>Layout rules divide the page into sections. Layouts hold one or more modules together. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>Your layout rules are where prototypes start to come to life. Every site can be broken down into two very broad layers. The first is the scaffolding of the page and the second is the modules which live in the scaffolding.</p>
+
+<p>To understand scaffolding, try looking at a website like <a href="http://www.cnn.com/">CNN</a> and unfocusing your eyes. Once you're ignoring the words and pictures you should be able to easily describe the major areas of content: the header, the primary content, sidebars, etc. The rules which govern the positioning of those elements should live in <code>layout.css</code>.</p>
+
+<p>``` css layout.css</p>
+
+<h1>header, #article, #footer {</h1>
+
+<pre><code>width: 960px;
+margin: auto;
+</code></pre>
+
+<p>}</p>
+
+<h1>article {</h1>
+
+<pre><code>border: solid #CCC;
+border-width: 1px 0 0;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>It's also a good place to put other generalized layout styles which might be used elsewhere in your site. For instance, a horizontal list for menu items or breadcrumbs:</p>
+
+<p>``` css layout.css
+.h-list {</p>
+
+<pre><code>margin: 0;
+padding: 0;
+list-style-type: none;
+</code></pre>
+
+<p>}
+.h-list > li {</p>
+
+<pre><code>display: inline-block;
+margin: 0 10px 0 0; 
+
+/* IE7 hack to mimic inline-block on block elements */
+*display: inline;
+*zoom: 1;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>These styles don't care about the color or background or any other specifics of their elements. They only care about how those elements will be layed out in space.</p>
+
+<h2>Module Rules</h2>
+
+<blockquote><p>Modules are the reusable, modular parts of our design. They are the callouts, the sidebar sections, the product lists and so on. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>The module rules are where the majority of your site code will go, as this sheet defines all the little inhabitants of that second layer I mentioned, the modules <em>inside</em> the scaffolding. Each module should be able to stand on its own, and as such, it might be a good idea to design them first in a separate file so there is no temptation to leverage styles already on the page. Once your module is complete you can drop it into your document and it <em>should</em> play nice with everyone else.</p>
+
+<p>Each module will typically start with a class name, and all subsequent selectors should work from this point down. Or if our module is going to be rather complex we can namespace our selectors. For instance:</p>
+
+<p>``` css modules.css</p>
+
+<p>.pod {</p>
+
+<pre><code>width: 100%
+</code></pre>
+
+<p>}</p>
+
+<p>.pod > h3 {</p>
+
+<pre><code>color: #F00;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em> Or... </em>/</p>
+
+<p>.pod-title {</p>
+
+<pre><code>color: #F00;
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<p>Whether you use descendant selectors or namespaced clases is really up to you and how complex your modules get. You definitely don't want to end up with classitis. The advantage to using <code>.pod-title</code> is that it doesn't tie us to an <code>h3</code>, however your markup might become a total mess if every single element requires its own class. Balance is key.</p>
+
+<h3>Subclassing Modules</h3>
+
+<p>One very important concept to keep in mind is that of subclassing modules. Imagine a scenario where you have a widget which exists in your primary content area. One day your boss tells you to move it into the sidebar, and once it's there 99% of the styles should look the same, except the widget will now be about 3/4ths of its normal width and its text should be red instead of blue. Your first inclination might be to move the code for the widget into the sidebar and then to do something like this:</p>
+
+<p>``` css modules.css
+/*</p>
+
+<p>DON'T DO THIS!</p>
+
+<p>*/</p>
+
+<p>.widget {</p>
+
+<pre><code>width: 100px;
+</code></pre>
+
+<p>}</p>
+
+<p>.widget .widget-title {</p>
+
+<pre><code>color: #00F;
+</code></pre>
+
+<p>}</p>
+
+<h1>sidebar .widget {</h1>
+
+<pre><code>width: 75px;
+</code></pre>
+
+<p>}</p>
+
+<h1>sidebar .widget .widget-title {</h1>
+
+<pre><code>width: 75px;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>By leveraging the parent context we've now locked ourselves into a specificity war. Any change to our second widget requires the <code>#sidebar</code> id, which also means that this second widget cannot live anywhere else. Rather than using the parent we should consider the widget that lives in the sidebar as an <em>extension</em> of our original object.</p>
+
+<p>``` css modules.css
+.widget {</p>
+
+<pre><code>width: 100px;
+</code></pre>
+
+<p>}</p>
+
+<p>.widget .widget-title {</p>
+
+<pre><code>color: #00F;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em> Our Subclass </em>/
+.widget-constrained {</p>
+
+<pre><code>width: 75px;
+</code></pre>
+
+<p>}</p>
+
+<p>.widget-constrained .widget-title {</p>
+
+<pre><code>color: #F00;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>To use a subclass we should apply both the original and the subclass styles to our element:</p>
+
+<p>``` html</p>
+
+<div class="widget widget-constrained">...</div>
+
+
+<p>```</p>
+
+<p>The benefit of doing it this way is that the styles are easier to read and also more flexible. Since there's no parent coupling our <code>widget-constrained</code> can be used in the sidebar, footer, modals, or anywhere else you'd like.</p>
+
+<h2>State Rules</h2>
+
+<blockquote><p>State rules are ways to describe how our modules or layouts will look when in a particular state. Is it hidden or expanded? Is it active or inactive? They are about describing how a module or layout looks on screens that are smaller or bigger. They are also about describing how a module might look in different views like the home page or the inside page. -- SMACSS, Categorizing CSS Rules</p></blockquote>
+
+<p>The best example of what should go into a <code>states.css</code> is the classic error state.</p>
+
+<p>``` css states.css
+.is-error {</p>
+
+<pre><code>border: 1px solid red;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Really anything that would potentially be added with JavaScript to illustrate a change in a module's state would be a good candidate. Some other ones that come to mind are <code>is-hidden</code> or <code>is-pressed</code>.</p>
+
+<p>One rather sticky point to the whole idea of a <code>states.css</code> is that most of the states would need to either rely on being loaded after all your other stylesheets or have an <code>!important</code> added to them. I think for a lot of folks that is a dealbreaker, although in my opinion, if used properly, those few !importants can be very useful. For instance, if we add an <code>is-hidden</code> state to one of our elements I think it's perfectly ok to <code>!important</code> the <code>display: none</code>.</p>
+
+<h3>Module States</h3>
+
+<p>An alternative to using <code>!important</code> all over the place is the idea of module states. So rather than <code>.is-pressed</code> in our <code>states.css</code> we would have <code>.is-btn-pressed</code> next to our <code>.btn</code> module in <code>modules.css</code>. I like this approach a lot and think it solves many of the places where <code>states.css</code> feels too general.</p>
+
+<h2>Theme Rules</h2>
+
+<blockquote><p>Theme rules are similar to state rules in that they describe how modules or layouts might look. Most sites don’t require a layer of theming but it is good to be aware of it.</p></blockquote>
+
+<p>The primary consideration for theme rules are when your site is able to be reskinned and also if the typography can be changed.</p>
+
+<p>Skinning a new module with a <code>theme.css</code> might look something like this:</p>
+
+<p>``` css
+/<em> in modules.css </em>/
+.mod {</p>
+
+<pre><code>border: 1px solid;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em> in theme.css </em>/
+.mod {</p>
+
+<pre><code>border-color: blue;
+</code></pre>
+
+<p>}
+<code>``
+Likewise if you need to switch to a different font or size, here is where you would do that. To be honest I don't currently need to make any of my projects skinnable so I haven't explored the ideas around</code>theme.css` all that much, but I do think it's a good idea to keep in the back of your hat.</p>
+
+<h2>Wrap it up!</h2>
+
+<p>That does it for tonight. Hopefully you're a little more enlightened with regards to SMACSS. Definitely <a href="http://smacss.com/">checkout the SMACSS site</a> and grab the book. And as always please feel free to leave comments and feedback. Thanks! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Anxious</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CSS Semantics: Best Practices]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/09/css-semantics/"/>
+    <updated>2012-06-09T07:19:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/09/css-semantics</id>
+    <content type="html"><![CDATA[<p>CSS is, for me, one of the most challenging and nerve wracking aspects of my job. With most programming languages there are frameworks and guides and heuristics that all make up a suite of best practices. CSS doesn't <em>really</em> have anything like this and as a result it's kind of a mish-mash of good rules to follow, definite don'ts, and lots and lots of grey area. Since I'm starting a new CSS heavy project, and because I want to further my own understanding in this realm, I'm going to spend a few posts exploring the topic of what makes good, maintainable CSS. Along the way I'm also going to point out a few frameworks that I've been looking at, in particular <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> But lets kick things off with a discussion of what it means to write good, semantic CSS selectors and we'll follow up with frameworks in our next post.</p>
+
+<!--more-->
+
+
+<h2>Define Semantic</h2>
+
+<p>When I was trolling the interwebs for talks on writing large-scale maintainable CSS I somehow managed to come across <a href="http://css-tricks.com/semantic-class-names/">this article on css-tricks comparing the semantics of various css selectors.</a> After reading it I had this weird feeling like maybe I haven't been putting as much thought into my css selectors as I should. My selectors need to be highly semantic, but what does that really <em>mean?</em></p>
+
+<p>Trying to look up the definition of "semantic" is kind of a fun, albeit a slightly annoying task since most definitions look like this:</p>
+
+<p><em>Of, relating to, or according to the science of semantics.</em></p>
+
+<p>Well...thanks. <a href="http://www.wordnik.com/words/semantic">The wonderful Wordnik site has a great list of definitions</a> the most useful of which is probably this:</p>
+
+<p><em>Reflecting intended structure and meaning.</em></p>
+
+<p>So a semantic CSS selector should reflect the intended structure or meaning of the element it is applied to. Hmm...that's still a rather broad definition but at least we have a starting point. If I have a <code>div</code> that holds a bunch of news articles there's probably a gradient of increasingly more semantic names I could use for it.</p>
+
+<p>``` html</p>
+
+<div class="container"></div>
+
+
+
+
+<div class="article-box"></div>
+
+
+
+
+<div class="newsstand"></div>
+
+
+<p>```</p>
+
+<p>On the far end of the spectrum, <code>container</code> is about as generic as you can get and basically restates that something is a <code>div</code>. While I've been guilty of doing this in the past, if you're saying a containing HTML Element is a 'container' you're restating the obvious and should probably work on improving the name.</p>
+
+<p><code>article-box</code> is much more descriptive than just <code>container</code> so I'd say it has a higher semantic "score". But there is the potential for some semantic weirdness here, for instance, if we decide at a later date that we want our articles to be contained in a horizontal list it might make less sense to call it an "article-<em>box</em>". So maybe <code>article-container</code> is semantically similar but also a bit more flexible?</p>
+
+<p>Finally we have <code>newsstand</code> which is highly semantic and probably my favorite of the bunch. <code>newsstand</code> describes what our element <em>is</em> but it doesn't bother delving into how our element works. As a result <code>newsstand</code> can work however we want, it can be list like, or grid like, tabular, etc and it won't matter. You might argue that this would be a good place to use an ID instead of a class but that decision should be weighed carefully. You have to make sure that 3 months or a year from now there isn't the potential of having two newsstands on the same page.</p>
+
+<h3>If we only worked on contived examples...</h3>
+
+<p>Of course there's a litany of cases where highly semantic naming just doesn't quite cut it. Often times we're given a layout which has a few primary areas (columns, headers, footer) and the designer is putting all sorts of content into those divisions. On one page it could be news articles, then a list of search results, then a directory of users, and so on. I would argue that for major layout elements it's ok to use less semantic names, and in fact this is probably a good idea. So things like <code>column_1</code>, <code>flex-box</code>, <code>constrained-container</code>, are all specifying, at varying degrees, what the element is doing. They are less semantically rich than, say, <code>rolodex</code> or <code>id-badge</code>, but that's because their very intention is to be generic.</p>
+
+<h3>What about helpers?</h3>
+
+<p><em>Preface: I know about SASS and LESS. Let's pretend they don't exist for a moment :D</em></p>
+
+<p>Here is an area where I recently got very tripped up and I'm still not entirely sure what the best approach might be. Let's say you have a brand color, something like Facebook's blue, and you need to apply it to all sorts of different and unrelated elements. If you're like me then your brain starts thinking, "Well, that blue value is essentially a variable that I'd like to reuse. Maybe I should just make a helper style for it..." and so you produce something like this in a helpers.css file:</p>
+
+<p>``` css helpers.css
+.light-blue {</p>
+
+<pre><code>#00C
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now our HTML has little <code>light-blue</code>s sprinkled on top of it and we don't have to worry about declaring that same blue value over and over again in our styles. But what happens when our company decides to rebrand and now our primary color is a bright red? Uh oh...You definitely don't want to have to change HTML <em>and</em> CSS just to update a color.</p>
+
+<p><a href="http://css-tricks.com/semantic-class-names/#comment-102571">Neal G on CSS-Tricks made a very good comment regarding this scenario:</a></p>
+
+<blockquote><p>Perhaps an easier way to explain semantic CSS is simply, don’t name your classes or ids anything related to a CSS property. A property could be color, font-family, float, border, background etc.</p></blockquote>
+
+<p><a href="http://www.webdesignerdepot.com/2009/05/10-best-css-practices-to-improve-your-code/">Also from the Web Designer Depot</a></p>
+
+<blockquote><p>Name your elements based on what they are, not what they look like. For example, .comment-blue is much less versatile than .comment-beta, and .post-largefont is more limiting than .post-title.</p></blockquote>
+
+<p>Perhaps a better helper would have been <code>.brand-color</code> but again this is a contrived example. What about all the <em>other</em> colors on the site. And what about helpers that wrap commonly used styles like <code>float: left</code> and <code>clear: both</code>?</p>
+
+<p>The debate is pretty hot and heavy <a href="http://css-tricks.com/semantic-class-names">on the css-tricks article.</a> Just seach for the word 'float' and you'll see some pretty interesting discussions on it. My opinion is that you probably don't want to tack a bunch of <code>.bright-red</code> or <code>.larger</code> classes everywhere but at the same time something like <code>.float-right</code> can be extremely useful and <a href="http://css-tricks.com/semantic-class-names/#comment-102906">in some cases forcing semantics into a design can actually make things worse</a> especially for <a href="http://css-tricks.com/semantic-class-names/#comment-103076">less technically inclined clients.</a></p>
+
+<p>As a bit of a homework assignment I would recommend looking into a few of the resources I'm posting below. Obviouslyl take everything with a grain of salt, there isn't any true gospel for CSS so do what works best for you. I'll cover OOCSS and SMACSS in my next post, till then, thanks for reading! - Rob</p>
+
+<p><a href="http://css-tricks.com/semantic-class-names/">What Makes For a Semantic Class Name?</a></p>
+
+<p><a href="http://www.stubbornella.org/content/2011/04/28/our-best-practices-are-killing-us/">Our Best Practices Are Killing Us</a></p>
+
+<p><a href="https://github.com/styleguide/css">Github CSS Style Guide</a></p>
+
+<p><a href="https://github.com/csswizardry/CSS-Guidelines/blob/master/CSS%20Guidelines.md">CSS Wizardry: CSS Guidelines</a></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Annoyed</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

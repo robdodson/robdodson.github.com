@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: State Pattern | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/state-pattern/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Managing Your Backbone Views with the State Pattern]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern/"/>
+    <updated>2012-06-02T18:22:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/02/managing-your-backbone-views-with-the-state-pattern</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/">Yesterday I wrote a post to illustrate the concepts behind the State pattern</a> (one of my all time favorite tools). If you're new to this pattern and haven't read my previous post I suggest you start there and read this one after you've had a chance to play around with the ideas.</p>
+
+<!--more-->
+
+
+<p>I wanted to write about this pattern in the context of a Backbone app because I think there's a lot of value in exploring different ways to manage our Views and Models. Here's an example Video Player in which several State objects inherit from a common ancestor, <code>BaseState</code>. I chose to make <code>BaseState</code> extend <code>Backbone.Model</code> because it seemed like the best fit for this kind of thing, although typically when I implement this pattern in other languages I just use generic Objects. I would have done that here but Backbone's <code>extend</code> functionality makes the code so much cleaner.</p>
+
+<p>``` js
+var BaseState = Backbone.Model.extend({
+  initialize: function(owner) {</p>
+
+<pre><code>this.owner = owner;
+</code></pre>
+
+<p>  },
+  enter: function() {</p>
+
+<pre><code>// Implement me in your state objects
+</code></pre>
+
+<p>  },
+  execute: function() {</p>
+
+<pre><code>// Implement me in your state objects
+</code></pre>
+
+<p>  },
+  play: function() {</p>
+
+<pre><code>console.log('changing to the playing state...');
+this.owner.changeState(this.owner.states.playing);
+</code></pre>
+
+<p>  },
+  stop: function() {</p>
+
+<pre><code>console.log('changing to the stopping state...')
+this.owner.changeState(this.owner.states.stopping);
+</code></pre>
+
+<p>  },
+  pause: function() {</p>
+
+<pre><code>console.log('changing to the pausing state...')
+this.owner.changeState(this.owner.states.pausing);
+</code></pre>
+
+<p>  },
+  exit: function() {</p>
+
+<pre><code>// Implement me in your state objects
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var PlayingState = BaseState.extend({
+  execute: function() {</p>
+
+<pre><code>console.log('playing the video!');
+</code></pre>
+
+<p>  },
+  play: function() {</p>
+
+<pre><code>console.log('already playing!');
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var StoppingState = BaseState.extend({
+  enter: function() {</p>
+
+<pre><code>console.log('we have entered the stopping state...');
+</code></pre>
+
+<p>  },
+  execute: function() {</p>
+
+<pre><code>console.log('stopping the video...');
+</code></pre>
+
+<p>  },
+  stop: function() {</p>
+
+<pre><code>console.log('already stopped!');
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var PausingState = BaseState.extend({
+  execute: function() {</p>
+
+<pre><code>console.log('pausing the video.');
+</code></pre>
+
+<p>  },
+  pause: function() {</p>
+
+<pre><code>console.log('already paused!');
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Every state inherits from <code>BaseState</code> which means they all create a reference to an <code>owner</code> object in their <code>initialize</code> methods. The <code>owner</code> is going to be our actual <code>VideoPlayer</code> object. Rather than having <code>videoPlayer.play</code> lead to some big weird conditional:</p>
+
+<p>``` js
+play: function() {
+  if (this.status == 'playing') {</p>
+
+<pre><code>  return;
+</code></pre>
+
+<p>  } else if (this.status == 'stopped') {</p>
+
+<pre><code>  // play the video
+</code></pre>
+
+<p>  } else if (this.status == 'paused') {</p>
+
+<pre><code>  // unpause and play
+</code></pre>
+
+<p>  }
+  else if ...
+}
+```</p>
+
+<p>we're instead going to delegate the work to our State objects. They'll handle switching from one State to the next and so long as we provide the exact same public API methods in each, they should be interchangeable. Inheriting from the same BaseState ensures that all of the States have the same public methods and each State can choose how or if it wants to override them. In our example the <code>StoppingState</code> overrides the <code>enter</code> method to display some text as we're transitioning into this state. Again, you can override some or all of the methods, <code>enter</code> and <code>exit</code> are great for building up/tearing down anything that our state might need and <code>execute</code> is where the main work of our state should happen.</p>
+
+<p>Let's take a look at the <code>VideoPlayer</code> which is a <code>Backbone.View</code> that will leverage our State objects:</p>
+
+<p>``` js
+var VideoPlayer = Backbone.View.extend({
+  initialize: function() {</p>
+
+<pre><code>this.states = {};
+this.states.playing = new PlayingState(this);
+this.states.stopping = new StoppingState(this);
+this.states.pausing = new PausingState(this);
+this.changeState(this.states.pausing);
+</code></pre>
+
+<p>  },
+  play: function() {</p>
+
+<pre><code>this.state.play();
+</code></pre>
+
+<p>  },
+  stop: function() {</p>
+
+<pre><code>this.state.stop();
+</code></pre>
+
+<p>  },
+  pause: function() {</p>
+
+<pre><code>this.state.pause();
+</code></pre>
+
+<p>  },
+  changeState: function(state) {</p>
+
+<pre><code>// Make sure the current state wasn't passed in
+if (this.state !== state) {
+  // Make sure the current state exists before
+  // calling exit() on it
+  if (this.state) {
+    this.state.exit();
+  }
+  this.state = state;
+  this.state.enter();
+  this.state.execute();
+}
+</code></pre>
+
+<p>  }
+});
+<code>``
+You'll notice that</code>VideoPlayer<code>instantiates its own State objects when it is first created. Then whenever we call one of its public methods the call is delegated to whichever state object is currently residing in</code>this.state`.</p>
+
+<p>Let's instantiate a new VideoPlayer to see it in action:</p>
+
+<p>``` js
+var videoPlayer = new VideoPlayer();</p>
+
+<p>=> 'pausing the video.'</p>
+
+<p>videoPlayer.play();</p>
+
+<p>=> 'changing to the playing state...'
+=> 'playing the video!'</p>
+
+<p>videoPlayer.play();</p>
+
+<p>=> 'already playing!'</p>
+
+<p>videoPlayer.stop();</p>
+
+<p>=> 'changing to the stopping state...'
+=> 'we have entered the stopping state...'
+=> 'stopping the video...'
+```</p>
+
+<p>Hopefully this gives you some food for thought the next time you're trying to wrangle some unwieldy component. I cannot count how many times I've used this pattern in other languages to tidy up and organize my code. I'm looking forward to working with it again in Backbone and I'd love to hear anyone's take on how this can be tweaked or improved. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Focused, Hurried</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Take Control of your App with the JavaScript State Pattern]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten/"/>
+    <updated>2012-06-02T00:09:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/02/take-control-of-your-app-with-the-javascript-state-patten</id>
+    <content type="html"><![CDATA[<p>Last week I wrote a post about <a href="http://robdodson.me/blog/2012/05/25/backbone-events-framework-communication/">communicating between views in Backbone.js</a> and since then it has easily become my most popular article. The comments have forced me to think about the ways in which I typically manage state in very large Flash applications and how that might translate to JavaScript and Backbone. Today I want to present my all time favorite design pattern, the State pattern, and illustrate how it can help you maintain control of your application. I want to warn you that I'm going to show a rather large block of what looks like repetitive code because I want the pattern to be obvious. In tomorrow's post we'll clean it up and try it out with a Backbone Model and View.</p>
+
+<!--more-->
+
+
+<h3>The State pattern?</h3>
+
+<p>Ok let's get started. I want to write a video player so I'm going to need an object that can handle <code>play</code>, <code>stop</code> and <code>pause</code> states. I would say that there are probably a ton of video players out there that have <code>play</code>, <code>stop</code> and <code>pause</code> methods on them, and I bet many look kind of like this:</p>
+
+<p>``` js
+play: function() {</p>
+
+<pre><code>if (this.status == 'playing') {
+    return;
+} else if (this.status == 'stopped') {
+    // play the video
+} else if (this.status == 'paused') {
+    // unpause and play
+}
+else if ...
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Or maybe instead of a long conditional there's a switch statement or something. But <em>essentially</em> you're querying some variable somewhere to check what state the object is in and you're branching your logic as a result. Now, I would argue that this is a really brittle process and probably error prone. You could imagine that in each of those conditional blocks there might be several lines of code: preparing to play, stopping the video, tearing down this or that... Or perhaps if you're moving from one state to another you want to animate something on screen, maybe do some ajax, who knows!? Really no matter what you're doing if you're tossing it into these big conditionals it's going to become a nightmare to manage.</p>
+
+<p>Alternatives? Ok, let's think of our video player in terms of the actions that it performs. Our player can play, it can stop and it can pause. What if instead of play, pause and stop acting as methods on our object, we make each of those states into its <em>own</em> object? So when the play state object is told to play it says 'Hey! I'm already playing. No need to change' and when it's told to stop it says 'Ah stopping, eh? Let me defer to my friend the Stop state object'.</p>
+
+<p>To illustrate this I've written a very simple player which just logs what it's doing as you ask it to change state. I want to point out that this code is neither DRY nor very useful in a real world situation but it's intended to illustrate a point. Hopefully when you see the repetition you'll quickly say to yourself 'Hey! Those state objects could be made into a more general/abstract parent object.' That would be the correct mindset but I thought that if I skipped this part the pattern might not be obvious for those new to it.</p>
+
+<p>``` js
+var player = {</p>
+
+<pre><code>state: undefined,
+states: {
+    playing: {
+        initialize: function(target) {
+            this.target = target;
+        },
+        enter: function() {
+            console.log('setting up the playing state');
+        },
+        execute: function() {
+            console.log('playing!');
+        },
+        play: function() {
+            console.log('already playing!');
+        },
+        stop: function() {
+            this.target.changeState(this.target.states.stopping);
+        },
+        pause: function() {
+            this.target.changeState(this.target.states.pausing);
+        },
+        exit: function() {
+            console.log('tearing down the playing state');
+        }
+    },
+    stopping: {
+        initialize: function(target) {
+            this.target = target;
+        },
+        enter: function() {
+            console.log('setting up the stopping state');
+        },
+        execute: function() {
+            console.log('stopping!');
+        },
+        play: function() {
+            this.target.changeState(this.target.states.playing);
+        },
+        stop: function() {
+            console.log('already stopped!');
+        },
+        pause: function() {
+            this.target.changeState(this.target.states.pausing);
+        },
+        exit: function() {
+            console.log('tearing down the stopping state');                
+        }
+    },
+    pausing: {
+        initialize: function(target) {
+            this.target = target;
+        },            
+        enter: function() {
+            console.log('setting up the pausing state');
+        },
+        execute: function() {
+            console.log('pausing!');
+        },
+        play: function() {
+            this.target.changeState(this.target.states.playing);
+        },
+        stop: function() {
+            this.target.changeState(this.target.states.stopping);
+        },
+        pause: function() {
+            console.log('already paused!');
+        },
+        exit: function() {
+            console.log('tearing down the pausing state!');                
+        }
+    }
+},
+initialize: function() {
+    this.states.playing.initialize(this);
+    this.states.stopping.initialize(this);
+    this.states.pausing.initialize(this);
+    this.state = this.states.stopping;
+},
+play: function() {
+    this.state.play();
+},
+stop: function() {
+    this.state.stop();
+},
+pause: function() {
+    this.state.pause();
+},
+changeState: function(state) {
+    if (this.state !== state) {
+        this.state.exit();
+        this.state = state;
+        this.state.enter();
+        this.state.execute();
+    }
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>Lots of code, I know. But there is serious value in digesting this pattern so stick with me here and I'll go through it bit by bit. Let's start at the top where we define our object:</p>
+
+<p>``` js
+var player = {</p>
+
+<pre><code>state: undefined,
+states: {
+    playing: {
+        initialize: function(target) {
+            this.target = target;
+        },
+        enter: function() {
+            console.log('setting up the playing state');
+        },
+        execute: function() {
+            console.log('playing!');
+        },
+        play: function() {
+            console.log('already playing!');
+        },
+        stop: function() {
+            this.target.changeState(this.target.states.stopping);
+        },
+        pause: function() {
+            this.target.changeState(this.target.states.pausing);
+        },
+        exit: function() {
+            console.log('tearing down the playing state');
+        }
+    },
+</code></pre>
+
+<p>... .
+<code>``
+First we declare our object and give it a property of</code>state<code>which we set to</code>undefined` for now. We're going to be creating state object to delegate all of our method calls to so once we're ready to use our player we'll set its initial state.</p>
+
+<p>The <code>states</code> object (note the plurality) holds all of the different state objects that our player can use. In this version we've defined <code>playing</code>, <code>stopping</code> and <code>pausing</code> but you could also add states like <code>buffering</code> or <code>initializing</code>. Keep in mind that this pattern can be applied to just about anything. For instance, if you were making a game with an old prospector his state objects could be <code>mining</code>, <code>drinking</code> and <code>sleeping</code>. The main thing to remember is that <strong>your state objects should all define the exact same public methods</strong>.</p>
+
+<p>We can skip the <code>stopping</code> and <code>pausing</code> states since they're nearly identical to the <code>playing</code> state. Instead let's jump down to the bottom and look at the last bit.</p>
+
+<p>``` js
+initialize: function() {</p>
+
+<pre><code>this.states.playing.initialize(this);
+this.states.stopping.initialize(this);
+this.states.pausing.initialize(this);
+this.state = this.states.stopping;
+</code></pre>
+
+<p>},
+play: function() {</p>
+
+<pre><code>this.state.play();
+</code></pre>
+
+<p>},
+stop: function() {</p>
+
+<pre><code>this.state.stop();
+</code></pre>
+
+<p>},
+pause: function() {</p>
+
+<pre><code>this.state.pause();
+</code></pre>
+
+<p>},
+changeState: function(state) {</p>
+
+<pre><code>if (this.state !== state) {
+    this.state.exit();
+    this.state = state;
+    this.state.enter();
+    this.state.execute();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>In our player's initialize function we give each state a reference to the player object so we can tell it to <code>changeState</code>. We also set our initial state to be the stopping state.</p>
+
+<p>Now let's look at the <code>play</code> method. Do you see how it defers the call to whatever object is currently set as the player's <code>state</code>? Since <code>this.state</code> refers to <code>this.states.stopping</code> we're effectively calling the <code>play</code> method of the <code>stopping</code> state object. Go look at the other state objects to see how they respond to having their <code>play</code> methods called. In the case of <code>states.stopping</code>, calling <code>play</code> is going to tell its <code>target</code> (which is just a reference to the player) to <code>changeState</code>, passing in the <code>states.playing</code> state.</p>
+
+<p><code>changeState</code> is kind of an awesome method because it does a ton of work but it does it very elegantly and efficiently. For starters it makes sure that the state we've asked to change to is actually different than our current state. Then it tells our current state to <code>exit()</code>. A state's <code>exit()</code> method is a great place to tear down any constructs that we may have built to support that action. Next it sets our current state to the new state. Lastly, it calls <code>enter()</code> (a good place to build up supporting constructs) and <code>execute()</code>, which is where we do the main work of our state. That's pretty straightforward right?</p>
+
+<p>Since <code>play</code>, <code>pause</code> and <code>stop</code> are members of our player's public API, <strong>all of our states must also implement those methods.</strong> Otherwise you would get an error if you called <code>play()</code> on the object and its state did not support that method. Keep this in mind when you're designing your state objects.</p>
+
+<h3>Aaaaand we're off!</h3>
+
+<p>Let's look at our player in action:</p>
+
+<p>```
+// We start off in the stopping state
+// So when we call stop...
+player.initialize();
+player.stop();</p>
+
+<p>=> 'already stopped!'</p>
+
+<p>// Let's move to the playing state
+player.play();</p>
+
+<p>=> 'tearing down the stopping state'
+=> 'setting up the playing state'
+=> 'playing!'</p>
+
+<p>// Quick call pause!
+player.pause();</p>
+
+<p>=> 'tearing down the playing state'
+=> 'setting up the pausing state'
+=> 'pausing!'</p>
+
+<p>// Um... call pause like 3 times cuz
+// I'm a button masher!!!
+player.pause();
+player.pause();
+player.pause();</p>
+
+<p>=> 'already paused!'
+=> 'already paused!'
+=> 'already paused!'</p>
+
+<p>// OK call play again!
+player.play();</p>
+
+<p>=> 'tearing down the pausing state!'
+=> 'setting up the playing state'
+=> 'playing!'
+```</p>
+
+<h3>I like it, but...</h3>
+
+<p>Before you run for the hills due to the sheer volume of boilerplate code I want to remind you that almost all of this repetition can easily be cleaned up. If we defined a base state that all of our other states extended then they would only need to override the methods that they cared about. For instance, the <code>stopping</code> state and <code>pausing</code> state both tell their target to <code>changeState</code> when someone calls <code>play</code>. This kind of functionality is easily moved into a base state. Also if you have no need for <code>enter</code> and <code>exit</code> methods those can be removed or also thrown into the base state. I'll dig into this more tomorrow but for now play around with the example and leave some feedback if you have comments or suggestions. Thanks!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Drunk</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

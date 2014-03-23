@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Chrome | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/chrome/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Chrome/Blink devs discuss setImmediate]]></title>
+    <link href="http://robdodson.github.com/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate/"/>
+    <updated>2013-07-29T09:05:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate</id>
+    <content type="html"><![CDATA[<p>Really interesting discussion of the pros and cons of the <code>setImmediate</code> function. For a little backstory checkout <a href="http://www.nczonline.net/blog/2013/07/09/the-case-for-setimmediate/">this post</a> by <a href="http://www.nczonline.net/blog/">Nicholas Zakas</a> (<a href="http://twitter.com/slicknet">@slicknet</a>)</p>
+
+<p>Here's a nice tidbit from one of the Chrome devs:</p>
+
+<p><blockquote><p>To perform work immediately before the next display - for example to batch up graphical updates as data is streamed in off the network - just make a one-off <code>requestAnimationFrame()</code> call.  To perform work immediately -after- a display, just call <code>setTimeout()</code> from inside the <code>requestAnimationFrame()</code> handler.</p></blockquote></p>
+
+<p><a href="https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/Hn3GxRLXmR0">The full thread is available here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Debug LESS with Chrome Developer Tools]]></title>
+    <link href="http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools/"/>
+    <updated>2012-12-28T08:32:00-08:00</updated>
+    <id>http://robdodson.github.com/blog/2012/12/28/debug-less-with-chrome-developer-tools</id>
+    <content type="html"><![CDATA[<p><em>11/19/2013: Updated to work with LESS v1.5.1 which now has support for v3 source maps</em></p>
+
+<p>If you've spent much time with preprocessors like LESS you've probably discovered their one rather crippling flaw: debugging. With thousands of lines of LESS code suddenly turning into even more thousands of lines of CSS, it can become nearly impossible to tell where a particular style originated. Thankfully the Chrome team is addressing this problem with their recent support for <strong>CSS source maps.</strong></p>
+
+<p>Today I'll teach you how to rework your LESS preprocessor so it plays nice with Chrome and reunites you with your old friend: the CSS inspector.</p>
+
+<!--more-->
+
+
+<p>Just to whet your appetite here's a teaser of what we're going to accomplish.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/less-preview.png" title="'A preview of the Inspector showing LESS debugging'" ></p>
+
+<p>You'll notice, over on the right, instead of your typical <code>style.css: 7</code> it says <code>modules.less: 7</code>. That's right, the developer tools are looking at the generated CSS and source mapping it back to the LESS file!</p>
+
+<p>Clicking on the line number will dive into the LESS file itself.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/less-preview2.png" title="'The inspector revealing the actual LESS file'" ></p>
+
+<p>To achieve this effect, we'll need to tell the LESS compiler to generate a source map file when it spits out our CSS. A source map tells the debugger how to find its way from generated output back to the source file.</p>
+
+<p><em>Important: If you use less.js to compile your LESS in the browser, the techniques we'll be covering will not work for you. Please see <a href="https://code.google.com/p/chromium/issues/detail?id=285786">this ticket</a> for more information.</em></p>
+
+<h2>Setting Up Chrome <a href="#" id="setting-up-chrome"></a></h2>
+
+<p>Fire up the developer tools and click the gear in the bottom right.</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/chrome-options.png" title="'Chrome Developer tools options'" ></p>
+
+<p>In the left hand sidebar click <code>General</code>. Scroll down to where it says <code>Sources</code> and click <code>Enable CSS source maps</code>.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/enable-css-source-maps.jpg" title="'Enable CSS source maps'" ></p>
+
+<h2>Processors <a href="#" id="processors"></a></h2>
+
+<p>There are a quite a few ways to convert your LESS into properly source mapped CSS code. You can use the <code>lessc</code> command line tool, or have the server do it with a tool like <a href="https://github.com/emberfeather/less.js-middleware">less-middleware</a> for <a href="http://www.senchalabs.org/connect/">connect</a>. As I mentioned previously, you can also compile LESS on the client-side using <code>less.js</code>, but <a href="https://code.google.com/p/chromium/issues/detail?id=285786">the current implementation of source maps in Chrome does not support this.</a></p>
+
+<h3>lessc <a href="#" id="lessc"></a></h3>
+
+<p>If you've <a href="https://github.com/less/less.js/#getting-started">installed LESS using npm</a>, check that you've got the latest version. You'll need <code>1.5.0</code> or above.</p>
+
+<p><code>bash
+$ lessc --version
+lessc 1.5.1 (LESS Compiler) [JavaScript]
+</code>
+If your version is not <code>1.5.0</code> or greater, you should run <code>npm update -g less</code>.</p>
+
+<h3>Outputting a source map</h3>
+
+<p>Let's imagine your project has a directory structure like this:</p>
+
+<p><code>
+css/
+less/
+  index.less
+  modules.less
+  variables.less
+index.html
+</code></p>
+
+<p><code>index.less</code> imports all of the other LESS files, so that's the one we want to compile to CSS. Our goal is to have an <code>index.css</code> and <code>index.css.map</code> file inside of the <code>css/</code> folder when everything is finished.</p>
+
+<p><code>
+css/
+  index.css
+  index.css.map
+less/
+  index.less
+  modules.less
+  variables.less
+index.html
+</code></p>
+
+<p>To do this with <code>lessc</code> we'll run the following command from the root of the project:</p>
+
+<p><code>lessc less/index.less &gt; css/index.css --source-map=css/index.css.map --source-map-basepath=css</code></p>
+
+<p>Kind of a mouthful, I know.</p>
+
+<p>The first bit is just compiling our LESS file to a CSS file in the <code>css/</code> dir.</p>
+
+<p><code>
+lessc less/index.less &gt; css/index.css
+</code></p>
+
+<p>The <code>--source-map</code> flag tells <code>lessc</code> where to put the souce map file. In this case we want it inside the <code>css/</code> dir as well.</p>
+
+<p><code>
+--source-map=css/index.css.map
+</code></p>
+
+<p>The <code>--source-map-basepath</code> flag tells <code>lessc</code></p>
+
+<h3>less-middleware <a href="#" id="less-middleware"></a></h3>
+
+<p>You might need to update your version of the middleware to whatever's the latest, which looks like 0.1.9 as of this writing.</p>
+
+<p>In your app you'll need to add the <code>dumpLineNumbers</code> options to the middleware's config.</p>
+
+<p><code>js app.js
+app.use(lessMiddleware({
+  src: __dirname + 'path/to/src',
+  dest: __dirname + 'path/to/dest',
+  dumpLineNumbers: 'mediaquery'
+}));
+</code></p>
+
+<p>After that you should be all set. Make sure any minification is turned off or it will screw up the source maps.</p>
+
+<h2>Conclusion</h2>
+
+<p>Personally I've found this trick <em>extremely</em> useful when working with large LESS codebases. I've seen some chatter that Stylus might also support this trick so if you have first-hand experience debugging Stylus with Chrome please drop me a comment. Otherwise I might do a follow up showing how to achieve similar results in that language.</p>
+
+<p>Any questions or comments hit me up in the discussion area below.</p>
+
+<p>-- Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

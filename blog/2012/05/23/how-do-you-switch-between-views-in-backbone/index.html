@@ -1,0 +1,374 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>How do you switch between views in Backbone | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">23 May 2012</span>
+	<h1 class="post-title">How Do You Switch Between Views in Backbone</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>I&#8217;m going to try to approach some of my future articles as more of a question/answer setup so they don&#8217;t turn into these sprawling tutorials. Today I want to focus on moving between views in Backbone.js. I&#8217;m starting with some very simple templates and three views: LeftView, MiddleView, RightView. To do this quickly we&#8217;ll make it so each view is essentially a big button which, when clicked on, should animate to the middle of the screen.</p>
+
+<!--more-->
+
+
+<p>Here&#8217;s what one of my templates looks like:</p>
+
+<figure class='code'><figcaption><span>right.html</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;right-container&quot;</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+  Everyone knows I&#39;m right.
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></figure>
+
+
+<p>One of the first thing I&#8217;m noticing is that all of my templates seem to be wrapped in an extra div. Since this extra div is block displayed I can&#8217;t get my items to line up next to each other&#8230; Oh! T<a href="http://stackoverflow.com/questions/7894253/backbone-js-turning-off-wrap-by-div-in-render">he problem is because I haven&#8217;t specified a tagName for my views.</a> I think I can actually do everything in the View declaration without needing a template.</p>
+
+<figure class='code'><figcaption><span>example.js</span></figcaption><pre><code><span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;right-container&#39;</span><span class="p">,</span>
+  <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;container&#39;</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>That should create our view for us with the proper tag, class and id attributes. My containers are just colored squares so I don&#8217;t need to populate them with any content. If I did want to use this approach I could add more content like this:</p>
+
+<figure class='code'><figcaption><span>example.js</span></figcaption><pre><code><span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;right-container&#39;</span><span class="p">,</span>
+  <span class="nx">className</span><span class="o">:</span> <span class="s1">&#39;container&#39;</span><span class="p">,</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;Hello World!&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Or I could render a template. Again for our purposes we just want to move some colored blocks around so the first approach is sufficient.</p>
+
+<p>Here is our most basic <code>Router</code> showing how to add the views to stage. Since we aren&#8217;t using a template we can just call the regular render function and append the returned element to the DOM.</p>
+
+<figure class='code'><figcaption><span>main.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Router</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nx">index</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">leftView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Left</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">middleView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Middle</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">rightView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span><span class="p">();</span>
+
+    <span class="c1">// Attach the views to the DOM</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#main&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">leftView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#main&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">middleView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#main&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">rightView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Here are my very simple styles:</p>
+
+<figure class='code'><figcaption><span>style.css</span></figcaption><pre><code><span class="nc">.container</span> <span class="p">{</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="o">-</span><span class="k">block</span><span class="p">;</span>
+  <span class="k">margin-right</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#left-container</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#F00</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#middle-container</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#0F0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#right-container</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#00F</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>We should now have a very simple horizontal layout.</p>
+
+<p><img class="center" src="http://f.cl.ly/items/173L112z0g2t3S1h3k1E/Screen%20Shot%202012-05-23%20at%209.02.56%20AM.png" title="'Our Basic Backbone Layout'" ></p>
+
+<h3>Composite Views</h3>
+
+<p>Well I&#8217;d like to center my views in the middle of the screen but moving each item individually is going to be pretty challenging. I think the better idea would be to wrap my views in a containing view which can then be easily centered on screen.</p>
+
+<p>Here&#8217;s what that looks like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Sections</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span>
+  <span class="nx">leftView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+  <span class="nx">middleView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+  <span class="nx">rightView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">leftView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Left</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">middleView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Middle</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">rightView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span><span class="p">();</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">leftView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">middleView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rightView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="c1">// We should do this work with events instead of methods</span>
+  <span class="nx">setInitialPosition</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span><span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>Our Sections view is going to contain our 3 subordinate views. When it gets added to the DOM, <code>initialize</code> will run and create our subviews. I&#8217;ve also defined a method <code>setInitialPosition</code> which centers our view on screen. Tomorrow I&#8217;ll replace this with an event handler that fires whenever our element is added to the DOM. For now I&#8217;m too lazy to look up the supported events :D</p>
+
+<p>The sections view is absolutely positioned and it&#8217;s width and height are explicitly defined in the css. In the short term here&#8217;s how we&#8217;ve updated things:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nf">#sections</span> <span class="p">{</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="o">-</span><span class="k">block</span><span class="p">;</span>
+  <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">1000px</span><span class="p">;</span>
+  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+  <span class="k">top</span><span class="o">:</span> <span class="m">50px</span><span class="p">;</span>
+  <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.container</span> <span class="p">{</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#left-container</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#F00</span><span class="p">;</span>
+  <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+  <span class="k">top</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#middle-container</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#0F0</span><span class="p">;</span>
+  <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+  <span class="k">top</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">left</span><span class="o">:</span> <span class="m">350px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#right-container</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#00F</span><span class="p">;</span>
+  <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+  <span class="k">top</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">left</span><span class="o">:</span> <span class="m">700px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>I wanted to give each view a 50px margin on each side so in the short term all these values are hard coded. I&#8217;ll think about how to make things more dynamic.</p>
+
+<p>Let&#8217;s listen to when the user clicks on a view. When we hear that we&#8217;ll animate the whole sections container over so that view is centered on screen.</p>
+
+<p>We&#8217;ll need to add an events hash to our Sections view. Since all of our children implement the same <code>.container</code> class we may as well listen for a click on that.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+  <span class="s2">&quot;click .container&quot;</span><span class="o">:</span>    <span class="s2">&quot;onChildClicked&quot;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>In our handler, <code>onChildClicked</code>, we&#8217;ll figure out which child was actually clicked and then animate ourselves accordingly. Here&#8217;s the entire object for your reference with the handler at the bottom.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Sections</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span>
+
+  <span class="nx">leftView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+  <span class="nx">middleView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+  <span class="nx">rightView</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+
+  <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;click .container&quot;</span><span class="o">:</span>    <span class="s2">&quot;onChildClicked&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">leftView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Left</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">middleView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Middle</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">rightView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Right</span><span class="p">();</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">leftView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">middleView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rightView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="c1">// We should do this work with events instead of methods</span>
+  <span class="nx">setInitialPosition</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span><span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">});</span>
+  <span class="p">},</span>
+
+  <span class="c1">// Whenever a child is clicked let&#39;s animate so it is</span>
+  <span class="c1">// centered on screen</span>
+  <span class="nx">onChildClicked</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">$target</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">$e</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
+
+      <span class="k">switch</span><span class="p">(</span><span class="nx">$e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s1">&#39;left-container&#39;</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+            <span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="p">});</span>
+          <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;middle-container&#39;</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+            <span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="p">});</span>
+          <span class="k">break</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;right-container&#39;</span><span class="o">:</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+            <span class="nx">left</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">+</span> <span class="nx">$target</span><span class="p">.</span><span class="nx">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="p">});</span>
+          <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Laggy, Pensive</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=How do you switch between views in Backbone&amp;url=http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/23/how-do-you-switch-between-views-in-backbone/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

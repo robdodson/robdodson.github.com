@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Deferred | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/deferred/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Make Your Own jQuery Deferreds and Promises]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/"/>
+    <updated>2012-06-03T20:33:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises</id>
+    <content type="html"><![CDATA[<p>Last week <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">I did a post on how to load an Underscore template using jQuery's Deferred method</a>. I got some great feedback from folks and decided I should do a follow up showing how to create your own Deferreds.</p>
+
+<!--more-->
+
+
+<h3>What's a Deferred again...?</h3>
+
+<p>So, quick summary time. jQuery has a neat little Object called a <code>Deferred</code> which is basically a wrapper around a function or a group of functions. Let's say that you want to load 3 different json files via ajax and when all that's done you want to let the rest of the world know. Using jQuery's <code>Deferred</code> Object we can actually put a wrapper around those 3 ajax functions and fire off a callback when they've all finished. <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">Refer back to my previous post (toward the bottom) where I explain some of these callbacks.</a></p>
+
+<p><code>Deferred</code> isn't limited to ajax calls, it can work in just about any environment. Let's do an example using jQuery's animate function. We'll fade an item and when it's finished animating we'll resolve our <code>Deferred</code> object.</p>
+
+<h3>Our First Deferred</h3>
+
+<p>Here's the code we'll be using in our index.html file:</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Deferred Sandbox&lt;/title&gt;
+&lt;style type="text/css"&gt;
+  #container {
+    width: 100px;
+    height: 100px;
+    background: #CCC;
+  }
+&lt;/style&gt;
+
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="main.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;div id="main"&gt;
+  &lt;div id="container"&gt;&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>Take note of the fact that I've included jquery.js and main.js in the same folder as index.html. If you run the above you should get a simple little grey square in the top left of your screen. Now let's dive into the JavaScript.</p>
+
+<p>``` js main.js
+var container = {</p>
+
+<pre><code>initialize: function($el) {
+    // Store a reference to our element
+    // on the page
+    this.$el = $el;
+},
+fadeOut: function() {
+    // Create a new Deferred.
+    var dfd = new $.Deferred();
+
+    this.$el.animate({
+        opacity: 0
+    }, 2000, function() {
+        // When we're done animating
+        // we'll resolve our Deferred.
+        // This will call any done() callbacks
+        // attached to either our Deferred or
+        // one of its promises.
+        dfd.resolve("Finished fading out!");
+    });
+
+    // Return an immutable promise object.
+    // Clients can listen for its done or fail
+    // callbacks but they can't resolve it themselves
+    return dfd.promise();
+}
+</code></pre>
+
+<p>};</p>
+
+<p>$(function() {</p>
+
+<pre><code>// Hook the container object up to the #container div
+container.initialize($('#container'));
+
+// Instruct the container to fade out. When we call
+// fadeOut we should get a promise back as a return value
+var promise = container.fadeOut();
+
+// Now that we have a promise we can hook a done callback
+// onto it. The done() method will fire once the promise
+// is resolved.
+promise.done(function(message) {
+    console.log(message);
+});
+</code></pre>
+
+<p>});
+```</p>
+
+<p>That's a fair bit of code so let's walk through it bit by bit. We start off by creating an object called <code>container</code> which is going to wrap the <code>#container</code> div already on the page. The real guts of container happens in the <code>fadeOut</code> method:</p>
+
+<p>``` js
+fadeOut: function() {</p>
+
+<pre><code>// Create a new Deferred.
+var dfd = new $.Deferred();
+
+this.$el.animate({
+    opacity: 0
+}, 2000, function() {
+    // When we're done animating
+    // we'll resolve our Deferred.
+    // This will call any done() callbacks
+    // attached to either our Deferred or
+    // one of its promises.
+    dfd.resolve("Finished fading out!");
+});
+
+// Return an immutable promise object.
+// Clients can listen for its done or fail
+// callbacks but they can't resolve it themselves
+return dfd.promise();
+</code></pre>
+
+<p>}
+<code>``
+The first thing we do is to create a new</code>Deferred<code>using jQuery's Deferred constructor. Ignore the animation function for a moment and look at the bottom of this method. See how we're returning</code>dfd.promise()<code>? A promise is a dynamically generated object which lets clients hook onto our</code>done<code>and</code>fail<code>callbacks but it doesn't let them do anything to change our original</code>Deferred<code>object. A promise is an</code>immutable<code>object, meaning clients can listen to it but they can't really do anything to change it. We want this functionality because we don't want someone else to come along and accidentally resolve our</code>Deferred<code>. So instead of returning the</code>Deferred<code>we just created, we only return its</code>promise`.</p>
+
+<p>OK back to the animation function:</p>
+
+<p>``` js
+this.$el.animate({</p>
+
+<pre><code>opacity: 0
+</code></pre>
+
+<p>}, 2000, function() {</p>
+
+<pre><code>// When we're done animating
+// we'll resolve our Deferred.
+// This will call any done() callbacks
+// attached to either our Deferred or
+// one of its promises.
+dfd.resolve("Finished fading out!");
+</code></pre>
+
+<p>});
+<code>``
+If you've used</code>jQuery.animate<code>before this should look pretty straightforward to you. At the end of our animation we pass in an anonymouse function which will be run when the animation completes. In this function we tell our</code>Deferred<code>to resolve. Resolving the</code>Deferred<code>causes any</code>done<code>callbacks to fire. In this case we're also passing along a little snippet of text. When you resolve a</code>Deferred<code>you can give it an optional payload object which will be passed to all the</code>done` callbacks. This is extremely useful if you're using ajax to pass along the final data value. In this case we're just going to log the message into the console:</p>
+
+<p>``` js
+promise.done(function(message) {</p>
+
+<pre><code>console.log(message);
+</code></pre>
+
+<p>});
+<code>``
+There are more cool things you can do with</code>Deferreds<code>I highly recommend you [spend some time with the documentation](http://api.jquery.com/category/deferred-object/) and trying out some of the other methods like</code>pipe<code>or</code>resolveWith<code>. Also as a side note [checkout this page](http://api.jquery.com/promise/) which shows how to extract a</code>promise` by type. It will actually let you do everything we've done in our animation example but with fewer lines of code.</p>
+
+<p>Let me know if this is helpful or if you have any questions. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Silly, Lazy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <updated>2012-05-30T08:53:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
+
+<!--more-->
+
+
+<p>Since I'm using Backbone Boilerplate I've gotten used to having my template loading method already stubbed out for me. Here's the one they use:</p>
+
+<p>``` js
+fetchTemplate: function(path, done) {
+  var JST = window.JST = window.JST || {};
+  var def = new $.Deferred();</p>
+
+<p>  // Should be an instant synchronous way of getting the template, if it
+  // exists in the JST object.
+  if (JST[path]) {</p>
+
+<pre><code>if (_.isFunction(done)) {
+  done(JST[path]);
+}
+
+return def.resolve(JST[path]);
+</code></pre>
+
+<p>  }</p>
+
+<p>  // Fetch it asynchronously if not available from JST, ensure that
+  // template requests are never cached and prevent global ajax event
+  // handlers from firing.
+  $.ajax({</p>
+
+<pre><code>url: path,
+type: "get",
+dataType: "text",
+cache: false,
+global: false,
+
+success: function(contents) {
+  JST[path] = _.template(contents);
+
+  // Set the global JST cache and return the template
+  if (_.isFunction(done)) {
+    done(JST[path]);
+  }
+
+  // Resolve the template deferred
+  def.resolve(JST[path]);
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Ensure a normalized return value (Promise)
+  return def.promise();
+}
+```</p>
+
+<p>Not having previous experience working with <a href="http://api.jquery.com/category/deferred-object/">jQuery.Deferred</a> I was initially put-off by the idea of just copy/pasting this function over to him, especially since I couldn't explain what was going on. I knew that I probably wanted to use Deferreds and Promises but I wasn't sure how best to explain the concepts nor did this method seem to do much in the way of loading JSON, it was just for loading templates. Since my friend only wanted to load 1 template and 1 JSON file I thought it best for us to start small, and to write something that we could easily debug. Knowing I wanted to use Deferreds I found <a href="http://msdn.microsoft.com/en-us/magazine/gg723713.aspx">this wonderful article by Addy Osmani and Julian Aubourg</a> detailing how Deferreds work. It is VERY comprehensive and for our purposes I only needed to read the first few paragraphs before I had enough to start.</p>
+
+<p>In a nutshell deferreds are objects which contain promises (also objects). Promises can be in various states, <code>pending</code>, <code>resolved</code> or <code>rejected</code>. Once you have a deferred (or it's promise) you can hook functions on to it so when it changes from a <code>pending</code> to <code>resolved</code> state all those functions fire. It's actually the promise that changes state but you can use the deferred like a promise because in most cases it will just proxy the calls to its promise object. Using deferreds can be nice for several reasons. For starters, you can avoid the jQuery <em>pyramid of doom</em></p>
+
+<p>``` js</p>
+
+<p>// NOOOOOOoooooooooo</p>
+
+<p>$.ajax({
+  url: 'foo.php',
+  success: function() {</p>
+
+<pre><code>$.ajax({
+  url: 'bar.php',
+  success: function() {
+    $.ajax({
+      url: 'baz.php',
+      success: function() {
+        ...
+      }
+    })
+  }
+})
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>```</p>
+
+<p>Secondly your deferreds/promises are little tokens that you can hand out from your services so other actors don't have to get all up in your ajax guts. Someone makes an API request, you give em a token, when it resolves they play with the data.</p>
+
+<p>``` js
+function doSomethingWithHugeData(data) {
+  console.log("man, look at all these 1's and 0's!");
+}</p>
+
+<p>var dfd = myService.getSomeHugeData();
+dfd.done(doSomethingWithHugeData);
+```</p>
+
+<p>This is a much nicer approach than passing in a callback that your service will need to execute whenever it finishes getting its data. Your service shouldn't care about your callbacks. It should care about getting data and letting people know when that data's been got! :D</p>
+
+<h3>But I digress...</h3>
+
+<p>We were <em>trying</em> to load some JSON and a template, so let's get back to the task at hand. Since we know that we have two ajax calls, one for the JSON and one for the template, and we know that we don't really want to do anything till both of these calls have completed we've got a perfect use case for <a href="http://api.jquery.com/jQuery.when/">$.when</a>. <code>when</code> accepts a list of deferreds/promises and acts as one big deferred, waiting for all of its children to resolve before it resolves. This is a nice way to build a sequencer. In our case we're going to take  two ajax calls and toss them into <code>$.when</code>. When it resolves we'll use <code>$.then</code> to tell it what our success and failure callbacks should be.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Deferred Sandbox&lt;/title&gt;
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="underscore.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;div id="main"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  $(function() {
+
+    function successFunc(jsonRes, templateRes) {
+      var json = _.first(jsonRes);
+      var template = _.first(templateRes);
+      var compiled = _.template(template, json);
+      $('#main').html(compiled);
+    }
+
+    function failureFunc() {
+      console.log('fail whale!');
+    }
+
+    $.when(
+      $.ajax("person.json"),
+      $.ajax("person.template.html")
+    ).then(successFunc, failureFunc);
+
+  });
+&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>In our case everything is in the same folder as index.html so there's no need for any paths. Keep in mind that in most (all?) browsers you'll need to be running a local server for the above code to actually work. In Chrome, at least, you can't run an html file from file:// and have it load external resources, it'll complain that the access-origin is not allowed.</p>
+
+<p>Let me take a moment to explain <code>$.then</code> a little bit. We know that <code>$.ajax</code> returns a deferred, and that the deferred's promise can be in three states: <code>pending</code>, <code>resolved</code>, <code>rejected</code>. So if we did something like this:</p>
+
+<p><code>js
+var dfd = $.ajax('foobar.php');
+</code></p>
+
+<p><code>dfd</code> would be a deferred object with a <code>pending</code> promise. Deferred's let us link methods up to them for when their state changes. These methods are: <code>done()</code>, <code>fail()</code>, <code>always()</code>, <code>progress()</code>, and <code>then()</code>. There are more but <a href="http://api.jquery.com/category/deferred-object/">I'll let the documentation explain them.</a> <code>done()</code> and <code>fail()</code> each accept either a single callback or an array of callbacks to be fired when the deferred changes to either the <code>resolved</code> or <code>rejected</code> state.</p>
+
+<p>``` js
+function successFunc() {
+  console.log('success! do stuff with data!');
+}</p>
+
+<p>function failureFunc() {
+  console.log('failure! um...give up!');
+}</p>
+
+<p>var service = {
+  getJSON: function() {</p>
+
+<pre><code>return $.ajax('person.json');
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>service.getJSON()
+.done(successFunc)
+.fail(failureFunc);</p>
+
+<p>```</p>
+
+<p><code>always()</code> fires its callbacks regardless of whether the deferred was <code>resolved</code> or <code>rejected</code>. This might be a good place to put any cleanup code. <code>progress()</code> is fired during any progress events that the process might emit. Finally there's <code>then()</code> which is what we're using in our template example. <code>then()</code> is essentially shorthand for <code>done()</code> and <code>fail()</code> so you can pass it two callbacks or two arrays of success/fail callbacks.</p>
+
+<p>Hopefully that's helpful for you all and you can go back and clean up some of those pyramids that might be lingering in your code. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Reserved, Sedate</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

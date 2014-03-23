@@ -1,0 +1,288 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Make Your Own jQuery Deferreds and Promises | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">03 Jun 2012</span>
+	<h1 class="post-title">Make Your Own jQuery Deferreds and Promises</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Last week <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">I did a post on how to load an Underscore template using jQuery&#8217;s Deferred method</a>. I got some great feedback from folks and decided I should do a follow up showing how to create your own Deferreds.</p>
+
+<!--more-->
+
+
+<h3>What&#8217;s a Deferred again&#8230;?</h3>
+
+<p>So, quick summary time. jQuery has a neat little Object called a <code>Deferred</code> which is basically a wrapper around a function or a group of functions. Let&#8217;s say that you want to load 3 different json files via ajax and when all that&#8217;s done you want to let the rest of the world know. Using jQuery&#8217;s <code>Deferred</code> Object we can actually put a wrapper around those 3 ajax functions and fire off a callback when they&#8217;ve all finished. <a href="http://robdodson.me/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/">Refer back to my previous post (toward the bottom) where I explain some of these callbacks.</a></p>
+
+<p><code>Deferred</code> isn&#8217;t limited to ajax calls, it can work in just about any environment. Let&#8217;s do an example using jQuery&#8217;s animate function. We&#8217;ll fade an item and when it&#8217;s finished animating we&#8217;ll resolve our <code>Deferred</code> object.</p>
+
+<h3>Our First Deferred</h3>
+
+<p>Here&#8217;s the code we&#8217;ll be using in our index.html file:</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Deferred Sandbox<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;style </span><span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+      <span class="nf">#container</span> <span class="p">{</span>
+        <span class="k">width</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+        <span class="k">height</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+        <span class="k">background</span><span class="o">:</span> <span class="m">#CCC</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;jquery.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;main.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Take note of the fact that I&#8217;ve included jquery.js and main.js in the same folder as index.html. If you run the above you should get a simple little grey square in the top left of your screen. Now let&#8217;s dive into the JavaScript.</p>
+
+<figure class='code'><figcaption><span>main.js</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$el</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Store a reference to our element</span>
+        <span class="c1">// on the page</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span> <span class="o">=</span> <span class="nx">$el</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="nx">fadeOut</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Create a new Deferred.</span>
+        <span class="kd">var</span> <span class="nx">dfd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+            <span class="nx">opacity</span><span class="o">:</span> <span class="mi">0</span>
+        <span class="p">},</span> <span class="mi">2000</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// When we&#39;re done animating</span>
+            <span class="c1">// we&#39;ll resolve our Deferred.</span>
+            <span class="c1">// This will call any done() callbacks</span>
+            <span class="c1">// attached to either our Deferred or</span>
+            <span class="c1">// one of its promises.</span>
+            <span class="nx">dfd</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s2">&quot;Finished fading out!&quot;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="c1">// Return an immutable promise object.</span>
+        <span class="c1">// Clients can listen for its done or fail</span>
+        <span class="c1">// callbacks but they can&#39;t resolve it themselves</span>
+        <span class="k">return</span> <span class="nx">dfd</span><span class="p">.</span><span class="nx">promise</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// Hook the container object up to the #container div</span>
+    <span class="nx">container</span><span class="p">.</span><span class="nx">initialize</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#container&#39;</span><span class="p">));</span>
+
+    <span class="c1">// Instruct the container to fade out. When we call</span>
+    <span class="c1">// fadeOut we should get a promise back as a return value</span>
+    <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">container</span><span class="p">.</span><span class="nx">fadeOut</span><span class="p">();</span>
+
+    <span class="c1">// Now that we have a promise we can hook a done callback</span>
+    <span class="c1">// onto it. The done() method will fire once the promise</span>
+    <span class="c1">// is resolved.</span>
+    <span class="nx">promise</span><span class="p">.</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>That&#8217;s a fair bit of code so let&#8217;s walk through it bit by bit. We start off by creating an object called <code>container</code> which is going to wrap the <code>#container</code> div already on the page. The real guts of container happens in the <code>fadeOut</code> method:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">fadeOut</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Create a new Deferred.</span>
+    <span class="kd">var</span> <span class="nx">dfd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+        <span class="nx">opacity</span><span class="o">:</span> <span class="mi">0</span>
+    <span class="p">},</span> <span class="mi">2000</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// When we&#39;re done animating</span>
+        <span class="c1">// we&#39;ll resolve our Deferred.</span>
+        <span class="c1">// This will call any done() callbacks</span>
+        <span class="c1">// attached to either our Deferred or</span>
+        <span class="c1">// one of its promises.</span>
+        <span class="nx">dfd</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s2">&quot;Finished fading out!&quot;</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Return an immutable promise object.</span>
+    <span class="c1">// Clients can listen for its done or fail</span>
+    <span class="c1">// callbacks but they can&#39;t resolve it themselves</span>
+    <span class="k">return</span> <span class="nx">dfd</span><span class="p">.</span><span class="nx">promise</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>The first thing we do is to create a new <code>Deferred</code> using jQuery&#8217;s Deferred constructor. Ignore the animation function for a moment and look at the bottom of this method. See how we&#8217;re returning <code>dfd.promise()</code>? A promise is a dynamically generated object which lets clients hook onto our <code>done</code> and <code>fail</code> callbacks but it doesn&#8217;t let them do anything to change our original <code>Deferred</code> object. A promise is an <code>immutable</code> object, meaning clients can listen to it but they can&#8217;t really do anything to change it. We want this functionality because we don&#8217;t want someone else to come along and accidentally resolve our <code>Deferred</code>. So instead of returning the <code>Deferred</code> we just created, we only return its <code>promise</code>.</p>
+
+<p>OK back to the animation function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+    <span class="nx">opacity</span><span class="o">:</span> <span class="mi">0</span>
+<span class="p">},</span> <span class="mi">2000</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// When we&#39;re done animating</span>
+    <span class="c1">// we&#39;ll resolve our Deferred.</span>
+    <span class="c1">// This will call any done() callbacks</span>
+    <span class="c1">// attached to either our Deferred or</span>
+    <span class="c1">// one of its promises.</span>
+    <span class="nx">dfd</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s2">&quot;Finished fading out!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>If you&#8217;ve used <code>jQuery.animate</code> before this should look pretty straightforward to you. At the end of our animation we pass in an anonymouse function which will be run when the animation completes. In this function we tell our <code>Deferred</code> to resolve. Resolving the <code>Deferred</code> causes any <code>done</code> callbacks to fire. In this case we&#8217;re also passing along a little snippet of text. When you resolve a <code>Deferred</code> you can give it an optional payload object which will be passed to all the <code>done</code> callbacks. This is extremely useful if you&#8217;re using ajax to pass along the final data value. In this case we&#8217;re just going to log the message into the console:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">promise</span><span class="p">.</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>There are more cool things you can do with <code>Deferreds</code> I highly recommend you <a href="http://api.jquery.com/category/deferred-object/">spend some time with the documentation</a> and trying out some of the other methods like <code>pipe</code> or <code>resolveWith</code>. Also as a side note <a href="http://api.jquery.com/promise/">checkout this page</a> which shows how to extract a <code>promise</code> by type. It will actually let you do everything we&#8217;ve done in our animation example but with fewer lines of code.</p>
+
+<p>Let me know if this is helpful or if you have any questions. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Silly, Lazy</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Make Your Own jQuery Deferreds and Promises&amp;url=http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/03/make-your-own-jquery-deferreds-and-promises/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

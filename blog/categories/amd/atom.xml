@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: AMD | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/amd/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[RequireJS -- Embracing the Awesomness of AMD Modules]]></title>
+    <link href="http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules/"/>
+    <updated>2013-03-21T21:57:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/03/21/requirejs-embracing-the-awesomness-of-amd-modules</id>
+    <content type="html"><![CDATA[<p>Over the past few weeks I put together this talk for my team at GE to help get everyone on the same page with AMD modules. I figured it'd be cool if I removed any GE specific stuff and open sourced the presentation, so here it is!</p>
+
+<p>The video is around 35 minutes long and there's a slide deck available on Github that has clickable links and whatnot. Enjoy!</p>
+
+<iframe width="420" height="315" src="http://www.youtube.com/embed/vWGuaZOTR4U" frameborder="0" allowfullscreen></iframe>
+
+
+<p><a href="https://github.com/robdodson/requirejs-presentation">Slidedeck on Github</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,188 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Publish your Node Library to NPM | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">16 Jun 2012</span>
+	<h1 class="post-title">Publish Your Node Library to NPM</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Alright, <a href="http://robdodson.me/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/">contuing from yesterday</a> we want to take our little Node module and make it available to the world as a really awesome command line tool.</p>
+
+<!--more-->
+
+
+<p>The first thing we need to do is register an NPM account.</p>
+
+<p><code>npm adduser</code></p>
+
+<p>Fill in your credentials and it should be ready to go.</p>
+
+<p>If we have any dependencies they should be added to our <code>package.json</code> file. Our simple <code>compliment</code> program doesn&#8217;t need any extra libraries but we&#8217;ll add <code>xml2json</code> just to demonstrate how it&#8217;s done.</p>
+
+<figure class='code'><figcaption><span>package.json</span></figcaption><pre><code><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;compliment&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Tell us how awesome we are.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;preferGlobal&quot;</span><span class="o">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bin&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;compliment&quot;</span><span class="o">:</span> <span class="s2">&quot;compliment.js&quot;</span> <span class="p">},</span>
+    <span class="s2">&quot;author&quot;</span><span class="o">:</span> <span class="s2">&quot;Rob Dodson&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;xml2json&quot;</span><span class="o">:</span> <span class="s2">&quot;0.2.4&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;engines&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;node&quot;</span><span class="o">:</span> <span class="s2">&quot;*&quot;</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Since we&#8217;ve changed our <code>package.json</code> we need to run <code>npm link</code> again to install the dependency. After that you should have a <code>node_modules/</code> folder in your project root.</p>
+
+<p>Let&#8217;s put this baby under version control!</p>
+
+<figure class='code'><figcaption><span>package.json</span></figcaption><pre><code><span class="nx">git</span> <span class="nx">init</span>
+<span class="nx">echo</span> <span class="nx">node_modules</span><span class="o">/</span> <span class="o">&gt;&gt;</span> <span class="p">.</span><span class="nx">gitignore</span> <span class="err">#</span> <span class="nx">node_modules</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">installed</span> <span class="nx">by</span> <span class="nx">npm</span>
+<span class="nx">git</span> <span class="nx">add</span> <span class="p">.</span>
+<span class="nx">git</span> <span class="nx">commit</span> <span class="o">-</span><span class="nx">am</span> <span class="s1">&#39;Initial commit&#39;</span>
+</code></pre></figure>
+
+
+<p>Final step: <code>npm publish</code></p>
+
+<h1>BOOMJAMS! We have us an npm module! - Rob</h1>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Hyper</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 1</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Publish your Node Library to NPM&amp;url=http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

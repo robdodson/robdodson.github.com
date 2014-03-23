@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Decorator | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/decorator/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[JavaScript Design Patterns: Decorator Update]]></title>
+    <link href="http://robdodson.github.com/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/"/>
+    <updated>2012-08-30T18:07:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/08/30/javascript-design-patterns-decorator-pt-2</id>
+    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">Yesterday's post</a> drew a lot of traffic from Reddit and with it came some really good feedback. If you haven't read the <a href="http://robdodson.me/blog/2012/08/27/javascript-design-patterns-decorator/">previous post</a> please do so first and then come back here.</p>
+
+<p>I want to go through some of what was said so I can refine my examples and also clear up any confusion.</p>
+
+<!--more-->
+
+
+<h2>That prototype example sucked!</h2>
+
+<p>OK let me start off by apologizing for even including that second example (the <code>Sale</code> decorators). It was meant as a kind of fun academic exercise but I tried to make it clear that I wasn't suggesting anyone actually implement it. Redditor gizmo490 pointed out that for the pattern to actually work you would have to overwrite all the methods of the <code>Sale</code> object or risk working in the wrong context. You can see our full discussion <a href="http://www.reddit.com/r/javascript/comments/z0z2j/decorators_in_javascript_hope_you_enjoy/c60qb0c">here.</a></p>
+
+<p>So I'll just say if you're considering that second example: Stop. Just don't do it. It is way too much code.</p>
+
+<h2>We don't necessarily need all those objects</h2>
+
+<p>Another Redditor, Draders, pointed out that the decorator objects aren't really necessary since we can just put functions directly into the decoratorsList.</p>
+
+<p><code>js
+// This is presuming that `add` pushes a function into the
+// list of decorators
+validator.add('zipcode', validateZipCodeFunction);
+</code>
+If you want <code>validateZipCodeFunction</code> to be reusable you'll have to define it somewhere and attaching it to the Validator object is probably a fine choice. In the end it's a bit less code so definitely something to think about.</p>
+
+<h2>Finally, the power of CLOSURES!</h2>
+
+<p>Finally, and this is really the reason why I wanted to write this update, Redditor emehrkay pointed out that my examples are basically ignoring the power of JS functions and closures. <a href="http://www.reddit.com/r/javascript/comments/z0z2j/decorators_in_javascript_hope_you_enjoy/c60rl7x">In his quick and dirty example</a> he shows how to achieve a similar goal with much less code:</p>
+
+<p>``` js
+function test(arg){</p>
+
+<pre><code>return arg + arg;
+</code></pre>
+
+<p>}</p>
+
+<p>function testDecorator(fn, args){</p>
+
+<pre><code>var arg = args[0] * 2;
+
+return fn(arg);
+</code></pre>
+
+<p>}</p>
+
+<p>function decorate(dec, fn, args){</p>
+
+<pre><code>return function(){
+    return dec(fn, args);
+}
+</code></pre>
+
+<p>}</p>
+
+<p>x = decorate(testDecorator, test, [2])();
+console.log(x)
+```</p>
+
+<p>So here's my attempt to recreate the <code>Sale</code> example but using more of emehrkay's approach:</p>
+
+<p>``` js
+function Sale(price) {</p>
+
+<pre><code>this.price = price || 100;
+</code></pre>
+
+<p>}</p>
+
+<p>Sale.prototype.getPrice = function() {</p>
+
+<pre><code>return this.price;
+</code></pre>
+
+<p>};</p>
+
+<p>Sale.prototype.setPrice = function(price) {</p>
+
+<pre><code>this.price = price;
+</code></pre>
+
+<p>};</p>
+
+<p>function usd(fn, context) {</p>
+
+<pre><code>var price = fn.call(context);
+return "$" + price;
+</code></pre>
+
+<p>}</p>
+
+<p>function decorate(dec, fn, context) {</p>
+
+<pre><code>return function() {
+    return dec.call(context, fn, context);
+};
+</code></pre>
+
+<p>}</p>
+
+<p>// Let's run it!
+var sale = new Sale(50);</p>
+
+<p>// Decorate our getPrice method. We'll just add
+// some extra dollar signs to the output.
+sale.getPrice = decorate(usd, sale.getPrice, sale);
+sale.getPrice = decorate(usd, sale.getPrice, sale);
+sale.getPrice = decorate(usd, sale.getPrice, sale);
+console.log(sale.getPrice()); // output: $$$50</p>
+
+<p>// Test to make sure other methods can still
+// access the price in the correct context
+sale.setPrice(100);
+console.log(sale.getPrice()); // output: $$$100
+<code>``
+Since we're kind of mixing OO and functional style here the one caveat is that you have to pass the context to your decorators so when they call</code>getPrice` they know which instance they're referring to. So the code is a little funky but still interesting and if anyone can think of a way to write it cleaner I'm all ears!</p>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/decorator/">Grab the Example Source</a></h2>
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[JavaScript Design Patterns: Decorator]]></title>
+    <link href="http://robdodson.github.com/blog/2012/08/27/javascript-design-patterns-decorator/"/>
+    <updated>2012-08-27T09:59:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/08/27/javascript-design-patterns-decorator</id>
+    <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p><a href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">Update: Part 2 has been posted!</a></p>
+
+<p>A Decorator is an object which adds functionality to another object dynamically. It can be used to enhance the behavior of an object without requiring the author to reopen its class. While Decorators might feel a little weird to implement in static languages they're extremely simple in JavaScript due to the ease with which JS passes around functions and handles dynamic types.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<p><blockquote><p>Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote></p>
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Wrapper</li>
+</ul>
+
+
+<h2>When to use it</h2>
+
+<ul>
+<li><p>When you'd like to add responsibilities to individual objects dynamically (i.e. without subclassing/inheritence).</p></li>
+<li><p>When you'd like to be able to remove the functionality at a later time. An <code>undecorate</code> method, for instance.</p></li>
+<li><p>When extension by subclassing would be unmanageable or lead to a class explosion. For instance, if a <code>Vehicle</code> class is subclassed by 30 other vehicle objects with only minor differences.</p></li>
+</ul>
+
+
+<h2>Pros and Cons</h2>
+
+<ul>
+<li><p><strong>Pro</strong>: More flexible than inheritance.</p></li>
+<li><p><strong>Pro</strong>: Avoids feature-laden classes high up in the hierarchy.</p></li>
+<li><p><strong>Con</strong>: A decorator and its component aren’t identical.</p></li>
+<li><p><strong>Con</strong>: Lots of little objects.</p></li>
+</ul>
+
+
+<h2>A Brief Explanation</h2>
+
+<p>The Decorator pattern is very similar to one we've addressed earlier, called <a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns-strategy/">Strategy.</a> The differences between the two can be subtle but usually a decorator <em>enhances</em>, layers upon or "decorates" the object or method it's wrapping. In contrast, a strategy will replace a method's algorithm completely.</p>
+
+<p>The primary benefit of the Decorator pattern is that you can take a rather vanilla object and wrap it in more advanced behaviors. For instance a view which renders a plain window can have decorators to add different backgrounds, scroll bars, borders, etc. The underlying code, or guts, of the window object remains the same while the decorators provide a new <em>skin.</em></p>
+
+<p>Decorators are not limited to visual components. In fact much of the <code>java.io</code> package is composed of Decorators which add additional functionality such as buffering file streams and adding line numbers. A similar application to JavaScript might involve decorating I/O in Node.js. For instance, incoming data might need to be converted to ASCII and then compressed in some way. It might not <em>always</em> need to be converted to ASCII and it might not <em>always</em> need to be compressed. In this scenario we can apply or remove I/O decorators at runtime changing the behavior of our object instead of writing a big class with a bunch of cross-cutting concerns.</p>
+
+<h2>Enough Talk! COOOOODE!!!</h2>
+
+<p>Ok so let's do an example. We're going to create a <code>Validator</code> class which looks at the contents of a form and adds error messages to an array if anything in the form is not correct. We want our <code>Validator</code> to be really simple so it'll just have two methods: <code>validate</code> and <code>decorate</code>. As the name implies <code>validate</code> will tell our validator to compare the form against its internal rules. We'll use <code>decorate</code> to specify those rules. The <code>decorate</code> method will accept a String, such as 'hasAge' or 'hasZipCode' which corresponds to an actual function. We'll collect these functions in a list and compare the contents of the form to each item in the list.</p>
+
+<p>We'll start with the constructor and <code>decorate</code> method:</p>
+
+<p>``` js
+function Validator () {</p>
+
+<pre><code>this.errors = [];
+this.decoratorsList = [];
+</code></pre>
+
+<p>}</p>
+
+<p>Validator.prototype.decorate = function(name) {</p>
+
+<pre><code>this.decoratorsList.push(name);
+</code></pre>
+
+<p>};
+<code>``
+We'll collect any error messages in the</code>errors<code>array. We could write a method like</code>validator.hasErrors()` to check the length and contents of the array but for now I'll leave that unspecified. Just know that if we do come across an error we'll toss it in there.</p>
+
+<p>The <code>decoratorsList</code> will hold all of our decorator functions. This is not how the Gang of Four does things, or how you will see the Decorator pattern presented in languages like Java or C++, but that's because they're using static languages which don't do well with functions being passed around. In our case since JavaScript functions are objects we can pass our decorators into a collection to have them called sequentially. This is the easier approach recommended by <a href="https://twitter.com/stoyanstefanov">Stoyan Stefanov</a> in <a href="http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752">JavaScript Patterns.</a> A little later I'll show you the "hard" approach and you can decide which you prefer ;)</p>
+
+<p>OK moving on... Let's define some decorator functions. We'll add an object to our constructor called <code>decorators</code> and we'll attach our functions to it.</p>
+
+<p>``` js
+Validator.decorators = {};</p>
+
+<p>Validator.decorators.hasName = {</p>
+
+<pre><code>validate: function(form) {
+    // Code to verify presence of name...
+
+    // If no name found...
+    this.errors.push('no name!');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Validator.decorators.hasAge = {</p>
+
+<pre><code>validate: function(form) {
+    // Code to verify presence of age...
+
+    // If no age found...
+    this.errors.push('no age!');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Validator.decorators.hasZipCode = {</p>
+
+<pre><code>validate: function(form) {
+    // Code to verify presence of zip code...
+
+    // If no zip found...
+    this.errors.push('no zip!');
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>Each decorator is actually an object which implements the same interface as our <code>Validator</code> object. When we have all of our decorators added to our <code>decoratorsList</code> we'll be able to loop through and call <code>validate</code> on each one.</p>
+
+<p>``` js
+Validator.prototype.validate = function(form) {</p>
+
+<pre><code>var i,
+    max,
+    name;
+
+this.form = form;
+
+max = this.decoratorsList.length;
+for (i = 0; i &lt; max; i++) {
+    name = this.decoratorsList[i];
+    Validator.decorators[name].validate.call(this, form);
+};
+</code></pre>
+
+<p>};
+<code>``
+At last we come to the</code>validate<code>method. It first receives an object containing all of our form data. Next it prepares to loop through our collection of decorators. We use the name of the decorator object as a key and</code>call<code>its</code>validate<code>method, passing in</code>this<code>for our context and also the form object as an argument. This way all of the validators will execute in the context of our</code>Validator` instance and they should all have access to the form data.</p>
+
+<p>Let's try it out!</p>
+
+<p><code>js
+var validator = new Validator();
+validator.decorate('hasName');
+validator.decorate('hasAge');
+validator.decorate('hasZipCode');
+validator.validate({}); // we'll just use a blank object in place of real form data
+console.log(validator.errors);
+</code></p>
+
+<p>We aren't really doing any validation at this point so our <code>console.log</code> at the end should output an array with 3 error messages, one from each of the validator decorators. But there you go, you've now got a fully decorated <code>validate</code> function. What was once rather vanilla can have all sorts of new and interesting validations applied to it!</p>
+
+<h2>What if my Decorators need additional arguments?</h2>
+
+<p>The above example gets us started decorating but it leaves some room for improvement. For starters what if we want to pass additional arguments to our validation functions? Let's revamp this thing just a bit so we can get really fancy...</p>
+
+<p>```js
+function Validator () {</p>
+
+<pre><code>this.errors = [];
+this.decoratorsList = [];
+</code></pre>
+
+<p>}</p>
+
+<p>Validator.prototype.decorate = function(name, args) {</p>
+
+<pre><code>this.decoratorsList.push({ name: name, args: args });
+</code></pre>
+
+<p>};</p>
+
+<p>Validator.decorators = {};</p>
+
+<p>Validator.decorators.hasName = {</p>
+
+<pre><code>validate: function(form, args) {
+    // Code to verify presence of name...
+
+    this.errors.push('no name!');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Validator.decorators.hasAge = {</p>
+
+<pre><code>validate: function(form, args) {
+    // Code to verify presence of age...
+
+    this.errors.push('no age!');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Validator.decorators.hasZipCode = {</p>
+
+<pre><code>validate: function(form, args) {
+    // Code to verify presence of zip code...
+
+    this.errors.push('no zip!');
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Validator.prototype.validate = function(form) {</p>
+
+<pre><code>var i,
+    max,
+    temp,
+    name,
+    args;
+
+this.form = form;
+
+max = this.decoratorsList.length;
+for (i = 0; i &lt; max; i++) {
+    temp = this.decoratorsList[i];
+    name = temp.name;
+    args = temp.args;
+    Validator.decorators[name].validate.call(this, form, args);
+};
+</code></pre>
+
+<p>};
+<code>``
+This time we are passing an optional hash to our</code>decorate` method which is stored along with its corresponding decorator object. If you've ever used validators in Rails this should feel similar. Time to see it in action!</p>
+
+<p><code>js
+var validator = new Validator();
+validator.decorate('hasName', { length: 5 });
+validator.decorate('hasAge', { minimum: 21 });
+validator.decorate('hasZipCode');
+validator.validate({}); // some form data. in this case just an anonymous object
+console.log(validator.errors);
+</code></p>
+
+<h2>Time to do things the hard way...</h2>
+
+<p>I promised I would show you the more classical example of Decorator and since I am a man of my word I <em>guess</em> you can see it... I would not recommend using this approach because it can require overwriting all of your methods to make sure you're always in the correct context. Still, as a kind of academic observation it's a cool example and demonstrates how JS can emulate other languages. I'm taking this code almost verbatim from <a href="http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752">JavaScript Patterns</a> so full credit goes to Stoyan for coming up with it.</p>
+
+<p>In this example we're going to format a Sale price so that it can work for both U.S. and Canadian stores. This means applying different tax rates and outputting the text with different currency symbols.</p>
+
+<p>``` js
+function Sale(price) {</p>
+
+<pre><code>this.price = price || 100;
+</code></pre>
+
+<p>}</p>
+
+<p>Sale.prototype.getPrice = function() {</p>
+
+<pre><code>return this.price;
+</code></pre>
+
+<p>};
+<code>``
+Things start off very similar to our last example. Instead of</code>validate<code>the method we're interested in this time is</code>getPrice<code>. If you've been paying attention you'll notice that in our previous example</code>validate<code>was rather complex. Yet</code>getPrice` is so...simple. Hmm...</p>
+
+<p>Let's move on to the decorators.</p>
+
+<p>``` js
+Sale.decorators = {};</p>
+
+<p>Sale.decorators.fedtax = {</p>
+
+<pre><code>getPrice: function() {
+    var price = this._super.getPrice();
+    price += price * 5 / 100;
+    return price;
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Sale.decorators.quebec = {</p>
+
+<pre><code>getPrice: function() {
+    var price = this._super.getPrice();
+    price += price * 7.5 / 100;
+    return price;
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Sale.decorators.usd = { // U.S. dollars</p>
+
+<pre><code>getPrice: function() {
+    return "$" + this._super.getPrice().toFixed(2);
+}
+</code></pre>
+
+<p>};</p>
+
+<p>Sale.decorators.cdn = { // Canadian dollars</p>
+
+<pre><code>getPrice: function() {
+    return "CDN$" + this._super.getPrice().toFixed(2);
+}
+</code></pre>
+
+<p>};
+<code>``
+This may look similar to the last example but take note of the use of</code><em>super<code>. The</code></em>super` property is actually a reference to a parent class instance. We'll use this reference to travel up the chain of decorators, performing an operation and returning the price at each stop.</p>
+
+<p>This leads us to the <code>decorate</code> method:</p>
+
+<p>``` js
+Sale.prototype.decorate = function (decorator) {</p>
+
+<pre><code>var F = function () {},
+overrides = this.constructor.decorators[decorator],
+i,
+newobj;
+
+// Create prototype chain
+F.prototype = this;
+newobj = new F();
+newobj._super = F.prototype;
+
+// Mixin properties/methods of our decorator
+// Overriding the ones from our prototype
+for (i in overrides) {
+    if (overrides.hasOwnProperty(i)) {
+        newobj[i] = overrides[i];
+    }
+}
+
+return newobj;
+</code></pre>
+
+<p>}
+<code>``
+If you're unfamiliar with JavaScript prototypes this can look a little daunting. We're using a pattern that [JavaScript Patterns](http://www.amazon.com/JavaScript-Patterns-Stoyan-Stefanov/dp/0596806752) refers to as *Rented Constructor* in order to essentially take a snapshot of our current object, store it in</code>_super` and then mixin new decorator methods. Let's see it in action to clarify things a bit better.</p>
+
+<p><code>js
+var sale = new Sale(50);
+sale = sale.decorate('fedtax');
+sale = sale.decorate('cdn');
+console.log(sale.getPrice()); // outputs $CDN52.50
+</code>
+You'll notice that each time we call <code>decorate</code> we have to re-assign the sale variable to a new instance. Each new instance has a reference to the previous sale object. When we finally call <code>getPrice</code> it walks up this chain of instances and calls <code>getPrice</code> on each stop along the way. In the end we have something which is functionally identical to our first example but potentially a lot harder to understand. In other words, stick with the first approach! Also be sure to <a href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">see my update</a> which discusses this example a bit more and points out a few more of its flaws. Again, it's a neat idea to mess around with but there are much easier ways.</p>
+
+<h2>The Open-Closed Principle</h2>
+
+<p>I'm going to go off on a quick tangent here because of something I saw in <a href="http://www.amazon.com/First-Design-Patterns-Elisabeth-Freeman/dp/0596007124">Head First Design Patterns.</a> There's a common heuristic in software design known as the <strong>Open-Closed Principle</strong> which states that "classes should be open for extension but closed for modification." Let's explore this concept with our Sale object.</p>
+
+<p>Consider the following bit of code:</p>
+
+<p>``` js
+function Sale(price) {</p>
+
+<pre><code>this.price = price || 100;
+</code></pre>
+
+<p>}</p>
+
+<p>Sale.prototype.getPrice = function() {</p>
+
+<pre><code>return this.price;
+</code></pre>
+
+<p>};
+```
+You should be able to look at this snippet of code and say that it's almost certainly bug free. Now let's pretend we aren't using decorators and our boss comes to us and says we need to add US and Canadian taxes and currency symbols.</p>
+
+<p>"<em>Hm...I guess that means I'll need to pass those parameters into the constructor and then write some booleans or something to check if we're Canadian or US... Or maybe I'll put them all in a hash... Or...</em>"</p>
+
+<p>Regardless of what we choose to do, if it involves opening up the class then there's a chance that we'll compromise our previous snippet of code. The more times we do this the more we increase the likelihood that we'll introduce a bug which might go uncaught for a long time. Eventually what started off as extremely simple, bug-free code, can turn into a rat's nest.</p>
+
+<p>So, where possible, try to avoid reopening classes and find ways to extend their functionality. This can mean simply subclassing the parent, or using one of the many design patterns we'll be covering.</p>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/decorator/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li><p>Adapter: A decorator is different from an adapter in that a decorator only changes an object’s responsibilities, not its interface; an adapter will give an object a completely new interface.</p></li>
+<li><p>Composite: A decorator can be viewed as a degenerate composite with only one component. However, a decorator adds additional responsibilities—it isn't intended for object aggregation.</p></li>
+<li><p><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns-strategy/">Strategy:</a> A decorator lets you change the skin of an object; a strategy lets you change the guts. These are two alternative ways of changing an object.</p></li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. Also be sure to <a href="http://robdodson.me/blog/2012/08/30/javascript-design-patterns-decorator-pt-2/">checkout Part 2 which covers even more ways to do decorators!</a> - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

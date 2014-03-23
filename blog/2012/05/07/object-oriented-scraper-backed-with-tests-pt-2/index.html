@@ -1,0 +1,362 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Object Oriented Scraper Backed With Tests pt. 2 | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">07 May 2012</span>
+	<h1 class="post-title">Object Oriented Scraper Backed With Tests Pt. 2</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>I&#8217;m picking up from where I left off last night. If you look back at the <a href="/blog/2012/05/06/object-oriented-scraper-backed-with-tests/">previous post</a> we ended with a spec&#8217;d out <code>Runner</code> object. Now we need to build our <code>Crawler</code> which will slurp up all the content from our posts and return them as meaningful data.</p>
+
+<!--more-->
+
+
+<p>Our Crawler will have 2 main responsibilities. First it will iterate over a post and return a Hash of words and their usage count. Second, it will iterate over a post and pull out any metadata and associate that with a Date. These are rather simple goals and if you remember from our original scraper we were actually hitting every post on the main page. I think I&#8217;d like to nail down these simple functions and then refactor the Crawler to accept a corpus page full of links—<a href="http://robdodson.me/blog/archives/">like our archives page</a>—which it will follow and parse. Right now I want to start small.</p>
+
+<p>Here&#8217;s a list of what I <em>think</em> would be good tests for our <code>Crawler</code>.</p>
+
+<ul>
+<li>It should return an instance in exchange for a valid URI. Since the URI comes from the Runner and that&#8217;s already being tested we&#8217;ll assume that the URI we&#8217;re given is valid.</li>
+<li>It should respond to a <code>get_word_counts</code> method.</li>
+<li>The get_word_counts method should accept a selector <code>String</code> and return a <code>Hash</code> of words and their counts. Since the selector will be coming from the Runner we&#8217;ll assume it&#8217;s valid too but first we&#8217;ll need to put another test in our <code>runner_spec.rb</code>.</li>
+<li>It should respond to a <code>get_metadata</code> method.</li>
+<li>The get_metadata method should also accept a selector <code>String</code> and return a <code>Hash</code> with a valid <code>Date</code> and each piece of metadata categorized. Let&#8217;s see how far we can take this by converting strings related to time into <code>Time</code> objects and any categories with multiple entries into <code>Arrays</code>.</li>
+</ul>
+
+
+<p>I&#8217;m actually going to copy and paste the above list into my specs and start buliding from there.</p>
+
+<p>&#8230;.</p>
+
+<p>Hmm&#8230; actually I&#8217;m not. Something about this doesn&#8217;t feel right. <code>Runner</code> has accrued too much responsibility. It&#8217;s supposed to validate 3 different strings parsed from a YAML file which it loads and then it also has to deal with creating and running the <code>Crawler</code>. I think it&#8217;s time for another object. Which we&#8217;ll call <code>Options</code>. Options will be in charge of loading our YAML and verifying that all the values are valid. <code>Runner</code> will create both an Options and a Crawler object and pass the values from Options to Crawler. This is actaully also in line with the Pickaxe book&#8217;s Anagrams example, so we have a nice guide to follow in that.</p>
+
+<p>OK so <code>Options</code>, eh? Well we&#8217;ll need to spec out its responsibilities. I think we can just take the tests we wrote for Runner and move them over to Options.</p>
+
+<p>After doing this for while I&#8217;ve ended up with a TON of tests&#8230;only to validate 3 variables.</p>
+
+<figure class='code'><figcaption><span>tentacles/spec/options_spec.rb</span></figcaption><pre><code><span class="n">require_relative</span> <span class="s1">&#39;../lib/tentacles/options&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;uri&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;helpers&#39;</span>
+
+<span class="n">describe</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span> <span class="k">do</span>
+  <span class="kp">include</span> <span class="no">Helpers</span>
+
+  <span class="n">before</span> <span class="k">do</span>
+    <span class="vi">@options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/../lib/tentacles/config.yml&#39;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">subject</span> <span class="p">{</span> <span class="vi">@options</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:uri</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:post_selector</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:metadata_selector</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;when parsing the config file&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the config file is missing&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Errno</span><span class="o">::</span><span class="no">ENOENT</span><span class="p">)</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">TypeError</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the config file is invalid&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/invalid_yaml.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;when parsing the URI&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should display the right URI&quot;</span> <span class="k">do</span>
+      <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;http://robdodson.me&#39;</span><span class="p">)</span>
+      <span class="vi">@options</span><span class="o">.</span><span class="n">uri</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if uri is empty&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/blank_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if uri is invalid&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/invalid_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;when parsing the post selector&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should have a post_selector&quot;</span> <span class="k">do</span>
+      <span class="vi">@options</span><span class="o">.</span><span class="n">post_selector</span><span class="o">.</span><span class="n">should</span> <span class="n">be</span><span class="p">(</span><span class="s1">&#39;.entry-content&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the post selector is empty&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/blank_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;when parsing the metadata selector&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should have a metadata_selector&quot;</span> <span class="k">do</span>
+      <span class="vi">@options</span><span class="o">.</span><span class="n">metadata_selector</span><span class="o">.</span><span class="n">should</span> <span class="n">be</span><span class="p">(</span><span class="s1">&#39;.personal-metadata&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the metadata selector is empty&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/blank_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Here&#8217;s my implementation of <code>options.rb</code></p>
+
+<figure class='code'><figcaption><span>tentacles/lib/tentacles/options.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Options</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:uri</span>
+    <span class="kp">attr_reader</span> <span class="ss">:post_selector</span>
+    <span class="kp">attr_reader</span> <span class="ss">:metadata_selector</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+      <span class="vi">@config</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+
+      <span class="vi">@uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="vi">@config</span><span class="o">[</span><span class="ss">:uri</span><span class="o">]</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">IOError</span><span class="p">,</span> <span class="s1">&#39;invalid uri!&#39;</span> <span class="k">if</span> <span class="vi">@uri</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span> <span class="vi">@uri</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">nil?</span>
+
+      <span class="vi">@post_selector</span> <span class="o">=</span> <span class="vi">@config</span><span class="o">[</span><span class="ss">:post_selector</span><span class="o">]</span>
+      <span class="k">raise</span> <span class="no">IOError</span><span class="p">,</span> <span class="s1">&#39;post_selector is not defined&#39;</span> <span class="k">if</span> <span class="vi">@post_selector</span><span class="o">.</span><span class="n">empty?</span>
+
+      <span class="vi">@metadata_selector</span> <span class="o">=</span> <span class="vi">@config</span><span class="o">[</span><span class="ss">:metadata_selector</span><span class="o">]</span>
+      <span class="k">raise</span> <span class="no">IOError</span><span class="p">,</span> <span class="s1">&#39;metadata_selector is not defined&#39;</span> <span class="k">if</span> <span class="vi">@metadata_selector</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Seems like now might be a good time to pause for a bit. When I look at those tests I see a lot of places where I&#8217;m testing Classes that have probably already been tested. I feel like you can safely assume that if you pass <code>YAML.load</code> a bunch of junk it&#8217;s going to throw an error. Is there any value in testing something like that for my own implementation? I&#8217;m guessing not. However I do think it&#8217;s important that I test the 3 exceptions that I wrote. I&#8217;ll get all the tests to pass and then I&#8217;ll go back and clean it up.</p>
+
+<h3>Making the Tests Pass</h3>
+
+<p>I like to comment out my spec file and go line by line making each test pass as I go. I&#8217;m pretty good at writing failing tests (heh) so this approach adheres well to the red, green, refactor mantra.</p>
+
+<p>Starting out I have a problem in the first block which checks my <code>attr_readers</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:uri</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:post_selector</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:metadata_selector</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></figure>
+
+
+<p>Let&#8217;s see if I can get just the first test to pass&#8230; I comment out everything inside of Options and notice that YAML does not use symbols for keys. It seems like loaded YAML uses Strings for keys. After changing my symbol keys to strings my first block of tests pass.</p>
+
+<figure class='code'><figcaption><span>tentacles/lib/tentacles/options.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Options</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:uri</span>
+    <span class="kp">attr_reader</span> <span class="ss">:post_selector</span>
+    <span class="kp">attr_reader</span> <span class="ss">:metadata_selector</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+      <span class="vi">@config</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+
+      <span class="vi">@uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="vi">@config</span><span class="o">[</span><span class="s2">&quot;uri&quot;</span><span class="o">]</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">IOError</span><span class="p">,</span> <span class="s1">&#39;invalid uri!&#39;</span> <span class="k">if</span> <span class="vi">@uri</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span> <span class="vi">@uri</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">nil?</span>
+
+      <span class="vi">@post_selector</span> <span class="o">=</span> <span class="vi">@config</span><span class="o">[</span><span class="s2">&quot;post_selector&quot;</span><span class="o">]</span>
+      <span class="k">raise</span> <span class="no">IOError</span><span class="p">,</span> <span class="s1">&#39;post_selector is not defined&#39;</span> <span class="k">if</span> <span class="vi">@post_selector</span><span class="o">.</span><span class="n">empty?</span>
+
+      <span class="vi">@metadata_selector</span> <span class="o">=</span> <span class="vi">@config</span><span class="o">[</span><span class="s2">&quot;metadata_selector&quot;</span><span class="o">]</span>
+      <span class="k">raise</span> <span class="no">IOError</span><span class="p">,</span> <span class="s1">&#39;metadata_selector is not defined&#39;</span> <span class="k">if</span> <span class="vi">@metadata_selector</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>The next block passes quite easily because it&#8217;s ported over from the <code>Runner</code> class</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">describe</span> <span class="s2">&quot;when parsing the config file&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the config file is missing&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Errno</span><span class="o">::</span><span class="no">ENOENT</span><span class="p">)</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">TypeError</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the config file is invalid&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/invalid_yaml.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></figure>
+
+
+<p>After that we run into some issues because our next set of tested exceptions have the wrong class.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>  <span class="n">describe</span> <span class="s2">&quot;when parsing the URI&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should display the right URI&quot;</span> <span class="k">do</span>
+      <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;http://robdodson.me&#39;</span><span class="p">)</span>
+      <span class="vi">@options</span><span class="o">.</span><span class="n">uri</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if uri is empty&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/blank_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if uri is invalid&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/invalid_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Changing the last two exceptions to expect <code>Errno::ENOENT</code> and <code>URI::InvalidURIError</code> in that order fixes things and we&#8217;re all green again.</p>
+
+<p>In the next block we have 2 failing tests because the first one is using improper syntax. Instead of <code>be</code> we should be using <code>eq</code>. Seems like in RSpec <code>be</code> is equivalent to === and not ==. Also we have another PSYCH::SyntaxError that needs to be replaced with <code>Errno::ENOENT</code>. Here&#8217;s what we end up with after making those changes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">describe</span> <span class="s2">&quot;when parsing the post selector&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should have a post_selector&quot;</span> <span class="k">do</span>
+      <span class="vi">@options</span><span class="o">.</span><span class="n">post_selector</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span><span class="p">(</span><span class="s1">&#39;.entry-content&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an exception if the post selector is empty&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">options</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/blank_uri.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Errno</span><span class="o">::</span><span class="no">ENOENT</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></figure>
+
+
+<p>Ugh, hate to cut it short but looks like I&#8217;m going down a rabbit hole with validation. I&#8217;ll pickup tomorrow to see if we can iron a lot of this out.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Calm, Hot, Tired</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 6.5</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Object Oriented Scraper Backed With Tests pt. 2&amp;url=http://robdodson.github.com/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Object Oriented Scraper Backed with Tests | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">06 May 2012</span>
+	<h1 class="post-title">Object Oriented Scraper Backed With Tests</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><em>I just drank a ton of coffee and I&#8217;m blasting music in my headphones so this post my bit a bit more scatter-shot than most since I can&#8217;t really focus :]</em></p>
+
+<p>Yesterday I managed to build a pretty naive scraper using Nokogiri which would count how often each word was used in the first 10 posts of this blog. Basically scraping the home URL of the site and grabbing everything inside of the <code>div.entry-content</code> selector.</p>
+
+<p>Today I want to convert it into a more OO library so it&#8217;s a bit more modular and reusable. I also want to back everything with RSpec tests to get into the practice. While it won&#8217;t be true TDD I&#8217;ll try to write the tests for the library before putting the classes together.</p>
+
+<!--more-->
+
+
+<h3>Design Decisions</h3>
+
+<p>I&#8217;m calling the project <code>Tentacles</code> for now since it relates to my Octopress blog. I&#8217;m still trying to figure out exactly what the end product will be. So far I know that I want it to produce a page of statistics about my blog. I figure that for now it can be just one page with stats that cover the entire blog. In the future I might want to make it more granular so that each post can get special attention. For now it&#8217;s easiest for me if I just think of the whole blog as a big data set and this page as the output.</p>
+
+<p>I also know that since Octopress is heavily integrated with Rake that I&#8217;d probably like to trigger the process as part of a Rake task. IMO the logical place would be to amend Octopress&#8217; <code>rake generate</code> so that it not only builds our static pages but it also produces our statistics. Down the line I might want to change this but for now it seems OK to me.</p>
+
+<p>Finally I figure I&#8217;ll want to have some kind of configuration file so the parser knows what to look for.</p>
+
+<p>For now I&#8217;m fine with the output being a plain text file with a few stats on it. We&#8217;ll work on making the output more robust after we&#8217;ve figure out the basics of our module and integrated it with Rake.</p>
+
+<p>Here&#8217;s the folder structure I&#8217;m using:</p>
+
+<ul>
+<li>tentacles
+
+<ul>
+<li>bin      <em>&lt;&#8212; contains our executable program</em>
+
+<ul>
+<li>tentacles</li>
+</ul>
+</li>
+<li>lib      <em>&lt;&#8212; contains our library of classes</em>
+
+<ul>
+<li>crawler.rb</li>
+<li>config.yml</li>
+<li>runner.rb</li>
+</ul>
+</li>
+<li>spec      <em>&lt;&#8212; contains our RSpec tests</em>
+
+<ul>
+<li>crawler_spec.rb</li>
+<li>runner_spec.rb</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Playing with IRB</h3>
+
+<p>One of the first issues I&#8217;ve run up against is figuring out how to play with my classes in IRB. Being new to Ruby I tend to build everything in one folder. Since this is my first time embarking on some actual modular structure I&#8217;m unsure how to require or include a module in IRB. What I&#8217;ve settled on for now is to <code>cd</code> into my lib folder and use the <code>-I</code> flag to set the <code>$LOAD_PATH</code>.</p>
+
+<p>Here&#8217;s the <code>grep</code> from the irb man page.</p>
+
+<figure class='code'><pre><code>-I path        Same as `ruby -I' .  Specifies $LOAD_PATH directory</code></pre></figure>
+
+
+<p>So we end up in <code>tentacles/lib</code> and call IRB like so:</p>
+
+<figure class='code'><pre><code>irb -I .</code></pre></figure>
+
+
+<p>And now we can require our classes</p>
+
+<figure class='code'><pre><code>irb -I .
+1.9.3-p125 :001 &gt; require 'runner'
+ =&gt; true # sweeet</code></pre></figure>
+
+
+<p></p>
+
+<h3>Skeletons</h3>
+
+<p>I&#8217;m going to create a basic <code>Runner</code> class so we can verify that the stuff in IRB is working properly.</p>
+
+<p>Here&#8217;s what I&#8217;ve thrown together:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Runner</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+      <span class="c1"># Load in our config file</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">run</span>
+      <span class="nb">puts</span> <span class="s1">&#39;run run run!&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>and here&#8217;s how we test it in IRB.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">irb</span> <span class="o">-</span><span class="n">I</span> <span class="o">.</span>
+<span class="nb">require</span> <span class="s1">&#39;runner&#39;</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+ <span class="o">=&gt;</span> <span class="c1">#&lt;Tentacles::Runner:0x007faeb284ec30&gt; </span>
+
+<span class="n">runner</span><span class="o">.</span><span class="n">run</span>
+<span class="n">run</span> <span class="n">run</span> <span class="n">run!</span>
+ <span class="o">=&gt;</span> <span class="kp">nil</span>
+</code></pre></figure>
+
+
+<p>Looks good so far!</p>
+
+<h3>Tests</h3>
+
+<p>OK on to the tests then. I&#8217;m going to be using RSpec so if you don&#8217;t have that setup already you should do a <code>gem install rspec</code>.</p>
+
+<p>I&#8217;m a total noob when it comes to testing so let me take my best stab at this&#8230;</p>
+
+<p>I&#8217;m going to write tests for <code>Runner</code> first since it&#8217;s already stubbed out. I want to make sure of the following things:</p>
+
+<ul>
+<li>It should respond to the <code>run</code> method</li>
+<li>When I pass it an invalid config file it should throw an error</li>
+<li>When I pass it an empty string or nil in place of config it should throw an error</li>
+</ul>
+
+
+<p>For now that&#8217;s the only public API this object has. Pretty simple but of course I&#8217;m immediately running into issues. Here&#8217;s what my spec looks like:</p>
+
+<figure class='code'><figcaption><span>tentacles/spec/runner_spec.rb</span></figcaption><pre><code><span class="n">require_relative</span> <span class="s1">&#39;../lib/tentacles/runner&#39;</span>
+
+<span class="n">describe</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span> <span class="k">do</span>
+
+  <span class="n">before</span> <span class="k">do</span>
+    <span class="vi">@runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">subject</span> <span class="p">{</span> <span class="vi">@runner</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:run</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;when passing the config file&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should raise an error if the config file is missing&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Errno</span><span class="o">::</span><span class="no">ENOENT</span><span class="p">)</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">TypeError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>and here&#8217;s what runner.rb looks like:</p>
+
+<figure class='code'><figcaption><span>tentacles/lib/tentacles/runner.rb</span></figcaption><pre><code><span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+
+<span class="k">module</span> <span class="nn">Tentacles</span>
+  <span class="k">class</span> <span class="nc">Runner</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+      <span class="vi">@config</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">run</span>
+      <span class="s1">&#39;Runner should be running&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>aaaaaand here&#8217;s the error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code>1<span class="o">)</span> Tentacles::Runner
+     Failure/Error: @runner <span class="o">=</span> Tentacles::Runner.new<span class="o">(</span><span class="s1">&#39;config.yml&#39;</span><span class="o">)</span>
+     Errno::ENOENT:
+       No such file or directory - config.yml
+     <span class="c"># ./lib/tentacles/runner.rb:10:in `initialize&#39;</span>
+     <span class="c"># ./lib/tentacles/runner.rb:10:in `open&#39;</span>
+     <span class="c"># ./lib/tentacles/runner.rb:10:in `initialize&#39;</span>
+     <span class="c"># ./spec/runner_spec.rb:8:in `new&#39;</span>
+     <span class="c"># ./spec/runner_spec.rb:8:in `block (2 levels) in &lt;top (required)&gt;&#39;</span>
+</code></pre></figure>
+
+
+<p>It looks like the test is bailing out on my <code>before</code> block when I try to create an instance of runner and pass it the config file. Folks on IRC are kind enough to point out that <code>require</code> and methods run in RSpec don&#8217;t necessarily have the same scope so trying <code>../lib/tentacles/config.yml</code> won&#8217;t work either. The solution is to use <code>File.dirname(__FILE__) + '/../lib/tentacles/config.yml'</code>. Since I don&#8217;t want my line lengths to get any longer I define a helper module and give it a <code>relative_path</code> method which should spit out <code>File.dirname(__FILE__)</code>.</p>
+
+<figure class='code'><figcaption><span>tentacles/spec/helpers.rb</span></figcaption><pre><code><span class="k">module</span> <span class="nn">Helpers</span>
+  <span class="k">def</span> <span class="nf">relative_path</span>
+    <span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>After I include it my tests look like this:</p>
+
+<figure class='code'><figcaption><span>tentacles/spec/runner_spec.rb</span></figcaption><pre><code><span class="n">require_relative</span> <span class="s1">&#39;../lib/tentacles/runner&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;helpers&#39;</span>
+
+<span class="n">describe</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span> <span class="k">do</span>
+  <span class="kp">include</span> <span class="no">Helpers</span>
+
+  <span class="n">before</span> <span class="k">do</span>
+    <span class="vi">@runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/../lib/tentacles/config.yml&#39;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">subject</span> <span class="p">{</span> <span class="vi">@runner</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:run</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;when passing the config file&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should raise an error if the config file is missing&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Errno</span><span class="o">::</span><span class="no">ENOENT</span><span class="p">)</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">TypeError</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an error if the config file is invalid&quot;</span> <span class="k">do</span>
+      <span class="n">expect</span> <span class="p">{</span> <span class="n">runner</span> <span class="o">=</span> <span class="no">Tentacles</span><span class="o">::</span><span class="no">Runner</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">relative_path</span> <span class="o">+</span> <span class="s1">&#39;/mocks/invalid_yaml.yml&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Psych</span><span class="o">::</span><span class="no">SyntaxError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>You&#8217;ll also notice I added a test for an invalid yml file. Basically I created a mocks folder and tossed in a yaml file that&#8217;s full of gibberish. Probably not the best way to mock stuff but whatever, i&#8217;m learning!</p>
+
+<p>With that all of our tests for <code>Tentacles::Runner</code> are passing. Yay! But now it&#8217;s 10:37pm and I gotta call it a night. We&#8217;ll continue tomorrow by writing tests for <code>Tentacles::Crawler</code>. See ya!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Wired, Lazy</li>
+    <li>Sleep: 7.5</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 2</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Object Oriented Scraper Backed with Tests&amp;url=http://robdodson.github.com/blog/2012/05/06/object-oriented-scraper-backed-with-tests/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/06/object-oriented-scraper-backed-with-tests/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/06/object-oriented-scraper-backed-with-tests/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/06/object-oriented-scraper-backed-with-tests/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/06/object-oriented-scraper-backed-with-tests/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

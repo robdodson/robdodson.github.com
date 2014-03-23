@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Webkit | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/webkit/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Chrome/Blink devs discuss setImmediate]]></title>
+    <link href="http://robdodson.github.com/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate/"/>
+    <updated>2013-07-29T09:05:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/07/29/chrome-slash-blink-devs-discuss-setimmediate</id>
+    <content type="html"><![CDATA[<p>Really interesting discussion of the pros and cons of the <code>setImmediate</code> function. For a little backstory checkout <a href="http://www.nczonline.net/blog/2013/07/09/the-case-for-setimmediate/">this post</a> by <a href="http://www.nczonline.net/blog/">Nicholas Zakas</a> (<a href="http://twitter.com/slicknet">@slicknet</a>)</p>
+
+<p>Here's a nice tidbit from one of the Chrome devs:</p>
+
+<p><blockquote><p>To perform work immediately before the next display - for example to batch up graphical updates as data is streamed in off the network - just make a one-off <code>requestAnimationFrame()</code> call.  To perform work immediately -after- a display, just call <code>setTimeout()</code> from inside the <code>requestAnimationFrame()</code> handler.</p></blockquote></p>
+
+<p><a href="https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/Hn3GxRLXmR0">The full thread is available here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,231 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>How to setup PostgreSQL for Rails and Heroku | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">27 Apr 2012</span>
+	<h1 class="post-title">How to Setup PostgreSQL for Rails and Heroku</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<h3>Install PostgreSQL Locally</h3>
+
+<p>Ryan Bates has already put together a wonderful Railscast on this topic so feel free to <a href="http://railscasts.com/episodes/342-migrating-to-postgresql">jump over there</a> to view it. My main goal in writing this post was to distill down what he said, point out a small gotcha along the way and offer some additional tools.</p>
+
+<!--more-->
+
+
+<p>There are a few different options for installing PostgreSQL. The first one, which Ryan outlines, is to use <a href="http://mxcl.github.com/homebrew/">Homebrew</a> and simply do a <code>brew install postgresql</code>. Some folks might not be comfortable with that process so I wanted to also recommend the new <a href="http://postgresapp.com/">PostgreSQL.app</a> from the team at <a href="http://www.heroku.com/">Heroku</a>. If you&#8217;re more used to tools like <a href="http://www.mamp.info/en/index.html">MAMP</a> then the PostgreSQL.app might be a bit more your style.</p>
+
+<p>If you go the Homebrew route make sure you type in <code>initdb /usr/local/var/postgres</code> after the install finishes to init your first database. The installer will also mention some commands you can use to have PostgreSQL auto-start whenever you turn on your computer. I wasn&#8217;t a big fan of this approach so instead I created two aliases in my .bash_profile.</p>
+
+<figure class='code'><pre><code>alias pg-start='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
+alias pg-stop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'</code></pre></figure>
+
+
+<p>With these I can just type <code>pg-start</code> to fire up Postgres and <code>pg-stop</code> when I want to shut it down.</p>
+
+<h3>Change Rails Database to PostgreSQL</h3>
+
+<p>The next thing you&#8217;ll want to do is either convert an existing project to PostgreSQL or create a new rails project and set PostgreSQL as the database.</p>
+
+<p>Creating a new rails project for Postgres is as easy as <code>rails new blog -d postgresql</code>. After running this command you&#8217;ll also need to call <code>rake db:create:all</code> to create a new database.</p>
+
+<p>To convert an existing project you&#8217;ll want to update your Gemfile to include the <code>pg</code> gem. A basic Gemfile might look something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+
+<span class="n">gem</span> <span class="s1">&#39;rails&#39;</span><span class="p">,</span> <span class="s1">&#39;3.2.3&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;pg&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt;0.13.2&#39;</span>
+
+<span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;sass-rails&#39;</span><span class="p">,</span>   <span class="s1">&#39;~&gt; 3.2.3&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;coffee-rails&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 3.2.1&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;= 1.0.3&#39;</span>
+<span class="k">end</span>
+
+<span class="n">gem</span> <span class="s1">&#39;jquery-rails&#39;</span>
+</code></pre></figure>
+
+
+<p>You&#8217;ll also need to update your config/database.yml to look for Postgres instead of SQLite or MySQL.</p>
+
+<figure class='code'><figcaption><span>config/database.yml</span></figcaption><pre><code><span class="l-Scalar-Plain">development</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">adapter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">postgresql</span>
+  <span class="l-Scalar-Plain">encoding</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">unicode</span>
+  <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">insert your dev database name</span><span class="p-Indicator">]</span>
+  <span class="l-Scalar-Plain">pool</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+  <span class="l-Scalar-Plain">username</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">insert your user name</span><span class="p-Indicator">]</span>
+  <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span>
+
+<span class="l-Scalar-Plain">test</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">adapter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">postgresql</span>
+  <span class="l-Scalar-Plain">encoding</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">unicode</span>
+  <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">insert your test database name</span><span class="p-Indicator">]</span>
+  <span class="l-Scalar-Plain">pool</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+  <span class="l-Scalar-Plain">username</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">insert your user name</span><span class="p-Indicator">]</span>
+  <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span>
+</code></pre></figure>
+
+
+<p>Since we haven&#8217;t created any Postgres user accounts both Homebrew and PostgreSQL.app will simply use our current username as the login. The password can remain blank. After this is done you&#8217;ll also need to call <code>rake db:create:all</code> to create the new database.</p>
+
+<h3>Connect a Rails Project to a PostgreSQL Database on Heroku</h3>
+
+<p>If your project isn&#8217;t already under version control then now would be a good time to set that up.</p>
+
+<figure class='code'><figcaption><span>config/database.yml</span></figcaption><pre><code><span class="l-Scalar-Plain">git init</span>
+<span class="l-Scalar-Plain">git add .</span>
+<span class="l-Scalar-Plain">git commit -m &#39;Initial commit!&#39;</span>
+</code></pre></figure>
+
+
+<p>Next we&#8217;ll create a free Heroku instance</p>
+
+<figure class='code'><figcaption><span>config/database.yml</span></figcaption><pre><code><span class="l-Scalar-Plain">heroku create --stack cedar</span>
+</code></pre></figure>
+
+
+<p>After that&#8217;s done we&#8217;ll simply push our project up there.</p>
+
+<figure class='code'><figcaption><span>config/database.yml</span></figcaption><pre><code><span class="l-Scalar-Plain">git push heroku master</span>
+</code></pre></figure>
+
+
+<p>You might see some deprecation warnings about vendor plugins. For now you can (probably) safely ignore those.</p>
+
+<p>Here&#8217;s one little gotcha that I seemed to run into. If you try to access your site on Heroku using the <code>heroku open</code> command you might get an error page. You have to make sure to also call <code>heroku run rake db:create:all</code> otherwise your production database will not be in place and your app will fail to connect to it. Speaking of production databases, you should also note that Heroku will overwrite whatever you put into your config/database.yml so you don&#8217;t have to worry about figuring out all the connection details for their shared services&#8230;it&#8217;ll all just work. Sweet!</p>
+
+<h3>PostgreSQL GUI</h3>
+
+<p>One last tip re: your new Postgres setup. If you&#8217;re just starting out like me then your command line fu is probably not as strong as you&#8217;d like it to be. Personally I really like having a nice GUI to visualize the tables in my database. For MySQL I usually use the awesome (and free) <a href="http://www.sequelpro.com/">SequelPro</a>. For PostgreSQL you can use <a href="http://inductionapp.com/">Induction</a>. It doesn&#8217;t seem like they have a downloadable binary on their website (weird?) but you can grab one out of <a href="https://github.com/Induction/Induction/downloads">the Github repo&#8217;s downloads page</a>. Connecting to your Postgres instance can be a little tricky, you have to make sure to use the PostgreSQL adapter, localhost as the hostname, your computer&#8217;s username as the user and the password can remain blank. You also <em>HAVE</em> to give it a database name (even though it says it&#8217;s optional) or it will throw a <code>FATAL:  database [your username] does not exist</code>. Here&#8217;s a screenshot of what mine looks like:</p>
+
+<p><img class="center" src="/images/induction_screen.png" title="'Induction Login Screen'" ></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=How to setup PostgreSQL for Rails and Heroku&amp;url=http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/04/27/how-to-setup-postgresql-for-rails-and-heroku/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

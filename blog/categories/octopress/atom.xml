@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Octopress | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Some Octopress Rake Tips]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/11/some-octopress-rake-tips/"/>
+    <updated>2012-06-11T19:04:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/11/some-octopress-rake-tips</id>
+    <content type="html"><![CDATA[<p>This is a quick post just to scratch one of my own itches. I've been using Octopress every single day for around two months now and the generation time for my blog is slowly starting to creep up. I'd heard that you could isolate a post and just preview/generate it instead of doing the whole blog every time but it wasn't until today that I finally decided to look into it.</p>
+
+<!--more-->
+
+
+<p>Turns out it's really simple. Let's say we are going through our usual steps of creating a new post:</p>
+
+<p><code>rake new_post["Today is a Wonderful Day"]</code></p>
+
+<p>Now that we have our post ready we can isolate it from all the others:</p>
+
+<p><code>rake isolate[wonderful-day]</code></p>
+
+<p>Notice I didn't pass in the entire filename? That's because the Rake task inspects each of our posts and stashes anything that doesn't include the String 'wonderful-day' in the filename.</p>
+
+<p>``` ruby
+Dir.glob("#{source_dir}/#{posts_dir}/<em>.</em>") do |post|</p>
+
+<pre><code>FileUtils.mv post, stash_dir unless post.include?(args.filename)
+</code></pre>
+
+<p>end
+```</p>
+
+<p>Now that our post is isolated we can preview it, like we always do:</p>
+
+<p><code>rake preview</code></p>
+
+<p>Write a little bit, save, and hit <code>localhost:4000</code> to see your super speedy blog post!</p>
+
+<p>When we're all done we integrate the post back in with the rest of our blog.</p>
+
+<p><code>rake integrate</code></p>
+
+<p>And finally we generate and deploy it, which can be done in a single command:</p>
+
+<p><code>rake gen_deploy</code></p>
+
+<p>There are a few other useful rake tasks, you can see the whole list by running:</p>
+
+<p><code>rake -T</code></p>
+
+<p><code>
+rake clean                     # Clean out caches: .pygments-cache, .gist-cache, .sass-cache
+rake copydot[source,dest]      # copy dot files for deployment
+rake deploy                    # Default deploy task
+rake gen_deploy                # Generate website and deploy
+rake generate                  # Generate jekyll site
+rake install[theme]            # Initial setup for Octopress: copies the default theme into the path of Jekyll's generator.
+rake integrate                 # Move all stashed posts back into the posts directory, ready for site generation.
+rake isolate[filename]         # Move all other posts than the one currently being worked on to a temporary stash location (stas...
+rake list                      # list tasks
+rake new_page[filename]        # Create a new page in source/(filename)/index.markdown
+rake new_post[title]           # Begin a new post in source/_posts
+rake preview                   # preview the site in a web browser
+rake push                      # deploy public directory to github pages
+rake rsync                     # Deploy website via rsync
+rake set_root_dir[dir]         # Update configurations to support publishing to root or sub directory
+rake setup_github_pages[repo]  # Set up _deploy folder and deploy branch for Github Pages deployment
+rake update_source[theme]      # Move source to source.old, install source theme updates, replace source/_includes/navigation.ht...
+rake update_style[theme]       # Move sass to sass.old, install sass theme updates, replace sass/custom with sass.old/custom
+rake watch                     # Watch the site and regenerate when it changes
+</code></p>
+
+<p>I'm looking forward to trying out Octopress 2.1 as it includes <a href="https://github.com/imathis/octopress/pull/207">a more streamlined generate task</a> as well as some other nifty features. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Caffeinated</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[D3.js and Octopress]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress/"/>
+    <updated>2012-05-02T07:20:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/02/d3-js-and-octopress</id>
+    <content type="html"><![CDATA[<!-- CSS Styles: -->
+
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+</div>
+
+
+
+
+<!-- Global Variables and Handlers: -->
+
+
+<script type="text/javascript">
+
+  var data = [1, 1, 2, 3, 5, 8];
+
+  var margin = {top: 40, right: 40, bottom: 40, left: 40},
+      width = $('.entry-content').width(),
+      height = 300;
+
+  $(window).resize(function() {
+    width = $('.entry-content').width();
+  });
+
+</script>
+
+
+<p>This morning I was hoping to cover some of the basics of using D3.js. Along the way I realized I really wanted people to be able to see the graphs on the blog itself. I <em>could</em> have used JSFiddle, but I didn't like all that chrome repeated across the page. So I came up with my own solution with a little bit of hacking :)</p>
+
+<!--more-->
+
+
+<p>I'll have to save the basics for tomorrow since I've already spent way too much time just getting this setup. But I will offer a brief explanation of D3 and how I got it working on Octopress.</p>
+
+<h3>What is D3.js?</h3>
+
+<p>D3 (formerly Protovis) is a library written by <a href="http://bost.ocks.org/mike/">Mike Bostock</a> (<a href="https://twitter.com/#!/mbostock">@mbostock</a>) which allows you to easily manipulate a DOM using data sets. While the implications of that statement are somewhat vague, D3 is generally used for doing data visualizations primarily in SVG. D3 can also work with regular DOM nodes however SVG is often the best tool to use if you're trying to draw a graph of some kind.</p>
+
+<p>As a quick demo, here's a bar chart which visualizes an <code>Array</code> of Fibonacci numbers: <code>[1, 1, 2, 3, 5, 8]</code></p>
+
+<!-- D3.js Chart -->
+
+
+<div id='chart-1'></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  function draw() {
+    
+    $('#chart-1').empty();
+
+    var x = d3.scale.linear()
+        .domain([0, d3.max(data)])
+        .range([0, width - margin.left - margin.right]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(data.length))
+        .rangeRoundBands([height - margin.top - margin.bottom, 0], 0.2);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickPadding(8);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .tickPadding(8)
+        .tickSize(0);
+
+    var svg = d3.select('#chart-1').append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'chart')
+      .append('g')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+    svg.selectAll('.chart')
+        .data(data)
+      .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('y', function(d, i) { return y(i) })
+        .attr('width', x)
+        .attr('height', y.rangeBand());
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + y.rangeExtent()[1] + ')')
+        .call(xAxis);
+
+    svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+      .selectAll('text')
+        .text(function(d) { return String.fromCharCode(d + 65); });
+    
+  }
+
+  draw();
+
+  $(window).resize(function() {
+    draw();
+  });
+
+})();
+</script>
+
+
+<p>Break open your developer tools and inspect the graph above. You'll notice that it's just SVG elements. For many the 2 best aspects of D3 are 1) That it works with regular SVG elements and 2) That it doesn't wrap that functionality in arbitrary objects which require a lot of configuration. This second aspect is where many graphing libraries fall short. As Justin Palmer (<a href="https://twitter.com/#!/caged">@Caged</a>) <a href="http://dealloc.me/2011/06/24/d3-is-not-a-graphing-library.html">points out on his blog</a>:</p>
+
+<blockquote><p>As long as you stay within the confines of the template, it’s simple, but, anytime you want customize a specific aspect of the original template, more configuration options are added to the library. You should avoid “design by configuration.”</p></blockquote>
+
+<p>D3 handles this by dumping the idea of templated visuals. There is no <code>makeBarGraph()</code> function in D3; instead you work directly with your data and the SVG elements. Essentially what you see is what you get, which can make the initial learning curve pretty steep. But because it's so non-prescriptive you can build just about anything with it.</p>
+
+<h3>How do you integrate D3 and Octopress?</h3>
+
+<p>Since I want to write several more posts on D3 I figured it'd be good if I setup my own little system to help me generate most of the boilerplate. If you're lazy and want to skip to the end <a href="https://github.com/robdodson/octopress-templates">here's a link to the template.</a></p>
+
+<h4>Requiring D3</h4>
+
+<p>If you inspect the page you'll see that starting at the top of this post I'm requiring d3.js. There's a good chance I'll move that over into the site's header so it isn't required every time but if you're just doing a one off then that should be fine. Normally it's a good idea to require your javascript at the end of your page but I want to wrap all of my graphs in self-executing functions so they can seal their scope (and also because I'm lazy and want to use the same boilerplate stub code in each). As a result if you don't require d3 before the functions execute it'll throw an error.</p>
+
+<p>I chose to put a copy of d3 into my Octopress <code>source/javascripts</code> so it would get compiled with the rest of my assets and deployed. If you'd prefer you can also grab D3 from the site.</p>
+
+<p>```html</p>
+
+<script src="http://d3js.org/d3.v2.js"></script>
+
+
+<p>```</p>
+
+<h4>Adding the CSS</h4>
+
+<p>The next step is to add some CSS. Getting a <code>style</code> tag into the post ended up being trickier than I had first thought because Markdown strips out <code>style</code> tags. As a result every time I generate the site the CSS dissapears. The work around is to wrap the <code>style</code> tag in a <code>div</code> and put that at the top of the post.</p>
+
+<p>Here are the basic styles I'm using:</p>
+
+<p>```html</p>
+
+<div>
+  <style type="text/css">
+
+    .chart {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      margin-top: -40px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+  </style>
+</div>
+
+
+<p>```</p>
+
+<h4>Margins and Resizing</h4>
+
+<p>Now that we have D3 included on the page and our CSS styles are being respected it's time to setup some useful defaults in another <code>script</code> tag. Typically I'll define the dimensions of my graph area as well as any margins that I might want to use.</p>
+
+<p>If I'm going to use the same data set throughout I might put that in as well so I don't have to declare it over and over again. In our case the array of Fibonacci numbers is there.</p>
+
+<p>```html</p>
+
+<!-- Global Variables and Handlers: -->
+
+
+<script type="text/javascript">
+
+  var data = [1, 1, 2, 3, 5, 8];
+
+  var margin = {top: 40, right: 40, bottom: 40, left: 40},
+      width = $('.entry-content').width(),
+      height = 300;
+
+  $(window).resize(function() {
+    width = $('.entry-content').width();
+  });
+
+</script>
+
+
+<p>```</p>
+
+<p>The margin object can be really helpful when you're trying to move things around. For instance, to send something to the bottom of your graph you can just say <code>height - margin.top - margin.bottom</code>.</p>
+
+<p>You'll notice that rather than giving it an explicit width I'm using jQuery to find our containing element's width. I'm trying to keep in line with the responsiveness of the Octopress theme so setting the width to match our containing element prevents the graph from breaking out if the user starts off with a small window.</p>
+
+<p>I'm also including a handler for the <code>window</code> resize event. Whenever the user changes the size of their browser we'll update our global width variable and tell all of the dependent graphs to redraw themselves.</p>
+
+<h4>Our First Graph!</h4>
+
+<p>Finally I create a <code>div</code> to contain our visualization. Beneath the <code>div</code> I've included another script tag with a self-executing function. When run, the function will grab its sibling and populate it with an SVG element. Here's the code (don't freak out when you see it all, we'll go over what everything does in a later post).</p>
+
+<p>```html</p>
+
+<!-- D3.js Chart -->
+
+
+<div id='chart-1'></div>
+
+
+<script type='text/javascript'>
+(function() {
+
+  function draw() {
+    
+    $('#chart-1').empty();
+
+    var x = d3.scale.linear()
+        .domain([0, d3.max(data)])
+        .range([0, width - margin.left - margin.right]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(data.length))
+        .rangeRoundBands([height - margin.top - margin.bottom, 0], 0.2);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickPadding(8);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .tickPadding(8)
+        .tickSize(0);
+
+    var svg = d3.select('#chart-1').append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', 'chart')
+      .append('g')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+    svg.selectAll('.chart')
+        .data(data)
+      .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('y', function(d, i) { return y(i) })
+        .attr('width', x)
+        .attr('height', y.rangeBand());
+
+    svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0, ' + y.rangeExtent()[1] + ')')
+        .call(xAxis);
+
+    svg.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+      .selectAll('text')
+        .text(function(d) { return String.fromCharCode(d + 65); });
+    
+  }
+
+  draw();
+
+  $(window).resize(function() {
+    draw();
+  });
+
+})();
+</script>
+
+
+<p><code>``
+After we declare the self-executing function we include another function called</code>draw<code>. Using a separate function lets us later *redraw* the graph if the user resizes their browser. This also works on the iPhone when the user changes from portrait to landscape mode. Inside of</code>draw<code>we first make sure that the containing div is empty (otherwise we'd end up drawing graphs on top of one another). You can skip most of the D3 code—we'll cover that over the next couple of days—but take a look at the last few lines where we call</code>draw()<code>and add another handler for</code>window.resize<code>. Whenever the user changes their browser size our global</code>width` value will be updated, then our graphs will redraw themselves using this new width.</p>
+
+<p>At the moment you need to add this handler to each of your visualizations. Not terrible but not very DRY either. I think in a future iteration I'll add a queue which holds a reference to each <code>draw</code> instance and calls them in sync. For now this is the quick and dirty way to get a graph up on Octopress. <a href="https://github.com/robdodson/octopress-templates">You can download the entire post template from Github.</a> Enjoy!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Custom Domain with Octopress and Github Pages]]></title>
+    <link href="http://robdodson.github.com/blog/2012/04/30/custom-domain-with-octopress-and-github-pages/"/>
+    <updated>2012-04-30T06:52:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/04/30/custom-domain-with-octopress-and-github-pages</id>
+    <content type="html"><![CDATA[<p><em>I'm going to try to write this as a bit of a lightening post to see if I can bring down the time it takes me to produce something.</em></p>
+
+<p><a href="http://octopress.org/">Octopress</a> is a blogging framework written by <a href="http://brandonmathis.com/">Brandon Mathis</a> (<a href="https://twitter.com/#!/imathis">@imathis</a>) which sits on top of <a href="https://github.com/mojombo/jekyll">Jekyll</a>. Jekyll is a static site generator, meaning there's no database associated with your blog. Instead of writing everything in a WSYWIG linked to MySQL (like Wordpress or Blogger) you produce text files using Markdown which are then converted to static HTML. There are 3 huge benefits to this approach. First, writing in Markdown is awesome. Once you learn the syntax it's incredibly fast and you don't have to spend time playing with a tiny little editor window just to <s>add</s> <em>some</em> <strong>style</strong> to your posts. Second, writing in your favorite text editor is also awesome. I produce everything in <a href="http://www.sublimetext.com/2">Sublime Text 2</a> and every day I discover new tricks to make the process better. If you've ever had to write a blog post using one of those horrible little TinyMCE editors you will appreciate this feature. And lastly, static HTML is <em>fast</em>.</p>
+
+<!--more-->
+
+
+<p>Octopress takes what Jekyll has started and adds some useful tasks and templates which make setting up your own blog a breeze. I'm going to quickly cover the steps needed to set everything up on Github Pages using a custom domain since that's something I struggled with when first starting out.</p>
+
+<p>If you don't already have RVM installed you can <a href="http://robdodson.me/blog/2011/09/23/how-to-use-rvm-for-rails3/">refer back to my previous post on getting setup</a>. If you're unexperienced I highly recommend going the RVM route, though there's also <a href="https://github.com/sstephenson/rbenv#section_2">an explanation for setting up rbenv if you would prefer</a>. I should point out that I'm going to pretty much mirror <a href="http://octopress.org/docs/setup/">the Octopress setup guide</a> but I'll add some tips toward the end for setting up a custom domain.</p>
+
+<h3>Setup Octopress</h3>
+
+<p>You'll need at least Ruby 1.9.2 to install and run Octopress. As of right now the current version of Ruby is up to 1.9.3. I'd also recommend setting up a new RVM gemset just for your blog.</p>
+
+<p><code>
+rvm install 1.9.3   # This will take a while
+rvm gemset create octopress
+rvm 1.9.3@octopress   # This will tell RVM to use our new gemset.
+</code></p>
+
+<p>Next you'll need to clone and <code>bundle install</code> Octopress. When you <code>cd</code> into the directory it'll ask you to approve the .rvmrc file. An .rvmrc file basically tells RVM which ruby and gemset to use in a particular folder. Type <code>yes</code> and you'll probably get an error saying you're not using Ruby 1.9.2. This is ok, we're going to change what's in that file so ignore it for now.</p>
+
+<p><code>
+git clone git://github.com/imathis/octopress.git octopress
+cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+</code>
+Now let's tell RVM to use Ruby 1.9.3 with our custom Octopress gemset.
+```</p>
+
+<blockquote><p>.rvmrc    # This will empty the .rvmrc file
+echo "rvm use 1.9.3@octopress" > .rvmrc
+<code>
+The next time you `cd` into the octopress directory you'll have to approve the new .rvmrc file. Next let's use [Bundler](http://gembundler.com/) to install our dependencies.
+</code>
+gem install bundler
+bundle install
+<code>
+Finally we'll tell Octopress to setup its default theme.
+</code>
+rake install
+<code>
+If you get an error that looks like this:
+</code>
+rake aborted!
+You have already activated rake 0.9.2.2, but your Gemfile requires rake 0.9.2. Using bundle exec may solve this.
+<code>``
+then you already have a version of Rake in your global gemset. You can use</code>bundle exec rake install` which will use the version of Rake that bundler just installed in our gemset.</p></blockquote>
+
+<h3>Octopress on Github Pages</h3>
+
+<p>I prefer to host Octopress on <a href="http://github.com">Github</a> pages because it's extemely easy (and free) to setup. The first step is to go to <a href="http://github.com">Github</a> and create a new repository. The repository should be called "your_user_name.github.com". My name on Github is <a href="https://github.com/robdodson">robdodson</a> so my repo is: <a href="https://github.com/robdodson/robdodson.github.com">robdodson.github.com</a>. Here's a quick explanation from the <a href="http://octopress.org/docs/deploying/github/">Octopress deployment guide</a>.</p>
+
+<blockquote><p>Github Pages for users and organizations uses the master branch like the public directory on a web server, serving up the files at your Pages url <code>http://username.github.com</code>. As a result, you’ll want to work on the source for your blog in the source branch and commit the generated content to the master branch. Octopress has a configuration task that helps you set all this up.</p></blockquote>
+
+<p>Here's the task, let's run it:</p>
+
+<p><code>
+rake setup_github_pages
+</code>
+This will setup your git branches and remotes to work with Github Pages. Basically Octopress uses 2 branches to manage your blog. The source branch contains all of our octopress files. The master branch contains only the generated blog posts and theme. This way when Github looks at the master branch of our repository it'll see a bunch of static HTML and serve it up as our website. As a result we use the built in octopress rake tasks to commit to master instead of pushing to it manually. Let's set that up now.</p>
+
+<p><code>
+rake generate
+rake deploy
+</code>
+This will generate your blog, copy the generated files into _deploy/, add them to git, commit and push them up to the master branch. We still need to manually commit to our source branch though so lets do that next.
+<code>
+git add .
+git commit -am 'Initial commit!'
+git push origin source
+</code></p>
+
+<h3>Octopress: Deploying a Blog Post</h3>
+
+<p>I won't go into too much detail here since <a href="http://octopress.org/docs/blogging/">there's already a pretty comprehensive write up on the Octopress site for getting started</a>. But let's do a quick post to get you familiar with everything.</p>
+
+<p>You'll use Rake tasks to generate your blog posts, like so:
+<code>
+rake new_post["Hello World: The First of Many New Blog Posts"]
+</code>
+<em>Remember if rake cries just use <code>bundle exec</code> in front of your rake command.</em></p>
+
+<p>This will spit out a markdown file for us in the <code>source/_posts</code> directory. Open up the new file using your favorite text editor. You should see a little block of <a href="https://github.com/mojombo/jekyll/wiki/yaml-front-matter">YAML Front Matter</a> at the top which generates some useful metadata about our post. If you need to change a blog post's title in Octopress you'll have to update this YAML as well as the post's filename.</p>
+
+<p>As I mentioned earlier your posts should be written in Markdown. <a href="http://support.mashery.com/docs/customizing_your_portal/Markdown_Cheat_Sheet">Here's a good Markdown cheat sheet to get you started</a>. <em>Tip: When you're writing in markdown you're also free to mix in HTML tags as they are ignored by the processor.</em> Write a quick block of text like "Hey, here's my first blog post!" and save it.</p>
+
+<p>You can use <code>bundle exec rake preview</code> to fire up a local instance of your blog at <code>http://localhost:4000</code>. I usually leave this process running while I write so I can preview any of the markdown that I'm adding to the page. When you're done writing you'll need to generate and deploy the site to Github.</p>
+
+<p><code>
+bundle exec rake generate
+bundle exec rake deploy
+</code>
+And don't forget to commit your changes to source.
+<code>
+git add .
+git commit -am 'Add my first blog post'
+git push origin source
+</code>
+Now that we're all deployed you should be able to see your blog at "your_user_name.github.com".</p>
+
+<h3>Setting up your Custom Domain with Octopress and Github</h3>
+
+<p>If you're cool using the Github subdomain then feel free to stick with it. However if you'd like to point a custom domain at your blog then here's how to go about it.</p>
+
+<p>Create a new file in the <code>source</code> folder named <code>CNAME</code>. Add your domain name to this file. In my case the only contents of my CNAME are <code>robdodson.me</code>. If you're trying to use nested domains or subdomains you may need to <a href="http://octopress.org/docs/deploying/github/">refer back to the Octopress documentation</a>.</p>
+
+<p>Now lets go through the familiar steps for deploying...</p>
+
+<p>```
+bundle exec rake generate
+bundle exec rake deploy</p>
+
+<p>git add .
+git commit -am 'Create a CNAME record for my custom domain'
+git push origin source
+```
+If you visit your repo you should see the CNAME record in the root of the master branch now (Octopress has copied it over for us as part of the generate task).</p>
+
+<p>Next you'll need to update the DNS for your domain. Head over to your domain registrar and fire up their DNS manager. For a top level domain like <code>robdodson.me</code> we need to create an A record which points to the address for Github Pages: <code>204.232.175.78</code>. Save that change and now...we wait... Unfortunately, DNS can take several hours to update. If all goes according to plan then in a few hours "your_name.github.com" should resolve to "your_custom_domain.com".</p>
+
+<p>A few quick gotchas...</p>
+
+<p>If you're using Dreamhost then you may need to set the hosting preferences for the domain to DNS only. <a href="https://github.com/imathis/octopress/issues/518">See this thread for more explanation.</a></p>
+
+<p>If adding <code>www</code> to the beginning of your domain seems to break things then make sure that your domain registrar has a CNAME record for www which points to your A record. I'm not a DNS expert but I <em>think</em> this is the proper way to set that up.</p>
+
+<p>Make sure you spelled your domain name correctly in the CNAME record that you pushed to Github. I spent almost an hour wondering why <code>robodson.me</code> wasn't resolving :\</p>
+
+<p>If all else fails checkout the docs from <a href="http://help.github.com/pages/">Github Pages</a> and <a href="http://octopress.org/docs/deploying/github/">Octopress</a> on setting up a custom domain.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

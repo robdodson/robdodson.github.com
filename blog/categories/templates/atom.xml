@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Templates | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/templates/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
+    <link href="http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
+    <updated>2013-10-02T08:05:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
+    <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
+
+<p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+
+<!-- more -->
+
+
+<h2>Github</h2>
+
+<p><a href="https://github.com/robdodson/mark-down">If you'd like to follow along you can grab the code from Github.</a></p>
+
+<h2>The Setup</h2>
+
+<p>First things first, we need to download the latest version of Polymer. I like to do this with <a href="http://bower.io">bower</a> and I would encourage you to do so as well. Although it hasn't been discussed much, I think bower is going to be as important to web components as npm and the node_modules folder is to Node.js. When developers can assume the location and version of a dependency then they're able to remove extra work from the consumer's plate. But that's a discussion for another day! For now let's just run</p>
+
+<p><code>
+bower init
+</code></p>
+
+<p>to create our <code>bower.json</code> file.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/bower-init.jpg" title="'bower init is kinda awesome'" ></p>
+
+<p>And we'll want to install our Polymer and Markdown dependencies so</p>
+
+<p><code>
+bower install polymer markdown --save
+</code></p>
+
+<p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
+
+<p>``` html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Markdown Polymer Element&lt;/title&gt;
+
+&lt;!-- Include our Markdown lib --&gt;
+&lt;script src="./lib/markdown.js"&gt;&lt;/script&gt;
+
+&lt;!-- Include Polymer awesomesauce --&gt;
+&lt;script src="./lib/polymer.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Import our polymer elements --&gt;
+&lt;link rel="import" href="./elements/mark-down.html"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;!-- Test our awesome new tag --&gt;
+&lt;mark-down&gt;&lt;/mark-down&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<h2>The Element</h2>
+
+<p>We'll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
+
+<p>``` html
+<polymer-element name="mark-down">
+  <template></p>
+
+<pre><code>&lt;div id="markdown"&gt;&lt;/div&gt;
+</code></pre>
+
+<p>  </template>
+  <script></p>
+
+<pre><code>Polymer("mark-down");
+</code></pre>
+
+<p>  </script>
+</polymer-element>
+```</p>
+
+<p>Let's walk through this a bit.</p>
+
+<p><code>html
+&lt;polymer-element name="mark-down"&gt;
+</code>
+This line tells Polymer that we'd like to define a new element and its tag name should be <code>mark-down</code>.</p>
+
+<p><code>html
+&lt;template&gt;
+  &lt;div id="markdown"&gt;&lt;/div&gt;
+&lt;/template&gt;
+</code>
+This is our template which Polymer will convert to <a href="/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
+
+<p>``` html</p>
+
+<script>
+  Polymer("mark-down");
+</script>
+
+
+<p>```
+Finally, we call the Polymer constructor and pass it the name of our element. This makes our new tag available so we can start using it in the document. But first we'll need to parse our Markdown into HTML!</p>
+
+<h2>Markdown</h2>
+
+<p>All custom elements have a <code>createdCallback</code> which can be used as a kind of constructor function. Polymer shortens this method name to <code>created</code> but it's essentially the same thing. We'll use the <code>created</code> callback to grab the <code>innerHTML</code> of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.</p>
+
+<p>``` js
+Polymer("mark-down", {
+  created: function() {</p>
+
+<pre><code>var content = this.trim(this.innerHTML);
+var parsed = markdown.toHTML(content);
+this.$.markdown.innerHTML = parsed;
+</code></pre>
+
+<p>  },
+  // Remove excess white space
+  trim: function() { ... }
+});
+```</p>
+
+<p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I'm using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon's Markdown element.</a> Big thanks to Ryan :D</p>
+
+<p><code>js
+created: function() {
+  var content = this.trim(this.innerHTML);
+  ...
+},
+</code></p>
+
+<p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
+
+<p><code>js
+created: function() {
+  ...
+  var parsed = markdown.toHTML(content);
+  this.$.markdown.innerHTML = parsed;
+}
+</code></p>
+
+<h3>Node Finding</h3>
+
+<p>You might notice the funny use of <code>$</code> and think I'm doing something clever with jQuery. What's actually happening is that Polymer creates a map of any element inside of our template with an <code>id</code>. It then stores this map in a <code>$</code> property. So if you're using ids you can quickly access elements with the use of <code>this.$.someId</code>. In the Polymer docs this is referred to as <a href="http://www.polymer-project.org/getting-started.html#automatic-node-finding">automatic node finding.</a></p>
+
+<p><em>But aren't ids an anti-pattern?</em></p>
+
+<p>Although the traditional document model only allows for one id per page, the Shadow DOM creates a kind of clean slate where each element has its own id sandbox. This means we can use an id of <code>#markdown</code> in our element and not worry if the parent document also contains an element with id <code>#markdown</code>. Pretty nifty!</p>
+
+<h2>Test</h2>
+
+<p>The only thing left is for us to throw some Markdown into our tag to test it out.</p>
+
+<p>``` html
+<mark-down>
+  # This is a heading
+  ## This is a subheading</p>
+
+<p>  Here is <strong>more</strong> <em>Markdown!</em></p>
+
+<p>  <code>This is some codez</code></p>
+
+<p>  This <a href="http://robdodson.me">is a link</a>
+</mark-down>
+```</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/markdown-example.jpg" title="'sweet sweet markdown!'" ></p>
+
+<p>Piece O' Cake!</p>
+
+<h2>Moar!</h2>
+
+<p>There's a lot more that we could do, for instance, using something like <code>contenteditable</code> to allow us to toggle back and forth between the source and the rendered content. <a href="https://github.com/robdodson/mark-down">I've posted the code on Github</a> so fork it and go crazy.</p>
+
+<p>Be sure to leave a comment if you want to share your experiments!</p>
+
+<p>Till next time!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to use EJS in Express]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/31/how-to-use-ejs-in-express/"/>
+    <updated>2012-05-31T11:34:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/31/how-to-use-ejs-in-express</id>
+    <content type="html"><![CDATA[<p><em>Update: If you're starting a fresh project with Express it's much easier to just run <code>express --ejs</code>. That will scaffold out an Express app for you with EJS ready to go!</em></p>
+
+<p>Here's a quick explanation of how to use EJS instead of Jade in your Express projects. This is super easy and covered well in the documentation but I wanted to put it here since that's what I worked on today :)</p>
+
+<!--more-->
+
+
+<p>To start I'll create a new project from the command line:</p>
+
+<p><code>
+express foobar
+cd foobar
+npm install
+</code></p>
+
+<p>Now that I have my foobar project created I need to install <code>ejs</code>.</p>
+
+<p><code>
+npm install ejs
+</code></p>
+
+<p>If you're within your project directory this will place ejs in the <code>node_modules</code> dir. Let's also add it to our package.json.</p>
+
+<p>```
+{
+  "name": "foobar",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {</p>
+
+<pre><code>"express": "~2.5.8",
+"ejs": "~0.7.1"
+</code></pre>
+
+<p>  }
+}
+<code>``
+The tilde operator means that we require ejs verion 0.7.1 or greater but only up to the next major release. So the following are equivalent:</code>"~1.2" = ">=1.2.0 &lt;2.0.0"`. For a deeper explanation of package.json and NPM in general <a href="http://howtonode.org/introduction-to-npm">checkout this great post</a>.</p>
+
+<h3>Leaving Jade for EJS</h3>
+
+<p>If you're using the boilerplate that Express generates then it should be setup to use Jade as the rendering engine for its views. I think that Jade is cool but I need to baby step into Node/Express and make sure I understand everything that's going on instead of trying to consume so many different tools at once. With this in mind I decided to switch from Jade to EJS at least in the beginning because the syntax has no learning curve. To change your rendering engine you'll need to either add or edit the following call:</p>
+
+<p><code>js
+app.set('view engine', 'ejs');
+</code></p>
+
+<p>The boilerplate should have this set to <code>jade</code> inside of a configuration block. Once we've changed that line to read <code>ejs</code> we're ready to start writing some views.</p>
+
+<h3>Setting up your layout</h3>
+
+<p>By default Express' boilerplate will look for a file named layout in our views directory. Let's write one called <code>layout.ejs</code>:</p>
+
+<p>``` html views/layout.ejs
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Pivotal Search&lt;/title&gt;
+&lt;meta name="description" content=""&gt;
+&lt;meta name="author" content=""&gt;
+
+&lt;!-- HTML5 shim, for IE6-8 support of HTML elements --&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+&lt;![endif]--&gt;
+
+&lt;!-- styles --&gt;
+&lt;link href="stylesheets/style.css" rel="stylesheet"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;%- body %&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>This is all really straightforward with the exception of the <code>&lt;%- body %&gt;</code> line which basically works like a <code>yield</code> in erb. Whatever template we pass to Express' <code>response.render()</code> function will fill this dependency, here's an example:</p>
+
+<p><code>js app.js
+app.get('/', function(req, res) {
+  res.render('index', { title: 'The index page!' })
+});
+</code></p>
+
+<p>``` html views/index.ejs</p>
+
+<div class="title">
+    <%= title %>
+</div>
+
+
+<p>```
+<img class="center" src="https://s3.amazonaws.com/robdodson/images/rendering_the_index_template.png" title="'Rendering the index template'" ></p>
+
+<p>Furthermore we can use partials with Express and EJS like so:</p>
+
+<p>``` html views/layout.ejs
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Pivotal Search&lt;/title&gt;
+&lt;meta name="description" content=""&gt;
+&lt;meta name="author" content=""&gt;
+
+&lt;!-- HTML5 shim, for IE6-8 support of HTML elements --&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+&lt;![endif]--&gt;
+
+&lt;!-- styles --&gt;
+&lt;link href="stylesheets/style.css" rel="stylesheet"&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;%- partial('header.ejs') %&gt;
+&lt;%- body %&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>``` html views/header.ejs
+<header></p>
+
+<pre><code>My awesome header!
+</code></pre>
+
+<p></header></p>
+
+<hr>
+
+
+<p>```</p>
+
+<p><img class="center" src="https://s3.amazonaws.com/robdodson/images/rendering_the_header_partial.png" title="'Rendering the header partial'" ></p>
+
+<p>And there ya go! Simple but hopefully useful if you're just getting started like I am :) - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Eager, Alert</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 7</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using jQuery Deferred to Load an Underscore Template]]></title>
+    <link href="http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template/"/>
+    <updated>2012-05-30T08:53:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/05/30/using-jquery-deferred-to-load-an-underscore-template</id>
+    <content type="html"><![CDATA[<p>Today's post is meant to scratch an itch I had the other day regarding templates. My friend wanted to load an underscore template along with some JSON data but wasn't sure what the best approach would be.</p>
+
+<!--more-->
+
+
+<p>Since I'm using Backbone Boilerplate I've gotten used to having my template loading method already stubbed out for me. Here's the one they use:</p>
+
+<p>``` js
+fetchTemplate: function(path, done) {
+  var JST = window.JST = window.JST || {};
+  var def = new $.Deferred();</p>
+
+<p>  // Should be an instant synchronous way of getting the template, if it
+  // exists in the JST object.
+  if (JST[path]) {</p>
+
+<pre><code>if (_.isFunction(done)) {
+  done(JST[path]);
+}
+
+return def.resolve(JST[path]);
+</code></pre>
+
+<p>  }</p>
+
+<p>  // Fetch it asynchronously if not available from JST, ensure that
+  // template requests are never cached and prevent global ajax event
+  // handlers from firing.
+  $.ajax({</p>
+
+<pre><code>url: path,
+type: "get",
+dataType: "text",
+cache: false,
+global: false,
+
+success: function(contents) {
+  JST[path] = _.template(contents);
+
+  // Set the global JST cache and return the template
+  if (_.isFunction(done)) {
+    done(JST[path]);
+  }
+
+  // Resolve the template deferred
+  def.resolve(JST[path]);
+}
+</code></pre>
+
+<p>  });</p>
+
+<p>  // Ensure a normalized return value (Promise)
+  return def.promise();
+}
+```</p>
+
+<p>Not having previous experience working with <a href="http://api.jquery.com/category/deferred-object/">jQuery.Deferred</a> I was initially put-off by the idea of just copy/pasting this function over to him, especially since I couldn't explain what was going on. I knew that I probably wanted to use Deferreds and Promises but I wasn't sure how best to explain the concepts nor did this method seem to do much in the way of loading JSON, it was just for loading templates. Since my friend only wanted to load 1 template and 1 JSON file I thought it best for us to start small, and to write something that we could easily debug. Knowing I wanted to use Deferreds I found <a href="http://msdn.microsoft.com/en-us/magazine/gg723713.aspx">this wonderful article by Addy Osmani and Julian Aubourg</a> detailing how Deferreds work. It is VERY comprehensive and for our purposes I only needed to read the first few paragraphs before I had enough to start.</p>
+
+<p>In a nutshell deferreds are objects which contain promises (also objects). Promises can be in various states, <code>pending</code>, <code>resolved</code> or <code>rejected</code>. Once you have a deferred (or it's promise) you can hook functions on to it so when it changes from a <code>pending</code> to <code>resolved</code> state all those functions fire. It's actually the promise that changes state but you can use the deferred like a promise because in most cases it will just proxy the calls to its promise object. Using deferreds can be nice for several reasons. For starters, you can avoid the jQuery <em>pyramid of doom</em></p>
+
+<p>``` js</p>
+
+<p>// NOOOOOOoooooooooo</p>
+
+<p>$.ajax({
+  url: 'foo.php',
+  success: function() {</p>
+
+<pre><code>$.ajax({
+  url: 'bar.php',
+  success: function() {
+    $.ajax({
+      url: 'baz.php',
+      success: function() {
+        ...
+      }
+    })
+  }
+})
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>```</p>
+
+<p>Secondly your deferreds/promises are little tokens that you can hand out from your services so other actors don't have to get all up in your ajax guts. Someone makes an API request, you give em a token, when it resolves they play with the data.</p>
+
+<p>``` js
+function doSomethingWithHugeData(data) {
+  console.log("man, look at all these 1's and 0's!");
+}</p>
+
+<p>var dfd = myService.getSomeHugeData();
+dfd.done(doSomethingWithHugeData);
+```</p>
+
+<p>This is a much nicer approach than passing in a callback that your service will need to execute whenever it finishes getting its data. Your service shouldn't care about your callbacks. It should care about getting data and letting people know when that data's been got! :D</p>
+
+<h3>But I digress...</h3>
+
+<p>We were <em>trying</em> to load some JSON and a template, so let's get back to the task at hand. Since we know that we have two ajax calls, one for the JSON and one for the template, and we know that we don't really want to do anything till both of these calls have completed we've got a perfect use case for <a href="http://api.jquery.com/jQuery.when/">$.when</a>. <code>when</code> accepts a list of deferreds/promises and acts as one big deferred, waiting for all of its children to resolve before it resolves. This is a nice way to build a sequencer. In our case we're going to take  two ajax calls and toss them into <code>$.when</code>. When it resolves we'll use <code>$.then</code> to tell it what our success and failure callbacks should be.</p>
+
+<p>``` html index.html
+&lt;!DOCTYPE html>
+<html lang="en">
+  <head></p>
+
+<pre><code>&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Deferred Sandbox&lt;/title&gt;
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="underscore.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></p>
+
+<pre><code>&lt;div id="main"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  $(function() {
+
+    function successFunc(jsonRes, templateRes) {
+      var json = _.first(jsonRes);
+      var template = _.first(templateRes);
+      var compiled = _.template(template, json);
+      $('#main').html(compiled);
+    }
+
+    function failureFunc() {
+      console.log('fail whale!');
+    }
+
+    $.when(
+      $.ajax("person.json"),
+      $.ajax("person.template.html")
+    ).then(successFunc, failureFunc);
+
+  });
+&lt;/script&gt;
+</code></pre>
+
+<p>  </body>
+</html>
+```</p>
+
+<p>In our case everything is in the same folder as index.html so there's no need for any paths. Keep in mind that in most (all?) browsers you'll need to be running a local server for the above code to actually work. In Chrome, at least, you can't run an html file from file:// and have it load external resources, it'll complain that the access-origin is not allowed.</p>
+
+<p>Let me take a moment to explain <code>$.then</code> a little bit. We know that <code>$.ajax</code> returns a deferred, and that the deferred's promise can be in three states: <code>pending</code>, <code>resolved</code>, <code>rejected</code>. So if we did something like this:</p>
+
+<p><code>js
+var dfd = $.ajax('foobar.php');
+</code></p>
+
+<p><code>dfd</code> would be a deferred object with a <code>pending</code> promise. Deferred's let us link methods up to them for when their state changes. These methods are: <code>done()</code>, <code>fail()</code>, <code>always()</code>, <code>progress()</code>, and <code>then()</code>. There are more but <a href="http://api.jquery.com/category/deferred-object/">I'll let the documentation explain them.</a> <code>done()</code> and <code>fail()</code> each accept either a single callback or an array of callbacks to be fired when the deferred changes to either the <code>resolved</code> or <code>rejected</code> state.</p>
+
+<p>``` js
+function successFunc() {
+  console.log('success! do stuff with data!');
+}</p>
+
+<p>function failureFunc() {
+  console.log('failure! um...give up!');
+}</p>
+
+<p>var service = {
+  getJSON: function() {</p>
+
+<pre><code>return $.ajax('person.json');
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>service.getJSON()
+.done(successFunc)
+.fail(failureFunc);</p>
+
+<p>```</p>
+
+<p><code>always()</code> fires its callbacks regardless of whether the deferred was <code>resolved</code> or <code>rejected</code>. This might be a good place to put any cleanup code. <code>progress()</code> is fired during any progress events that the process might emit. Finally there's <code>then()</code> which is what we're using in our template example. <code>then()</code> is essentially shorthand for <code>done()</code> and <code>fail()</code> so you can pass it two callbacks or two arrays of success/fail callbacks.</p>
+
+<p>Hopefully that's helpful for you all and you can go back and clean up some of those pyramids that might be lingering in your code. Till tomorrow! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Reserved, Sedate</li>
+    <li>Sleep: 7</li>
+    <li>Hunger: 4</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

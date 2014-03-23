@@ -1,0 +1,298 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Creating a Markdown Tag with Polymer | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">02 Oct 2013</span>
+	<h1 class="post-title">Creating a Markdown Tag With Polymer</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Ah Markdown&#8230; Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress&#8217; HTML mode, too limiting. Markdown changed all of that for me and I think it&#8217;s high time we make it a full fledged member of our developer toolbox.</p>
+
+<p>So today I&#8217;m going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
+
+<!-- more -->
+
+
+<h2>Github</h2>
+
+<p><a href="https://github.com/robdodson/mark-down">If you&#8217;d like to follow along you can grab the code from Github.</a></p>
+
+<h2>The Setup</h2>
+
+<p>First things first, we need to download the latest version of Polymer. I like to do this with <a href="http://bower.io">bower</a> and I would encourage you to do so as well. Although it hasn&#8217;t been discussed much, I think bower is going to be as important to web components as npm and the node_modules folder is to Node.js. When developers can assume the location and version of a dependency then they&#8217;re able to remove extra work from the consumer&#8217;s plate. But that&#8217;s a discussion for another day! For now let&#8217;s just run</p>
+
+<figure class='code'><pre><code>bower init</code></pre></figure>
+
+
+<p>to create our <code>bower.json</code> file.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/bower-init.jpg" title="'bower init is kinda awesome'" ></p>
+
+<p>And we&#8217;ll want to install our Polymer and Markdown dependencies so</p>
+
+<figure class='code'><pre><code>bower install polymer markdown --save</code></pre></figure>
+
+
+<p>Lastly we&#8217;ll setup a test page for our element. I&#8217;m going to assume that the element lives in a folder called (creatively) <code>elements</code> so we&#8217;ll import from there.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Markdown Polymer Element<span class="nt">&lt;/title&gt;</span>
+
+    <span class="c">&lt;!-- Include our Markdown lib --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;./lib/markdown.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+    <span class="c">&lt;!-- Include Polymer awesomesauce --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;./lib/polymer.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+    <span class="c">&lt;!-- Import our polymer elements --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;./elements/mark-down.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="c">&lt;!-- Test our awesome new tag --&gt;</span>
+    <span class="nt">&lt;mark</span><span class="na">-down</span><span class="nt">&gt;</span><span class="err">&lt;</span>/mark-down&gt;
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<h2>The Element</h2>
+
+<p>We&#8217;ll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;polymer</span><span class="na">-element</span> <span class="na">name=</span><span class="s">&quot;mark-down&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;markdown&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="nx">Polymer</span><span class="p">(</span><span class="s2">&quot;mark-down&quot;</span><span class="p">);</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="err">&lt;</span>/polymer-element&gt;
+</code></pre></figure>
+
+
+<p>Let&#8217;s walk through this a bit.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;polymer</span><span class="na">-element</span> <span class="na">name=</span><span class="s">&quot;mark-down&quot;</span><span class="nt">&gt;</span>
+</code></pre></figure>
+
+
+<p>This line tells Polymer that we&#8217;d like to define a new element and its tag name should be <code>mark-down</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;template&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;markdown&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></figure>
+
+
+<p>This is our template which Polymer will convert to <a href="/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;script&gt;</span>
+  <span class="nx">Polymer</span><span class="p">(</span><span class="s2">&quot;mark-down&quot;</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>Finally, we call the Polymer constructor and pass it the name of our element. This makes our new tag available so we can start using it in the document. But first we&#8217;ll need to parse our Markdown into HTML!</p>
+
+<h2>Markdown</h2>
+
+<p>All custom elements have a <code>createdCallback</code> which can be used as a kind of constructor function. Polymer shortens this method name to <code>created</code> but it&#8217;s essentially the same thing. We&#8217;ll use the <code>created</code> callback to grab the <code>innerHTML</code> of our tag and convert it all to Markdown. To define behaviors for our element we&#8217;ll pass a prototype object as the second argument to the Polymer constructor.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">Polymer</span><span class="p">(</span><span class="s2">&quot;mark-down&quot;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">markdown</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">markdown</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">parsed</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="c1">// Remove excess white space</span>
+  <span class="nx">trim</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I&#8217;m using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon&#8217;s Markdown element.</a> Big thanks to Ryan :D</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">);</span>
+  <span class="p">...</span>
+<span class="p">},</span>
+</code></pre></figure>
+
+
+<p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">markdown</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">markdown</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">parsed</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></figure>
+
+
+<h3>Node Finding</h3>
+
+<p>You might notice the funny use of <code>$</code> and think I&#8217;m doing something clever with jQuery. What&#8217;s actually happening is that Polymer creates a map of any element inside of our template with an <code>id</code>. It then stores this map in a <code>$</code> property. So if you&#8217;re using ids you can quickly access elements with the use of <code>this.$.someId</code>. In the Polymer docs this is referred to as <a href="http://www.polymer-project.org/getting-started.html#automatic-node-finding">automatic node finding.</a></p>
+
+<p><em>But aren&#8217;t ids an anti-pattern?</em></p>
+
+<p>Although the traditional document model only allows for one id per page, the Shadow DOM creates a kind of clean slate where each element has its own id sandbox. This means we can use an id of <code>#markdown</code> in our element and not worry if the parent document also contains an element with id <code>#markdown</code>. Pretty nifty!</p>
+
+<h2>Test</h2>
+
+<p>The only thing left is for us to throw some Markdown into our tag to test it out.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;mark</span><span class="na">-down</span><span class="nt">&gt;</span>
+  # This is a heading
+  ## This is a subheading
+
+  Here is **more** _Markdown!_
+
+  `This is some codez`
+
+  This [is a link](http://robdodson.me)
+<span class="err">&lt;</span>/mark-down&gt;
+</code></pre></figure>
+
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/markdown-example.jpg" title="'sweet sweet markdown!'" ></p>
+
+<p>Piece O&#8217; Cake!</p>
+
+<h2>Moar!</h2>
+
+<p>There&#8217;s a lot more that we could do, for instance, using something like <code>contenteditable</code> to allow us to toggle back and forth between the source and the rendered content. <a href="https://github.com/robdodson/mark-down">I&#8217;ve posted the code on Github</a> so fork it and go crazy.</p>
+
+<p>Be sure to leave a comment if you want to share your experiments!</p>
+
+<p>Till next time!</p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Creating a Markdown Tag with Polymer&amp;url=http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/10/02/creating-a-markdown-tag-with-polymer/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

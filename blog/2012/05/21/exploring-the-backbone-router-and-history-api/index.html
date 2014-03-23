@@ -1,0 +1,263 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Exploring the Backbone Router and History API | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">21 May 2012</span>
+	<h1 class="post-title">Exploring the Backbone Router and History API</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>I want to talk a bit more about the Backbone Router because I think it&#8217;s one of the first pieces of the framework that people run up against that deviates from the standard MVC setup.</p>
+
+<!--more-->
+
+
+<p>If you&#8217;ve used Rails before you&#8217;re used to the idea of <code>routes</code> which pick apart a url and figure out which controller to run. CodeIgniter uses the same paradigm but I&#8217;m not sure if they also call them routes or use a different term. Contrary to this, in Backbone the Router is like a controller for the entire application. This makes it similar to Sinatra. Creating two different routes which replace the content of the page each time would look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">Router</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;search&quot;</span><span class="o">:</span> <span class="s2">&quot;search&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nx">index</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">tutorial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Tutorial</span><span class="p">();</span>
+
+    <span class="c1">// Attach the tutorial page to the DOM</span>
+    <span class="nx">tutorial</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#main&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">},</span>
+
+  <span class="nx">search</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Search</span><span class="p">();</span>
+
+    <span class="c1">// Attach the search page to the DOM</span>
+    <span class="nx">search</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#main&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>If you&#8217;re using the Backbone Boilerplate you won&#8217;t need to tell the Router to update every time someone clicks a link. The Boilerplate implements the following block of code at the very bottom of main.js</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// All navigation that is relative should be passed through the navigate</span>
+  <span class="c1">// method, to be processed by the router.  If the link has a data-bypass</span>
+  <span class="c1">// attribute, bypass the delegation completely.</span>
+  <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="s2">&quot;a:not([data-bypass])&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Get the anchor href and protcol</span>
+    <span class="kd">var</span> <span class="nx">href</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">protocol</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">protocol</span> <span class="o">+</span> <span class="s2">&quot;//&quot;</span><span class="p">;</span>
+
+    <span class="c1">// Ensure the protocol is not part of URL, meaning its relative.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">href</span> <span class="o">&amp;&amp;</span> <span class="nx">href</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">protocol</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">protocol</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">href</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;javascript:&quot;</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Stop the default event to ensure the link will not cause a page</span>
+      <span class="c1">// refresh.</span>
+      <span class="nx">evt</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+
+      <span class="c1">// `Backbone.history.navigate` is sufficient for all Routers and will</span>
+      <span class="c1">// trigger the correct events.  The Router&#39;s internal `navigate` method</span>
+      <span class="c1">// calls this anyways.</span>
+      <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="nx">href</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+</code></pre></figure>
+
+
+<p>In short this is an application wide handler for any relative anchor that doesn&#8217;t have a <code>data-bypass</code> attribute. So something like <code>&lt;a href="search"&gt;Search&lt;/a&gt;</code> would get passed through here.
+The last few bits prevent the link from completely refreshing the page—<code>evt.preventDefault()</code>—and pipe the href through the router. Actually the href gets piped through <code>Backbone.history.navigate</code> which <code>Router.navigate</code> proxies. When you call <code>Router.navigate('foobar')</code> you&#8217;re supposed to pash a hash of <code>{trigger: true}</code> if you&#8217;d like the router to run the corresponding <code>foobar</code> method. If you dig into the source you can see that just passing true will also have the same effect and that&#8217;s what&#8217;s done here by the Boilerplate.</p>
+
+<p>Originally I had written my View like this because I thought I had to use the Router explicitly.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// This will fetch the tutorial template and render it.</span>
+<span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Tutorial</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">template</span><span class="o">:</span> <span class="s2">&quot;app/templates/example.html&quot;</span><span class="p">,</span>
+
+  <span class="c1">// Listen for when the user clicks our anchor tag</span>
+  <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">&#39;click .search&#39;</span><span class="o">:</span> <span class="s1">&#39;search&#39;</span>
+  <span class="p">},</span>
+
+  <span class="c1">// Note: I&#39;m stopping the event and explicitly telling the Router to</span>
+  <span class="c1">// update the history and trigger the corresponding search method.</span>
+  <span class="nx">search</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="nx">namespace</span><span class="p">.</span><span class="nx">app</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s1">&#39;search&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">trigger</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+</code></pre></figure>
+
+
+<p>Notice that I&#8217;ve defined a <code>search</code> method which listens for a click on my anchor of class <code>.search</code>. This is inline with the vanilla Backbone.js documentation but since the Boilerplate has added that application wide handler for us, we don&#8217;t need this function unless there&#8217;s some additional work that search needs to do. By just letting that global handler do its thing our route will still be called and we can save a fair bit of boilerplate in our templates.</p>
+
+<p>If you want to subvert the handler then you can just call <code>preventDefault</code> and <code>stopPropagation</code> on the click event like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">Example</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Tutorial</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+  <span class="nx">template</span><span class="o">:</span> <span class="s2">&quot;app/templates/example.html&quot;</span><span class="p">,</span>
+
+  <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s1">&#39;click .search&#39;</span><span class="o">:</span> <span class="s1">&#39;search&#39;</span>
+  <span class="p">},</span>
+
+  <span class="nx">search</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
+    <span class="nx">namespace</span><span class="p">.</span><span class="nx">app</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s1">&#39;whatever&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+<span class="p">...</span>
+</code></pre></figure>
+
+
+<p>Something else to keep in mind is that the boilerplate comes with <code>History pushState</code> turned on by default.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c1">// Trigger the initial route and enable HTML5 History API support</span>
+<span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span> <span class="nx">pushState</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</code></pre></figure>
+
+
+<p><s>This lets you create routes that look like this: <code>mysite.com/search/foobar</code> instead of using a hash <code>mysite.com/#search/foobar</code>. The only problem is that for HTML5 History pushState to work your server has to keep resolving to index.html. The boilerplate tutorial says to use <code>node build/server</code> to run your project server, even though elsewhere it says to use <code>bbb server</code>. Neither works so I&#8217;ve <a href="https://github.com/backbone-boilerplate/grunt-bbb/issues/21">logged an issue on Github.</a> Very possible I&#8217;m doing it wrong but we&#8217;ll see. For now I&#8217;m not using pushState so I changed the line in main.js to read <code>Backbone.history.start()</code> and instead I&#8217;m using the hash approach.</s></p>
+
+<p><em>UPDATE: Turns out there was a bug in the Backbone Boilerplate, make sure in your index.html file that the data-main attribute starts from the root of the site, like so: <code>data-main="/app/config"</code>. Also make sure to use bbb server as node build/server is deprecated.</em></p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Hurried, Focused</li>
+    <li>Sleep: 8</li>
+    <li>Hunger: 0</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Exploring the Backbone Router and History API&amp;url=http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/05/21/exploring-the-backbone-router-and-history-api/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

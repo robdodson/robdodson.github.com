@@ -1,0 +1,323 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>JavaScript Design Patterns: Iterator | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">10 Aug 2012</span>
+	<h1 class="post-title">JavaScript Design Patterns: Iterator</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>If you&#8217;re coming from Ruby or Java you probably think of an Iterator as an object which gives you a consistent interface for traversing a collection of some kind. If you&#8217;re coming from JavaScript or Actionscript you probably just think of an iterator as the <code>i</code> value in a <code>for</code> loop. The term has mixed meanings but in this case we&#8217;re refering to the former, an object which gives us a consistent interface for iterating over a collection of some kind. If you&#8217;ve never used them before that might seem kind of silly. &#8220;If I need to loop over something I&#8217;m just going to loop over it!&#8221; For many use cases that&#8217;s totally fine. Where Iterator objects are useful is in situations where you might need to loop in an async fashion (stopping and restarting) or if you want to preclude an object from knowing too much about the inner workings of a collection.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<blockquote><p>Provide a way to access the elements of an aggregate object sequentially without exposing its underlying representation.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote>
+
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Cursor</li>
+</ul>
+
+
+<h2>Example Time</h2>
+
+<p>The code for an Iterator should be pretty easy to grok if you&#8217;ve worked with loops before. Here is a simple example which returns an Iterator for looping over an Array by every third value.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">iterator</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">element</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">element</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+            <span class="nx">index</span> <span class="o">+=</span> <span class="mi">3</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">element</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">hasNext</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">length</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">rewind</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="p">},</span>
+        <span class="nx">current</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}());</span>
+</code></pre></figure>
+
+
+<p>Our iterator has a handful of useful operations including <code>next</code>, <code>hasNext</code>, <code>rewind</code> and <code>current</code>.</p>
+
+<p><code>next</code> will return the next value and advance the index by 3.</p>
+
+<p><code>hasNext</code> will check to see if calling <code>next</code> will actually return an item. Good for indicating when we&#8217;ve reached the end of a collection.</p>
+
+<p><code>rewind</code> will reset the index to zero so we can loop over the collection again.</p>
+
+<p><code>current</code> will return the current item at the index without advancing the index.</p>
+
+<p>Let&#8217;s put these into play to see how it works:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="k">while</span><span class="p">(</span><span class="nx">iterator</span><span class="p">.</span><span class="nx">hasNext</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">iterator</span><span class="p">.</span><span class="nx">next</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="nx">iterator</span><span class="p">.</span><span class="nx">rewind</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">iterator</span><span class="p">.</span><span class="nx">current</span><span class="p">());</span>
+</code></pre></figure>
+
+
+<p>If we ran the above we&#8217;d see the following output in the console.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="mi">1</span>
+<span class="mi">4</span>
+<span class="mi">7</span>
+<span class="mi">10</span>
+<span class="mi">1</span>
+</code></pre></figure>
+
+
+<p>Since the iterator is mainting its own state if we need to stop iteration at any point we just don&#8217;t call <code>next</code>. Using exclusively <code>for</code> loops we&#8217;d have to check against a flag of some kind, store our current position and then rebuild the loop starting from that point.</p>
+
+<h2>Not just for Arrays</h2>
+
+<p>As I mentioned before the Iterator gives us a consistent interface for traversing a collection, which means it can iterate over <em>any</em> object. Calendar Dates, Linked Lists, Node Graphs, whatever! Here&#8217;s an example of an iterator that traverses a simple Hash.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">iterator</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="nx">bar</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="nx">baz</span><span class="o">:</span> <span class="s1">&#39;baz&#39;</span> <span class="p">},</span>
+        <span class="nx">keys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">element</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">element</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">keys</span><span class="p">[</span><span class="nx">index</span><span class="p">]];</span>
+            <span class="nx">index</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">element</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">hasNext</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">length</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">rewind</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="p">[</span><span class="nx">keys</span><span class="p">[</span><span class="nx">index</span><span class="p">]];</span>
+        <span class="p">},</span>
+        <span class="nx">current</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="p">[</span><span class="nx">keys</span><span class="p">[</span><span class="nx">index</span><span class="p">]];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}());</span>
+</code></pre></figure>
+
+
+<p>Notice how the interface is identical to our previous Iterator? That&#8217;s one of the key aspects to this pattern: Regardless of the <em>type</em> of collection, we can define a consistent interface to loop through it. It also means that the client doesn&#8217;t need to know anything about the implementation of the actual collection, and by wrapping it in a closure we can prevent the client from <em>editing</em> the collection. Personally I like the idea of certain services handing out iterators rather than a wholesale dump of all the data. As always use whichever tool is appropriate for the context.</p>
+
+<p>One quick note regarding Hashes. Previous versions of the ECMA spec did not require that Hash keys be kept in order. While most modern browsers <em>do</em> keep them in order there are some funky inconsistencies. For instance, if you write out the following Hash:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;foo&#39;</span><span class="o">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="o">:</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="o">:</span> <span class="s1">&#39;world&#39;</span> <span class="p">};</span>
+</code></pre></figure>
+
+
+<p>Google Chrome will swap the order of the keys such that they appear like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="p">{</span> <span class="s1">&#39;1&#39;</span><span class="o">:</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="o">:</span> <span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="o">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span> <span class="p">};</span>
+</code></pre></figure>
+
+
+<p>There are some interesting discussions on StackOverflow which cover this topic but it&#8217;s a bit outside the scope of this article. If you&#8217;re interested you can find them here:</p>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/5773950/how-to-keep-an-javascript-object-array-ordered-while-also-maintaining-key-lookup">How to keep an Javascript object/array ordered while also maintaining key lookups?</a></li>
+<li><a href="http://stackoverflow.com/questions/3549894/javascript-data-structure-for-fast-lookup-and-ordered-looping">Javascript data structure for fast lookup and ordered looping?</a></li>
+</ul>
+
+
+<h2>JavaScript 1.7</h2>
+
+<p>Although not widely supported yet, JavaScript 1.7 includes a built in Iterator object which can be used to wrap an Array or Hash with just a single line of code.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;application/javascript;version=1.7&quot;</span><span class="nt">&gt;</span>
+    <span class="kd">var</span> <span class="nx">lang</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;JavaScript&#39;</span><span class="p">,</span> <span class="nx">birthYear</span><span class="o">:</span> <span class="mi">1995</span> <span class="p">};</span>
+    <span class="kd">var</span> <span class="nx">it</span> <span class="o">=</span> <span class="nx">Iterator</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>The above script block will not work in Chrome but it should work in the latest version of Firefox. Note the <code>type</code> attribute of the script tag which instructs the interpreter to handle the code as JS 1.7.</p>
+
+<p>For some further reading on the topic checkout the MDN article which covers <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Iterators_and_Generators">Iterators in JavaScript 1.7</a></p>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/iterator/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li>Composite: Iterators are often applied to recursive structures such as Composites.</li>
+<li>Factory Method: Polymorphic iterators rely on factory methods to instantiate the appropriate Iterator subclass.</li>
+<li>Memento: Often used in conjunction with the Iterator pattern. An iterator can use a memento to capture the state of an iteration. The iterator stores the memento internally.</li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=JavaScript Design Patterns: Iterator&amp;url=http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

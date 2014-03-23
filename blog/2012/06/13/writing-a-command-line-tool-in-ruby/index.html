@@ -1,0 +1,223 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Writing a Command Line Tool in Ruby | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">13 Jun 2012</span>
+	<h1 class="post-title">Writing a Command Line Tool in Ruby</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p>Yesterday I tried to do a post on creating your first Ruby Gem as a command line tool. <a href="http://robdodson.me/blog/2012/06/12/messing-around-with-gems/">It didn&#8217;t go very well.</a> In an effort to better understand what goes on with command line tools I&#8217;m going to start from the most basic, a ruby script that is in our <code>PATH</code>.</p>
+
+<!--more-->
+
+
+<p>I&#8217;ve previously added the folder <code>~/bin</code> to my PATH so I know that if I drop an executable script in there I should be able to run it by just typing its name. Let&#8217;s give that a shot. First we&#8217;ll make a new file just called <code>sherp</code> without any file extension. Make sure to <code>chmod 755 sherpa</code> so that it&#8217;s executable. Then we&#8217;ll add the following:</p>
+
+<figure class='code'><figcaption><span>~/bin/sherpa</span></figcaption><pre><code><span class="c1">#!/usr/bin/env ruby</span>
+
+<span class="nb">puts</span> <span class="s1">&#39;I am the sherpa!!!&#39;</span>
+</code></pre></figure>
+
+
+<p>If I now type <code>sherpa</code> into the command line, it should fire back <code>I am the sherpa!!!</code></p>
+
+<p>Ok cool so we&#8217;ve got that part working. Now let&#8217;s see if we can get some arguments in there. We&#8217;ll iterate the <code>ARGV</code> object to see what comes in.</p>
+
+<figure class='code'><figcaption><span>~/bin/sherpa</span></figcaption><pre><code><span class="c1">#!/usr/bin/env ruby</span>
+
+<span class="no">ARGV</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">arg</span><span class="o">|</span>
+    <span class="nb">puts</span> <span class="n">arg</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>With that little bit of code we should be able to pass just about anything to our command and have it echoed back.</p>
+
+<figure class='code'><figcaption><span>~/bin/sherpa</span></figcaption><pre><code><span class="n">sherpa</span> <span class="n">foo</span> <span class="n">bar</span> <span class="n">baz</span>
+
+ <span class="o">=&gt;</span> <span class="n">foo</span>
+ <span class="o">=&gt;</span> <span class="n">bar</span>
+ <span class="o">=&gt;</span> <span class="n">baz</span>
+</code></pre></figure>
+
+
+<p>Ok cool. Now let&#8217;s step this up a notch or two. Let&#8217;s say we want to send in commands and options. For that we&#8217;ll use the built-in <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/optparse/rdoc/OptionParser.html">OptionParser</a>. Here&#8217;s <a href="http://rubylearning.com/blog/2011/01/03/how-do-i-make-a-command-line-tool-in-ruby/">a link to the article I&#8217;ve been following which details how to use the OptionParser.</a> In my case, I&#8217;m going to tell <code>sherpa</code> to either <code>say_hello</code> or <code>say_goodbye</code>. When I pass in the <code>-n</code> flag it should accept a name, otherwise it will use the name &#8216;Master&#8217;. So the line <code>sherpa say_hello -n Rob</code> should produce <code>Hello Rob</code> and likewise if I left off the option and just used <code>sherpa say_hello</code> it should produce <code>Hello Master</code>.</p>
+
+<p>Here&#8217;s the code to accomplish this:</p>
+
+<figure class='code'><figcaption><span>~/bin</span></figcaption><pre><code><span class="c1">#!/usr/bin/env ruby</span>
+
+<span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">opt_parser</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">opt</span><span class="o">|</span>
+  <span class="n">opt</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;Usage: opt_parser COMMAND [OPTIONS]&quot;</span>
+  <span class="n">opt</span><span class="o">.</span><span class="n">separator</span>  <span class="s2">&quot;&quot;</span>
+  <span class="n">opt</span><span class="o">.</span><span class="n">separator</span>  <span class="s2">&quot;Commands&quot;</span>
+  <span class="n">opt</span><span class="o">.</span><span class="n">separator</span>  <span class="s2">&quot;     name: the name the sherpa should use when addressing you&quot;</span>
+  <span class="n">opt</span><span class="o">.</span><span class="n">separator</span>  <span class="s2">&quot;&quot;</span>
+  <span class="n">opt</span><span class="o">.</span><span class="n">separator</span>  <span class="s2">&quot;Options&quot;</span>
+
+  <span class="n">opt</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-n&quot;</span><span class="p">,</span><span class="s2">&quot;--name NAME&quot;</span><span class="p">,</span><span class="s2">&quot;tell the sherpa what to call you&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span>
+    <span class="n">options</span><span class="o">[</span><span class="ss">:name</span><span class="o">]</span> <span class="o">=</span> <span class="nb">name</span>
+  <span class="k">end</span>
+
+  <span class="n">opt</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span><span class="s2">&quot;--help&quot;</span><span class="p">,</span><span class="s2">&quot;help&quot;</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nb">puts</span> <span class="n">opt_parser</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">opt_parser</span><span class="o">.</span><span class="n">parse!</span>
+<span class="nb">name</span> <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:name</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;Master&#39;</span>
+
+<span class="k">case</span> <span class="no">ARGV</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+<span class="k">when</span> <span class="s2">&quot;say_hello&quot;</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Hello </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">when</span> <span class="s2">&quot;say_goodbye&quot;</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Goodbye </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">else</span>
+  <span class="nb">puts</span> <span class="n">opt_parser</span>
+<span class="k">end</span>
+</code></pre></figure>
+
+
+<p>And there we go, our first command line Ruby tool. I&#8217;ll pick it up tomorrow to try to improve upon it. We&#8217;re starting small but at least we have something that works!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Patient</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 0</li>
+</ul>
+
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Writing a Command Line Tool in Ruby&amp;url=http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby/';
+        var disqus_url = 'http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

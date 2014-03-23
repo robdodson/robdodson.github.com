@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CLI | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/cli/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Publish your Node Library to NPM]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm/"/>
+    <updated>2012-06-16T23:06:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/16/publish-your-node-library-to-npm</id>
+    <content type="html"><![CDATA[<p>Alright, <a href="http://robdodson.me/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/">contuing from yesterday</a> we want to take our little Node module and make it available to the world as a really awesome command line tool.</p>
+
+<!--more-->
+
+
+<p>The first thing we need to do is register an NPM account.</p>
+
+<p><code>npm adduser</code></p>
+
+<p>Fill in your credentials and it should be ready to go.</p>
+
+<p>If we have any dependencies they should be added to our <code>package.json</code> file. Our simple <code>compliment</code> program doesn't need any extra libraries but we'll add <code>xml2json</code> just to demonstrate how it's done.</p>
+
+<p>``` js package.json
+{</p>
+
+<pre><code>"name": "compliment",
+"version": "0.0.1",
+"description": "Tell us how awesome we are.",
+"preferGlobal": "true",
+"bin": { "compliment": "compliment.js" },
+"author": "Rob Dodson",
+"dependencies": {
+    "xml2json": "0.2.4"
+},
+"engines": { "node": "*" }
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Since we've changed our <code>package.json</code> we need to run <code>npm link</code> again to install the dependency. After that you should have a <code>node_modules/</code> folder in your project root.</p>
+
+<p>Let's put this baby under version control!</p>
+
+<p><code>
+git init
+echo node_modules/ &gt;&gt; .gitignore # node_modules should be installed by npm
+git add .
+git commit -am 'Initial commit'
+</code></p>
+
+<p>Final step: <code>npm publish</code></p>
+
+<h1>BOOMJAMS! We have us an npm module! - Rob</h1>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Hyper</li>
+    <li>Sleep: 5</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 1</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to Run a Node Script from the Command Line]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line/"/>
+    <updated>2012-06-15T19:46:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/15/how-to-run-a-node-script-from-the-command-line</id>
+    <content type="html"><![CDATA[<p>This post is going to be short and sweet because I have to help my lady pack for her big trip to Germany. Over the past few days I've been messing around with command line tools written in Ruby so today I decided to give it a shot in Node.</p>
+
+<!--more-->
+
+
+<p>We're going to start small in this first post and just get a little script running. After that we'll step it up so it can be distributed using NPM, <a href="http://robdodson.me/blog/2012/06/14/how-to-write-a-command-line-ruby-gem/">just like we did with our previous Ruby gem.</a></p>
+
+<h2>First write some codez</h2>
+
+<p>Make a new directory called <code>compliment</code> and create two files inside of it: <code>comliment.js</code> and <code>package.json</code>.</p>
+
+<p>In <code>compliment.js</code> we're just going to print out some kind words.</p>
+
+<p>``` js compliment/compliment.js</p>
+
+<h1>! /usr/bin/env node</h1>
+
+<p>console.log('you. are. AWESOME!');
+```</p>
+
+<p>Simple enough right? Just make sure you include that shebang up at the top which directs the system to use Node to execute our script.</p>
+
+<h2>Package it up</h2>
+
+<p>Ok now that we have our little script we'll give its <code>package.json</code> some love.</p>
+
+<p>``` js compliment/package.json
+{</p>
+
+<pre><code>"name": "compliment",
+"version": "0.0.1",
+"description": "Tell us how awesome we are.",
+"preferGlobal": "true",
+"bin": { "compliment": "compliment.js" },
+"author": "Rob Dodson",
+"engines": { "node": "*" }
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Most of that should be self explanatory. The key aspect is the <code>bin</code> section where you tell it to translate <code>compliment</code> into <code>compliment.js</code>. To install it all we have to do is run <code>npm link</code>. After you've done that you should be able to type <code>compliment</code> and hear how awesome you are!</p>
+
+<p>Keep in mind this isn't distributable just yet, we'll work on that tomorrow. Till then have fun playing with your new powers :D</p>
+
+<ul>
+<li>Rob</li>
+</ul>
+
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How To Write a Command Line Ruby Gem]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/14/how-to-write-a-command-line-ruby-gem/"/>
+    <updated>2012-06-14T08:17:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/14/how-to-write-a-command-line-ruby-gem</id>
+    <content type="html"><![CDATA[<p>So <a href="http://robdodson.me/blog/2012/06/13/writing-a-command-line-tool-in-ruby/">yesterday we saw how to setup and run ruby scripts as executables from the command line.</a> While this is pretty rad, it definitely has its limitations. For one, it's not very portable and secondly it just isn't very flexible or powerful. If we stuck with this approach we'd need to write our own semantic versioning, we'd have to setup a way to make sure that all of our required 3rd party gems get installed properly... really it'll just be a big mess if we try to hand-roll it.</p>
+
+<p>Instead we're going to turn to Bundler to help us manage our files and turn our command line tool into a ruby gem. I'm going to start fresh and create a totally new tool, called <code>zerp</code>. I don't know what <code>zerp</code>'s purpose will be in the long run, but today we're going to make it print some text to verify everything is working.</p>
+
+<!--more-->
+
+
+<h2>New RVM Gemset</h2>
+
+<p>Before I do anything with gems I want to make sure I have a cleanroom of sorts. So if anything goes horribly wrong I can just throw everything away and start over. To do this we'll use RVM to create a new gemset.</p>
+
+<p><code>
+rvm gemset create zerp
+rvm gemset use zerp
+</code></p>
+
+<p>If you run <code>rvm current</code> you should see something like this: <code>ruby-1.9.3-p125@zerp</code></p>
+
+<p>Now that we have our cleanroom we can template out a new gem.</p>
+
+<h2>Bundle Gem</h2>
+
+<p>If bundler is not one of our global gems we can go ahead and install it with <code>gem install bundler</code>. You can do <code>gem list</code> to see what gems are in your global set.</p>
+
+<p>With Bundler in hand we will generate the boilerplate for our new gem:</p>
+
+<p><code>bundle gem zerp</code></p>
+
+<p>This will create a new folder called <code>zerp/</code> and fill it with several files. <code>cd</code> into <code>zerp/</code> and take a look around.</p>
+
+<p><code>
+drwxr-xr-x  10 Rob  staff   340B Jun 14 08:38 .
+drwxr-xr-x  21 Rob  staff   714B Jun 14 08:38 ..
+drwxr-xr-x  11 Rob  staff   374B Jun 14 08:38 .git
+-rw-r--r--   1 Rob  staff   154B Jun 14 08:38 .gitignore
+-rw-r--r--   1 Rob  staff    89B Jun 14 08:38 Gemfile
+-rw-r--r--   1 Rob  staff   1.0K Jun 14 08:38 LICENSE
+-rw-r--r--   1 Rob  staff   490B Jun 14 08:38 README.md
+-rw-r--r--   1 Rob  staff    48B Jun 14 08:38 Rakefile
+drwxr-xr-x   4 Rob  staff   136B Jun 14 08:38 lib
+-rw-r--r--   1 Rob  staff   626B Jun 14 08:38 zerp.gemspec
+</code></p>
+
+<p>Bundler has already setup a git project for us, as well as including a folder structure for our library. <a href="http://rails-bestpractices.com/blog/posts/8-using-bundler-and-rvm-to-build-a-rubygem">This article from rails-bestpractices.com does a great job of explaining what everything in the boilerplate is.</a></p>
+
+<h2>Zee Codez!</h2>
+
+<p>Our project contains a folder called <code>lib</code> which is where we'll store our Ruby code. Open up <code>lib/zerp.rb</code>. We'll populate it with an example class called <code>Chatter</code> which'll spit out our version of Hello World.</p>
+
+<p>``` ruby lib/zerp.rb
+require "zerp/version"</p>
+
+<p>module Zerp
+  class Chatter</p>
+
+<pre><code>def say_hello
+  puts 'This is zerp. Coming in loud and clear. Over.'
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<h2>Executable</h2>
+
+<p>It wouldn't be much of a CLI without an executable. For that we'll need to create a folder called <code>bin</code> in the root of our project. Next create a file called <code>zerp</code> without any kind of file extension. We're going to require our <code>Chatter</code> class and tell it to <code>say_hello</code>.</p>
+
+<p>``` ruby bin/zerp</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>require 'zerp'</p>
+
+<p>chatter = Zerp::Chatter.new
+chatter.say_hello
+```</p>
+
+<p>The shebang <code>#!/usr/bin/env ruby</code> tells the system that it should use Ruby to execute our code. After that we require our 'zerp' module defined previously. Finally we instantiate <code>Zerp::Chatter</code> and tell it to <code>say_hello</code>. If all goes well it should respond with</p>
+
+<p><code>
+This is zerp. Coming in loud and clear. Over.
+</code></p>
+
+<p>Let's see if we can make that happen.</p>
+
+<h2>Gemspec</h2>
+
+<p>We're going to open the <code>zerp.gemspec</code> and make it look like so:</p>
+
+<p>``` ruby zerp.gemspec</p>
+
+<h1>-<em>- encoding: utf-8 -</em>-</h1>
+
+<p>require File.expand_path('../lib/zerp/version', <strong>FILE</strong>)</p>
+
+<p>Gem::Specification.new do |gem|
+  gem.authors       = ["Rob Dodson"]
+  gem.email         = ["lets.email.rob@theawesomegmails.com"]
+  gem.description   = %q{When a problem comes along..You must zerp it}
+  gem.summary       = %q{Now zerp it..Into shape}
+  gem.homepage      = "http://robdodson.me"</p>
+
+<p>  gem.files         = <code>git ls-files</code>.split($)
+  gem.executables   = ["zerp"]
+  gem.test_files    = gem.files.grep(%r{<sup>(test|spec|features)/})</sup>
+  gem.name          = "zerp"
+  gem.require_paths = ["lib"]
+  gem.version       = Zerp::VERSION
+end
+```</p>
+
+<p>The main thing I did was to correct the two 'TODO' entries, and to change the <code>gem.executables</code> line from</p>
+
+<p><code>
+gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+</code></p>
+
+<p>to</p>
+
+<p><code>
+gem.executables   = ["zerp"]
+</code></p>
+
+<p>For reaons unknown to me the previous code wasn't picking up my executable properly so I replaced it with <code>["zerp"]</code>. I got the idea from <a href="https://github.com/lukebayes/project-sprouts/blob/master/sprout.gemspec">Project Sprouts which also uses this technique and seems to work fine on my system.</a></p>
+
+<p>Alright we're done! Let's test this thing!</p>
+
+<h2>Cross your fingers</h2>
+
+<p>To install the Gem we'll use Rake's <code>install</code> task. Go ahead and run <code>rake install</code> from the root of the project. It should create a <code>pkg</code> directory and notify us via the terminal that our gem was installed succesfully. Moment of truth time...type <code>zerp</code> into the terminal. If you see <code>This is zerp. Coming in loud and clear. Over.</code> then you're good to go. After you've committed everything to Github and setup a RubyGems account you should be able to run <code>rake release</code> to send your gem out into the world where it can wow the jaded masses and delight with all its wonders. Good Luck! - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Awake, Antsy</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 2</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Writing a Command Line Tool in Ruby]]></title>
+    <link href="http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby/"/>
+    <updated>2012-06-13T07:29:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/06/13/writing-a-command-line-tool-in-ruby</id>
+    <content type="html"><![CDATA[<p>Yesterday I tried to do a post on creating your first Ruby Gem as a command line tool. <a href="http://robdodson.me/blog/2012/06/12/messing-around-with-gems/">It didn't go very well.</a> In an effort to better understand what goes on with command line tools I'm going to start from the most basic, a ruby script that is in our <code>PATH</code>.</p>
+
+<!--more-->
+
+
+<p>I've previously added the folder <code>~/bin</code> to my PATH so I know that if I drop an executable script in there I should be able to run it by just typing its name. Let's give that a shot. First we'll make a new file just called <code>sherp</code> without any file extension. Make sure to <code>chmod 755 sherpa</code> so that it's executable. Then we'll add the following:</p>
+
+<p>``` ruby ~/bin/sherpa</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>puts 'I am the sherpa!!!'
+```</p>
+
+<p>If I now type <code>sherpa</code> into the command line, it should fire back <code>I am the sherpa!!!</code></p>
+
+<p>Ok cool so we've got that part working. Now let's see if we can get some arguments in there. We'll iterate the <code>ARGV</code> object to see what comes in.</p>
+
+<p>``` ruby ~/bin/sherpa</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>ARGV.each do |arg|</p>
+
+<pre><code>puts arg
+</code></pre>
+
+<p>end
+```</p>
+
+<p>With that little bit of code we should be able to pass just about anything to our command and have it echoed back.</p>
+
+<p>```
+sherpa foo bar baz</p>
+
+<p> => foo
+ => bar
+ => baz
+```</p>
+
+<p>Ok cool. Now let's step this up a notch or two. Let's say we want to send in commands and options. For that we'll use the built-in <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/optparse/rdoc/OptionParser.html">OptionParser</a>. Here's <a href="http://rubylearning.com/blog/2011/01/03/how-do-i-make-a-command-line-tool-in-ruby/">a link to the article I've been following which details how to use the OptionParser.</a> In my case, I'm going to tell <code>sherpa</code> to either <code>say_hello</code> or <code>say_goodbye</code>. When I pass in the <code>-n</code> flag it should accept a name, otherwise it will use the name 'Master'. So the line <code>sherpa say_hello -n Rob</code> should produce <code>Hello Rob</code> and likewise if I left off the option and just used <code>sherpa say_hello</code> it should produce <code>Hello Master</code>.</p>
+
+<p>Here's the code to accomplish this:</p>
+
+<p>``` ruby ~/bin</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>require 'optparse'</p>
+
+<p>options = {}</p>
+
+<p>opt_parser = OptionParser.new do |opt|
+  opt.banner = "Usage: opt_parser COMMAND [OPTIONS]"
+  opt.separator  ""
+  opt.separator  "Commands"
+  opt.separator  "     name: the name the sherpa should use when addressing you"
+  opt.separator  ""
+  opt.separator  "Options"</p>
+
+<p>  opt.on("-n","--name NAME","tell the sherpa what to call you") do |name|</p>
+
+<pre><code>options[:name] = name
+</code></pre>
+
+<p>  end</p>
+
+<p>  opt.on("-h","--help","help") do</p>
+
+<pre><code>puts opt_parser
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>opt_parser.parse!
+name = options[:name] || 'Master'</p>
+
+<p>case ARGV[0]
+when "say_hello"
+  puts "Hello #{name}"
+when "say_goodbye"
+  puts "Goodbye #{name}"
+else
+  puts opt_parser
+end
+```</p>
+
+<p>And there we go, our first command line Ruby tool. I'll pick it up tomorrow to try to improve upon it. We're starting small but at least we have something that works!</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+<ul class="personal-stats">
+    <li>Mood: Tired, Patient</li>
+    <li>Sleep: 6</li>
+    <li>Hunger: 1</li>
+    <li>Coffee: 0</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

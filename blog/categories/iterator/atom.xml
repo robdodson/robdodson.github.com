@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Iterator | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.github.com/blog/categories/iterator/atom.xml" rel="self"/>
+  <link href="http://robdodson.github.com/"/>
+  <updated>2014-03-23T08:26:29-07:00</updated>
+  <id>http://robdodson.github.com/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[JavaScript Design Patterns: Iterator]]></title>
+    <link href="http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator/"/>
+    <updated>2012-08-10T15:45:00-07:00</updated>
+    <id>http://robdodson.github.com/blog/2012/08/10/javascript-design-patterns-iterator</id>
+    <content type="html"><![CDATA[<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<p>If you're coming from Ruby or Java you probably think of an Iterator as an object which gives you a consistent interface for traversing a collection of some kind. If you're coming from JavaScript or Actionscript you probably just think of an iterator as the <code>i</code> value in a <code>for</code> loop. The term has mixed meanings but in this case we're refering to the former, an object which gives us a consistent interface for iterating over a collection of some kind. If you've never used them before that might seem kind of silly. "If I need to loop over something I'm just going to loop over it!" For many use cases that's totally fine. Where Iterator objects are useful is in situations where you might need to loop in an async fashion (stopping and restarting) or if you want to preclude an object from knowing too much about the inner workings of a collection.</p>
+
+<!--more-->
+
+
+<h2>Formal Definition</h2>
+
+<p><blockquote><p>Provide a way to access the elements of an aggregate object sequentially without exposing its underlying representation.</p><footer><strong>GoF</strong> <cite>Design Patterns: Elements of Reusable Object-Oriented Software</cite></footer></blockquote></p>
+
+<h3>Also Known As</h3>
+
+<ul>
+<li>Cursor</li>
+</ul>
+
+
+<h2>Example Time</h2>
+
+<p>The code for an Iterator should be pretty easy to grok if you've worked with loops before. Here is a simple example which returns an Iterator for looping over an Array by every third value.</p>
+
+<p>``` js
+var iterator = (function() {</p>
+
+<pre><code>var index = 0,
+    data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    length = data.length;
+
+return {
+    next: function() {
+        var element;
+        if (!this.hasNext()) {
+            return null;
+        }
+        element = data[index];
+        index += 3;
+        return element;
+    },
+    hasNext: function() {
+        return index &lt; length;
+    },
+    rewind: function() {
+        index = 0;
+        return data[index];
+    },
+    current: function() {
+        return data[index];
+    }
+}
+</code></pre>
+
+<p>}());
+<code>``
+Our iterator has a handful of useful operations including</code>next<code>,</code>hasNext<code>,</code>rewind<code>and</code>current`.</p>
+
+<p><code>next</code> will return the next value and advance the index by 3.</p>
+
+<p><code>hasNext</code> will check to see if calling <code>next</code> will actually return an item. Good for indicating when we've reached the end of a collection.</p>
+
+<p><code>rewind</code> will reset the index to zero so we can loop over the collection again.</p>
+
+<p><code>current</code> will return the current item at the index without advancing the index.</p>
+
+<p>Let's put these into play to see how it works:</p>
+
+<p>``` js
+while(iterator.hasNext()) {</p>
+
+<pre><code>console.log(iterator.next());
+</code></pre>
+
+<p>}</p>
+
+<p>iterator.rewind();
+console.log(iterator.current());
+```</p>
+
+<p>If we ran the above we'd see the following output in the console.</p>
+
+<p><code>
+1
+4
+7
+10
+1
+</code>
+Since the iterator is mainting its own state if we need to stop iteration at any point we just don't call <code>next</code>. Using exclusively <code>for</code> loops we'd have to check against a flag of some kind, store our current position and then rebuild the loop starting from that point.</p>
+
+<h2>Not just for Arrays</h2>
+
+<p>As I mentioned before the Iterator gives us a consistent interface for traversing a collection, which means it can iterate over <em>any</em> object. Calendar Dates, Linked Lists, Node Graphs, whatever! Here's an example of an iterator that traverses a simple Hash.</p>
+
+<p>``` js
+var iterator = (function() {</p>
+
+<pre><code>var data = { foo: 'foo', bar: 'bar', baz: 'baz' },
+    keys = Object.keys(data),
+    index = 0,
+    length = keys.length;
+
+return {
+    next: function() {
+        var element;
+        if (!this.hasNext()) {
+            return null;
+        }
+        element = data[keys[index]];
+        index++;
+        return element;
+    },
+    hasNext: function() {
+        return index &lt; length;
+    },
+    rewind: function() {
+        index = 0;
+        return data[keys[index]];
+    },
+    current: function() {
+        return data[keys[index]];
+    }
+}
+</code></pre>
+
+<p>}());
+```
+Notice how the interface is identical to our previous Iterator? That's one of the key aspects to this pattern: Regardless of the <em>type</em> of collection, we can define a consistent interface to loop through it. It also means that the client doesn't need to know anything about the implementation of the actual collection, and by wrapping it in a closure we can prevent the client from <em>editing</em> the collection. Personally I like the idea of certain services handing out iterators rather than a wholesale dump of all the data. As always use whichever tool is appropriate for the context.</p>
+
+<p>One quick note regarding Hashes. Previous versions of the ECMA spec did not require that Hash keys be kept in order. While most modern browsers <em>do</em> keep them in order there are some funky inconsistencies. For instance, if you write out the following Hash:</p>
+
+<p><code>js
+var hash = { 'foo': 'foo', 'bar': 'bar', '1': 'hello', '2': 'world' };
+</code>
+Google Chrome will swap the order of the keys such that they appear like this:</p>
+
+<p><code>js
+{ '1': 'hello', '2': 'world', 'foo': 'foo', 'bar': 'bar' };
+</code>
+There are some interesting discussions on StackOverflow which cover this topic but it's a bit outside the scope of this article. If you're interested you can find them here:</p>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/5773950/how-to-keep-an-javascript-object-array-ordered-while-also-maintaining-key-lookup">How to keep an Javascript object/array ordered while also maintaining key lookups?</a></li>
+<li><a href="http://stackoverflow.com/questions/3549894/javascript-data-structure-for-fast-lookup-and-ordered-looping">Javascript data structure for fast lookup and ordered looping?</a></li>
+</ul>
+
+
+<h2>JavaScript 1.7</h2>
+
+<p>Although not widely supported yet, JavaScript 1.7 includes a built in Iterator object which can be used to wrap an Array or Hash with just a single line of code.</p>
+
+<p>``` html</p>
+
+<script type="application/javascript;version=1.7">
+    var lang = { name: 'JavaScript', birthYear: 1995 };
+    var it = Iterator(lang);
+</script>
+
+
+<p><code>``
+The above script block will not work in Chrome but it should work in the latest version of Firefox. Note the</code>type` attribute of the script tag which instructs the interpreter to handle the code as JS 1.7.</p>
+
+<p>For some further reading on the topic checkout the MDN article which covers <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Iterators_and_Generators">Iterators in JavaScript 1.7</a></p>
+
+<h2><a href="https://github.com/robdodson/JavaScript-Design-Patterns/tree/master/iterator/">Grab the Example Source</a></h2>
+
+<h2>Related Patterns</h2>
+
+<ul>
+<li>Composite: Iterators are often applied to recursive structures such as Composites.</li>
+<li>Factory Method: Polymorphic iterators rely on factory methods to instantiate the appropriate Iterator subclass.</li>
+<li>Memento: Often used in conjunction with the Iterator pattern. An iterator can use a memento to capture the state of an iteration. The iterator stores the memento internally.</li>
+</ul>
+
+
+<p><small><cite style="color:#AAA;">Gamma, Erich; Helm, Richard; Johnson, Ralph; Vlissides, John (1994-10-31). Design Patterns: Elements of Reusable Object-Oriented Software. Pearson Education (USA).</cite></small></p>
+
+<hr>
+
+
+<br>
+
+
+<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
+
+<br>
+
+
+<p>Thanks for reading! If you have questions or feedback please leave a comment below. - Rob</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+]]></content>
+  </entry>
+  
+</feed>

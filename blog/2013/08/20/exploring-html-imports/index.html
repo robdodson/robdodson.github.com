@@ -1,0 +1,696 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Exploring HTML Imports | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">20 Aug 2013</span>
+	<h1 class="post-title">Exploring HTML Imports</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<p><a href="http://robdodson.me/blog/2013/03/17/why-web-components/">Web Components</a> have come a long way in the past few months and one of the technologies that I&#8217;m most interested in is <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html">HTML Imports</a> (or &#8220;imports&#8221;, for short). Imports allow you to load additional documents into your page without having to write a bunch of ajax. This is great for <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Elements</a> where you might want to import a suite of new tags. I spent the day playing with imports and thought it would be useful to write up my progress.</p>
+
+<!--more-->
+
+
+<h2>The Lowdown</h2>
+
+<p>Imports are a new type of <code>link</code> tag which should be familiar to you since that&#8217;s also how we load our stylesheets.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;/path/to/styles.css&quot;</span><span class="nt">&gt;</span>
+</code></pre></figure>
+
+
+<p>For an import we just replace the <code>rel</code> with one of type <code>import</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/path/to/some/import.html&quot;</span><span class="nt">&gt;</span>
+</code></pre></figure>
+
+
+<p>At the moment, imports do not block like script tags. However, that may change in the future to help with <a href="http://lists.w3.org/Archives/Public/public-webapps/2013JulSep/0287.html">Custom Element resolution.</a></p>
+
+<h2>Support</h2>
+
+<p>Native imports are only available in Chrome Canary v31 and Chrome Dev v30. Thankfully <a href="http://www.polymer-project.org/">Polymer</a> <a href="http://www.polymer-project.org/platform/html-imports.html">offers a polyfill</a> if you want to try them out in other modern / &#8220;evergreen&#8221; browsers.</p>
+
+<p>To use HTML Imports make sure you&#8217;ve enabled the following
+in Chrome&#8217;s <code>about:flags</code>.</p>
+
+<p>√ Experimental Web Platform features<br>
+√ HTML Imports<br></p>
+
+<h2>Codez!</h2>
+
+<p>I&#8217;ve created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I&#8217;ll link to the sketch so you can quickly try things out.</p>
+
+<h2>A Basic Example</h2>
+
+<h3>Sketch 0: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/0-basic">Basic</a></h3>
+
+<p>OK so what&#8217;s a very basic import look like?</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Basic HTML Imports<span class="nt">&lt;/title&gt;</span>
+    <span class="c">&lt;!-- Pull in our blog post example --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/blog-post.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>In its simplest form the import works just like calling a stylesheet. We have to make sure there&#8217;s a document to import so let&#8217;s create a fake blog post.</p>
+
+<figure class='code'><figcaption><span>imports/blog-post.html</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h1&gt;</span>Awesome header<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;p&gt;</span>Here is some really interesting paragraph content.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></figure>
+
+
+<p>To test you&#8217;ll need to host your <code>index.html</code> and <code>imports/</code> folder on a local server. I recommend <a href="https://github.com/visionmedia/serve">serve</a> if you don&#8217;t already have one installed.</p>
+
+<p>Once you have that setup visit your index page. If you take a look at the console you can see the request returning.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-console.jpg" title="'Our first HTML import!'" ></p>
+
+<p>Well that&#8217;s cool, but now what?</p>
+
+<p>Let&#8217;s grab the content of the import using some JavaScript and append it to the body.</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;link[rel=import]&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="kr">import</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#blog-post&#39;</span><span class="p">);</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</code></pre></figure>
+
+
+<p>First we query the <code>link</code> tag which loaded our import. Then we extract our <code>#blog-post</code> element and store it in a variable called <code>content</code>. You&#8217;ll notice that we don&#8217;t have to write any event handler code to wait till the import has loaded, we can just assume the content is there and start working with it. Finally we add the new content to our <code>body</code>.</p>
+
+<p>If you&#8217;re following along you should end up with something like this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen1.jpg" title="'Basic Import Example'" ></p>
+
+<p>Exciting, I know ;) But it demonstrates a no frills approach to loading content that doesn&#8217;t require ajax and writing our own event handlers. Let&#8217;s keep digging to see what else we find&#8230;</p>
+
+<h2>A Basic Example with Polymer</h2>
+
+<h3>Sketch 1: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/1-basic-polymer">Basic-Polymer</a></h3>
+
+<p>If you want to try out the snippets above in a browser other than Chrome Canary you&#8217;ll need to use Google&#8217;s <a href="http://www.polymer-project.org/">Polymer Project</a>. Polymer is a collection of polyfills and additional sugars which seeks to enable the use of Web Components in all modern browsers. The hope is that devolopers will use Polymer to inform the W3C on which direction to take with Web Components; so rather than wait for a stinky spec we can guide the implementation process.</p>
+
+<p>Polymer attempts to keep parity with the the evolving specifications but obviously there are some places where the API must differ because of the limitations of current browsers. In the case of HTML Imports, Polymer waits for the <code>DOMContentLoaded</code> event before triggering the actual import process. This means we need to listen for the <code>HTMLImportsLoaded</code> event on either <code>window</code> or <code>document</code> to know when it is finished.</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Basic HTML Imports<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/blog-post.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+
+    <span class="c">&lt;!-- Include polymer.js --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/bower_components/polymer/polymer.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+    <span class="c">&lt;!-- Listen for the HTMLImportsLoaded event --&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+      <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;HTMLImportsLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;link[rel=import]&#39;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="kr">import</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#blog-post&#39;</span><span class="p">);</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+      <span class="p">});</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Using the above we should get the same results as before.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen1.jpg" title="'Basic Import Example with Polymer'" ></p>
+
+<p>You might notice that I used <code>polymer.min.js</code> instead of only including the <a href="http://www.polymer-project.org/platform/html-imports.html">HTML Imports polyfill</a>. Polymer is structured so you can take any of the polyfills &agrave; la carte but I find it&#8217;s easier to just include all of Polymer when I&#8217;m experimenting, rather than worry if I have each individual polyfill loaded. That&#8217;s just personal preference (aka I&#8217;m lazy).</p>
+
+<h2>Using CSS in our Imports</h2>
+
+<h3>Sketch 2: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/2-css">CSS</a></h3>
+
+<p>Let&#8217;s put Polymer to the side for a bit and go back to our original, native example.</p>
+
+<p>One of the first things I wanted to try was importing documents using the new CSS <a href="http://www.w3.org/TR/html51/document-metadata.html#attr-style-scoped"><code>scoped</code></a> attribute. The <code>scoped</code> attribute allows you to include <code>&lt;style&gt;</code> tags inside of an element which <strong>only affect that element and not the entire document</strong>. Let&#8217;s update our index file a bit to demonstrate:</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Imports with CSS<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/blog-post.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="c">&lt;!-- Add a header so we can show off scoped --&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Boring header<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+
+    <span class="nt">&lt;script&gt;</span>
+      <span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;link[rel=import]&#39;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="kr">import</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#blog-post&#39;</span><span class="p">);</span>
+      <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>The only change I&#8217;ve made is to add an <code>h1</code> at line 10 so we can better illustrate how <code>scoped</code> works. Now let&#8217;s update our fake blog post.</p>
+
+<figure class='code'><figcaption><span>imports/blog-post.html</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;style </span><span class="na">scoped</span><span class="nt">&gt;</span>
+    <span class="nt">h1</span> <span class="p">{</span>
+      <span class="k">background</span><span class="o">:</span> <span class="nb">lightgreen</span><span class="p">;</span>
+      <span class="k">color</span><span class="o">:</span> <span class="nb">green</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">16px</span><span class="p">;</span>
+      <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="n">Arial</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+      <span class="k">color</span><span class="o">:</span> <span class="nb">green</span><span class="p">;</span>
+      <span class="k">font-weight</span><span class="o">:</span> <span class="k">bold</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+
+  <span class="nt">&lt;h1&gt;</span>Awesome header<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;p&gt;</span>
+    Here is some really interesting paragraph content.
+    It comes with its own stylesheet!
+  <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></figure>
+
+
+<p>When we run this in Canary we should get the following:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen2.jpg" title="'Imports with Scoped Styles'" ></p>
+
+<p>It&#8217;s still not much to look at but the gears in my imagination are starting to turn now. We just imported a document, which has its own styles that are scoped specifically to it, and we stamped its contents onto our page. We&#8217;re starting to get into Web Components territory and that&#8217;s pretty exciting. Let&#8217;s see what else we can do&#8230;</p>
+
+<h2>Using Scripts in our Imports</h2>
+
+<h3>Sketch 3: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/3-script">Script</a></h3>
+
+<p>Next let&#8217;s look at using <code>&lt;script&gt;</code> tags inside of our import. We&#8217;ll start by removing the <code>&lt;script&gt;</code> block from our <code>index.html</code>.</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Basic HTML Imports<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/blog-post.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Boring header<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Then we&#8217;ll transfer that script block over to our blog post.</p>
+
+<figure class='code'><figcaption><span>imports/blog-post.html</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;style </span><span class="na">scoped</span><span class="nt">&gt;</span>
+    <span class="nt">h1</span> <span class="p">{</span>
+      <span class="k">background</span><span class="o">:</span> <span class="nb">lightgreen</span><span class="p">;</span>
+      <span class="k">color</span><span class="o">:</span> <span class="nb">green</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nt">p</span> <span class="p">{</span>
+      <span class="k">font-size</span><span class="o">:</span> <span class="m">16px</span><span class="p">;</span>
+      <span class="k">font-family</span><span class="o">:</span> <span class="n">Helvetica</span><span class="o">,</span> <span class="n">Arial</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+      <span class="k">color</span><span class="o">:</span> <span class="nb">green</span><span class="p">;</span>
+      <span class="k">font-weight</span><span class="o">:</span> <span class="k">bold</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="nt">&lt;/style&gt;</span>
+
+  <span class="nt">&lt;h1&gt;</span>Awesome header<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;p&gt;</span>
+    Here is some really interesting paragraph content.
+    It comes with its own stylesheet!
+  <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+  <span class="c1">// thisDoc refers to the &quot;importee&quot;, which is blog-post.html</span>
+  <span class="kd">var</span> <span class="nx">thisDoc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">currentScript</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
+
+  <span class="c1">// thatDoc refers to the &quot;importer&quot;, which is index.html</span>
+  <span class="kd">var</span> <span class="nx">thatDoc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+
+  <span class="c1">// grab the contents of the #blog-post from this document</span>
+  <span class="c1">// and append it to the importing document.</span>
+  <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">thisDoc</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#blog-post&#39;</span><span class="p">);</span>
+  <span class="nx">thatDoc</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>If we run this we should get the exact same outcome as before.</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen2.jpg" title="'Imports with Scoped Styles'" ></p>
+
+<p>An important thing to take notice of is the relationship between <code>thisDoc</code> and <code>thatDoc</code>. <code>thisDoc</code> refers to the <code>blog-post.html</code> document, while <code>thatDoc</code> refers to our index.html file. It&#8217;s useful to distinguish between the two so we can <code>querySelector</code> for <code>#blog-post</code> and not worry that we may have grabbed something out of the importing document. <em>Thanks to <a href="https://twitter.com/coonsta">Dominic Cooney</a> for the heads up on this.</em></p>
+
+<p>You&#8217;ll also notice that since the import has access to our <code>document</code> object it is able to add itself to the page. In practice you probably wouldn&#8217;t want imports adding themselves wherever but the important takeaway is that <strong>anything imported can access the <code>document</code></strong>. This means an import could register itself as a Custom Element using our <code>document</code> object and we wouldn&#8217;t need to write any additional code. We&#8217;re almost to that point so let&#8217;s keep going&#8230;</p>
+
+<h2>Using Templates in our Imports</h2>
+
+<h3>Sketch 4: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/4-template">Template</a></h3>
+
+<p>I&#8217;m getting a little tired of our fake &#8220;blog post&#8221; so let&#8217;s switch over to something more practical. We&#8217;ll use <a href="http://www.chartjs.org/">Chart.js</a> to create a very simple pie diagram and we&#8217;ll use the new <code>&lt;template&gt;</code> tag to hold the contents of our import. If you haven&#8217;t heard of the template tag before <a href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/">checkout this introduction</a>.</p>
+
+<p>To start, I&#8217;ve updated the <code>index.html</code> so it includes Chart.js and imports a new <code>chart.html</code> file.</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Imports with Templates<span class="nt">&lt;/title&gt;</span>
+    <span class="c">&lt;!-- Include Chart.js so our import can use it --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="c">&lt;!-- Make sure to import chart.html --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/chart.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Quarterly Pokemon Sales<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Originally I had the Chart.js script include on line 7 inside of <code>chart.html</code>. I realize now that this is an antipattern because <code>chart.html</code> has no idea where you would store your 3rd party libraries. If your import depends on 3rd party code I think it&#8217;s best to keep it in the primary document.</p>
+
+<p>Here&#8217;s what <code>chart.html</code> looks like:</p>
+
+<figure class='code'><figcaption><span>imports/chart.html</span></figcaption><pre><code><span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">&quot;chart-pie&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;canvas</span> <span class="na">id=</span><span class="s">&quot;myChart&quot;</span> <span class="na">width=</span><span class="s">&quot;200&quot;</span> <span class="na">height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+  <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="nx">color</span><span class="o">:</span><span class="s2">&quot;#F38630&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="nx">color</span> <span class="o">:</span> <span class="s2">&quot;#E0E4CC&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nx">color</span> <span class="o">:</span> <span class="s2">&quot;#69D2E7&quot;</span>
+      <span class="p">}</span>
+    <span class="p">];</span>
+
+    <span class="c1">// Get the context of the canvas element we want to select</span>
+    <span class="c1">// It&#39;s ok to use document here because this script block won&#39;t</span>
+    <span class="c1">// activate till it&#39;s added to the page.</span>
+    <span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;myChart&quot;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">(</span><span class="s2">&quot;2d&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">myNewChart</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Chart</span><span class="p">(</span><span class="nx">ctx</span><span class="p">).</span><span class="nx">Pie</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+  <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+  <span class="c1">// thisDoc refers to the &quot;importee&quot;, which is chart.html</span>
+  <span class="kd">var</span> <span class="nx">thisDoc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">currentScript</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
+
+  <span class="c1">// thatDoc refers to the &quot;importer&quot;, which is index.html</span>
+  <span class="kd">var</span> <span class="nx">thatDoc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+
+  <span class="c1">// grab the contents of #chart-pie from this document</span>
+  <span class="c1">// and append it to the importing document.</span>
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">thisDoc</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">&quot;#chart-pie&quot;</span><span class="p">);</span>
+  <span class="nx">thatDoc</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>We&#8217;re creating a new <code>&lt;template&gt;</code> which contains a canvas tag and a script block to create our pie chart. The advantage of using a template tag is that any script blocks inside of it will not execute until we clone the contents and add them to the DOM.</p>
+
+<p>Lines 29-37 should look familiar. We&#8217;re grabbing the template and stamping its content onto the document. Notice on line 37 we use <code>template.content</code> to access the innards.</p>
+
+<p>Running the above gives us this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-template.jpg" title="'Imports with Template'" ></p>
+
+<p>Well this is interesting. We&#8217;re importing an entire pie chart and our index page isn&#8217;t cluttered with a bunch of code. Unfortunately we don&#8217;t have much control over where the pie chart ends up. It would be nice if we could turn the contents of the import into a tag and place that wherever. Thankfully Custom Elements let us do just that!</p>
+
+<h2>Using Custom Elements in our Imports</h2>
+
+<h3>Sketch 5: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/5-custom-element">Custom Element</a></h3>
+
+<p>I&#8217;ll say in advance that you might need to read through this section a few times before you fully grok it. We&#8217;re going to touch on a lot of new stuff and I fully admit that I don&#8217;t understand it all just yet. Consider this the bonus round :)</p>
+
+<p>Having said that, the final markup for our <code>index.html</code> file is going to look like this:</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Imports with Custom Elements<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/chart.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Quarterly Pokemon Sales<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;chart</span><span class="na">-pie</span><span class="nt">&gt;</span><span class="err">&lt;</span>/chart-pie&gt;
+    <span class="nt">&lt;chart</span><span class="na">-pie</span><span class="nt">&gt;</span><span class="err">&lt;</span>/chart-pie&gt;
+    <span class="nt">&lt;chart</span><span class="na">-pie</span><span class="nt">&gt;</span><span class="err">&lt;</span>/chart-pie&gt;
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>On lines 11-13 we&#8217;re going to use our new Custom Element, <code>chart-pie</code>, which will allow us to produce pie charts wherever we want. The result will look like this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-custom-elements.jpg" title="'Imports with Custom Elements'" ></p>
+
+<p>Obviously not the most amazing thing ever but from a practical perspective being able to drop a pie chart on your page with one line of HTML is pretty sweet.</p>
+
+<p>To create the <code>chart-pie</code> tag we&#8217;ll need to create a <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Element</a>. Custom Elements are new tags with a lifecycle of JavaScript callbacks. Typically they use <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM</a> to hide their internal markup and expose attributes and specific styles to the client. <a href="http://robdodson.me/blog/2013/03/17/why-web-components/">I wrote an article loosely explaining them</a> a while back so take a look at that and also checkout <a href="http://www.youtube.com/watch?v=fqULJBBEVQE">this talk by Eric Bidelman</a>.</p>
+
+<p>Here&#8217;s what our updated <code>chart.html</code> looks like.</p>
+
+<figure class='code'><figcaption><span>imports/chart.html</span></figcaption><pre><code><span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">&quot;chart-pie&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;canvas</span> <span class="na">class=</span><span class="s">&quot;myChart&quot;</span> <span class="na">width=</span><span class="s">&quot;200&quot;</span> <span class="na">height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+  <span class="c1">// thisDoc refers to the &quot;importee&quot;, which is chart.html</span>
+  <span class="kd">var</span> <span class="nx">thisDoc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">currentScript</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
+
+  <span class="c1">// thatDoc refers to the &quot;importer&quot;, which is index.html</span>
+  <span class="kd">var</span> <span class="nx">thatDoc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">thisDoc</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#chart-pie&#39;</span><span class="p">);</span>
+
+  <span class="c1">// Make sure you extend an existing HTMLElement prototype</span>
+  <span class="kd">var</span> <span class="nx">ChartPieProto</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HTMLElement</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+
+  <span class="c1">// Setup optional lifecycle callbacks: createdCallback,</span>
+  <span class="c1">// enteredDocumentCallback, leftDocumentCallback and</span>
+  <span class="c1">// attributeChangedCallback</span>
+  <span class="nx">ChartPieProto</span><span class="p">.</span><span class="nx">createdCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Create a ShadowDOM to hold our template content</span>
+    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">clone</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+    <span class="c1">// Create the pie chart with Chart.js</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="nx">color</span><span class="o">:</span><span class="s2">&quot;#F38630&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="nx">color</span> <span class="o">:</span> <span class="s2">&quot;#E0E4CC&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nx">color</span> <span class="o">:</span> <span class="s2">&quot;#69D2E7&quot;</span>
+      <span class="p">}</span>
+    <span class="p">];</span>
+
+    <span class="c1">//Get the context of the canvas element we want to select</span>
+    <span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">clone</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.myChart&#39;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">myNewChart</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Chart</span><span class="p">(</span><span class="nx">ctx</span><span class="p">).</span><span class="nx">Pie</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+
+    <span class="c1">// Add the template content + chart to our Shadow DOM</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">clone</span><span class="p">);</span>
+  <span class="p">};</span>
+
+  <span class="kd">var</span> <span class="nx">ChartPie</span> <span class="o">=</span> <span class="nx">thatDoc</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">&#39;chart-pie&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">prototype</span><span class="o">:</span> <span class="nx">ChartPieProto</span><span class="p">});</span>
+  <span class="c1">//var chartPie = new ChartPie();</span>
+  <span class="c1">//var chartPie = document.createElement(&#39;chart-pie&#39;);</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></figure>
+
+
+<p>Let&#8217;s walk through it piece by piece.</p>
+
+<pre><code>&lt;template id="chart-pie"&gt;
+  &lt;canvas class="myChart" width="200" height="200"&gt;&lt;/canvas&gt;
+&lt;/template&gt;
+</code></pre>
+
+<p>On lines 1-3 we&#8217;ve shortened the <code>template</code> down so that it only contains our <code>canvas</code> tag. We&#8217;ll use the Custom Element <code>createdCallback</code> to actually instantiate the chart in here.</p>
+
+<br>
+
+
+<pre><code>// thisDoc refers to the "importee", which is chart.html
+var thisDoc = document.currentScript.ownerDocument;
+
+// thatDoc refers to the "importer", which is index.html
+var thatDoc = document;
+
+var template = thisDoc.querySelector('#chart-pie');
+</code></pre>
+
+<p>Lines 6-12 should look familar from the last example. We&#8217;re storing our two documents in variables and querying for the template tag.</p>
+
+<br>
+
+
+<pre><code>var ChartPieProto = Object.create(HTMLElement.prototype);
+</code></pre>
+
+<p>On line 15 we define the prototype for our Custom Element called <code>ChartPieProto</code>. This prototype extends the <code>HTMLElement</code> prototype which is a requirement for creating a new element.</p>
+
+<br>
+
+
+<pre><code>ChartPieProto.createdCallback = function() {
+  ...
+};
+</code></pre>
+
+<p>On line 20 we see the first lifecycle callback, <code>createdCallback</code>. The <code>createdCallback</code> is run every time the parser hits a new instance of our tag. Therefore we can use it as a kind of Constructor to kickoff the creation of our chart. We&#8217;ll want to create a new chart instance for each tag so all of our Chart.js code has been moved inside of this callback.</p>
+
+<br>
+
+
+<pre><code>var root = this.createShadowRoot();
+var clone = template.content.cloneNode(true);
+</code></pre>
+
+<p>On lines 22-23 we create a <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM</a> to hold the markup for our chart.</p>
+
+<br>
+
+
+<pre><code>var data = [
+  {
+    value: 30,
+    color:"#F38630"
+  },
+  {
+    value : 50,
+    color : "#E0E4CC"
+  },
+  {
+    value : 100,
+    color : "#69D2E7"
+  }
+];
+
+//Get the context of the canvas element we want to select
+var ctx = clone.querySelector('.myChart').getContext('2d');
+var myNewChart = new Chart(ctx).Pie(data);
+</code></pre>
+
+<p>Lines 26-43 should look familiar. It&#8217;s the same Chart.js code from before except now we use <code>querySelector</code> to find the contents of the template clone and we&#8217;re using a class for <code>myChart</code> instead of an id.</p>
+
+<br>
+
+
+<pre><code>root.appendChild(clone);
+</code></pre>
+
+<p>On line 46 we add the new content to our Shadow DOM.</p>
+
+<br>
+
+
+<pre><code>var ChartPie = document.register('chart-pie', {prototype: ChartPieProto});
+</code></pre>
+
+<p>Line 49 is where we actually register our Custom Element and assign it to the name <code>chart-pie</code>. From here you can either place a <code>&lt;chart-pie&gt;&lt;/chart-pie&gt;</code> tag somewhere on your page, or use JavaScript to instantiate an instance and add it to the <code>document</code>. This is demonstrated in the comments on lines 50-51. If you refer back to our <code>index.html</code> example we just use the <code>&lt;chart-pie&gt;</code> tag.</p>
+
+<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Imports with Custom Elements<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;/imports/chart.html&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Quarterly Pokemon Sales<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;chart</span><span class="na">-pie</span><span class="nt">&gt;</span><span class="err">&lt;</span>/chart-pie&gt;
+    <span class="nt">&lt;chart</span><span class="na">-pie</span><span class="nt">&gt;</span><span class="err">&lt;</span>/chart-pie&gt;
+    <span class="nt">&lt;chart</span><span class="na">-pie</span><span class="nt">&gt;</span><span class="err">&lt;</span>/chart-pie&gt;
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></figure>
+
+
+<p>Which produces this:</p>
+
+<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-custom-elements.jpg" title="'Imports with Custom Elements'" ></p>
+
+<h2>Conclusion</h2>
+
+<p>If you&#8217;ve made it this far congrats and thanks for hanging in there! I know that last section was a little crazy but stop for a moment and think about what we just did.</p>
+
+<p>By using an HTML Import we were able to pull in a document which added a new tag to our application. Imagine if <em>all</em> of Chart.js was written in this manner. There would be no need for us to write any glue code to generate a chart ever again. Instead we could manipulate the attributes of a <code>&lt;chart-pie&gt;</code> tag using something like Angular or any other front-end framework. That would allow us to focus only on the code that matters to our application and leave all that other boilerplate tucked away inside of Custom Elements.</p>
+
+<p>As a matter of fact the Polymer folks have already started doing this. Checkout the <a href="https://github.com/Polymer/more-elements">more-elements project on GitHub</a> which includes proof of concept wrappers for a number of libraries including Chart.js. Thanks to Scott Miles on <a href="https://groups.google.com/forum/#!forum/polymer-dev">the Polymer Google Group</a> for pointing that out to me :)</p>
+
+<p>Over the next few months I&#8217;ll be blogging exclusively about this topic because I think it&#8217;s really interesting so check back later for more!</p>
+
+<p>Till then make sure to <a href="http://twitter.com/rob_dodson">hit me up on Twitter</a> if you have any questions or leave a note in the comments. Thanks!</p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Exploring HTML Imports&amp;url=http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/';
+        var disqus_url = 'http://robdodson.github.com/blog/2013/08/20/exploring-html-imports/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>A Basic RVM Tutorial for Rails 3 | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">23 Sep 2011</span>
+	<h1 class="post-title">A Basic RVM Tutorial for Rails 3</h1>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+	<section class="post-content">
+		<h3>What is RVM?</h3>
+
+<p><a href="https://rvm.io//">RVM</a> is a great Ruby and gem management tool that should probably be the first thing you install if you’re learning Rails (or Ruby for that matter). The main benefit of RVM is that it helps to keep your rubies and your gems organized into discrete folders which can easily be thrown away and recreated. If you’ve ever had a gem explode on you, then you know how great a feature like this is. I’ll cover the basics of using RVM in this post to quickly get you up and running. This tutorial is written for the OSX terminal, if you&#8217;re on Windows&#8230;um&#8230;kill yourself.</p>
+
+<!--more-->
+
+
+<h3>How to Install RVM</h3>
+
+<p>First download and run the RVM installation script. Thankfully the authors have made this nice and easy for you. Just copy and paste the following into your command line:</p>
+
+<figure class='code'><pre><code>curl -L get.rvm.io | bash -s stable</code></pre></figure>
+
+
+<p>Next you’re going to want to make sure that RVM gets loaded into your shell sessions. The easiest way to do this is to open up your .bash_profile file located in your user&#8217;s home directory (that&#8217;s what the ~ stands for in your terminal) and add the following to the bottom:</p>
+
+<figure class='code'><pre><code>[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # This loads RVM into a shell session.</code></pre></figure>
+
+
+<p>Then quit your terminal window and open it up again. You should be able to type: <code>rvm -v</code> to verify that RVM is loaded and ready for use. If instead it just returns the prompt then you&#8217;ve probably missed a step along the way. Check out the <a href="https://rvm.io/rvm/install/">RVM installation page</a> and double check that you&#8217;ve done everything correctly.</p>
+
+<h3>A Guided Tour of RVM&#8217;s Inner Workings</h3>
+
+<p>To get us started lets look around inside the .rvm directory. Try the following:</p>
+
+<figure class='code'><pre><code>cd ~/.rvm
+ls</code></pre></figure>
+
+
+<p>When you list out the contents of rvm you’ll see several folders but the ones we’re most interested in are gems and rubies. The gems folder is going to hold all of our gems after we create a <em>gemset</em>. The rubies folder holds different versions of ruby for us to play with. The really cool thing about RVM is that it lets you swap versions of ruby and different gemsets around so you can test out new packages without blowing stuff up. Made a mistake and installed the wrong gems? Just blow away the gemset and start over, no need to track everything down and uninstall it. RVM also lets you ensure that you have the same gems running for your dev, test and production environments :)</p>
+
+<p>Now that you have RVM installed, the next thing you’ll want to do is to install the latest version of Ruby. If you haven’t previously installed Ruby and you’re on OSX then typing <code>ruby -v</code> into the command line should produce something like this:</p>
+
+<p><code>ruby 1.8.7 (2009-06-12 patchlevel 174) [universal-darwin10.0]</code></p>
+
+<p>We’re going to leave the default version of Ruby installed on our machine, and instead install a new version using RVM. The current latest version of Ruby is 1.9.3, so try typing:</p>
+
+<figure class='code'><pre><code>rvm install 1.9.3</code></pre></figure>
+
+
+<p>It will take a little while to run but if all goes well we should have a brand new working copy of Ruby.</p>
+
+<p>Now try:</p>
+
+<figure class='code'><pre><code>rvm use 1.9.3
+ruby -v
+# ruby 1.9.3p125 (2012-02-16 revision 34643) [x86_64-darwin11.2.0]
+which ruby
+# /Users/Rob/.rvm/rubies/ruby-1.9.3-p125/bin/ruby</code></pre></figure>
+
+
+<p>We can see that not only are we running the latest version of ruby, but instead of being stashed in some random system folder somewhere, it’s being kept inside of a directory in RVM. To make sure that every time we open terminal we are using this new version of ruby we’ll simply say:</p>
+
+<figure class='code'><pre><code>rvm use 1.9.3 --default</code></pre></figure>
+
+
+<p>That will tell RVM to use this version as its default Ruby any time we open a terminal session.</p>
+
+<h3>What are RVM Gemsets?</h3>
+
+<p>I have to admit that when I first started using Ruby I found the concept of gems really confusing. In Flash or JavaScript if you want to use some code you just download the folder from github and include it in your project. Ruby does something similar with gems except it tries to automate the process for you and often times this can lead to busted projects. Because some gems rely on other gems it isn’t unheard of to have two gems in conflict which means your project won’t run and if you’re new to ruby or rails this can be just enough to make you call it quits. Here is where RVM really shines because it makes it OK to screw up your gems by sequestering them into their own little packages which you can recreate and destroy at will.</p>
+
+<p>Lets get started by typing:</p>
+
+<figure class='code'><pre><code>rvm gemset create my-new-gemset</code></pre></figure>
+
+
+<p>You should get a confirmation that a new gemset was created as well as a path to the new gemset. Let’s go take a look at that path.</p>
+
+<figure class='code'><pre><code># Make sure to use the path RVM provided you.
+cd /Users/RobDodson/.rvm/gems/ruby-1.9.3-p125@my-new-gemset
+ls</code></pre></figure>
+
+
+<p>Right now the folder is empty because we haven’t told RVM to install any gems into this gemset. Let’s change that by first assigning our current instance of ruby to this set.</p>
+
+<figure class='code'><pre><code>rvm 1.9.3@my-new-gemset --default</code></pre></figure>
+
+
+<p>The @ character tells RVM that we want to assign this gemset to our current ruby instance. The default flag is just there since I tend to forget to make my gemsets defaults and RVM will reset to whatever the prior default was the last time the flag was set. Let’s verify that things worked by typing:</p>
+
+<figure class='code'><pre><code>rvm current</code></pre></figure>
+
+
+<p>Which should output: <code>ruby-1.9.3-p125@my-new-gemset</code>. Similarly you could type:</p>
+
+<figure class='code'><pre><code>rvm gemset list</code></pre></figure>
+
+
+<p>To see a list of all your gemsets with a hash rocket next to the one currently in use.</p>
+
+<h3>How to Install Gems with RVM</h3>
+
+<p>Ok, so lets install some gems then. We’ll start by installing the Nokogiri gem, just as a test. But before we do this let me give you a little warning. In a lot of documentation you&#8217;ll see people installing gems with the <code>sudo</code> keyword at the beginning of the commmand. If you&#8217;re not using RVM then doing it this way makes sense. However if you ARE using RVM then <em>you should never install a gem with <code>sudo</code>!</em> In short, RVM does command line wizardry and installing gems with <code>sudo</code> will place them outside of the .rvm directory. You&#8217;ll think you&#8217;ve installed a gem properly but really it&#8217;ll be somewhere in the system folder. To install a gem using RVM we simply leave off the <code>sudo</code> keyword. Let&#8217;s try one by typing:</p>
+
+<figure class='code'><pre><code>gem install nokogiri</code></pre></figure>
+
+
+<p>After the installation has finished we should be able to see our new gem. If you’re still inside of the gems directory from earlier you can do a <code>cd gems</code>
+otherwise you’ll need to dig into it with a path that looks like this</p>
+
+<p><code>cd /Users/RobDodson/.rvm/gems/ruby-1.9.3-p125@my-new-gemset/gems</code></p>
+
+<p>Now if you type <code>ls</code> you should see your version of nokogiri. Let’s pause for a moment and consider what just happened. If you use Ruby Gems without RVM then everything will be installed in the system folder. If we wanted to have 2 different versions of nokogiri we would need to make sure that there wasn’t any kind of conflict in our gems directory. Since we’re using RVM to manage our gems, we’re able to tell Ruby Gems to put one version of nokogiri in the ‘my-new-gemset’ directory and another version in the ‘some-other-gemset’ directory. This is a great feature, especially when you want to try out an upgrade or a different version of a particular library. Rather than having to uninstall your working gem, you can just create a new gemset. If things blow up then you can throw it away and revert back to the previous gemset.</p>
+
+<p>Lets make another gemset and this time install a new instance of Rails.</p>
+
+<figure class='code'><pre><code>rvm create gemset my-new-rails-setup
+rvm 1.9.3@my-new-rails-setup
+gem install rails</code></pre></figure>
+
+
+<p>Now lets go into the folder for that gemset. Again the path should look similar to this:</p>
+
+<p><code>cd /Users/RobDodson/.rvm/gems/ruby-1.9.3-p125@my-new-rails-setup/gems</code></p>
+
+<p>Type <code>ls</code> this time and you’ll see <em>WAY</em> more gems. Imagine that we wanted to test our application on a different version of Rails. Managing all those gems in one directory would be a huge pain but thankfully RVM is taking care of that for us. If we decide that this version of rails is not for us we can just delte the gemset with:</p>
+
+<figure class='code'><pre><code>rvm gemset delete my-new-rails-setup</code></pre></figure>
+
+
+<p>And recreate it however we want :D</p>
+
+<p>That wraps it up for today. If you have any questions you can post a comment or hit me up on twitter <a href="http://twitter.com/robdodson">@rob_dodson</a>.</p>
+
+<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
+
+	</section>
+	<div class="newsletter">
+  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
+    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
+    <p class="newsletter-heading newsletter-sub">
+      Weekly emails cover Web Components, and the future of
+      Front-end Development.
+    </p>
+    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
+    <input type="hidden" name="group[4133][1]" value="true">
+    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
+  </form>
+</div>
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=A Basic RVM Tutorial for Rails 3&amp;url=http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.github.com/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/';
+        var disqus_url = 'http://robdodson.github.com/blog/2011/09/23/how-to-use-rvm-for-rails3/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>
