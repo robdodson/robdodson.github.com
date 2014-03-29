@@ -6,6 +6,8 @@ comments: true
 categories: [CSS, Shadow DOM, Web Components, Polymer]
 ---
 
+*03/18/2014: This post is now out of date. The cat and hat CSS selectors have been removed in favor of [`::shadow`](http://drafts.csswg.org/css-scoping/#shadow-pseudoelement) and [`/deep/`](http://drafts.csswg.org/css-scoping/#deep-combinator). Take a look at [the CSS Scoping Draft Spec](http://drafts.csswg.org/css-scoping/) for current selector status.*
+
 One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM's author would decide which elements could be exposed for styling [by using `part` attributes](/blog/2013/08/29/shadow-dom-styles-cont-dot#parts), but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent *accidental* styling of the shadow DOM, but allow intentional styles. That's where the new "cat" and "hat" CSS selectors come in.
 
 <!-- more -->
