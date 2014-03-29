@@ -31,18 +31,6 @@
 	</header>
 	<span class="post-meta">25 May 2012</span>
 	<h1 class="post-title">Backbone Events: Framework Communication</h1>
-	<div class="newsletter">
-  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
-    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
-    <p class="newsletter-heading newsletter-sub">
-      Weekly emails cover Web Components, and the future of
-      Front-end Development.
-    </p>
-    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
-    <input type="hidden" name="group[4133][1]" value="true">
-    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
-  </form>
-</div>
 	<section class="post-content">
 		<p>I want to figure out how to communicate on a framework level within Backbone. Coming from Flash and <a href="http://www.robotlegs.org/">RobotLegs</a> I&#8217;m used to a few MVC conventions that work very well as far as event dispatching goes. In RobotLegs you typically have a framework wide eventDispatcher that anyone can tune into. In a nutshell your View will trigger an event, for instance a user clicking a button, and that will get dispatched to interested framework actors. These can be other Views or, more likely, they can be Commands. The Commands are like single use actions tied directly to events. Think of it like binding every public method of your controller to an event. The Commands will typically effect models, changing them in some way, and the Models will dispatch an event that the Views listen for to update themselves.</p>
 
@@ -174,18 +162,7 @@
 
 
 	</section>
-	<div class="newsletter">
-  <form action="http://robdodson.us7.list-manage2.com/subscribe/post?u=5727aa0eb1ccbf4ae68284189&amp;id=6719a28b56" method="post" target="_blank" novalidate>
-    <p class="newsletter-heading newsletter-primary">Get your learn on.</p>
-    <p class="newsletter-heading newsletter-sub">
-      Weekly emails cover Web Components, and the future of
-      Front-end Development.
-    </p>
-    <input class="newsletter-email" type="email" value="" name="EMAIL" placeholder="your@email.com">
-    <input type="hidden" name="group[4133][1]" value="true">
-    <input class="newsletter-submit" type="submit" value="Subscribe" name="subscribe">
-  </form>
-</div>
+
 
   <footer class="post-footer">
   <section class="author">
