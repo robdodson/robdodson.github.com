@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Polymer | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/polymer/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-28T23:18:47-07:00</updated>
+  <updated>2014-03-29T16:19:52-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Setting Up Bower and Polymer]]></title>
+    <link href="http://robdodson.me/blog/2014/03/29/setting-up-bower-and-polymer/"/>
+    <updated>2014-03-29T16:17:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/03/29/setting-up-bower-and-polymer</id>
+    <content type="html"><![CDATA[<p>So, you're ready to dive into Polymer but you're not so sure about this whole Bower thing. Have no fear! In this short screencast I'll walk you through installing Bower, creating a project with the <code>bower init</code> command, and building your first Polymer element.</p>
+
+<iframe width="560" height="315" src="http://robdodson.me//www.youtube.com/embed/1rz334A8U7o" frameborder="0" allowfullscreen></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
@@ -215,187 +227,6 @@ font-style: normal;
 
 
 <h4><a href="http://robdodson.me/webcomponents-revolution">Web Components Revolution!</a></h4>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Creating a Markdown Tag with Polymer]]></title>
-    <link href="http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer/"/>
-    <updated>2013-10-02T08:05:00-07:00</updated>
-    <id>http://robdodson.me/blog/2013/10/02/creating-a-markdown-tag-with-polymer</id>
-    <content type="html"><![CDATA[<p>Ah Markdown... Such an amazing tool. I honestly would not be writing this blog post if Markdown did not exist. I tried many times to get in to blogging but I always found the writing experience, whether it be in a GUI or WordPress' HTML mode, too limiting. Markdown changed all of that for me and I think it's high time we make it a full fledged member of our developer toolbox.</p>
-
-<p>So today I'm going to show you how to build a Markdown tag using <a href="http://www.polymer-project.org/">Polymer, a Web Components framework from Google.</a></p>
-
-<!-- more -->
-
-
-<h2>Github</h2>
-
-<p><a href="https://github.com/robdodson/mark-down">If you'd like to follow along you can grab the code from Github.</a></p>
-
-<h2>The Setup</h2>
-
-<p>First things first, we need to download the latest version of Polymer. I like to do this with <a href="http://bower.io">bower</a> and I would encourage you to do so as well. Although it hasn't been discussed much, I think bower is going to be as important to web components as npm and the node_modules folder is to Node.js. When developers can assume the location and version of a dependency then they're able to remove extra work from the consumer's plate. But that's a discussion for another day! For now let's just run</p>
-
-<p><code>
-bower init
-</code></p>
-
-<p>to create our <code>bower.json</code> file.</p>
-
-<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/bower-init.jpg" title="'bower init is kinda awesome'" ></p>
-
-<p>And we'll want to install our Polymer and Markdown dependencies so</p>
-
-<p><code>
-bower install polymer marked --save
-</code></p>
-
-<p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
-
-<p>``` html
-&lt;!DOCTYPE html>
-<html lang="en">
-  <head></p>
-
-<pre><code>&lt;meta charset="utf-8"&gt;
-&lt;title&gt;Markdown Polymer Element&lt;/title&gt;
-&lt;!-- Import our polymer element --&gt;
-&lt;link rel="import" href="elements/mark-down.html"&gt;
-</code></pre>
-
-<p>  </head>
-  <body></p>
-
-<pre><code>&lt;!-- Test our awesome new tag --&gt;
-&lt;mark-down&gt;&lt;/mark-down&gt;
-</code></pre>
-
-<p>  </body>
-</html>
-```</p>
-
-<h2>The Element</h2>
-
-<p>We'll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
-
-<p>``` html
-<link rel="import" href="../polymer/polymer.html">
-<polymer-element name="mark-down">
-  <template></p>
-
-<pre><code>&lt;div id="markdown"&gt;&lt;/div&gt;
-</code></pre>
-
-<p>  </template>
-  <script></p>
-
-<pre><code>Polymer("mark-down");
-</code></pre>
-
-<p>  </script>
-</polymer-element>
-```</p>
-
-<p>Let's walk through this a bit.</p>
-
-<p><code>html
-&lt;polymer-element name="mark-down"&gt;
-</code>
-This line tells Polymer that we'd like to define a new element and its tag name should be <code>mark-down</code>.</p>
-
-<p><code>html
-&lt;template&gt;
-  &lt;div id="markdown"&gt;&lt;/div&gt;
-&lt;/template&gt;
-</code>
-This is our template which Polymer will convert to <a href="/blog/2013/08/26/shadow-dom-introduction/">Shadow DOM.</a> All of the Markdown that we write inside of the <code>&lt;mark-down&gt;</code> tag will be parsed and end up here.</p>
-
-<p>``` html</p>
-
-<script>
-  Polymer("mark-down");
-</script>
-
-
-<p>```
-Finally, we call the Polymer constructor and pass it the name of our element. This makes our new tag available so we can start using it in the document. But first we'll need to parse our Markdown into HTML!</p>
-
-<h2>Markdown</h2>
-
-<p>We'll use Polymer's <a href="http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods"><code>ready</code> callback</a> to grab the <code>textContent</code> of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.</p>
-
-<p>``` js
-Polymer("mark-down", {
-  ready: function() {</p>
-
-<pre><code>var content = this.trim(this.textContent);
-var parsed = markdown.toHTML(content);
-this.$.markdown.innerHTML = parsed;
-</code></pre>
-
-<p>  },
-  // Remove excess white space
-  trim: function() { ... }
-});
-```</p>
-
-<p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I'm using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon's Markdown element.</a> Big thanks to Ryan :D</p>
-
-<p><code>js
-ready: function() {
-  var content = this.trim(this.textContent);
-  ...
-},
-</code></p>
-
-<p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
-
-<p><code>js
-ready: function() {
-  ...
-  var parsed = markdown.toHTML(content);
-  this.$.markdown.innerHTML = parsed;
-}
-</code></p>
-
-<h3>Node Finding</h3>
-
-<p>You might notice the funny use of <code>$</code> and think I'm doing something clever with jQuery. What's actually happening is that Polymer creates a map of any element inside of our template with an <code>id</code>. It then stores this map in a <code>$</code> property. So if you're using ids you can quickly access elements with the use of <code>this.$.someId</code>. In the Polymer docs this is referred to as <a href="http://www.polymer-project.org/getting-started.html#automatic-node-finding">automatic node finding.</a></p>
-
-<p><em>But aren't ids an anti-pattern?</em></p>
-
-<p>Although the traditional document model only allows for one id per page, the Shadow DOM creates a kind of clean slate where each element has its own id sandbox. This means we can use an id of <code>#markdown</code> in our element and not worry if the parent document also contains an element with id <code>#markdown</code>. Pretty nifty!</p>
-
-<h2>Test</h2>
-
-<p>The only thing left is for us to throw some Markdown into our tag to test it out.</p>
-
-<p>``` html
-<mark-down>
-  # This is a heading
-  ## This is a subheading</p>
-
-<p>  Here is <strong>more</strong> <em>Markdown!</em></p>
-
-<p>  <code>This is some codez</code></p>
-
-<p>  This <a href="http://robdodson.me">is a link</a>
-</mark-down>
-```</p>
-
-<p><img class="center" src="http://robdodson.s3.amazonaws.com/images/markdown-example.jpg" title="'sweet sweet markdown!'" ></p>
-
-<p>Piece O' Cake!</p>
-
-<h2>Moar!</h2>
-
-<p>There's a lot more that we could do, for instance, using something like <code>contenteditable</code> to allow us to toggle back and forth between the source and the rendered content. <a href="https://github.com/robdodson/mark-down">I've posted the code on Github</a> so fork it and go crazy.</p>
-
-<p>Be sure to leave a comment if you want to share your experiments!</p>
-
-<p>Till next time!</p>
 ]]></content>
   </entry>
   

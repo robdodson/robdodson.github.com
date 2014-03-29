@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Bower | Rob Dodson talks internets]]></title>
+  <link href="http://robdodson.me/blog/categories/bower/atom.xml" rel="self"/>
+  <link href="http://robdodson.me/"/>
+  <updated>2014-03-29T16:19:52-07:00</updated>
+  <id>http://robdodson.me/</id>
+  <author>
+    <name><![CDATA[Rob Dodson]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Setting Up Bower and Polymer]]></title>
+    <link href="http://robdodson.me/blog/2014/03/29/setting-up-bower-and-polymer/"/>
+    <updated>2014-03-29T16:17:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/03/29/setting-up-bower-and-polymer</id>
+    <content type="html"><![CDATA[<p>So, you're ready to dive into Polymer but you're not so sure about this whole Bower thing. Have no fear! In this short screencast I'll walk you through installing Bower, creating a project with the <code>bower init</code> command, and building your first Polymer element.</p>
+
+<iframe width="560" height="315" src="http://robdodson.me//www.youtube.com/embed/1rz334A8U7o" frameborder="0" allowfullscreen></iframe>
+
+]]></content>
+  </entry>
+  
+</feed>

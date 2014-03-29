@@ -4,7 +4,7 @@
   <title><![CDATA[Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-28T23:18:47-07:00</updated>
+  <updated>2014-03-29T16:19:52-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Setting Up Bower and Polymer]]></title>
+    <link href="http://robdodson.me/blog/2014/03/29/setting-up-bower-and-polymer/"/>
+    <updated>2014-03-29T16:17:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/03/29/setting-up-bower-and-polymer</id>
+    <content type="html"><![CDATA[<p>So, you&#8217;re ready to dive into Polymer but you&#8217;re not so sure about this whole Bower thing. Have no fear! In this short screencast I&#8217;ll walk you through installing Bower, creating a project with the <code>bower init</code> command, and building your first Polymer element.</p>
+
+<iframe width="560" height="315" src="http://robdodson.me//www.youtube.com/embed/1rz334A8U7o" frameborder="0" allowfullscreen></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[@font-face doesn't work in the Shadow DOM]]></title>
@@ -2590,114 +2602,6 @@ document.body.appendChild(b);
 <p>instead of hundreds of lines of markup rubber stamped over and over again. Even if you take the repetative markup and place it inside a template engine like handlebars you still can&#8217;t mix and match UI Frameworks like Bootstrap and Foundation without running into some serious risks. Web Components hope to solve both of these problems and open up a much more declarative authoring process.</p>
 
 <p>Hopefully tomorrow I can dig into Custom Elements more and provide some concrete examples knitting all of these concepts together. Thanks for reading!</p>
-
-<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[HTML5 Template Tag: Introduction]]></title>
-    <link href="http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction/"/>
-    <updated>2013-03-16T09:51:00-07:00</updated>
-    <id>http://robdodson.me/blog/2013/03/16/html5-template-tag-introduction</id>
-    <content type="html"><![CDATA[<p>If you&#8217;ve been following the Google Chrome release announcements you may have noticed some interesting terms popping up as of late. Phrases like &#8220;Shadow DOM&#8221;, &#8220;Custom Elements&#8221; and &#8220;Template&#8221;. These are all part of a new standard referred to as Web Components and the latest versions of Chrome are starting to implement them. Basically a Web Component is an encapsulated bit of markup, styles and script that allow you to reuse widgets across your page without worrying about accidental collisions. For a practical example consider Twitter Bootstrap and its myriad of buttons, dropdowns and badges. Bootstrap comes with <em>a lot</em> of CSS which means, right out of the gate, there are a ton of class names which you probably shouldn&#8217;t use for your own elements. Want to define a class of <code>.container</code>? Too bad, Bootstrap already uses that name. Want to upgrade Bootstrap in a few months? OK, but you need to double check that none of their new classes conflict with any of yours. Kind of a pain, right? Wouldn&#8217;t it be awesome if you could use all the little widgets from Bootstrap and not worry at all about possible collisions? Well, that&#8217;s what Web Components are trying to solve and so today I want to look at one part of the Web Components standard: The Template Tag.</p>
-
-<!--more-->
-
-
-<h2>Feature Detection</h2>
-
-<p>The &lt;template&gt; tag is currently only supported in Chrome 26 so you&#8217;ll need to either run these examples in Chrome Canary or (if it&#8217;s the future) a version of Chrome/FF/Whatever that supports &lt;template&gt;. Here&#8217;s a little feature dection script I stole from the <a href="http://www.html5rocks.com/en/tutorials/webcomponents/template/">HTML5Rocks article</a> on <code>&lt;template&gt;</code>.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;h3</span> <span class="na">class=</span><span class="s">&quot;template-detection&quot;</span><span class="nt">&gt;</span>Does your browser support <span class="ni">&amp;lt;</span>template<span class="ni">&amp;gt;</span>: <span class="nt">&lt;/h3&gt;</span>
-
-<span class="nt">&lt;script&gt;</span>
-  <span class="kd">function</span> <span class="nx">supportsTemplate</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="s1">&#39;content&#39;</span> <span class="k">in</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
-
-  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.template-detection&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">supportsTemplate</span><span class="p">().</span><span class="nx">toString</span><span class="p">().</span><span class="nx">toUpperCase</span><span class="p">());</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre></figure>
-
-
-
-
-<h3 class="template-detection">Does your browser support &lt;template&gt;: </h3>
-
-
-
-
-<script>
-  function supportsTemplate() {
-    return 'content' in document.createElement('template');
-  }
-
-  $('.template-detection').append(supportsTemplate().toString().toUpperCase());
-</script>
-
-
-<h2>Our first template</h2>
-
-<p>There&#8217;s a great <a href="http://www.html5rocks.com/en/tutorials/webcomponents/template/">HTML5Rocks article</a> on the subject of the <code>template</code> tag and I&#8217;m going to steal some of their examples.
-Let&#8217;s start by making a template for an image placeholder. We&#8217;re going to use the <a href="http://hhhhold.com/">hhhhold</a> image service which will load in a random image from <a href="http://ffffound.com">ffffound.com</a>. The markup for our template will be pretty simple:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">&quot;hhhhold-template&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;&quot;</span> <span class="na">alt=</span><span class="s">&quot;random hhhhold image&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;h3</span> <span class="na">class=</span><span class="s">&quot;title&quot;</span><span class="nt">&gt;&lt;/h3&gt;</span>
-<span class="nt">&lt;/template&gt;</span>
-
-<span class="nt">&lt;script&gt;</span>
-  <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#hhhhold-template&#39;</span><span class="p">);</span>
-  <span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">).</span><span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;http://hhhhold.com/350x200&#39;</span><span class="p">;</span>
-  <span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.title&#39;</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;Random image from hhhhold.com&#39;</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
-<span class="nt">&lt;/script&gt;</span>
-</code></pre></figure>
-
-
-<p>Which would render something like this (remember to view in a browser that supports template):</p>
-
-<div id="hhhold-container"></div>
-
-
-<p><template id="hhhhold-template">
-  <img src="" alt="random hhhhold image">
-  <h3 class="title"></h3>
-</template></p>
-
-<script>
-  var template = document.querySelector('#hhhhold-template');
-  template.content.querySelector('img').src = 'http://hhhhold.com/350x200';
-  template.content.querySelector('.title').textContent = 'Random image from hhhhold.com'
-  document.querySelector('#hhhold-container').appendChild(template.content.cloneNode(true));
-</script>
-
-
-<p>If you&#8217;ve worked with client-side template libraries like underscore or handelbars the above should look familiar to you. Where underscore and handelbars take advantage of putting their templates inside of <code>&lt;script&gt;</code> tags and changing the <code>type</code> to something like <code>text/x-handlebars-template</code>, the <code>&lt;template&gt;</code> tag doesn&#8217;t need to because it&#8217;s actually part of the HTML5 spec. There are pros and cons to this approach.</p>
-
-<h3>Pros</h3>
-
-<ul>
-<li>The content of the template is inert, scripts won&#8217;t run, images won&#8217;t load, audio won&#8217;t play, etc. This means you can have <code>&lt;img&gt;</code> and <code>&lt;script&gt;</code> tags whose <code>src</code> attributes haven&#8217;t been defined yet.</li>
-<li>The child nodes of a template are hidden from selectors like <code>document.getElementById()</code> and <code>querySelector()</code> so you won&#8217;t accidentally select them.</li>
-<li>You can place the <code>&lt;template&gt;</code> pretty much anywhere on the page and grab it later.</li>
-</ul>
-
-
-<h3>Cons</h3>
-
-<ul>
-<li>You can&#8217;t precompile the template into a JS function like you can with other libraries like handlebars.</li>
-<li>You can&#8217;t preload the assets referenced by a template (images, sounds, css, js).</li>
-<li>You can&#8217;t nest templates inside of one another and have it automagically work. If a template contains another template you&#8217;ll have to activate the child, then activate the parent.</li>
-<li>Very little browser support (only Chrome 26 at the time of this writing).</li>
-</ul>
-
-
-<p>Given that list of cons you might say &#8220;Well why would I ever bother with the <code>&lt;template&gt;</code> tag if something like handlebars gives me way more power?&#8221; That&#8217;s a great question because by itself the <code>&lt;template&gt;</code> tag isn&#8217;t so impressive. Its saving grace lies in the fact that it is intended to be used <em>along side</em> the Shadow DOM and Custom Elements to generate a Web Component.</p>
-
-<p>Think back to the story about Bootstrap that I told at the beginning of this post. If all the markup for a Bootstrap button lived inside a template tag then we&#8217;d be one step closer to having a nice encapsulated widget. The next step would be to isolate the styles associated with the button. But I&#8217;ll save that for tomorrow&#8217;s post :)</p>
 
 <p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
 ]]></content>

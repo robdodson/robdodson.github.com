@@ -54,6 +54,29 @@
 </div>
 	
 	<header class="post-header">
+		<span class="post-meta">06 May 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/05/06/object-oriented-scraper-backed-with-tests/">
+			
+				Object Oriented Scraper Backed With Tests</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p><em>I just drank a ton of coffee and I&#8217;m blasting music in my headphones so this post my bit a bit more scatter-shot than most since I can&#8217;t really focus :]</em></p>
+
+<p>Yesterday I managed to build a pretty naive scraper using Nokogiri which would count how often each word was used in the first 10 posts of this blog. Basically scraping the home URL of the site and grabbing everything inside of the <code>div.entry-content</code> selector.</p>
+
+<p>Today I want to convert it into a more OO library so it&#8217;s a bit more modular and reusable. I also want to back everything with RSpec tests to get into the practice. While it won&#8217;t be true TDD I&#8217;ll try to write the tests for the library before putting the classes together.</p>
+
+
+	</section>
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
 		<span class="post-meta">05 May 2012</span>
 		<h2 class="post-title">
 			
@@ -284,27 +307,6 @@
 
 
 <p>&#8220;Hmm, weird,&#8221; I thought. I know I&#8217;ve seen dot syntax used in Ruby before..what gives?</p>
-
-
-	</section>
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">30 Apr 2012</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2012/04/30/custom-domain-with-octopress-and-github-pages/">
-			
-				Custom Domain With Octopress and Github Pages</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p><em>I&#8217;m going to try to write this as a bit of a lightening post to see if I can bring down the time it takes me to produce something.</em></p>
-
-<p><a href="http://octopress.org/">Octopress</a> is a blogging framework written by <a href="http://brandonmathis.com/">Brandon Mathis</a> (<a href="https://twitter.com/#!/imathis">@imathis</a>) which sits on top of <a href="https://github.com/mojombo/jekyll">Jekyll</a>. Jekyll is a static site generator, meaning there&#8217;s no database associated with your blog. Instead of writing everything in a WSYWIG linked to MySQL (like Wordpress or Blogger) you produce text files using Markdown which are then converted to static HTML. There are 3 huge benefits to this approach. First, writing in Markdown is awesome. Once you learn the syntax it&#8217;s incredibly fast and you don&#8217;t have to spend time playing with a tiny little editor window just to <s>add</s> <em>some</em> <strong>style</strong> to your posts. Second, writing in your favorite text editor is also awesome. I produce everything in <a href="http://www.sublimetext.com/2">Sublime Text 2</a> and every day I discover new tricks to make the process better. If you&#8217;ve ever had to write a blog post using one of those horrible little TinyMCE editors you will appreciate this feature. And lastly, static HTML is <em>fast</em>.</p>
 
 
 	</section>
