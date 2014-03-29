@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CSS | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/css/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-23T08:29:42-07:00</updated>
+  <updated>2014-03-28T22:36:07-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -18,7 +18,9 @@
     <link href="http://robdodson.me/blog/2013/11/15/the-cat-and-the-hat-css-selectors/"/>
     <updated>2013-11-15T11:08:00-08:00</updated>
     <id>http://robdodson.me/blog/2013/11/15/the-cat-and-the-hat-css-selectors</id>
-    <content type="html"><![CDATA[<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM's author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That's where the new "cat" and "hat" CSS selectors come in.</p>
+    <content type="html"><![CDATA[<p><em>03/18/2014: This post is now out of date. The cat and hat CSS selectors have been removed in favor of <a href="http://drafts.csswg.org/css-scoping/#shadow-pseudoelement"><code>::shadow</code></a> and <a href="http://drafts.csswg.org/css-scoping/#deep-combinator"><code>/deep/</code></a>. Take a look at <a href="http://drafts.csswg.org/css-scoping/">the CSS Scoping Draft Spec</a> for current selector status.</em></p>
+
+<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM's author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That's where the new "cat" and "hat" CSS selectors come in.</p>
 
 <!-- more -->
 

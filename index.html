@@ -82,7 +82,9 @@
 		</h2>
 	</header>
 	<section class="post-excerpt">
-		<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
+		<p><em>03/18/2014: This post is now out of date. The cat and hat CSS selectors have been removed in favor of <a href="http://drafts.csswg.org/css-scoping/#shadow-pseudoelement"><code>::shadow</code></a> and <a href="http://drafts.csswg.org/css-scoping/#deep-combinator"><code>/deep/</code></a>. Take a look at <a href="http://drafts.csswg.org/css-scoping/">the CSS Scoping Draft Spec</a> for current selector status.</em></p>
+
+<p>One of the trickier aspects of encapsulating Shadow DOM CSS is figuring out how much access the parent document should have. Initially it was thought that the Shadow DOM&#8217;s author would decide which elements could be exposed for styling <a href="/blog/2013/08/29/shadow-dom-styles-cont-dot#parts">by using <code>part</code> attributes</a>, but it seems like that might be too limiting. The thinking now is that the shadow boundary should prevent <em>accidental</em> styling of the shadow DOM, but allow intentional styles. That&#8217;s where the new &#8220;cat&#8221; and &#8220;hat&#8221; CSS selectors come in.</p>
 
 
 	</section>
