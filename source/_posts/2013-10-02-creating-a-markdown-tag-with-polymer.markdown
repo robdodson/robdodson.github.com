@@ -31,7 +31,7 @@ to create our `bower.json` file.
 And we'll want to install our Polymer and Markdown dependencies so
 
 ```
-bower install polymer markdown --save
+bower install polymer marked --save
 ```
 
 Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) `elements` so we'll import from there.
@@ -42,15 +42,8 @@ Lastly we'll setup a test page for our element. I'm going to assume that the ele
   <head>
     <meta charset="utf-8">
     <title>Markdown Polymer Element</title>
-    
-    <!-- Include our Markdown lib -->
-    <script src="./lib/markdown.js"></script>
-
-    <!-- Include Polymer awesomesauce -->
-    <script src="./lib/polymer.min.js"></script>
-
-    <!-- Import our polymer elements -->
-    <link rel="import" href="./elements/mark-down.html">
+    <!-- Import our polymer element -->
+    <link rel="import" href="elements/mark-down.html">
   </head>
   <body>
     <!-- Test our awesome new tag -->
@@ -64,6 +57,7 @@ Lastly we'll setup a test page for our element. I'm going to assume that the ele
 We'll start with a very basic skeleton in our `elements/mark-down.html` file.
 
 ``` html
+<link rel="import" href="../polymer/polymer.html">
 <polymer-element name="mark-down">
   <template>
     <div id="markdown"></div>
@@ -97,12 +91,12 @@ Finally, we call the Polymer constructor and pass it the name of our element. Th
 
 ## Markdown
 
-All custom elements have a `createdCallback` which can be used as a kind of constructor function. Polymer shortens this method name to `created` but it's essentially the same thing. We'll use the `created` callback to grab the `innerHTML` of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.
+We'll use Polymer's [`ready` callback](http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods) to grab the `textContent` of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.
 
 ``` js
 Polymer("mark-down", {
-  created: function() {
-    var content = this.trim(this.innerHTML);
+  ready: function() {
+    var content = this.trim(this.textContent);
     var parsed = markdown.toHTML(content);
     this.$.markdown.innerHTML = parsed;
   },
@@ -114,8 +108,8 @@ Polymer("mark-down", {
 The first thing we do is to grab everything inside of the `<mark-down>` tag and remove any extra white space. Here I'm using a trim method that I borrowed from [Ryan Seddon's Markdown element.](https://github.com/ryanseddon/markdown-component) Big thanks to Ryan :D
 
 ``` js
-created: function() {
-  var content = this.trim(this.innerHTML);
+ready: function() {
+  var content = this.trim(this.textContent);
   ...
 },
 ```
@@ -123,7 +117,7 @@ created: function() {
 Next we convert the content into Markdown using the `toHTML` method of our Markdown library. Then we take this new, more presentational markup, and add it to the `#markdown` div inside of our `template`.
 
 ``` js
-created: function() {
+ready: function() {
   ...
   var parsed = markdown.toHTML(content);
   this.$.markdown.innerHTML = parsed;
