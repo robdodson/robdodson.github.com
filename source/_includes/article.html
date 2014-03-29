@@ -1,7 +1,6 @@
 {% if index %}
 	{% if is_first_post %}
 		{% assign is_first_post = false %}
-		{% include newsletters/sidebar.html %}
 	{% endif %}
 	<header class="post-header">
 		<span class="post-meta">{{ post.date | date: "%d %b %Y" }}</span>
@@ -23,9 +22,7 @@
 	</header>
 	<span class="post-meta">{{ page.date | date: "%d %b %Y" }}</span>
 	<h1 class="post-title">{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %}</h1>
-	{% include newsletters/sidebar.html %}
 	<section class="post-content">
 		{{ content }}
 	</section>
-	{% include newsletters/sidebar.html %}
 {% endif %}
