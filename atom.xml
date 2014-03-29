@@ -4,7 +4,7 @@
   <title><![CDATA[Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-28T22:36:07-07:00</updated>
+  <updated>2014-03-28T23:18:47-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -225,7 +225,7 @@
 
 <p>And we&#8217;ll want to install our Polymer and Markdown dependencies so</p>
 
-<figure class='code'><pre><code>bower install polymer markdown --save</code></pre></figure>
+<figure class='code'><pre><code>bower install polymer marked --save</code></pre></figure>
 
 
 <p>Lastly we&#8217;ll setup a test page for our element. I&#8217;m going to assume that the element lives in a folder called (creatively) <code>elements</code> so we&#8217;ll import from there.</p>
@@ -235,15 +235,8 @@
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;title&gt;</span>Markdown Polymer Element<span class="nt">&lt;/title&gt;</span>
-
-    <span class="c">&lt;!-- Include our Markdown lib --&gt;</span>
-    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;./lib/markdown.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-
-    <span class="c">&lt;!-- Include Polymer awesomesauce --&gt;</span>
-    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;./lib/polymer.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-
-    <span class="c">&lt;!-- Import our polymer elements --&gt;</span>
-    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;./elements/mark-down.html&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- Import our polymer element --&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;elements/mark-down.html&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;/head&gt;</span>
   <span class="nt">&lt;body&gt;</span>
     <span class="c">&lt;!-- Test our awesome new tag --&gt;</span>
@@ -257,7 +250,8 @@
 
 <p>We&#8217;ll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;polymer</span><span class="na">-element</span> <span class="na">name=</span><span class="s">&quot;mark-down&quot;</span><span class="nt">&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;../polymer/polymer.html&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;polymer</span><span class="na">-element</span> <span class="na">name=</span><span class="s">&quot;mark-down&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;template&gt;</span>
     <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;markdown&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
   <span class="nt">&lt;/template&gt;</span>
@@ -294,11 +288,11 @@
 
 <h2>Markdown</h2>
 
-<p>All custom elements have a <code>createdCallback</code> which can be used as a kind of constructor function. Polymer shortens this method name to <code>created</code> but it&#8217;s essentially the same thing. We&#8217;ll use the <code>created</code> callback to grab the <code>innerHTML</code> of our tag and convert it all to Markdown. To define behaviors for our element we&#8217;ll pass a prototype object as the second argument to the Polymer constructor.</p>
+<p>We&#8217;ll use Polymer&#8217;s <a href="http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods"><code>ready</code> callback</a> to grab the <code>textContent</code> of our tag and convert it all to Markdown. To define behaviors for our element we&#8217;ll pass a prototype object as the second argument to the Polymer constructor.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">Polymer</span><span class="p">(</span><span class="s2">&quot;mark-down&quot;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">);</span>
+  <span class="nx">ready</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">textContent</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">markdown</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">markdown</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">parsed</span><span class="p">;</span>
   <span class="p">},</span>
@@ -310,8 +304,8 @@
 
 <p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I&#8217;m using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon&#8217;s Markdown element.</a> Big thanks to Ryan :D</p>
 
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">);</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">ready</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">textContent</span><span class="p">);</span>
   <span class="p">...</span>
 <span class="p">},</span>
 </code></pre></figure>
@@ -319,7 +313,7 @@
 
 <p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">created</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nx">ready</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">markdown</span><span class="p">.</span><span class="nx">toHTML</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">markdown</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">parsed</span><span class="p">;</span>
@@ -436,14 +430,12 @@
 
 <h2>Support <a href="#" id="support"></a></h2>
 
-<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v31 or greater.</p>
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v35 or greater.</p>
 
 <p>Also make sure you&#8217;ve enabled the following in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>√ Experimental Web Platform features<br>
 √ Experimental JavaScript<br></p>
-
-<p><em>I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)</em></p>
 
 <h2>Codez! <a href="#" id="codez"></a></h2>
 
@@ -469,7 +461,7 @@
     <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
-    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">importNode</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;window.foo = &#39;</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nx">foo</span><span class="p">);</span>
   <span class="nt">&lt;/script&gt;</span>
 <span class="nt">&lt;/body&gt;</span>
@@ -497,7 +489,7 @@
 
 <h2>Event Retargeting <a href="#" id="event-retargeting"></a></h2>
 
-<p>As I mentioned previously, the one place where Shadow DOM JavaScript really differs is with respect to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
+<p>One place where Shadow DOM JavaScript really differs from conventional script is in regard to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
 
 <p>I know that doesn&#8217;t really sink in without an example so try this out.</p>
 
@@ -516,7 +508,7 @@
     <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
-    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">importNode</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
 
     <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; clicked!&#39;</span><span class="p">);</span>
@@ -558,7 +550,7 @@
     <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
-    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">importNode</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
 
     <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; clicked!&#39;</span><span class="p">);</span>
@@ -612,7 +604,7 @@
     <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#host&#39;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;template&#39;</span><span class="p">);</span>
-    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">importNode</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
 
     <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; text selected!&#39;</span><span class="p">);</span>

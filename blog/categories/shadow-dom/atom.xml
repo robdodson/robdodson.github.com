@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Shadow DOM | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/shadow-dom/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-28T22:36:07-07:00</updated>
+  <updated>2014-03-28T23:18:47-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -147,7 +147,7 @@ bower init
 <p>And we'll want to install our Polymer and Markdown dependencies so</p>
 
 <p><code>
-bower install polymer markdown --save
+bower install polymer marked --save
 </code></p>
 
 <p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
@@ -159,15 +159,8 @@ bower install polymer markdown --save
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Markdown Polymer Element&lt;/title&gt;
-
-&lt;!-- Include our Markdown lib --&gt;
-&lt;script src="./lib/markdown.js"&gt;&lt;/script&gt;
-
-&lt;!-- Include Polymer awesomesauce --&gt;
-&lt;script src="./lib/polymer.min.js"&gt;&lt;/script&gt;
-
-&lt;!-- Import our polymer elements --&gt;
-&lt;link rel="import" href="./elements/mark-down.html"&gt;
+&lt;!-- Import our polymer element --&gt;
+&lt;link rel="import" href="elements/mark-down.html"&gt;
 </code></pre>
 
 <p>  </head>
@@ -186,6 +179,7 @@ bower install polymer markdown --save
 <p>We'll start with a very basic skeleton in our <code>elements/mark-down.html</code> file.</p>
 
 <p>``` html
+<link rel="import" href="../polymer/polymer.html">
 <polymer-element name="mark-down">
   <template></p>
 
@@ -228,13 +222,13 @@ Finally, we call the Polymer constructor and pass it the name of our element. Th
 
 <h2>Markdown</h2>
 
-<p>All custom elements have a <code>createdCallback</code> which can be used as a kind of constructor function. Polymer shortens this method name to <code>created</code> but it's essentially the same thing. We'll use the <code>created</code> callback to grab the <code>innerHTML</code> of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.</p>
+<p>We'll use Polymer's <a href="http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods"><code>ready</code> callback</a> to grab the <code>textContent</code> of our tag and convert it all to Markdown. To define behaviors for our element we'll pass a prototype object as the second argument to the Polymer constructor.</p>
 
 <p>``` js
 Polymer("mark-down", {
-  created: function() {</p>
+  ready: function() {</p>
 
-<pre><code>var content = this.trim(this.innerHTML);
+<pre><code>var content = this.trim(this.textContent);
 var parsed = markdown.toHTML(content);
 this.$.markdown.innerHTML = parsed;
 </code></pre>
@@ -248,8 +242,8 @@ this.$.markdown.innerHTML = parsed;
 <p>The first thing we do is to grab everything inside of the <code>&lt;mark-down&gt;</code> tag and remove any extra white space. Here I'm using a trim method that I borrowed from <a href="https://github.com/ryanseddon/markdown-component">Ryan Seddon's Markdown element.</a> Big thanks to Ryan :D</p>
 
 <p><code>js
-created: function() {
-  var content = this.trim(this.innerHTML);
+ready: function() {
+  var content = this.trim(this.textContent);
   ...
 },
 </code></p>
@@ -257,7 +251,7 @@ created: function() {
 <p>Next we convert the content into Markdown using the <code>toHTML</code> method of our Markdown library. Then we take this new, more presentational markup, and add it to the <code>#markdown</code> div inside of our <code>template</code>.</p>
 
 <p><code>js
-created: function() {
+ready: function() {
   ...
   var parsed = markdown.toHTML(content);
   this.$.markdown.innerHTML = parsed;
@@ -319,14 +313,12 @@ created: function() {
 
 <h2>Support <a href="#" id="support"></a></h2>
 
-<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v31 or greater.</p>
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v35 or greater.</p>
 
 <p>Also make sure you've enabled the following in Chrome's <code>about:flags</code>.</p>
 
 <p>√ Experimental Web Platform features<br>
 √ Experimental JavaScript<br></p>
-
-<p><em>I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)</em></p>
 
 <h2>Codez! <a href="#" id="codez"></a></h2>
 
@@ -357,7 +349,7 @@ var foo = 'bar';
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 console.log('window.foo = ' + window.foo);
 </code></pre>
 
@@ -388,7 +380,7 @@ console.log('window.foo = ' + window.foo);
 
 <h2>Event Retargeting <a href="#" id="event-retargeting"></a></h2>
 
-<p>As I mentioned previously, the one place where Shadow DOM JavaScript really differs is with respect to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
+<p>One place where Shadow DOM JavaScript really differs from conventional script is in regard to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
 
 <p>I know that doesn't really sink in without an example so try this out.</p>
 
@@ -412,7 +404,7 @@ console.log('window.foo = ' + window.foo);
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 
 document.addEventListener('click', function(e) {
   console.log(e.target.id + ' clicked!');
@@ -462,7 +454,7 @@ document.addEventListener('click', function(e) {
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 
 document.addEventListener('click', function(e) {
   console.log(e.target.id + ' clicked!');
@@ -524,7 +516,7 @@ document.addEventListener('click', function(e) {
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 
 document.addEventListener('select', function(e) {
   console.log(e.target.id + ' text selected!');

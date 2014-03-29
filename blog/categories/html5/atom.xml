@@ -4,7 +4,7 @@
   <title><![CDATA[Category: HTML5 | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/html5/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-28T22:36:07-07:00</updated>
+  <updated>2014-03-28T23:18:47-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -170,14 +170,12 @@ font-style: normal;
 
 <h2>Support <a href="#" id="support"></a></h2>
 
-<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v31 or greater.</p>
+<p>In order to try the examples I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> v35 or greater.</p>
 
 <p>Also make sure you've enabled the following in Chrome's <code>about:flags</code>.</p>
 
 <p>√ Experimental Web Platform features<br>
 √ Experimental JavaScript<br></p>
-
-<p><em>I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)</em></p>
 
 <h2>Codez! <a href="#" id="codez"></a></h2>
 
@@ -208,7 +206,7 @@ var foo = 'bar';
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 console.log('window.foo = ' + window.foo);
 </code></pre>
 
@@ -239,7 +237,7 @@ console.log('window.foo = ' + window.foo);
 
 <h2>Event Retargeting <a href="#" id="event-retargeting"></a></h2>
 
-<p>As I mentioned previously, the one place where Shadow DOM JavaScript really differs is with respect to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
+<p>One place where Shadow DOM JavaScript really differs from conventional script is in regard to event dispatching. The thing to remember is that <strong>events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.</strong></p>
 
 <p>I know that doesn't really sink in without an example so try this out.</p>
 
@@ -263,7 +261,7 @@ console.log('window.foo = ' + window.foo);
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 
 document.addEventListener('click', function(e) {
   console.log(e.target.id + ' clicked!');
@@ -313,7 +311,7 @@ document.addEventListener('click', function(e) {
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 
 document.addEventListener('click', function(e) {
   console.log(e.target.id + ' clicked!');
@@ -375,7 +373,7 @@ document.addEventListener('click', function(e) {
 <pre><code>var host = document.querySelector('#host');
 var root = host.createShadowRoot();
 var template = document.querySelector('template');
-root.appendChild(template.content.cloneNode(true));
+root.appendChild(document.importNode(template.content, true));
 
 document.addEventListener('select', function(e) {
   console.log(e.target.id + ' text selected!');
