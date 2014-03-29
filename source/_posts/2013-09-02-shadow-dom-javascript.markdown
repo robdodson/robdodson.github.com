@@ -6,7 +6,7 @@ comments: true
 categories: [HTML5, Shadow DOM, Web Components]
 ---
 
-We're getting to a point where we've covered most of what there is to know about [templates](/blog/2013/03/16/html5-template-tag-introduction/), [imports](/blog/2013/08/20/exploring-html-imports/) and shadow DOM ([1](/blog/2013/08/26/shadow-dom-introduction/), [2](/blog/2013/08/27/shadow-dom-the-basics/), [3](/blog/2013/08/28/shadow-dom-styles/), [4](/blog/2013/08/29/shadow-dom-styles-cont-dot/)). The end goal for all of these technologies is **custom elements**, but we're not *quite* there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I'm going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you'll be in a good place to start creating your own custom elements. 
+We're getting to a point where we've covered most of what there is to know about [templates](/blog/2013/03/16/html5-template-tag-introduction/), [imports](/blog/2013/08/20/exploring-html-imports/) and shadow DOM ([1](/blog/2013/08/26/shadow-dom-introduction/), [2](/blog/2013/08/27/shadow-dom-the-basics/), [3](/blog/2013/08/28/shadow-dom-styles/), [4](/blog/2013/08/29/shadow-dom-styles-cont-dot/)). The end goal for all of these technologies is **custom elements**, but we're not *quite* there yet. I want you to understand the basics of working with JavaScript and the shadow DOM before diving head first into making your own elements. So in this post I'm going to explain some things to watch out for, in particular around how events work. With this knowledge under your belt you'll be in a good place to start creating your own custom elements.
 
 Let's get crackin'!
 
@@ -16,14 +16,12 @@ Let's get crackin'!
 
 ## Support <a href="#" id="support"></a>
 
-In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v31 or greater.
+In order to try the examples I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) v35 or greater.
 
 Also make sure you've enabled the following in Chrome's `about:flags`.
 
 √ Experimental Web Platform features<br>
 √ Experimental JavaScript<br>
-
-*I believe Shadow DOM is supported in Chrome without experimental flags but we may touch on other Web Component technologies that require them. Better to just turn them on now I think :)*
 
 ## Codez! <a href="#" id="codez"></a>
 
@@ -50,7 +48,7 @@ Here's an example of what I'm talking about.
     var host = document.querySelector('#host');
     var root = host.createShadowRoot();
     var template = document.querySelector('template');
-    root.appendChild(template.content.cloneNode(true));
+    root.appendChild(document.importNode(template.content, true));
     console.log('window.foo = ' + window.foo);
   </script>
 </body>
@@ -76,7 +74,7 @@ That's more like it!
 
 ## Event Retargeting <a href="#" id="event-retargeting"></a>
 
-As I mentioned previously, the one place where Shadow DOM JavaScript really differs is with respect to event dispatching. The thing to remember is that **events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.**
+One place where Shadow DOM JavaScript really differs from conventional script is in regard to event dispatching. The thing to remember is that **events originating from nodes inside of the shadow DOM are retargeted so they appear to come from the shadow host.**
 
 I know that doesn't really sink in without an example so try this out.
 
@@ -95,7 +93,7 @@ I know that doesn't really sink in without an example so try this out.
     var host = document.querySelector('#host');
     var root = host.createShadowRoot();
     var template = document.querySelector('template');
-    root.appendChild(template.content.cloneNode(true));
+    root.appendChild(document.importNode(template.content, true));
 
     document.addEventListener('click', function(e) {
       console.log(e.target.id + ' clicked!');
@@ -135,7 +133,7 @@ Heres' another example to demonstrate.
     var host = document.querySelector('#host');
     var root = host.createShadowRoot();
     var template = document.querySelector('template');
-    root.appendChild(template.content.cloneNode(true));
+    root.appendChild(document.importNode(template.content, true));
 
     document.addEventListener('click', function(e) {
       console.log(e.target.id + ' clicked!');
@@ -184,7 +182,7 @@ Here's an example to demonstrate what I mean.
     var host = document.querySelector('#host');
     var root = host.createShadowRoot();
     var template = document.querySelector('template');
-    root.appendChild(template.content.cloneNode(true));
+    root.appendChild(document.importNode(template.content, true));
 
     document.addEventListener('select', function(e) {
       console.log(e.target.id + ' text selected!');
