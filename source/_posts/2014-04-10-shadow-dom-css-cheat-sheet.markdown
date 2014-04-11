@@ -24,7 +24,7 @@ x-foo::shadow h1 {
   color: red;
 }
 ```
-[Try it on CodePen](http://codepen.io/robdodson/pen/HeLEb)
+[Try it on CodePen](http://codepen.io/robdodson/pen/HeLEb) | [Read the Spec](http://drafts.csswg.org/css-scoping/#selectordef-shadow)
 
 <table class="plain">
   <thead>
@@ -69,7 +69,7 @@ x-foo /deep/ h1 {
   color: red;
 }
 ```
-[Try it on CodePen](http://codepen.io/robdodson/pen/wraDn/)
+[Try it on CodePen](http://codepen.io/robdodson/pen/wraDn/) | [Read the Spec](http://drafts.csswg.org/css-scoping/#selectordef-deep)
 
 <table class="plain">
   <thead>
@@ -114,7 +114,7 @@ Selects a shadow host element. May contain additional identifiers in parenthesis
   background: purple;
 }
 ```
-[Try it on CodePen](http://codepen.io/robdodson/pen/rDuyJ/)
+[Try it on CodePen](http://codepen.io/robdodson/pen/rDuyJ/) | [Read the Spec](http://drafts.csswg.org/css-scoping/#selectordef-host0)
 
 <table class="plain">
   <thead>
@@ -159,7 +159,7 @@ Selects a shadow host based on a matching parent element.
   background: red;
 }
 ```
-[Try it on CodePen](http://codepen.io/robdodson/pen/ftpoG/)
+[Try it on CodePen](http://codepen.io/robdodson/pen/ftpoG/) | [Read the Spec](http://drafts.csswg.org/css-scoping/#selectordef-host-context)
 
 <table class="plain">
   <thead>
@@ -203,7 +203,7 @@ Selects distributed nodes inside of an element. Needs to be paired with `polyfil
   color: red;
 }
 ```
-[Try it on CodePen](http://codepen.io/robdodson/pen/FokEw/)
+[Try it on CodePen](http://codepen.io/robdodson/pen/FokEw/) | [Read the Spec](http://drafts.csswg.org/css-scoping/#selectordef-content)
 
 <table class="plain">
   <thead>
