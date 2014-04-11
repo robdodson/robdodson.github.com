@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CSS | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/css/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-04-11T09:24:48-07:00</updated>
+  <updated>2014-04-11T10:53:07-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -23,7 +23,7 @@
 <!-- more -->
 
 
-<p>Found a bug? <a href="">Submit a pull request!</a></p>
+<p>Found a bug? <a href="https://github.com/robdodson/robdodson.github.com/blob/source/source/_posts/2014-04-10-shadow-dom-css-cheat-sheet.markdown">Submit a pull request!</a></p>
 
 <br>
 
@@ -43,7 +43,7 @@ x-foo::shadow h1 {
   color: red;
 }
 </code>
-<a href="http://codepen.io/robdodson/pen/HeLEb">Try it on CodePen</a></p>
+<a href="http://codepen.io/robdodson/pen/HeLEb">Try it on CodePen</a> | <a href="http://drafts.csswg.org/css-scoping/#selectordef-shadow">Read the Spec</a></p>
 
 <table class="plain">
   <thead>
@@ -97,7 +97,7 @@ x-foo /deep/ h1 {
   color: red;
 }
 </code>
-<a href="http://codepen.io/robdodson/pen/wraDn/">Try it on CodePen</a></p>
+<a href="http://codepen.io/robdodson/pen/wraDn/">Try it on CodePen</a> | <a href="http://drafts.csswg.org/css-scoping/#selectordef-deep">Read the Spec</a></p>
 
 <table class="plain">
   <thead>
@@ -152,7 +152,7 @@ x-foo /deep/ h1 {
   background: purple;
 }
 </code>
-<a href="http://codepen.io/robdodson/pen/rDuyJ/">Try it on CodePen</a></p>
+<a href="http://codepen.io/robdodson/pen/rDuyJ/">Try it on CodePen</a> | <a href="http://drafts.csswg.org/css-scoping/#selectordef-host0">Read the Spec</a></p>
 
 <table class="plain">
   <thead>
@@ -207,7 +207,7 @@ x-foo /deep/ h1 {
   background: red;
 }
 </code>
-<a href="http://codepen.io/robdodson/pen/ftpoG/">Try it on CodePen</a></p>
+<a href="http://codepen.io/robdodson/pen/ftpoG/">Try it on CodePen</a> | <a href="http://drafts.csswg.org/css-scoping/#selectordef-host-context">Read the Spec</a></p>
 
 <table class="plain">
   <thead>
@@ -261,7 +261,7 @@ x-foo /deep/ h1 {
   color: red;
 }
 </code>
-<a href="http://codepen.io/robdodson/pen/FokEw/">Try it on CodePen</a></p>
+<a href="http://codepen.io/robdodson/pen/FokEw/">Try it on CodePen</a> | <a href="http://drafts.csswg.org/css-scoping/#selectordef-content">Read the Spec</a></p>
 
 <table class="plain">
   <thead>
