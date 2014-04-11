@@ -355,6 +355,24 @@ table.plain {
     color: #fff;
 }
 
+.no-border {
+    border: none !important;
+}
+
+.no-underline {
+    text-decoration: none !important;
+}
+
+table .supported {
+    background: #6CC23F !important;
+    color: white;
+}
+
+table .bug {
+    background: #FF851B !important;
+    color: white;
+}
+
 /* ==========================================================================
    4. General - The main styles for the the theme
    ========================================================================== */
