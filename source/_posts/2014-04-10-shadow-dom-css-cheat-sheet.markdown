@@ -10,7 +10,7 @@ This handy guide is my attempt to track the progress of all the new CSS selector
 
 <!-- more -->
 
-Found a bug? [Submit a pull request!]()
+Found a bug? [Submit a pull request!](https://github.com/robdodson/robdodson.github.com/blob/source/source/_posts/2014-04-10-shadow-dom-css-cheat-sheet.markdown)
 
 <br>
 <br>
