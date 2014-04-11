@@ -1,0 +1,391 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8">
+	<title>Shadow DOM CSS Cheat Sheet | Rob Dodson talks internets</title>
+
+	<meta name="author" content="Rob Dodson">
+	
+	<meta name="description" content="Hi I'm Rob Dodson. A freelance developer specializing in JavaScript and Backbone.js with a touch of Node and Ruby.">
+
+	<meta name="HandheldFriendly" content="True" />
+	<meta name="MobileOptimized" content="320" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link href="/atom.xml" rel="alternate" title="Rob Dodson talks internets" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+<body class="post-template">
+  <main class="content" role="main"><article class="post">
+  
+	<header class="post-header">
+		<a id="blog-logo" href="/">Rob Dodson talks internets</a>
+	</header>
+	<span class="post-meta">10 Apr 2014</span>
+	<h1 class="post-title">Shadow DOM CSS Cheat Sheet</h1>
+	<section class="post-content">
+		<p>This handy guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM.</p>
+
+<!-- more -->
+
+
+<p>Found a bug? <a href="">Submit a pull request!</a></p>
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#shadow" id="shadow" class="no-underline">::shadow</a></h2>
+
+
+<p>Selects shadow trees that are one level deep inside of an element. Will need to be combined with <code>shim-shadowdom</code> directive if used outside of a Polymer element in browsers that lack support for the native selector.</p>
+
+<figure class='code'><pre><code>x-foo::shadow h1 {
+  color: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/HeLEb">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#deep" id="deep" class="no-underline">/deep/</a></h2>
+
+
+<p>Selects shadow trees that are N levels deep inside of an element. Will need to be combined with <code>shim-shadowdom</code> directive if used outside of a Polymer element in browsers that lack support for the native selector.</p>
+
+<figure class='code'><pre><code>x-foo /deep/ h1 {
+  color: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/wraDn/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#host" id="host" class="no-underline">:host</a></h2>
+
+
+<p>Selects a shadow host element. May contain additional identifiers in parenthesis.</p>
+
+<figure class='code'><pre><code>:host(.fancy) {
+  display: inline-block;
+  background: purple;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/rDuyJ/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#host-context" id="host-context" class="no-underline">:host-context</a></h2>
+
+
+<p>Selects a shadow host based on a matching parent element.</p>
+
+<figure class='code'><pre><code>:host-context(.blocky) {
+  display: block
+  background: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/ftpoG/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#content" id="content" class="no-underline">::content</a></h2>
+
+
+<p>Selects distributed nodes inside of an element. Needs to be paired with <code>polyfill-next-selector</code> for browsers that do not support the native selector.</p>
+
+<figure class='code'><pre><code>::content h1 {
+  color: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/FokEw/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+	</section>
+
+
+  <footer class="post-footer">
+  <section class="author">
+    <h4>Rob Dodson</h4>
+    <p></p>
+  </section>
+  <section class="share">
+    <h4>Share this post</h4>
+    <a class="icon-twitter" href="http://twitter.com/share?text=Shadow DOM CSS Cheat Sheet&amp;url=http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+    </a>
+    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+    </a>
+    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+    </a>
+  </section>
+</footer>
+  <hr>
+  
+    <div class="share">
+</div>
+
+  
+  
+  <section id="comment">
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+  
+</article></main>
+  <footer class="site-footer"><a class="subscribe icon-feed" href="http://robdodson.me/atom.xml"><span class="tooltip">Subscribe!</span></a>
+<div class="inner">
+  Follow me on <a href="http://twitter.com/rob_dodson" rel="me">Twitter</a>, <a rel="author" href="https://plus.google.com/118271135596408598424">Google+</a> or <a rel="me" href="http://github.com/robdodson">Github</a>
+  <section class="copyright">All content copyright <a href="/">Rob Dodson</a> © 2013 • All rights reserved.</section>
+  <section class="poweredby">Casper theme by <a class="icon-ghost" href="http://tryghost.org">Ghost</a> &amp; Published with <a href="http://octopress.org">Octopress</a></section>
+</div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//yandex.st/highlightjs/7.3/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'robdodsontalksinternets';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/';
+        var disqus_url = 'http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-25869920-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</body>
+</html>

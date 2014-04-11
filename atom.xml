@@ -4,7 +4,7 @@
   <title><![CDATA[Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-29T16:40:31-07:00</updated>
+  <updated>2014-04-11T09:24:48-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,292 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Shadow DOM CSS Cheat Sheet]]></title>
+    <link href="http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/"/>
+    <updated>2014-04-10T22:56:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet</id>
+    <content type="html"><![CDATA[<p>This handy guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM.</p>
+
+<!-- more -->
+
+
+<p>Found a bug? <a href="">Submit a pull request!</a></p>
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#shadow" id="shadow" class="no-underline">::shadow</a></h2>
+
+
+<p>Selects shadow trees that are one level deep inside of an element. Will need to be combined with <code>shim-shadowdom</code> directive if used outside of a Polymer element in browsers that lack support for the native selector.</p>
+
+<figure class='code'><pre><code>x-foo::shadow h1 {
+  color: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/HeLEb">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#deep" id="deep" class="no-underline">/deep/</a></h2>
+
+
+<p>Selects shadow trees that are N levels deep inside of an element. Will need to be combined with <code>shim-shadowdom</code> directive if used outside of a Polymer element in browsers that lack support for the native selector.</p>
+
+<figure class='code'><pre><code>x-foo /deep/ h1 {
+  color: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/wraDn/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#host" id="host" class="no-underline">:host</a></h2>
+
+
+<p>Selects a shadow host element. May contain additional identifiers in parenthesis.</p>
+
+<figure class='code'><pre><code>:host(.fancy) {
+  display: inline-block;
+  background: purple;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/rDuyJ/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#host-context" id="host-context" class="no-underline">:host-context</a></h2>
+
+
+<p>Selects a shadow host based on a matching parent element.</p>
+
+<figure class='code'><pre><code>:host-context(.blocky) {
+  display: block
+  background: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/ftpoG/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#content" id="content" class="no-underline">::content</a></h2>
+
+
+<p>Selects distributed nodes inside of an element. Needs to be paired with <code>polyfill-next-selector</code> for browsers that do not support the native selector.</p>
+
+<figure class='code'><pre><code>::content h1 {
+  color: red;
+}</code></pre></figure>
+
+
+<p><a href="http://codepen.io/robdodson/pen/FokEw/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting Up Bower and Polymer]]></title>
@@ -2508,100 +2794,6 @@ document.body.appendChild(b);
 <h2>Support</h2>
 
 <p>Unfortunately, at least to my knowledge, custom elements are not currently supported in any major browsers. However Chrome has added support for 2 of the 4 Web Components standards in their last two releases so I can&#8217;t help but think that custom elements are right around the corner. One thing I didn&#8217;t touch on very much in this post was shadow DOM which currently <strong>is</strong> supported in Chrome so tomorrow I&#8217;ll talk about that technology. Till then!</p>
-
-<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Why Web Components?]]></title>
-    <link href="http://robdodson.me/blog/2013/03/17/why-web-components/"/>
-    <updated>2013-03-17T17:48:00-07:00</updated>
-    <id>http://robdodson.me/blog/2013/03/17/why-web-components</id>
-    <content type="html"><![CDATA[<p>Yesterday I did a post on the HTML5 <code>&lt;template&gt;</code> tag which is part of the new <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section">Web Components standard.</a> I didn&#8217;t go into a ton of explanation as to why I&#8217;m so interested with this spec and I think jumping right to the <code>&lt;template&gt;</code> tag was probably pretty confusing for folks who don&#8217;t have the same needs as me. I want to back up a bit and present a high level overview of Web Components and then illustrate why this is such an important concept.</p>
-
-<!--more-->
-
-
-<h2>So, what are Web Components?</h2>
-
-<p>Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Introduction to Web Components</a> article. Here&#8217;s a quote from the introduction (emphasis is mine):</p>
-
-<p style="text-align: center;">**</p>
-
-
-<p>&#8220;The component model for the Web (also known as Web Components) consists of four pieces designed to be used together <strong>to let web application authors define widgets with a level of visual richness not possible with CSS alone, and ease of composition and reuse not possible with script libraries today.</strong></p>
-
-<p>These pieces are:</p>
-
-<ul>
-<li><p><strong>templates</strong>, which define chunks of markup that are inert but can be activated for use later;</p></li>
-<li><p><strong>decorators</strong>, which apply templates to let CSS affect rich visual and behavioral changes to documents;</p></li>
-<li><p><strong>custom elements</strong>, which let authors define their own elements, including new presentation and API, that can be used in HTML documents; and</p></li>
-<li><p><strong>shadow DOM</strong> which defines how presentation and behavior of decorators and custom elements fit together in the DOM tree.</p></li>
-</ul>
-
-
-<p>Both decorators and custom elements are called <strong>components.</strong>&#8221;</p>
-
-<p>&#8211; <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section">Introduction to Web Components</a></p>
-
-<p style="text-align: center;">**</p>
-
-
-<p>In summary there are two kinds of &#8220;components&#8221;: <strong>custom elements</strong> and <strong>decorators</strong>.</p>
-
-<p><strong>Custom elements</strong> let you define new <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElements</a>, kind of like creating new tags, and <strong>decorators</strong> let you augment existing tags by injecting additional markup and styles via CSS selectors. Both custom elements and decorators leverage <strong>templates</strong> and <strong>shadow DOM</strong> to encapsulate their markup and styles.</p>
-
-<p>To visualize this process think about the iframe that holds a Facebook Like button. The Like button encapsulates all of its markup and styles inside the iframe so it doesn&#8217;t mess up anything on your page. Unfortunately there are a few downsides to this approach. For starters you have to make an http request to load the content of the iframe, so you would never want to build your entire site out of iframe&#8217;d components. Also, the Like button doesn&#8217;t expose much of an API for you to change its appearance. While that&#8217;s not a huge deal for a Facebook Like button, it is if you&#8217;re using a more generic component like a slider or dropdown.</p>
-
-<p>In an ideal world you could have a <em>framework</em> of components which hide their markup but expose an API to alter their appearance. Imagine if this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c">&lt;!-- Bootstrap Dropdown --&gt;</span>
-<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;dropdown&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;dropdown-menu&quot;</span> <span class="na">role=</span><span class="s">&quot;menu&quot;</span> <span class="na">aria-labelledby=</span><span class="s">&quot;dLabel&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">tabindex=</span><span class="s">&quot;-1&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Action<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">tabindex=</span><span class="s">&quot;-1&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Another action<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">tabindex=</span><span class="s">&quot;-1&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Something else here<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
-  <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code></pre></figure>
-
-
-<p>was just this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">is=</span><span class="s">&quot;x-dropdown&quot;</span> <span class="na">class=</span><span class="s">&quot;fancy&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-</code></pre></figure>
-
-
-<p>and you&#8217;re most of the way there.</p>
-
-<h2>It&#8217;s (probably) not for apps. It&#8217;s for frameworks.</h2>
-
-<p>Unless you&#8217;re trying to write a UI Framework like the next Bootstrap, you can probably ignore the underpinnings of how Web Components are produced. At present we have the <code>&lt;video&gt;</code> tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;video</span> <span class="na">autoplay=</span><span class="s">&quot;true&quot;</span> <span class="na">controls</span> <span class="na">src=</span><span class="s">&quot;path/to/video&quot;</span><span class="nt">&gt;</span>
-</code></pre></figure>
-
-
-<p>to spit out your awesome player. Think of the cognitive load that you could unburden yourself of if <em>all</em> UI Frameworks had the same abilities as <code>&lt;video&gt;</code>!</p>
-
-<p>A page might look like this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;nav</span> <span class="na">is=</span><span class="s">&quot;x-bootstrap-navbar&quot;</span> <span class="na">sticky</span><span class="nt">&gt;&lt;/nav&gt;</span>
-<span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span> <span class="na">role=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
-  <span class="c">&lt;!-- mixing Foundation and Bootstrap! --&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">is=</span><span class="s">&quot;x-foundation-alert&quot;</span> <span class="na">class=</span><span class="s">&quot;success&quot;</span><span class="nt">&gt;</span>Hey you succeeded!<span class="nt">&lt;/div&gt;</span>
-  <span class="nt">&lt;table</span> <span class="na">is=</span><span class="s">&quot;x-datatables&quot;</span> <span class="na">ascending</span> <span class="na">src=</span><span class="s">&quot;path/to/data.json&quot;</span><span class="nt">&gt;&lt;/table&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">is=</span><span class="s">&quot;x-bootstrap-pagination&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-<span class="nt">&lt;/section&gt;</span>
-<span class="nt">&lt;footer</span> <span class="na">is=</span><span class="s">&quot;x-bootstrap-footer&quot;</span><span class="nt">&gt;&lt;/footer&gt;</span>
-</code></pre></figure>
-
-
-<p>instead of hundreds of lines of markup rubber stamped over and over again. Even if you take the repetative markup and place it inside a template engine like handlebars you still can&#8217;t mix and match UI Frameworks like Bootstrap and Foundation without running into some serious risks. Web Components hope to solve both of these problems and open up a much more declarative authoring process.</p>
-
-<p>Hopefully tomorrow I can dig into Custom Elements more and provide some concrete examples knitting all of these concepts together. Thanks for reading!</p>
 
 <p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
 ]]></content>

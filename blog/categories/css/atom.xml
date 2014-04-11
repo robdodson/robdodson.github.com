@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CSS | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/css/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-03-29T16:40:31-07:00</updated>
+  <updated>2014-04-11T09:24:48-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,292 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Shadow DOM CSS Cheat Sheet]]></title>
+    <link href="http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/"/>
+    <updated>2014-04-10T22:56:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet</id>
+    <content type="html"><![CDATA[<p>This handy guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM.</p>
+
+<!-- more -->
+
+
+<p>Found a bug? <a href="">Submit a pull request!</a></p>
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#shadow" id="shadow" class="no-underline">::shadow</a></h2>
+
+
+<p>Selects shadow trees that are one level deep inside of an element. Will need to be combined with <code>shim-shadowdom</code> directive if used outside of a Polymer element in browsers that lack support for the native selector.</p>
+
+<p><code>
+x-foo::shadow h1 {
+  color: red;
+}
+</code>
+<a href="http://codepen.io/robdodson/pen/HeLEb">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#deep" id="deep" class="no-underline">/deep/</a></h2>
+
+
+<p>Selects shadow trees that are N levels deep inside of an element. Will need to be combined with <code>shim-shadowdom</code> directive if used outside of a Polymer element in browsers that lack support for the native selector.</p>
+
+<p><code>
+x-foo /deep/ h1 {
+  color: red;
+}
+</code>
+<a href="http://codepen.io/robdodson/pen/wraDn/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#host" id="host" class="no-underline">:host</a></h2>
+
+
+<p>Selects a shadow host element. May contain additional identifiers in parenthesis.</p>
+
+<p><code>
+:host(.fancy) {
+  display: inline-block;
+  background: purple;
+}
+</code>
+<a href="http://codepen.io/robdodson/pen/rDuyJ/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#host-context" id="host-context" class="no-underline">:host-context</a></h2>
+
+
+<p>Selects a shadow host based on a matching parent element.</p>
+
+<p><code>
+:host-context(.blocky) {
+  display: block
+  background: red;
+}
+</code>
+<a href="http://codepen.io/robdodson/pen/ftpoG/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+<br>
+
+
+
+
+<h2><a href="#content" id="content" class="no-underline">::content</a></h2>
+
+
+<p>Selects distributed nodes inside of an element. Needs to be paired with <code>polyfill-next-selector</code> for browsers that do not support the native selector.</p>
+
+<p><code>
+::content h1 {
+  color: red;
+}
+</code>
+<a href="http://codepen.io/robdodson/pen/FokEw/">Try it on CodePen</a></p>
+
+<table class="plain">
+  <thead>
+    <tr>
+      <th>Support Type</th>
+      <th>Chrome</th>
+      <th>Firefox</th>
+      <th>Internet Explorer</th>
+      <th>Safari</th>
+      <th>Opera</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no-border">Polyfill</td>
+      <td class="supported">Yes</td>
+      <td class="supported">Yes</td>
+      <td class="supported">10+</td>
+      <td class="supported">6+</td>
+      <td class="supported">Yes</td>
+    </tr>
+    <tr>
+      <td>Native</td>
+      <td class="supported">35</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The Cat and the Hat CSS Selectors]]></title>
@@ -739,108 +1025,6 @@ Likewise if you need to switch to a different font or size, here is where you wo
     <li>Sleep: 7</li>
     <li>Hunger: 0</li>
     <li>Coffee: 1</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[CSS Semantics: Best Practices]]></title>
-    <link href="http://robdodson.me/blog/2012/06/09/css-semantics/"/>
-    <updated>2012-06-09T07:19:00-07:00</updated>
-    <id>http://robdodson.me/blog/2012/06/09/css-semantics</id>
-    <content type="html"><![CDATA[<p>CSS is, for me, one of the most challenging and nerve wracking aspects of my job. With most programming languages there are frameworks and guides and heuristics that all make up a suite of best practices. CSS doesn't <em>really</em> have anything like this and as a result it's kind of a mish-mash of good rules to follow, definite don'ts, and lots and lots of grey area. Since I'm starting a new CSS heavy project, and because I want to further my own understanding in this realm, I'm going to spend a few posts exploring the topic of what makes good, maintainable CSS. Along the way I'm also going to point out a few frameworks that I've been looking at, in particular <a href="http://oocss.org/">OOCSS</a> and <a href="http://smacss.com/">SMACSS.</a> But lets kick things off with a discussion of what it means to write good, semantic CSS selectors and we'll follow up with frameworks in our next post.</p>
-
-<!--more-->
-
-
-<h2>Define Semantic</h2>
-
-<p>When I was trolling the interwebs for talks on writing large-scale maintainable CSS I somehow managed to come across <a href="http://css-tricks.com/semantic-class-names/">this article on css-tricks comparing the semantics of various css selectors.</a> After reading it I had this weird feeling like maybe I haven't been putting as much thought into my css selectors as I should. My selectors need to be highly semantic, but what does that really <em>mean?</em></p>
-
-<p>Trying to look up the definition of "semantic" is kind of a fun, albeit a slightly annoying task since most definitions look like this:</p>
-
-<p><em>Of, relating to, or according to the science of semantics.</em></p>
-
-<p>Well...thanks. <a href="http://www.wordnik.com/words/semantic">The wonderful Wordnik site has a great list of definitions</a> the most useful of which is probably this:</p>
-
-<p><em>Reflecting intended structure and meaning.</em></p>
-
-<p>So a semantic CSS selector should reflect the intended structure or meaning of the element it is applied to. Hmm...that's still a rather broad definition but at least we have a starting point. If I have a <code>div</code> that holds a bunch of news articles there's probably a gradient of increasingly more semantic names I could use for it.</p>
-
-<p>``` html</p>
-
-<div class="container"></div>
-
-
-
-
-<div class="article-box"></div>
-
-
-
-
-<div class="newsstand"></div>
-
-
-<p>```</p>
-
-<p>On the far end of the spectrum, <code>container</code> is about as generic as you can get and basically restates that something is a <code>div</code>. While I've been guilty of doing this in the past, if you're saying a containing HTML Element is a 'container' you're restating the obvious and should probably work on improving the name.</p>
-
-<p><code>article-box</code> is much more descriptive than just <code>container</code> so I'd say it has a higher semantic "score". But there is the potential for some semantic weirdness here, for instance, if we decide at a later date that we want our articles to be contained in a horizontal list it might make less sense to call it an "article-<em>box</em>". So maybe <code>article-container</code> is semantically similar but also a bit more flexible?</p>
-
-<p>Finally we have <code>newsstand</code> which is highly semantic and probably my favorite of the bunch. <code>newsstand</code> describes what our element <em>is</em> but it doesn't bother delving into how our element works. As a result <code>newsstand</code> can work however we want, it can be list like, or grid like, tabular, etc and it won't matter. You might argue that this would be a good place to use an ID instead of a class but that decision should be weighed carefully. You have to make sure that 3 months or a year from now there isn't the potential of having two newsstands on the same page.</p>
-
-<h3>If we only worked on contived examples...</h3>
-
-<p>Of course there's a litany of cases where highly semantic naming just doesn't quite cut it. Often times we're given a layout which has a few primary areas (columns, headers, footer) and the designer is putting all sorts of content into those divisions. On one page it could be news articles, then a list of search results, then a directory of users, and so on. I would argue that for major layout elements it's ok to use less semantic names, and in fact this is probably a good idea. So things like <code>column_1</code>, <code>flex-box</code>, <code>constrained-container</code>, are all specifying, at varying degrees, what the element is doing. They are less semantically rich than, say, <code>rolodex</code> or <code>id-badge</code>, but that's because their very intention is to be generic.</p>
-
-<h3>What about helpers?</h3>
-
-<p><em>Preface: I know about SASS and LESS. Let's pretend they don't exist for a moment :D</em></p>
-
-<p>Here is an area where I recently got very tripped up and I'm still not entirely sure what the best approach might be. Let's say you have a brand color, something like Facebook's blue, and you need to apply it to all sorts of different and unrelated elements. If you're like me then your brain starts thinking, "Well, that blue value is essentially a variable that I'd like to reuse. Maybe I should just make a helper style for it..." and so you produce something like this in a helpers.css file:</p>
-
-<p>``` css helpers.css
-.light-blue {</p>
-
-<pre><code>#00C
-</code></pre>
-
-<p>}
-```</p>
-
-<p>Now our HTML has little <code>light-blue</code>s sprinkled on top of it and we don't have to worry about declaring that same blue value over and over again in our styles. But what happens when our company decides to rebrand and now our primary color is a bright red? Uh oh...You definitely don't want to have to change HTML <em>and</em> CSS just to update a color.</p>
-
-<p><a href="http://css-tricks.com/semantic-class-names/#comment-102571">Neal G on CSS-Tricks made a very good comment regarding this scenario:</a></p>
-
-<blockquote><p>Perhaps an easier way to explain semantic CSS is simply, don’t name your classes or ids anything related to a CSS property. A property could be color, font-family, float, border, background etc.</p></blockquote>
-
-<p><a href="http://www.webdesignerdepot.com/2009/05/10-best-css-practices-to-improve-your-code/">Also from the Web Designer Depot</a></p>
-
-<blockquote><p>Name your elements based on what they are, not what they look like. For example, .comment-blue is much less versatile than .comment-beta, and .post-largefont is more limiting than .post-title.</p></blockquote>
-
-<p>Perhaps a better helper would have been <code>.brand-color</code> but again this is a contrived example. What about all the <em>other</em> colors on the site. And what about helpers that wrap commonly used styles like <code>float: left</code> and <code>clear: both</code>?</p>
-
-<p>The debate is pretty hot and heavy <a href="http://css-tricks.com/semantic-class-names">on the css-tricks article.</a> Just seach for the word 'float' and you'll see some pretty interesting discussions on it. My opinion is that you probably don't want to tack a bunch of <code>.bright-red</code> or <code>.larger</code> classes everywhere but at the same time something like <code>.float-right</code> can be extremely useful and <a href="http://css-tricks.com/semantic-class-names/#comment-102906">in some cases forcing semantics into a design can actually make things worse</a> especially for <a href="http://css-tricks.com/semantic-class-names/#comment-103076">less technically inclined clients.</a></p>
-
-<p>As a bit of a homework assignment I would recommend looking into a few of the resources I'm posting below. Obviouslyl take everything with a grain of salt, there isn't any true gospel for CSS so do what works best for you. I'll cover OOCSS and SMACSS in my next post, till then, thanks for reading! - Rob</p>
-
-<p><a href="http://css-tricks.com/semantic-class-names/">What Makes For a Semantic Class Name?</a></p>
-
-<p><a href="http://www.stubbornella.org/content/2011/04/28/our-best-practices-are-killing-us/">Our Best Practices Are Killing Us</a></p>
-
-<p><a href="https://github.com/styleguide/css">Github CSS Style Guide</a></p>
-
-<p><a href="https://github.com/csswizardry/CSS-Guidelines/blob/master/CSS%20Guidelines.md">CSS Wizardry: CSS Guidelines</a></p>
-
-<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here.</a></p>
-
-<ul class="personal-stats">
-    <li>Mood: Awake, Annoyed</li>
-    <li>Sleep: 7</li>
-    <li>Hunger: 0</li>
-    <li>Coffee: 0</li>
 </ul>
 
 ]]></content>
