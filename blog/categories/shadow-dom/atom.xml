@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Shadow DOM | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/shadow-dom/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-04-11T10:53:07-07:00</updated>
+  <updated>2014-04-14T10:32:04-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -18,7 +18,7 @@
     <link href="http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet/"/>
     <updated>2014-04-10T22:56:00-07:00</updated>
     <id>http://robdodson.me/blog/2014/04/10/shadow-dom-css-cheat-sheet</id>
-    <content type="html"><![CDATA[<p>This handy guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM.</p>
+    <content type="html"><![CDATA[<p>This guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM. I've written this from the perspective of someone who uses <a href="http://polymer-project.org">Polymer</a> so in a few places I point out polyfill features like <code>shim-shadowdom</code> and <code>polyfill-next-selector</code>. But the selectors themselves are all native and comply to <a href="http://drafts.csswg.org/css-scoping/">the current draft spec</a>.</p>
 
 <!-- more -->
 
