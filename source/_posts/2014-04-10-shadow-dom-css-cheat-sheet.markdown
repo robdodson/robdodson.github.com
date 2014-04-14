@@ -6,7 +6,7 @@ comments: true
 categories: [Shadow DOM, Web Components, Polymer, CSS]
 ---
 
-This handy guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM.
+This guide is my attempt to track the progress of all the new CSS selectors which affect the Shadow DOM. I've written this from the perspective of someone who uses [Polymer](http://polymer-project.org) so in a few places I point out polyfill features like `shim-shadowdom` and `polyfill-next-selector`. But the selectors themselves are all native and comply to [the current draft spec](http://drafts.csswg.org/css-scoping/).
 
 <!-- more -->
 
