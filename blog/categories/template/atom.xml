@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Template | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/template/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-04-30T07:08:12-07:00</updated>
+  <updated>2014-04-30T07:10:23-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -263,6 +263,10 @@ Using the above we should get the same results as before.</p>
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen1.jpg" title="'Basic Import Example with Polymer'" ></p>
 
 <p>You might notice that I used <code>platform.js</code> instead of only including the <a href="http://www.polymer-project.org/platform/html-imports.html">HTML Imports polyfill</a>. Polymer's collection of polyfills, referred to as "The Platform," is structured so you can take any of the polyfills &agrave; la carte but I find it's easier to just include the entire platform when I'm experimenting, rather than worry if I have each individual polyfill loaded. That's just personal preference (a.k.a. I'm lazy).</p>
+
+<h2>Using Scoped Styles in our Imports</h2>
+
+<p><em>04/30/14 Note: It's my understanding that scoped styles are being removed in favor of Shadow DOM so I'm removing this section</em></p>
 
 <h2>Using Scripts in our Imports</h2>
 
