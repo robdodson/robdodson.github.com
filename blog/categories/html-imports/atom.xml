@@ -4,7 +4,7 @@
   <title><![CDATA[Category: HTML Imports | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/html-imports/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-04-30T07:07:18-07:00</updated>
+  <updated>2014-04-30T07:08:12-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -240,10 +240,7 @@ in Chrome's <code>about:flags</code>.</p>
 
 <p>I've created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I'll link to the sketch so you can quickly try things out.</p>
 
-<ul>
-<li>04/30/14, Note: I'm in the process of updating this sketchbook. Hope to be done this week*</li>
-</ul>
-
+<p><em>04/30/14, Note: I'm in the process of updating this sketchbook. Hope to be done this week</em></p>
 
 <h2>A Basic Example</h2>
 
