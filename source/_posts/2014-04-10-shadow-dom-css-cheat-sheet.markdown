@@ -12,6 +12,8 @@ This guide is my attempt to track the progress of all the new CSS selectors whic
 
 Found a bug? [Submit a pull request!](https://github.com/robdodson/robdodson.github.com/blob/source/source/_posts/2014-04-10-shadow-dom-css-cheat-sheet.markdown)
 
+Follow [@rob_dodson on the twitters](http://twitter.com/rob_dodson)
+
 <br>
 <br>
 
