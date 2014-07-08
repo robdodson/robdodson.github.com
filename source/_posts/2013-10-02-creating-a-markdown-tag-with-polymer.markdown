@@ -31,7 +31,7 @@ to create our `bower.json` file.
 And we'll want to install our Polymer and Markdown dependencies so
 
 ```
-bower install polymer marked --save
+bower install Polymer/polymer marked --save
 ```
 
 Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) `elements` so we'll import from there.
@@ -42,6 +42,9 @@ Lastly we'll setup a test page for our element. I'm going to assume that the ele
   <head>
     <meta charset="utf-8">
     <title>Markdown Polymer Element</title>
+    <!-- Include platform.js to polyfill web components in old browsers -->
+    <script src="bower_components/platform/platform.js"></script>
+
     <!-- Import our polymer element -->
     <link rel="import" href="elements/mark-down.html">
   </head>
