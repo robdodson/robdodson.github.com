@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Custom Elements | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/custom-elements/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-08-06T13:24:52-07:00</updated>
+  <updated>2014-08-06T13:29:20-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -771,7 +771,7 @@ Which produces this:</p>
 <!--more-->
 
 
-<h1>*This post is pretty out of date. Unfortunately the &lt;element&gt; syntax is not supported in any browser. Take a look at the <a href="http://www.html5rocks.com/en/tutorials/webcomponents/customelements/">HTML5Rocks post on custom elements</a> to learn how to create your own tags.</h1>
+<h2><em>This post is pretty out of date. Unfortunately the &lt;element&gt; syntax is not supported in any browser. Take a look at the <a href="http://www.html5rocks.com/en/tutorials/webcomponents/customelements/">HTML5Rocks post on custom elements</a> to learn how to create your own tags.</em></h2>
 
 <h2>So, what are Custom Elements?</h2>
 
