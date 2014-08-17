@@ -10,6 +10,8 @@ categories: [HTML5, Web Components, Custom Elements, Shadow DOM]
 
 <!--more-->
 
+## *This post is pretty out of date. Unfortunately the &lt;element&gt; syntax is not supported in any browser. Take a look at the [HTML5Rocks post on custom elements](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/) to learn how to create your own tags.*
+
 ## So, what are Custom Elements?
 
 The [W3C Introduction to Web Components](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html) defines Custom Elements as follows:
