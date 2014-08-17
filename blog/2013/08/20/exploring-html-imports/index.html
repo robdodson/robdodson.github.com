@@ -53,18 +53,13 @@
 
 <h2>Support</h2>
 
-<p>Native imports are only available in Chrome Canary v36. Thankfully <a href="http://www.polymer-project.org/">Polymer</a> offers a polyfill in its <code>platform.js</code> file, if you want to try them out in other modern / &#8220;evergreen&#8221; browsers.</p>
-
-<p>To use HTML Imports make sure you&#8217;ve enabled the following
-in Chrome&#8217;s <code>about:flags</code>.</p>
-
-<p>√ Experimental Web Platform features<br></p>
+<p>Native imports are currently only available in Chrome. Be sure to check the <a href="http://caniuse.com/#feat=imports">support brackets on caniuse</a> to see if things have changed since the writing of this articel. Thankfully <a href="http://www.polymer-project.org/">Polymer</a> offers a polyfill in its <code>platform.js</code> file, if you want to try them out in other modern / &#8220;evergreen&#8221; browsers.</p>
 
 <h2>Codez!</h2>
 
 <p>I&#8217;ve created a sketchbook for this post and future Web Components related stuff. <a href="https://github.com/robdodson/webcomponents-sketchbook">You can grab the sketchbook on GitHub.</a> For each of the examples that I cover I&#8217;ll link to the sketch so you can quickly try things out.</p>
 
-<p><em>04/30/14, Note: I&#8217;m in the process of updating this sketchbook. Hope to be done this week</em></p>
+<p><em>Note: I&#8217;m in the process of updating this sketchbook. Please file an issue on Github if something seems broken.</em></p>
 
 <h2>A Basic Example</h2>
 
@@ -72,7 +67,7 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>OK so what&#8217;s a very basic import look like?</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
@@ -87,9 +82,9 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 </code></pre></figure>
 
 
-<p>In its simplest form the import works just like calling a stylesheet. We have to make sure there&#8217;s a document to import so let&#8217;s create a fake blog post.</p>
+<p>In its simplest form the import works just like calling a stylesheet. We have to make sure there&#8217;s a document to import so let&#8217;s create a fake blog post in <code>imports/blog-post.html</code>.</p>
 
-<figure class='code'><figcaption><span>imports/blog-post.html</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;h1&gt;</span>Awesome header<span class="nt">&lt;/h1&gt;</span>
   <span class="nt">&lt;p&gt;</span>Here is some really interesting paragraph content.<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
@@ -104,9 +99,9 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>Well that&#8217;s cool, but now what?</p>
 
-<p>Let&#8217;s grab the content of the import using some JavaScript and append it to the body.</p>
+<p>Let&#8217;s grab the content of the import using some JavaScript and append it to the body. We&#8217;ll do this back in our <code>index.html</code>.</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;body&gt;</span>
   <span class="nt">&lt;p&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
 
   <span class="nt">&lt;script&gt;</span>
@@ -130,11 +125,11 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <h3>Sketch 1: <a href="https://github.com/robdodson/webcomponents-sketchbook/tree/master/html-imports/1-basic-polymer">Basic-Polymer</a></h3>
 
-<p>If you want to try out the snippets above in a browser other than Chrome Canary you&#8217;ll need to use Google&#8217;s <a href="http://www.polymer-project.org/">Polymer Project</a>. Polymer is a collection of polyfills and additional sugars which seeks to enable the use of Web Components in all modern browsers. The hope is that devolopers will use Polymer to inform the W3C on which direction to take with Web Components; so rather than wait for a stinky spec we can guide the implementation process.</p>
+<p>If you want to try out the snippets above in a browser other than Chrome you&#8217;ll need to use Google&#8217;s <a href="http://www.polymer-project.org/">Polymer Project</a>. Polymer is a collection of polyfills and additional sugars which seeks to enable the use of Web Components in all modern browsers. The hope is that devolopers will use Polymer to inform the W3C on which direction to take with Web Components; so rather than wait for a stinky spec we can guide the implementation process.</p>
 
-<p>Polymer attempts to keep parity with the the evolving specifications but obviously there are some places where the API must differ because of the limitations of current browsers. In the case of HTML Imports, Polymer waits for the <code>DOMContentLoaded</code> event before triggering the actual import process. This means we need to listen for the <code>HTMLImportsLoaded</code> event on either <code>window</code> or <code>document</code> to know when it is finished.</p>
+<p>Polymer attempts to keep parity with the the evolving specifications but obviously there are some places where the API must differ because of the limitations of current browsers. In the case of HTML Imports, Polymer waits for the <code>DOMContentLoaded</code> event before triggering the actual import process. This means we need to listen for the <code>HTMLImportsLoaded</code> event on either <code>window</code> or <code>document</code> to know when it is finished. Let&#8217;s add that to our <code>index.html</code>.</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
@@ -176,7 +171,7 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>Next let&#8217;s look at using <code>&lt;script&gt;</code> tags inside of our import. We&#8217;ll start by removing the <code>&lt;script&gt;</code> block from our <code>index.html</code>.</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
@@ -191,9 +186,9 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 </code></pre></figure>
 
 
-<p>Then we&#8217;ll transfer that script block over to our blog post.</p>
+<p>Then we&#8217;ll transfer that script block over to our blog post in <code>imports/blog-post.html</code>.</p>
 
-<figure class='code'><figcaption><span>imports/blog-post.html</span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;blog-post&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;style&gt;</span>
     <span class="nt">h1</span> <span class="p">{</span>
       <span class="k">background</span><span class="o">:</span> <span class="nb">lightgreen</span><span class="p">;</span>
@@ -234,9 +229,9 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-screen2.jpg" title="'Imports with Styles'" ></p>
 
-<p>An important thing to take notice of is the relationship between <code>thisDoc</code> and <code>thatDoc</code>. <code>thisDoc</code> refers to the <code>blog-post.html</code> document, while <code>thatDoc</code> refers to our index.html file. It&#8217;s useful to distinguish between the two so we can <code>querySelector</code> for <code>#blog-post</code> and not worry that we may have grabbed something out of the importing document. <em>Thanks to <a href="https://twitter.com/coonsta">Dominic Cooney</a> for the heads up on this.</em></p>
+<p>An important thing to take notice of is the relationship between <code>thisDoc</code> and <code>thatDoc</code>. <code>thisDoc</code> refers to the <code>blog-post.html</code> document, while <code>thatDoc</code> refers to our <code>index.html</code> file. It&#8217;s useful to distinguish between the two so we can <code>querySelector</code> for <code>#blog-post</code> and not worry that we may have grabbed something out of the importing document. <em>Thanks to <a href="https://twitter.com/coonsta">Dominic Cooney</a> for the heads up on this.</em></p>
 
-<p>You&#8217;ll also notice that since the import has access to our <code>document</code> object it is able to add itself to the page. In practice you probably wouldn&#8217;t want imports adding themselves wherever but the important takeaway is that <strong>anything imported can access the <code>document</code></strong>. This means an import could register itself as a Custom Element using our <code>document</code> object and we wouldn&#8217;t need to write any additional code. We&#8217;re almost to that point so let&#8217;s keep going&#8230;</p>
+<p>You&#8217;ll also notice that since the import has access to our <code>document</code> object it is able to add itself to the page. In practice you probably wouldn&#8217;t want imports adding themselves wherever, but the important takeaway is that <strong>anything imported can access the <code>document</code></strong>. This means an import could register itself as a Custom Element using our <code>document</code> object and we wouldn&#8217;t need to write any additional code. We&#8217;re almost to that point so let&#8217;s keep going&#8230;</p>
 
 <h2>Using Templates in our Imports</h2>
 
@@ -246,7 +241,7 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>To start, I&#8217;ve updated the <code>index.html</code> so it includes Chart.js and imports a new <code>chart.html</code> file.</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
@@ -261,10 +256,10 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 </code></pre></figure>
 
 
-<p>Here&#8217;s what <code>chart.html</code> looks like:</p>
+<p>Here&#8217;s what <code>imports/chart.html</code> looks like:</p>
 
-<figure class='code'><figcaption><span>imports/chart.html</span></figcaption><pre><code><span class="c">&lt;!-- Include Chart.js so our import can use it --&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c">&lt;!-- Include Chart.js so our import can use it --&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/Chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">&quot;chart-pie&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;canvas</span> <span class="na">id=</span><span class="s">&quot;myChart&quot;</span> <span class="na">width=</span><span class="s">&quot;200&quot;</span> <span class="na">height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
   <span class="nt">&lt;script&gt;</span>
@@ -308,8 +303,6 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>We&#8217;re creating a new <code>&lt;template&gt;</code> which contains a canvas tag and a script block to create our pie chart. The advantage of using a template tag is that any script blocks inside of it will not execute until we clone the contents and add them to the DOM.</p>
 
-<p>Lines 29-37 should look familiar. We&#8217;re grabbing the template and stamping its content onto the document. Notice on line 37 we use <code>template.content</code> to access the innards.</p>
-
 <p>Running the above gives us this:</p>
 
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-template.jpg" title="'Imports with Template'" ></p>
@@ -324,7 +317,7 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>The final markup for our <code>index.html</code> file is going to look like this:</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
@@ -341,7 +334,7 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 </code></pre></figure>
 
 
-<p>On lines 11-13 we&#8217;re going to use our new Custom Element, <code>chart-pie</code>, which will allow us to produce pie charts wherever we want. The result will look like this:</p>
+<p>We&#8217;re going to use our new Custom Element, <code>chart-pie</code>, which will allow us to produce pie charts wherever we want. The result will look like this:</p>
 
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/imports-custom-elements.jpg" title="'Imports with Custom Elements'" ></p>
 
@@ -349,9 +342,9 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>To create the <code>chart-pie</code> tag we&#8217;ll need to create a <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Element</a>. Custom Elements are new tags with a lifecycle of JavaScript callbacks. Typically they use <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM</a> to hide their internal markup and expose attributes and specific styles to the client. <a href="http://robdodson.me/blog/2013/03/17/why-web-components/">I wrote an article loosely explaining them</a> a while back so take a look at that and also checkout <a href="http://www.youtube.com/watch?v=fqULJBBEVQE">this talk by Eric Bidelman</a>.</p>
 
-<p>Here&#8217;s what our updated <code>chart.html</code> looks like.</p>
+<p>Here&#8217;s what our updated <code>imports/chart.html</code> looks like.</p>
 
-<figure class='code'><figcaption><span>imports/chart.html</span></figcaption><pre><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/lib/Chart.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;template</span> <span class="na">id=</span><span class="s">&quot;chart-pie&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;canvas</span> <span class="na">class=</span><span class="s">&quot;myChart&quot;</span> <span class="na">width=</span><span class="s">&quot;200&quot;</span> <span class="na">height=</span><span class="s">&quot;200&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
 <span class="nt">&lt;/template&gt;</span>
@@ -416,9 +409,6 @@ in Chrome&#8217;s <code>about:flags</code>.</p>
 
 <p>On lines 1-3 we&#8217;ve shortened the <code>template</code> down so that it only contains our <code>canvas</code> tag. We&#8217;ll use the Custom Element <code>createdCallback</code> to actually instantiate the chart in here.</p>
 
-<br>
-
-
 <pre><code>// thisDoc refers to the "importee", which is chart.html
 var thisDoc = document.currentScript.ownerDocument;
 
@@ -430,35 +420,23 @@ var template = thisDoc.querySelector('#chart-pie');
 
 <p>Lines 6-12 should look familar from the last example. We&#8217;re storing our two documents in variables and querying for the template tag.</p>
 
-<br>
-
-
 <pre><code>var ChartPieProto = Object.create(HTMLElement.prototype);
 </code></pre>
 
 <p>On line 15 we define the prototype for our Custom Element called <code>ChartPieProto</code>. This prototype extends the <code>HTMLElement</code> prototype which is a requirement for creating a new element.</p>
-
-<br>
-
 
 <pre><code>ChartPieProto.createdCallback = function() {
   ...
 };
 </code></pre>
 
-<p>On line 20 we see the first lifecycle callback, <code>createdCallback</code>. The <code>createdCallback</code> is run every time the parser hits a new instance of our tag. Therefore we can use it as a kind of Constructor to kickoff the creation of our chart. We&#8217;ll want to create a new chart instance for each tag so all of our Chart.js code has been moved inside of this callback.</p>
-
-<br>
-
+<p>On line 20 we see the first lifecycle callback, <code>createdCallback</code>. The <code>createdCallback</code> is run every time the parser hits a new instance of our tag. Therefore we can use it as a kind of constructor to kickoff the creation of our chart. We&#8217;ll want to create a new chart instance for each tag so all of our Chart.js code has been moved inside of this callback.</p>
 
 <pre><code>var root = this.createShadowRoot();
 var clone = thatDoc.importNode(template.content, true);
 </code></pre>
 
 <p>On lines 22-23 we create a <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">Shadow DOM</a> to hold the markup for our chart.</p>
-
-<br>
-
 
 <pre><code>var data = [
   {
@@ -482,23 +460,17 @@ var myNewChart = new Chart(ctx).Pie(data);
 
 <p>Lines 26-43 should look familiar. It&#8217;s the same Chart.js code from before except now we use <code>querySelector</code> to find the contents of the template clone and we&#8217;re using a class for <code>myChart</code> instead of an id.</p>
 
-<br>
-
-
 <pre><code>root.appendChild(clone);
 </code></pre>
 
 <p>On line 46 we add the new content to our Shadow DOM.</p>
-
-<br>
-
 
 <pre><code>var ChartPie = thatDoc.registerElement('chart-pie', {prototype: ChartPieProto});
 </code></pre>
 
 <p>Line 49 is where we actually register our Custom Element and assign it to the name <code>chart-pie</code>. From here you can either place a <code>&lt;chart-pie&gt;&lt;/chart-pie&gt;</code> tag somewhere on your page, or use JavaScript to instantiate an instance and add it to the <code>document</code>. This is demonstrated in the comments on lines 50-51. If you refer back to our <code>index.html</code> example we just use the <code>&lt;chart-pie&gt;</code> tag.</p>
 
-<figure class='code'><figcaption><span>index.html</span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
@@ -523,7 +495,7 @@ var myNewChart = new Chart(ctx).Pie(data);
 
 <p>If you&#8217;ve made it this far congrats and thanks for hanging in there! I know that last section was a little crazy but stop for a moment and think about what we just did.</p>
 
-<p>By using an HTML Import we were able to pull in a document which added a new tag to our application. Imagine if <em>all</em> of Chart.js was written in this manner. There would be no need for us to write any glue code to generate a chart ever again. Instead we could manipulate the attributes of a <code>&lt;chart-pie&gt;</code> tag using something like Angular or any other front-end framework. That would allow us to focus only on the code that matters to our application and leave all that other boilerplate tucked away inside of Custom Elements.</p>
+<p>By using an HTML Import we were able to pull in a document which added a new tag to our application. Imagine if <em>all</em> of Chart.js was written in this manner. There would be no need for us to write any glue code to generate a chart ever again. That would allow us to focus only on the code that matters to our application, and leave all that other boilerplate tucked away inside of Custom Elements.</p>
 
 <p>Over the next few months I&#8217;ll be blogging exclusively about this topic because I think it&#8217;s really interesting so check back later for more!</p>
 

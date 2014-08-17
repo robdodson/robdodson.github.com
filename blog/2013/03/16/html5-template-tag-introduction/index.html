@@ -39,7 +39,7 @@
 
 <h2>Feature Detection</h2>
 
-<p>The &lt;template&gt; tag is currently only supported in Chrome 26 so you&#8217;ll need to either run these examples in Chrome Canary or (if it&#8217;s the future) a version of Chrome/FF/Whatever that supports &lt;template&gt;. Here&#8217;s a little feature dection script I stole from the <a href="http://www.html5rocks.com/en/tutorials/webcomponents/template/">HTML5Rocks article</a> on <code>&lt;template&gt;</code>.</p>
+<p>The &lt;template&gt; tag is currently supported in Chrome, Firefox, Opera and Safari 8+. You can see the full bracket of supported browsers over on <a href="http://caniuse.com/#feat=template">caniuse</a>. Here&#8217;s a little feature dection script I stole from the <a href="http://www.html5rocks.com/en/tutorials/webcomponents/template/">HTML5Rocks article</a> on <code>&lt;template&gt;</code>.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;h3</span> <span class="na">class=</span><span class="s">&quot;template-detection&quot;</span><span class="nt">&gt;</span>Does your browser support <span class="ni">&amp;lt;</span>template<span class="ni">&amp;gt;</span>: <span class="nt">&lt;/h3&gt;</span>
 
@@ -58,6 +58,9 @@
 <h3 class="template-detection">Does your browser support &lt;template&gt;: </h3>
 
 
+
+
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 
 
 <script>
@@ -83,7 +86,7 @@ Let&#8217;s start by making a template for an image placeholder. We&#8217;re goi
   <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#hhhhold-template&#39;</span><span class="p">);</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">).</span><span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;http://hhhhold.com/350x200&#39;</span><span class="p">;</span>
   <span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.title&#39;</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="s1">&#39;Random image from hhhhold.com&#39;</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">importNode</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
 <span class="nt">&lt;/script&gt;</span>
 </code></pre></figure>
 
@@ -102,11 +105,13 @@ Let&#8217;s start by making a template for an image placeholder. We&#8217;re goi
   var template = document.querySelector('#hhhhold-template');
   template.content.querySelector('img').src = 'http://hhhhold.com/350x200';
   template.content.querySelector('.title').textContent = 'Random image from hhhhold.com'
-  document.querySelector('#hhhold-container').appendChild(template.content.cloneNode(true));
+  document.querySelector('#hhhold-container').appendChild(
+    document.importNode(template.content, true)
+  );
 </script>
 
 
-<p>If you&#8217;ve worked with client-side template libraries like underscore or handelbars the above should look familiar to you. Where underscore and handelbars take advantage of putting their templates inside of <code>&lt;script&gt;</code> tags and changing the <code>type</code> to something like <code>text/x-handlebars-template</code>, the <code>&lt;template&gt;</code> tag doesn&#8217;t need to because it&#8217;s actually part of the HTML5 spec. There are pros and cons to this approach.</p>
+<p>If you&#8217;ve worked with client-side template libraries like underscore or handelbars the above should look familiar to you. Where underscore and handelbars take advantage of putting their templates inside of <code>&lt;script&gt;</code> tags and changing the <code>type</code> to something like <code>text/x-handlebars-template</code>, the <code>&lt;template&gt;</code> tag doesn&#8217;t need to, because it&#8217;s actually part of the HTML DOM spec. There are pros and cons to this approach.</p>
 
 <h3>Pros</h3>
 
@@ -123,11 +128,13 @@ Let&#8217;s start by making a template for an image placeholder. We&#8217;re goi
 <li>You can&#8217;t precompile the template into a JS function like you can with other libraries like handlebars.</li>
 <li>You can&#8217;t preload the assets referenced by a template (images, sounds, css, js).</li>
 <li>You can&#8217;t nest templates inside of one another and have it automagically work. If a template contains another template you&#8217;ll have to activate the child, then activate the parent.</li>
-<li>Very little browser support (only Chrome 26 at the time of this writing).</li>
+<li>There&#8217;s no support for data interpolation (i.e. filling a template with values from a JS object).</li>
 </ul>
 
 
-<p>Given that list of cons you might say &#8220;Well why would I ever bother with the <code>&lt;template&gt;</code> tag if something like handlebars gives me way more power?&#8221; That&#8217;s a great question because by itself the <code>&lt;template&gt;</code> tag isn&#8217;t so impressive. Its saving grace lies in the fact that it is intended to be used <em>along side</em> the Shadow DOM and Custom Elements to generate a Web Component.</p>
+<p>Given that list of cons you might say &#8220;Well why would I ever bother with the <code>&lt;template&gt;</code> tag if something like handlebars gives me way more power?&#8221; That&#8217;s a great question because by itself the <code>&lt;template&gt;</code> tag doesn&#8217;t seem so impressive.</p>
+
+<p>Its saving grace lies in the fact that it is part of the DOM, whereas all other template libraries are actually just pushing around Strings. That makes them vulnerable to XSS and requires weird hacks to prevent the browser from rendering their content. While features like data interpolation are pretty crucial, they can be fixed by the next generation of template libraries, in fact <a href="polymer-project.org">Polymer&#8217;s</a> templating has already added this back in. Which leads to the bigger point: combining templates with Shadow DOM and Custom Elements gives us the future component model for the web, and that&#8217;s why I&#8217;m truly excited to use them.</p>
 
 <p>Think back to the story about Bootstrap that I told at the beginning of this post. If all the markup for a Bootstrap button lived inside a template tag then we&#8217;d be one step closer to having a nice encapsulated widget. The next step would be to isolate the styles associated with the button. But I&#8217;ll save that for tomorrow&#8217;s post :)</p>
 
