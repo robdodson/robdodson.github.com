@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Custom Elements | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/custom-elements/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-08-27T19:54:57-07:00</updated>
+  <updated>2014-08-27T19:56:35-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -202,7 +202,7 @@ ready: function() {
     <link href="http://robdodson.me/blog/2013/08/22/web-components-resources/"/>
     <updated>2013-08-22T17:47:00-07:00</updated>
     <id>http://robdodson.me/blog/2013/08/22/web-components-resources</id>
-    <content type="html"><![CDATA[<p><a href="webcomponents.org">webcomponents.org</a> is an awesome, one-stop shop to help you get up to speed on Web Components. Go check it out.</p>
+    <content type="html"><![CDATA[<p><a href="webcomponents.org">http://webcomponents.org</a> is an awesome, one-stop shop to help you get up to speed on Web Components. Go check it out.</p>
 ]]></content>
   </entry>
   
