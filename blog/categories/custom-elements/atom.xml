@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Custom Elements | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/custom-elements/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-08-27T19:45:43-07:00</updated>
+  <updated>2014-08-27T19:54:57-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -202,7 +202,7 @@ ready: function() {
     <link href="http://robdodson.me/blog/2013/08/22/web-components-resources/"/>
     <updated>2013-08-22T17:47:00-07:00</updated>
     <id>http://robdodson.me/blog/2013/08/22/web-components-resources</id>
-    <content type="html"><![CDATA[<p>Eric Bidelman (<a href="http://twitter.com/ebidel">@ebidel</a>) put together <a href="https://gist.github.com/ebidel/6314025">a great list of Web Components Resources</a>. It's nice to have it all in one place because it sure can get confusing hoping around from spec to article to slideshow, etc. If you have more resources make sure to do a PR and add them to the list!</p>
+    <content type="html"><![CDATA[<p><a href="webcomponents.org">webcomponents.org</a> is an awesome, one-stop shop to help you get up to speed on Web Components. Go check it out.</p>
 ]]></content>
   </entry>
   
@@ -733,211 +733,6 @@ Which produces this:</p>
 <p>Over the next few months I'll be blogging exclusively about this topic because I think it's really interesting so check back later for more!</p>
 
 <p>Till then make sure to <a href="http://twitter.com/rob_dodson">hit me up on Twitter</a> if you have any questions or leave a note in the comments. Thanks!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Introduction to Custom Elements]]></title>
-    <link href="http://robdodson.me/blog/2013/03/19/custom-elements-intro/"/>
-    <updated>2013-03-19T01:21:00-07:00</updated>
-    <id>http://robdodson.me/blog/2013/03/19/custom-elements-intro</id>
-    <content type="html"><![CDATA[<p><a href="http://robdodson.me/blog/2013/03/17/why-web-components/">In yesterday's post</a> I made the case for Web Components so today let's dive back in and look at Custom Elements.</p>
-
-<!--more-->
-
-
-<h2><em>This post is pretty out of date. Unfortunately the &lt;element&gt; syntax is not supported in any browser. Take a look at the <a href="http://www.html5rocks.com/en/tutorials/webcomponents/customelements/">HTML5Rocks post on custom elements</a> to learn how to create your own tags.</em></h2>
-
-<h2>So, what are Custom Elements?</h2>
-
-<p>The <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">W3C Introduction to Web Components</a> defines Custom Elements as follows:</p>
-
-<blockquote><p>custom elements let authors define their own elements, including new presentation and API, that can be used in HTML documents</p></blockquote>
-
-<p>To translate that a little bit, consider that every HTML tag inherits from <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElement</a>. Often in the W3C specs they'll shorthand that and refer to items in the DOM as just "element" or "elements". So what this is basically saying is that the custom elements spec lets you define <em>new</em> HTMLElements, which is kind of like saying you get to define new HTML tags. Technically it has always been possible to create your own HTML tags by shimming the browser, this is in fact how <a href="need%20link">HTML5shim</a> makes legacy browsers recognize HTML5 tags, but these tags weren't really first class citizens. Which is to say, they <em>could</em> work as containers but if they needed to do anything else like spit out some custom DOM (think the <code>&lt;video&gt;</code> tag or an <code>&lt;input&gt;</code> field) then that wasn't going to just magically happen. You'd have to write some custom javascript for that and somehow trigger it on the page.</p>
-
-<p>Custom elements solves these issues by letting you define new markup which can then have a whole lifecycle of events, unique styles that are only scope to the element and additional (hidden) HTML markup.</p>
-
-<h2>Defining a new Custom Element</h2>
-
-<p>It's probably easier to grok all of this if you just see some example code. Let's look at the proposed markup for defining a new custom element.</p>
-
-<p><code>html
-&lt;element extends="button" name="x-dropdown-button"&gt;
-  …
-&lt;/element&gt;
-</code>
-The W3C definition of this is painfully muddled:</p>
-
-<p>"The element element defines a custom element. It specifies the type of element it's a refinement of using the extends attribute."</p>
-
-<p>To translate, you create an element tag, give it a unique identifier with <code>name</code> and specify which tag you're extending. All custom elements <em>must</em> extend an existing tag and ideally it should be a tag that they closely relate to. In this case we're creating a new custom element called <code>x-dropdown-button</code> which extends <code>&lt;button&gt;</code>. The docs suggest that if you don't have a closely related tag that you should just extend <code>&lt;div&gt;</code> or <code>&lt;span&gt;</code> since (at a minimum) you know that your element is related to a container of some sort. As a fallback legacy browsers will then use the original tag and at least render something that is close to your intent. Maybe IE8 won't get a <code>x-dropdown-button</code> but at least it'll get a <code>button</code>.</p>
-
-<h2>Defining Custom Elements with Templates</h2>
-
-<p>If you recall I said that Custom Elements can define additional markup, similar to the <code>&lt;video&gt;</code> tag or an <code>&lt;input&gt;</code> field. This markup is specified through the use of a <code>&lt;template&gt;</code> tag. For example:</p>
-
-<p>``` html
-<element extends="button" name="x-dropdown-button">
-  <template></p>
-
-<pre><code>&lt;content&gt;&lt;/content&gt;
-&lt;div class="dropdown"&gt;
-  &lt;ul class="dropdown-menu"&gt;
-    &lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Action&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Another action&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Something else here&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;
-</code></pre>
-
-<p>  </template>
-</element>
-```</p>
-
-<p>If a custom element includes a template then it will be cloned into that element's <strong>shadow DOM</strong> when the browser parses the tag. We haven't talked much about shadow DOM yet but for now just think of it as markup that's <em>rendered</em> on the page but not inspectable by the client.</p>
-
-<p>Any content that would normally live inside of the extended tag ends up inside of the <code>&lt;content&gt;</code> tag in the template. For instance if we extended <code>&lt;button&gt;Hello World&lt;/button&gt;</code> then "Hello World" would end up in the <code>&lt;content&gt;</code> tag.</p>
-
-<p>In addition to markup the template can include styles that are scoped only to the custom element. Here's the same example from above with the addition of a scoped style tag.</p>
-
-<p>```html
-<element extends="button" name="x-dropdown-button">
-  <template></p>
-
-<pre><code>&lt;style scoped&gt;
-  .dropdown-menu {
-    font-size: 12px;
-    color: #CCC;
-  }
-&lt;/style&gt;
-&lt;content&gt;&lt;/content&gt;
-&lt;div class="dropdown"&gt;
-  &lt;ul class="dropdown-menu"&gt;
-    &lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Action&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Another action&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a tabindex="-1" href="#"&gt;Something else here&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;
-</code></pre>
-
-<p>  </template>
-</element>
-<code>``
-The CSS used in the scoped style tag will not affect anything else on the page so you can have your own</code>.dropdown-menu<code>classes and they won't conflict with the component. The component author *can* expose style hooks for the consumer to alter the appearance of the element through the use of the new</code>pseudo` attribute.</p>
-
-<p>```html
-<element extends="button" name="x-dropdown-button">
-  <template></p>
-
-<pre><code>&lt;style scoped&gt;
-  .dropdown-menu {
-    font-size: 12px;
-    color: #CCC;
-  }
-&lt;/style&gt;
-&lt;content&gt;&lt;/content&gt;
-&lt;div class="dropdown"&gt;
-  &lt;ul class="dropdown-menu"&gt;
-    &lt;li pseudo="x-dropdown-item"&gt;&lt;a tabindex="-1" href="#"&gt;Action&lt;/a&gt;&lt;/li&gt;
-    &lt;li pseudo="x-dropdown-item"&gt;&lt;a tabindex="-1" href="#"&gt;Another action&lt;/a&gt;&lt;/li&gt;
-    &lt;li pseudo="x-dropdown-item"&gt;&lt;a tabindex="-1" href="#"&gt;Something else here&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;
-</code></pre>
-
-<p>  </template>
-</element>
-```</p>
-
-<p>elsewhere in a style.css you could say:</p>
-
-<p><code>css
-x-dropdown-button::x-dropdown-item {
-  background-color: blue;
-  height: 40px;
-}
-</code></p>
-
-<h2>Using Custom Elements in Markup</h2>
-
-<p>Using a custom element is really straightforward thanks to the new <code>is</code> attribute. To use our new dropdown-button from above would just be:</p>
-
-<p><code>html
-&lt;button is="x-dropdown-button"&gt;Hey I'm a dropdown!&lt;/button&gt;
-</code>
-Easy, right?</p>
-
-<p>You can also create custom element in script like so:</p>
-
-<p><code>js
-var btn = document.createElement("x-dropdown-button");
-alert(btn.outerHTML); // will display '&lt;button is="x-dropdown-button"&gt;&lt;/button&gt;'
-</code></p>
-
-<p>Also you can specify a <code>constructor</code> attribute and then use it to create new instances of your element.</p>
-
-<p>```html
-<element extends="button" name="x-dropdown-button" constructor="DropdownButton">
-  …
-</element></p>
-
-<p>var btn = new DropdownButton();
-document.body.appendChild(b);
-```</p>
-
-<p>Additionally you can add methods and properties to this constructor and call them later:</p>
-
-<p>```html
-<element extends="button" name="x-dropdown-button" constructor="DropdownButton">
-  <script>
-  DropdownButton.prototype.open = function () {</p>
-
-<pre><code>alert("Hey I'm open!");
-</code></pre>
-
-<p>  };
-  DropdownButton.prototype.close = function () {</p>
-
-<pre><code>alert("Aw dang I'm closed...");
-</code></pre>
-
-<p>  };
-  </script>
-</element></p>
-
-<p>…</p>
-
-<script>
-    var btn = new DropdownButton();
-    document.body.appendChild(btn);
-    b.open(); // alerts "Hey I'm open!"
-</script>
-
-
-<p>```</p>
-
-<p>Constructors are attached to the <code>window</code> object, but if you don't want to pollute that scope you can use the <code>generatedConstructor</code> property:</p>
-
-<p>```html
-<element extends="table" name="x-chart">
-  <script></p>
-
-<pre><code>// …
-var DropdownButton = this.generatedConstructor;
-DropdownButton.prototype.open = function() { /* … */ };
-// …
-</code></pre>
-
-<p>  </script>
-</element>
-```</p>
-
-<h2>Support</h2>
-
-<p>Unfortunately, at least to my knowledge, custom elements are not currently supported in any major browsers. However Chrome has added support for 2 of the 4 Web Components standards in their last two releases so I can't help but think that custom elements are right around the corner. One thing I didn't touch on very much in this post was shadow DOM which currently <strong>is</strong> supported in Chrome so tomorrow I'll talk about that technology. Till then!</p>
-
-<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
 ]]></content>
   </entry>
   

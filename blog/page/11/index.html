@@ -42,28 +42,6 @@
 		
 	
 	<header class="post-header">
-		<span class="post-meta">31 May 2012</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2012/05/31/how-to-use-ejs-in-express/">
-			
-				How to Use EJS in Express</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p><em>Update: If you&#8217;re starting a fresh project with Express it&#8217;s much easier to just run <code>express --ejs</code>. That will scaffold out an Express app for you with EJS ready to go!</em></p>
-
-<p>Here&#8217;s a quick explanation of how to use EJS instead of Jade in your Express projects. This is super easy and covered well in the documentation but I wanted to put it here since that&#8217;s what I worked on today :)</p>
-
-
-	</section>
-
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
 		<span class="post-meta">30 May 2012</span>
 		<h2 class="post-title">
 			
@@ -162,11 +140,44 @@
 
 </article>
 
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">25 May 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/05/25/backbone-events-framework-communication/">
+			
+				Backbone Events: Framework Communication</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>I want to figure out how to communicate on a framework level within Backbone. Coming from Flash and <a href="http://www.robotlegs.org/">RobotLegs</a> I&#8217;m used to a few MVC conventions that work very well as far as event dispatching goes. In RobotLegs you typically have a framework wide eventDispatcher that anyone can tune into. In a nutshell your View will trigger an event, for instance a user clicking a button, and that will get dispatched to interested framework actors. These can be other Views or, more likely, they can be Commands. The Commands are like single use actions tied directly to events. Think of it like binding every public method of your controller to an event. The Commands will typically effect models, changing them in some way, and the Models will dispatch an event that the Views listen for to update themselves.</p>
+
+<p>Backbone works differently in that Views are often tied directly to their models like so:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Documents</span><span class="p">.</span><span class="nx">first</span><span class="p">();</span> <span class="c1">// &lt;-- Model object</span>
+
+<span class="k">new</span> <span class="nx">DocumentRow</span><span class="p">({</span> <span class="c1">// &lt;-- View object with model reference</span>
+  <span class="nx">model</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="s2">&quot;document-row-&quot;</span> <span class="o">+</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">id</span>
+<span class="p">});</span>
+</code></pre></figure>
+
+
+<p>When you use this approach it&#8217;s trivial to tell the view to listen to the model&#8217;s change event and then call <code>view.render()</code>. Essentially you are munging some of a Controller&#8217;s responsibilities into the View. That&#8217;s all well and good but let&#8217;s say we want to dispatch an event from one view which will affect other views and actors. This event has nothing to do with a model, maybe it&#8217;s just an animation of some kind that others need to know about. So how do we go about this?</p>
+
+
+	</section>
+
+</article>
+
 <nav class="pagination" role="pagination">
     
         <a class="newer-posts" href="/blog/page/10/">← Newer Posts</a>
     
-    <span class="page-number">Page 11 of 17</span>
+    <span class="page-number">Page 11 of 16</span>
     
         <a class="older-posts" href="/blog/page/12/">Older Posts →</a>
     

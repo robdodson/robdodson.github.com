@@ -42,26 +42,6 @@
 		
 	
 	<header class="post-header">
-		<span class="post-meta">07 May 2012</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2012/05/07/object-oriented-scraper-backed-with-tests-pt-2/">
-			
-				Object Oriented Scraper Backed With Tests Pt. 2</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>I&#8217;m picking up from where I left off last night. If you look back at the <a href="/blog/2012/05/06/object-oriented-scraper-backed-with-tests/">previous post</a> we ended with a spec&#8217;d out <code>Runner</code> object. Now we need to build our <code>Crawler</code> which will slurp up all the content from our posts and return them as meaningful data.</p>
-
-
-	</section>
-
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
 		<span class="post-meta">06 May 2012</span>
 		<h2 class="post-title">
 			
@@ -287,11 +267,50 @@
 
 </article>
 
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">01 May 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/05/01/ruby-objects-and-dot-syntax/">
+			
+				Ruby Objects and Dot Syntax</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>Coming from JavaScript I&#8217;m very accustomed to doing something like this:</p>
+
+<figure class='code'><figcaption><span>Javascript</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Rob&#39;</span><span class="p">,</span> <span class="nx">city</span><span class="o">:</span> <span class="s1">&#39;San Francisco&#39;</span> <span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">person</span><span class="p">.</span><span class="nx">city</span> <span class="p">);</span>   <span class="c1">// &#39;San Francisco&#39;</span>
+</code></pre></figure>
+
+
+<p>Using dot syntax to access a <code>Hash</code> is second nature to me. That&#8217;s why I was surprised when I ran into the following error yesterday while writing some Ruby.</p>
+
+<figure class='code'><figcaption><span>Ruby</span></figcaption><pre><code><span class="n">person</span> <span class="o">=</span> <span class="p">{</span><span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Rob&#39;</span><span class="p">,</span> <span class="n">city</span><span class="p">:</span> <span class="s1">&#39;San Francisco&#39;</span><span class="p">}</span>
+ <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">&quot;Rob&quot;</span><span class="p">,</span> <span class="ss">:city</span><span class="o">=&gt;</span><span class="s2">&quot;San Francisco&quot;</span><span class="p">}</span>
+
+<span class="nb">puts</span> <span class="n">person</span><span class="o">.</span><span class="n">city</span>
+
+<span class="no">NoMethodError</span><span class="p">:</span> <span class="n">undefined</span> <span class="nb">method</span> <span class="sb">`city&#39; for {:name=&gt;&quot;Rob&quot;, :city=&gt;&quot;San Francisco&quot;}:Hash</span>
+</code></pre></figure>
+
+
+<p>&#8220;Hmm, weird,&#8221; I thought. I know I&#8217;ve seen dot syntax used in Ruby before..what gives?</p>
+
+
+	</section>
+
+</article>
+
 <nav class="pagination" role="pagination">
     
         <a class="newer-posts" href="/blog/page/14/">← Newer Posts</a>
     
-    <span class="page-number">Page 15 of 17</span>
+    <span class="page-number">Page 15 of 16</span>
     
         <a class="older-posts" href="/blog/page/16/">Older Posts →</a>
     

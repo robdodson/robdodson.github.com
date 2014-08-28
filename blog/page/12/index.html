@@ -42,39 +42,6 @@
 		
 	
 	<header class="post-header">
-		<span class="post-meta">25 May 2012</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2012/05/25/backbone-events-framework-communication/">
-			
-				Backbone Events: Framework Communication</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>I want to figure out how to communicate on a framework level within Backbone. Coming from Flash and <a href="http://www.robotlegs.org/">RobotLegs</a> I&#8217;m used to a few MVC conventions that work very well as far as event dispatching goes. In RobotLegs you typically have a framework wide eventDispatcher that anyone can tune into. In a nutshell your View will trigger an event, for instance a user clicking a button, and that will get dispatched to interested framework actors. These can be other Views or, more likely, they can be Commands. The Commands are like single use actions tied directly to events. Think of it like binding every public method of your controller to an event. The Commands will typically effect models, changing them in some way, and the Models will dispatch an event that the Views listen for to update themselves.</p>
-
-<p>Backbone works differently in that Views are often tied directly to their models like so:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Documents</span><span class="p">.</span><span class="nx">first</span><span class="p">();</span> <span class="c1">// &lt;-- Model object</span>
-
-<span class="k">new</span> <span class="nx">DocumentRow</span><span class="p">({</span> <span class="c1">// &lt;-- View object with model reference</span>
-  <span class="nx">model</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
-  <span class="nx">id</span><span class="o">:</span> <span class="s2">&quot;document-row-&quot;</span> <span class="o">+</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">id</span>
-<span class="p">});</span>
-</code></pre></figure>
-
-
-<p>When you use this approach it&#8217;s trivial to tell the view to listen to the model&#8217;s change event and then call <code>view.render()</code>. Essentially you are munging some of a Controller&#8217;s responsibilities into the View. That&#8217;s all well and good but let&#8217;s say we want to dispatch an event from one view which will affect other views and actors. This event has nothing to do with a model, maybe it&#8217;s just an animation of some kind that others need to know about. So how do we go about this?</p>
-
-
-	</section>
-
-</article>
-
-
-    <article class="post">
-	
-	<header class="post-header">
 		<span class="post-meta">24 May 2012</span>
 		<h2 class="post-title">
 			
@@ -221,11 +188,33 @@
 
 </article>
 
+
+    <article class="post">
+	
+	<header class="post-header">
+		<span class="post-meta">19 May 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/05/19/my-first-chain/">
+			
+				My First Chain</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>Back in April I was reading hacker news when I came across a blog posted titled <a href="http://japhr.blogspot.com/2012/04/366-or-how-i-tricked-myself-into-being.html">&#8216;366 or How I Tricked Myself into Being Awesome&#8217;</a>. It was written by a fellow named Chris Strom. It was written on blogspot. It was mostly unstyled.</p>
+
+<p>Chris wrote every single day for 366 days and in so doing self-published three books on programming languages that he knew nothing about. His post was to champion that milestone. At the time I read it and thought, &#8220;I can totally do this,&#8221; meaning if I follow the steps that Chris has outlined I can potentially trick myself into becoming a blogger.</p>
+
+
+	</section>
+
+</article>
+
 <nav class="pagination" role="pagination">
     
         <a class="newer-posts" href="/blog/page/11/">← Newer Posts</a>
     
-    <span class="page-number">Page 12 of 17</span>
+    <span class="page-number">Page 12 of 16</span>
     
         <a class="older-posts" href="/blog/page/13/">Older Posts →</a>
     
