@@ -56,7 +56,7 @@
 
 <p>And we&#8217;ll want to install our Polymer and Markdown dependencies so</p>
 
-<figure class='code'><pre><code>bower install polymer marked --save</code></pre></figure>
+<figure class='code'><pre><code>bower install Polymer/polymer marked --save</code></pre></figure>
 
 
 <p>Lastly we&#8217;ll setup a test page for our element. I&#8217;m going to assume that the element lives in a folder called (creatively) <code>elements</code> so we&#8217;ll import from there.</p>
@@ -66,6 +66,9 @@
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;title&gt;</span>Markdown Polymer Element<span class="nt">&lt;/title&gt;</span>
+    <span class="c">&lt;!-- Include platform.js to polyfill web components in old browsers --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;bower_components/platform/platform.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
     <span class="c">&lt;!-- Import our polymer element --&gt;</span>
     <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;elements/mark-down.html&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;/head&gt;</span>

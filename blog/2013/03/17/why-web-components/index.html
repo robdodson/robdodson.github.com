@@ -39,7 +39,7 @@
 
 <h2>So, what are Web Components?</h2>
 
-<p>Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Introduction to Web Components</a> article. Here&#8217;s a quote from the introduction (emphasis is mine):</p>
+<p>Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Introduction to Web Components</a> article. <em>update 08/27/14: for various reasons this document is now deprecated but the high level overview is still useful</em>.</p>
 
 <p style="text-align: center;">**</p>
 
@@ -49,23 +49,17 @@
 <p>These pieces are:</p>
 
 <ul>
-<li><p><strong>templates</strong>, which define chunks of markup that are inert but can be activated for use later;</p></li>
-<li><p><strong>decorators</strong>, which apply templates to let CSS affect rich visual and behavioral changes to documents;</p></li>
-<li><p><strong>custom elements</strong>, which let authors define their own elements, including new presentation and API, that can be used in HTML documents; and</p></li>
-<li><p><strong>shadow DOM</strong> which defines how presentation and behavior of decorators and custom elements fit together in the DOM tree.</p></li>
+<li><p><strong>Templates</strong>, which define chunks of markup that are inert but can be activated for use later;</p></li>
+<li><p><strong>Custom Elements</strong>, which let authors define their own elements, including new presentation and API, that can be used in HTML documents; and</p></li>
+<li><p><strong>Shadow DOM</strong> which defines how presentation and behavior of decorators and custom elements fit together in the DOM tree.</p></li>
+<li><p><strong>HTML Imports</strong> provide a way to include and reuse HTML documents in other HTML documents.</p></li>
 </ul>
 
-
-<p>Both decorators and custom elements are called <strong>components.</strong>&#8221;</p>
-
-<p>&#8211; <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section">Introduction to Web Components</a></p>
 
 <p style="text-align: center;">**</p>
 
 
-<p>In summary there are two kinds of &#8220;components&#8221;: <strong>custom elements</strong> and <strong>decorators</strong>.</p>
-
-<p><strong>Custom elements</strong> let you define new <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElements</a>, kind of like creating new tags, and <strong>decorators</strong> let you augment existing tags by injecting additional markup and styles via CSS selectors. Both custom elements and decorators leverage <strong>templates</strong> and <strong>shadow DOM</strong> to encapsulate their markup and styles.</p>
+<p><strong>Custom elements</strong> let you define new <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElements</a>, kind of like creating new tags. Custom elements leverage <strong>templates</strong> and <strong>shadow DOM</strong> to encapsulate their markup and styles, and often are loaded into an application via <strong>HTML imports</strong>.</p>
 
 <p>To visualize this process think about the iframe that holds a Facebook Like button. The Like button encapsulates all of its markup and styles inside the iframe so it doesn&#8217;t mess up anything on your page. Unfortunately there are a few downsides to this approach. For starters you have to make an http request to load the content of the iframe, so you would never want to build your entire site out of iframe&#8217;d components. Also, the Like button doesn&#8217;t expose much of an API for you to change its appearance. While that&#8217;s not a huge deal for a Facebook Like button, it is if you&#8217;re using a more generic component like a slider or dropdown.</p>
 
@@ -84,15 +78,13 @@
 
 <p>was just this:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;div</span> <span class="na">is=</span><span class="s">&quot;x-dropdown&quot;</span> <span class="na">class=</span><span class="s">&quot;fancy&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;fancy</span><span class="na">-dropdown</span><span class="nt">&gt;</span><span class="err">&lt;</span>/fancy-dropdown&gt;
 </code></pre></figure>
 
 
 <p>and you&#8217;re most of the way there.</p>
 
-<h2>It&#8217;s (probably) not for apps. It&#8217;s for frameworks.</h2>
-
-<p>Unless you&#8217;re trying to write a UI Framework like the next Bootstrap, you can probably ignore the underpinnings of how Web Components are produced. At present we have the <code>&lt;video&gt;</code> tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:</p>
+<p>At present we have the <code>&lt;video&gt;</code> tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;video</span> <span class="na">autoplay=</span><span class="s">&quot;true&quot;</span> <span class="na">controls</span> <span class="na">src=</span><span class="s">&quot;path/to/video&quot;</span><span class="nt">&gt;</span>
 </code></pre></figure>
@@ -102,14 +94,14 @@
 
 <p>A page might look like this:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;nav</span> <span class="na">is=</span><span class="s">&quot;x-bootstrap-navbar&quot;</span> <span class="na">sticky</span><span class="nt">&gt;&lt;/nav&gt;</span>
+<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;bootstrap</span><span class="na">-navbar</span> <span class="na">sticky</span><span class="nt">&gt;</span><span class="err">&lt;</span>/bootstrap-navbar&gt;
 <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span> <span class="na">role=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
   <span class="c">&lt;!-- mixing Foundation and Bootstrap! --&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">is=</span><span class="s">&quot;x-foundation-alert&quot;</span> <span class="na">class=</span><span class="s">&quot;success&quot;</span><span class="nt">&gt;</span>Hey you succeeded!<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;foundation</span><span class="na">-alert</span> <span class="na">success</span><span class="nt">&gt;</span>Hey you succeeded!<span class="err">&lt;</span>/foundation-alert&gt;
   <span class="nt">&lt;table</span> <span class="na">is=</span><span class="s">&quot;x-datatables&quot;</span> <span class="na">ascending</span> <span class="na">src=</span><span class="s">&quot;path/to/data.json&quot;</span><span class="nt">&gt;&lt;/table&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">is=</span><span class="s">&quot;x-bootstrap-pagination&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;bootstrap</span><span class="na">-pagination</span><span class="nt">&gt;</span><span class="err">&lt;</span>/bootstrap-pagination&gt;
 <span class="nt">&lt;/section&gt;</span>
-<span class="nt">&lt;footer</span> <span class="na">is=</span><span class="s">&quot;x-bootstrap-footer&quot;</span><span class="nt">&gt;&lt;/footer&gt;</span>
+<span class="nt">&lt;bootstrap</span><span class="na">-footer</span><span class="nt">&gt;</span><span class="err">&lt;</span>/bootstrap-footer&gt;
 </code></pre></figure>
 
 

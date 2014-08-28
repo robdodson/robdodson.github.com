@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Custom Elements | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/custom-elements/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-08-17T09:40:04-07:00</updated>
+  <updated>2014-08-27T19:45:43-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -44,7 +44,7 @@ bower init
 <p>And we'll want to install our Polymer and Markdown dependencies so</p>
 
 <p><code>
-bower install polymer marked --save
+bower install Polymer/polymer marked --save
 </code></p>
 
 <p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
@@ -56,6 +56,9 @@ bower install polymer marked --save
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Markdown Polymer Element&lt;/title&gt;
+&lt;!-- Include platform.js to polyfill web components in old browsers --&gt;
+&lt;script src="bower_components/platform/platform.js"&gt;&lt;/script&gt;
+
 &lt;!-- Import our polymer element --&gt;
 &lt;link rel="import" href="elements/mark-down.html"&gt;
 </code></pre>
@@ -950,7 +953,7 @@ DropdownButton.prototype.open = function() { /* … */ };
 
 <h2>So, what are Web Components?</h2>
 
-<p>Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Introduction to Web Components</a> article. Here's a quote from the introduction (emphasis is mine):</p>
+<p>Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Introduction to Web Components</a> article. <em>update 08/27/14: for various reasons this document is now deprecated but the high level overview is still useful</em>.</p>
 
 <p style="text-align: center;">**</p>
 
@@ -960,23 +963,17 @@ DropdownButton.prototype.open = function() { /* … */ };
 <p>These pieces are:</p>
 
 <ul>
-<li><p><strong>templates</strong>, which define chunks of markup that are inert but can be activated for use later;</p></li>
-<li><p><strong>decorators</strong>, which apply templates to let CSS affect rich visual and behavioral changes to documents;</p></li>
-<li><p><strong>custom elements</strong>, which let authors define their own elements, including new presentation and API, that can be used in HTML documents; and</p></li>
-<li><p><strong>shadow DOM</strong> which defines how presentation and behavior of decorators and custom elements fit together in the DOM tree.</p></li>
+<li><p><strong>Templates</strong>, which define chunks of markup that are inert but can be activated for use later;</p></li>
+<li><p><strong>Custom Elements</strong>, which let authors define their own elements, including new presentation and API, that can be used in HTML documents; and</p></li>
+<li><p><strong>Shadow DOM</strong> which defines how presentation and behavior of decorators and custom elements fit together in the DOM tree.</p></li>
+<li><p><strong>HTML Imports</strong> provide a way to include and reuse HTML documents in other HTML documents.</p></li>
 </ul>
 
-
-<p>Both decorators and custom elements are called <strong>components.</strong>"</p>
-
-<p>-- <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section">Introduction to Web Components</a></p>
 
 <p style="text-align: center;">**</p>
 
 
-<p>In summary there are two kinds of "components": <strong>custom elements</strong> and <strong>decorators</strong>.</p>
-
-<p><strong>Custom elements</strong> let you define new <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElements</a>, kind of like creating new tags, and <strong>decorators</strong> let you augment existing tags by injecting additional markup and styles via CSS selectors. Both custom elements and decorators leverage <strong>templates</strong> and <strong>shadow DOM</strong> to encapsulate their markup and styles.</p>
+<p><strong>Custom elements</strong> let you define new <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElements</a>, kind of like creating new tags. Custom elements leverage <strong>templates</strong> and <strong>shadow DOM</strong> to encapsulate their markup and styles, and often are loaded into an application via <strong>HTML imports</strong>.</p>
 
 <p>To visualize this process think about the iframe that holds a Facebook Like button. The Like button encapsulates all of its markup and styles inside the iframe so it doesn't mess up anything on your page. Unfortunately there are a few downsides to this approach. For starters you have to make an http request to load the content of the iframe, so you would never want to build your entire site out of iframe'd components. Also, the Like button doesn't expose much of an API for you to change its appearance. While that's not a huge deal for a Facebook Like button, it is if you're using a more generic component like a slider or dropdown.</p>
 
@@ -1000,17 +997,12 @@ DropdownButton.prototype.open = function() { /* … */ };
 
 <p>was just this:</p>
 
-<p>``` html</p>
-
-<div is="x-dropdown" class="fancy"></div>
-
-
-<p>```
+<p><code>html
+&lt;fancy-dropdown&gt;&lt;/fancy-dropdown&gt;
+</code>
 and you're most of the way there.</p>
 
-<h2>It's (probably) not for apps. It's for frameworks.</h2>
-
-<p>Unless you're trying to write a UI Framework like the next Bootstrap, you can probably ignore the underpinnings of how Web Components are produced. At present we have the <code>&lt;video&gt;</code> tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:</p>
+<p>At present we have the <code>&lt;video&gt;</code> tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:</p>
 
 <p><code>html
 &lt;video autoplay="true" controls src="path/to/video"&gt;
@@ -1021,14 +1013,14 @@ and you're most of the way there.</p>
 <p>A page might look like this:</p>
 
 <p><code>html
-&lt;nav is="x-bootstrap-navbar" sticky&gt;&lt;/nav&gt;
+&lt;bootstrap-navbar sticky&gt;&lt;/bootstrap-navbar&gt;
 &lt;section class="container" role="main"&gt;
   &lt;!-- mixing Foundation and Bootstrap! --&gt;
-  &lt;div is="x-foundation-alert" class="success"&gt;Hey you succeeded!&lt;/div&gt;
+  &lt;foundation-alert success&gt;Hey you succeeded!&lt;/foundation-alert&gt;
   &lt;table is="x-datatables" ascending src="path/to/data.json"&gt;&lt;/table&gt;
-  &lt;div is="x-bootstrap-pagination"&gt;&lt;/div&gt;
+  &lt;bootstrap-pagination&gt;&lt;/bootstrap-pagination&gt;
 &lt;/section&gt;
-&lt;footer is="x-bootstrap-footer"&gt;&lt;/footer&gt;
+&lt;bootstrap-footer&gt;&lt;/bootstrap-footer&gt;
 </code>
 instead of hundreds of lines of markup rubber stamped over and over again. Even if you take the repetative markup and place it inside a template engine like handlebars you still can't mix and match UI Frameworks like Bootstrap and Foundation without running into some serious risks. Web Components hope to solve both of these problems and open up a much more declarative authoring process.</p>
 

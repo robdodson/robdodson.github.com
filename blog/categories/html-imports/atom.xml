@@ -4,7 +4,7 @@
   <title><![CDATA[Category: HTML Imports | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/html-imports/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-08-17T09:40:04-07:00</updated>
+  <updated>2014-08-27T19:45:43-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -44,7 +44,7 @@ bower init
 <p>And we'll want to install our Polymer and Markdown dependencies so</p>
 
 <p><code>
-bower install polymer marked --save
+bower install Polymer/polymer marked --save
 </code></p>
 
 <p>Lastly we'll setup a test page for our element. I'm going to assume that the element lives in a folder called (creatively) <code>elements</code> so we'll import from there.</p>
@@ -56,6 +56,9 @@ bower install polymer marked --save
 
 <pre><code>&lt;meta charset="utf-8"&gt;
 &lt;title&gt;Markdown Polymer Element&lt;/title&gt;
+&lt;!-- Include platform.js to polyfill web components in old browsers --&gt;
+&lt;script src="bower_components/platform/platform.js"&gt;&lt;/script&gt;
+
 &lt;!-- Import our polymer element --&gt;
 &lt;link rel="import" href="elements/mark-down.html"&gt;
 </code></pre>
