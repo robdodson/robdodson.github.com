@@ -14,12 +14,7 @@ Let's get started!
 
 ## Support <a href="#" id="support"></a>
 
-In order to try the examples, I suggest you use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html) 33 or greater.
-
-Also make sure you've enabled the following in Chrome's `about:flags`.
-
-√ Experimental Web Platform features<br>
-√ Experimental JavaScript<br>
+In order to try the examples, I suggest you use Google Chrome, v33 or greater.
 
 ## Codez! <a href="#" id="codez"></a>
 
@@ -63,11 +58,11 @@ What's unique about shadow DOM is that it allows us to create our own node trees
 
 Using the code above, we've replaced the text content of our `.widget` div using a shadow tree. To create a shadow tree, we first specify that a node should act as a **shadow host**. In this case, we use `.widget` as our shadow host. Then we add a new node to our shadow host, known as a **shadow root**. The shadow root acts as the first node in your shadow tree and all other nodes descend from it.
 
-If you were to inspect this element in the Chrome Dev Tools (and you had [Show Shadow DOM](/blog/2013/08/26/shadow-dom-introduction#the-shadows) turned on), it would look something like this:
+If you were to inspect this element in the Chrome Dev Tools, it would look something like this:
 
 {% img center http://robdodson.s3.amazonaws.com/images/shadow-dom-basic-inspect.jpg 'Inspecting our first shadow dom' %}
 
-Do you see how `#document-fragment` is grayed out? That's our shadow root. **The takeaway is that the content inside of the shadow host is _not_ rendered. Instead, the content inside of the shadow root is what gets rendered.**
+Do you see how `#shadow-root` is grayed out? That's the shadow root we just created. **The takeaway is that the content inside of the shadow host is _not_ rendered. Instead, the content inside of the shadow root is what gets rendered.**
 
 This is why, when we run our example, we see `Im inside yr div!` instead of `Hello, world!`
 
@@ -134,7 +129,7 @@ First things first, to use the content in our shadow host we're going to need to
     var host = document.querySelector('.pokemon');
     var root = host.createShadowRoot();
     var template = document.querySelector('.pokemon-template');
-    root.appendChild(template.content.cloneNode(true));
+    root.appendChild(document.importNode(template.content, true));
   </script>
 </body>
 ```
