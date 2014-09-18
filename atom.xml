@@ -4,7 +4,7 @@
   <title><![CDATA[Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-08-27T19:57:36-07:00</updated>
+  <updated>2014-09-18T09:31:18-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -1562,12 +1562,7 @@
 
 <h2>Support <a href="#" id="support"></a></h2>
 
-<p>In order to try the examples, I suggest you use <a href="https://www.google.com/intl/en/chrome/browser/canary.html">Chrome Canary</a> 33 or greater.</p>
-
-<p>Also make sure you&#8217;ve enabled the following in Chrome&#8217;s <code>about:flags</code>.</p>
-
-<p>√ Experimental Web Platform features<br>
-√ Experimental JavaScript<br></p>
+<p>In order to try the examples, I suggest you use Google Chrome, v33 or greater.</p>
 
 <h2>Codez! <a href="#" id="codez"></a></h2>
 
@@ -1611,11 +1606,11 @@
 
 <p>Using the code above, we&#8217;ve replaced the text content of our <code>.widget</code> div using a shadow tree. To create a shadow tree, we first specify that a node should act as a <strong>shadow host</strong>. In this case, we use <code>.widget</code> as our shadow host. Then we add a new node to our shadow host, known as a <strong>shadow root</strong>. The shadow root acts as the first node in your shadow tree and all other nodes descend from it.</p>
 
-<p>If you were to inspect this element in the Chrome Dev Tools (and you had <a href="http://robdodson.me/blog/2013/08/26/shadow-dom-introduction#the-shadows">Show Shadow DOM</a> turned on), it would look something like this:</p>
+<p>If you were to inspect this element in the Chrome Dev Tools, it would look something like this:</p>
 
 <p><img class="center" src="http://robdodson.s3.amazonaws.com/images/shadow-dom-basic-inspect.jpg" title="'Inspecting our first shadow dom'" ></p>
 
-<p>Do you see how <code>#document-fragment</code> is grayed out? That&#8217;s our shadow root. <strong>The takeaway is that the content inside of the shadow host is <em>not</em> rendered. Instead, the content inside of the shadow root is what gets rendered.</strong></p>
+<p>Do you see how <code>#shadow-root</code> is grayed out? That&#8217;s the shadow root we just created. <strong>The takeaway is that the content inside of the shadow host is <em>not</em> rendered. Instead, the content inside of the shadow root is what gets rendered.</strong></p>
 
 <p>This is why, when we run our example, we see <code>Im inside yr div!</code> instead of <code>Hello, world!</code></p>
 
@@ -1681,7 +1676,7 @@
     <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.pokemon&#39;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">createShadowRoot</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.pokemon-template&#39;</span><span class="p">);</span>
-    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">importNode</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
   <span class="nt">&lt;/script&gt;</span>
 <span class="nt">&lt;/body&gt;</span>
 </code></pre></figure>
