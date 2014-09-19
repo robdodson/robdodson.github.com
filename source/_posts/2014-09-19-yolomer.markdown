@@ -1,0 +1,13 @@
+---
+layout: post
+title: "YOLOmer!"
+date: 2014-09-19 09:30
+comments: true
+categories: [Screencasts, Web Components, Polymer, Yeoman]
+---
+
+'Allo!
+
+In this video I show you how to setup your first Polymer project using [the new Yeoman generator](https://github.com/yeoman/generator-polymer), how to create an element with a subgenerator, and how to run some Mocha tests. Let Yeoman do the heavy lifting, and make app building a breeze!
+
+{% youtube INH_OW4lFSs %}
