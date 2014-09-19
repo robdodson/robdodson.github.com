@@ -42,6 +42,45 @@
 		
 	
 	<header class="post-header">
+		<span class="post-meta">01 May 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/05/01/ruby-objects-and-dot-syntax/">
+			
+				Ruby Objects and Dot Syntax</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p>Coming from JavaScript I&#8217;m very accustomed to doing something like this:</p>
+
+<figure class='code'><figcaption><span>Javascript</span></figcaption><pre><code><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Rob&#39;</span><span class="p">,</span> <span class="nx">city</span><span class="o">:</span> <span class="s1">&#39;San Francisco&#39;</span> <span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">person</span><span class="p">.</span><span class="nx">city</span> <span class="p">);</span>   <span class="c1">// &#39;San Francisco&#39;</span>
+</code></pre></figure>
+
+
+<p>Using dot syntax to access a <code>Hash</code> is second nature to me. That&#8217;s why I was surprised when I ran into the following error yesterday while writing some Ruby.</p>
+
+<figure class='code'><figcaption><span>Ruby</span></figcaption><pre><code><span class="n">person</span> <span class="o">=</span> <span class="p">{</span><span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Rob&#39;</span><span class="p">,</span> <span class="n">city</span><span class="p">:</span> <span class="s1">&#39;San Francisco&#39;</span><span class="p">}</span>
+ <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">&quot;Rob&quot;</span><span class="p">,</span> <span class="ss">:city</span><span class="o">=&gt;</span><span class="s2">&quot;San Francisco&quot;</span><span class="p">}</span>
+
+<span class="nb">puts</span> <span class="n">person</span><span class="o">.</span><span class="n">city</span>
+
+<span class="no">NoMethodError</span><span class="p">:</span> <span class="n">undefined</span> <span class="nb">method</span> <span class="sb">`city&#39; for {:name=&gt;&quot;Rob&quot;, :city=&gt;&quot;San Francisco&quot;}:Hash</span>
+</code></pre></figure>
+
+
+<p>&#8220;Hmm, weird,&#8221; I thought. I know I&#8217;ve seen dot syntax used in Ruby before..what gives?</p>
+
+
+	</section>
+
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
 		<span class="post-meta">30 Apr 2012</span>
 		<h2 class="post-title">
 			
@@ -144,33 +183,13 @@
 
 </article>
 
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">20 Sep 2011</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2011/09/20/nomethoderror-in-rails-3/">
-			
-				NoMethodError in Rails 3</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<p>Coming from Actionscript 3 I’m pretty used to all of the different errors that the Flash compiler and runtime typically throw at me. But now that I’ve started teaching myself Ruby on Rails 3 I’m having to learn a whole new lexicon of messages which generally amount to “Something blow’d up&#8230;”</p>
-
-<p>For my own benefit, and hopefully for the benefit of others, I’m going to post the errors and solutions that I come up with. Hopefully since I’m a total newbie, explaining things from my perspective will help other people who are new to the language as well.</p>
-
-
-	</section>
-
-</article>
-
 <nav class="pagination" role="pagination">
     
         <a class="newer-posts" href="/blog/page/15/">← Newer Posts</a>
     
-    <span class="page-number">Page 16 of 16</span>
+    <span class="page-number">Page 16 of 17</span>
+    
+        <a class="older-posts" href="/blog/page/17/">Older Posts →</a>
     
 </nav>
   </main>

@@ -4,7 +4,7 @@
   <title><![CDATA[Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-09-18T09:31:18-07:00</updated>
+  <updated>2014-09-19T09:32:38-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,20 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[YOLOmer!]]></title>
+    <link href="http://robdodson.me/blog/2014/09/19/yolomer/"/>
+    <updated>2014-09-19T09:30:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/09/19/yolomer</id>
+    <content type="html"><![CDATA[<p>&#8216;Allo!</p>
+
+<p>In this video I show you how to setup your first Polymer project using <a href="https://github.com/yeoman/generator-polymer">the new Yeoman generator</a>, how to create an element with a subgenerator, and how to run some Mocha tests. Let Yeoman do the heavy lifting, and make app building a breeze!</p>
+
+<div class="embed-video-container"><iframe src="http://www.youtube.com/embed/INH_OW4lFSs "></iframe></div>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM CSS Cheat Sheet]]></title>
@@ -2518,92 +2532,6 @@ var myNewChart = new Chart(ctx).Pie(data);
 
 
 <p><a href="https://github.com/robdodson/requirejs-presentation">Slidedeck on Github</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Why Web Components?]]></title>
-    <link href="http://robdodson.me/blog/2013/03/17/why-web-components/"/>
-    <updated>2013-03-17T17:48:00-07:00</updated>
-    <id>http://robdodson.me/blog/2013/03/17/why-web-components</id>
-    <content type="html"><![CDATA[<p>Yesterday I did a post on the HTML5 <code>&lt;template&gt;</code> tag which is part of the new <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html#custom-element-section">Web Components standard.</a> I didn&#8217;t go into a ton of explanation as to why I&#8217;m so interested with this spec and I think jumping right to the <code>&lt;template&gt;</code> tag was probably pretty confusing for folks who don&#8217;t have the same needs as me. I want to back up a bit and present a high level overview of Web Components and then illustrate why this is such an important concept.</p>
-
-<!--more-->
-
-
-<h2>So, what are Web Components?</h2>
-
-<p>Web Components are actually a group of standards which all fall under the same umbrella. The W3C does a good job of giving a high level overview in their <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Introduction to Web Components</a> article. <em>update 08/27/14: for various reasons this document is now deprecated but the high level overview is still useful</em>.</p>
-
-<p style="text-align: center;">**</p>
-
-
-<p>&#8220;The component model for the Web (also known as Web Components) consists of four pieces designed to be used together <strong>to let web application authors define widgets with a level of visual richness not possible with CSS alone, and ease of composition and reuse not possible with script libraries today.</strong></p>
-
-<p>These pieces are:</p>
-
-<ul>
-<li><p><strong>Templates</strong>, which define chunks of markup that are inert but can be activated for use later;</p></li>
-<li><p><strong>Custom Elements</strong>, which let authors define their own elements, including new presentation and API, that can be used in HTML documents; and</p></li>
-<li><p><strong>Shadow DOM</strong> which defines how presentation and behavior of decorators and custom elements fit together in the DOM tree.</p></li>
-<li><p><strong>HTML Imports</strong> provide a way to include and reuse HTML documents in other HTML documents.</p></li>
-</ul>
-
-
-<p style="text-align: center;">**</p>
-
-
-<p><strong>Custom elements</strong> let you define new <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLElement">HTMLElements</a>, kind of like creating new tags. Custom elements leverage <strong>templates</strong> and <strong>shadow DOM</strong> to encapsulate their markup and styles, and often are loaded into an application via <strong>HTML imports</strong>.</p>
-
-<p>To visualize this process think about the iframe that holds a Facebook Like button. The Like button encapsulates all of its markup and styles inside the iframe so it doesn&#8217;t mess up anything on your page. Unfortunately there are a few downsides to this approach. For starters you have to make an http request to load the content of the iframe, so you would never want to build your entire site out of iframe&#8217;d components. Also, the Like button doesn&#8217;t expose much of an API for you to change its appearance. While that&#8217;s not a huge deal for a Facebook Like button, it is if you&#8217;re using a more generic component like a slider or dropdown.</p>
-
-<p>In an ideal world you could have a <em>framework</em> of components which hide their markup but expose an API to alter their appearance. Imagine if this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="c">&lt;!-- Bootstrap Dropdown --&gt;</span>
-<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;dropdown&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;dropdown-menu&quot;</span> <span class="na">role=</span><span class="s">&quot;menu&quot;</span> <span class="na">aria-labelledby=</span><span class="s">&quot;dLabel&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">tabindex=</span><span class="s">&quot;-1&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Action<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">tabindex=</span><span class="s">&quot;-1&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Another action<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">tabindex=</span><span class="s">&quot;-1&quot;</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>Something else here<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
-  <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code></pre></figure>
-
-
-<p>was just this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;fancy</span><span class="na">-dropdown</span><span class="nt">&gt;</span><span class="err">&lt;</span>/fancy-dropdown&gt;
-</code></pre></figure>
-
-
-<p>and you&#8217;re most of the way there.</p>
-
-<p>At present we have the <code>&lt;video&gt;</code> tag which basically uses all of the technologies listed above. Do you care what its template and shadow DOM look like? Not really. You just want to say:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;video</span> <span class="na">autoplay=</span><span class="s">&quot;true&quot;</span> <span class="na">controls</span> <span class="na">src=</span><span class="s">&quot;path/to/video&quot;</span><span class="nt">&gt;</span>
-</code></pre></figure>
-
-
-<p>to spit out your awesome player. Think of the cognitive load that you could unburden yourself of if <em>all</em> UI Frameworks had the same abilities as <code>&lt;video&gt;</code>!</p>
-
-<p>A page might look like this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><pre><code><span class="nt">&lt;bootstrap</span><span class="na">-navbar</span> <span class="na">sticky</span><span class="nt">&gt;</span><span class="err">&lt;</span>/bootstrap-navbar&gt;
-<span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span> <span class="na">role=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
-  <span class="c">&lt;!-- mixing Foundation and Bootstrap! --&gt;</span>
-  <span class="nt">&lt;foundation</span><span class="na">-alert</span> <span class="na">success</span><span class="nt">&gt;</span>Hey you succeeded!<span class="err">&lt;</span>/foundation-alert&gt;
-  <span class="nt">&lt;table</span> <span class="na">is=</span><span class="s">&quot;x-datatables&quot;</span> <span class="na">ascending</span> <span class="na">src=</span><span class="s">&quot;path/to/data.json&quot;</span><span class="nt">&gt;&lt;/table&gt;</span>
-  <span class="nt">&lt;bootstrap</span><span class="na">-pagination</span><span class="nt">&gt;</span><span class="err">&lt;</span>/bootstrap-pagination&gt;
-<span class="nt">&lt;/section&gt;</span>
-<span class="nt">&lt;bootstrap</span><span class="na">-footer</span><span class="nt">&gt;</span><span class="err">&lt;</span>/bootstrap-footer&gt;
-</code></pre></figure>
-
-
-<p>instead of hundreds of lines of markup rubber stamped over and over again. Even if you take the repetative markup and place it inside a template engine like handlebars you still can&#8217;t mix and match UI Frameworks like Bootstrap and Foundation without running into some serious risks. Web Components hope to solve both of these problems and open up a much more declarative authoring process.</p>
-
-<p>Hopefully tomorrow I can dig into Custom Elements more and provide some concrete examples knitting all of these concepts together. Thanks for reading!</p>
-
-<p>You should follow me on Twitter <a href="http://twitter.com/rob_dodson">here</a>.</p>
 ]]></content>
   </entry>
   

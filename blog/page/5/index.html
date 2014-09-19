@@ -42,6 +42,28 @@
 		
 	
 	<header class="post-header">
+		<span class="post-meta">29 Nov 2012</span>
+		<h2 class="post-title">
+			
+			<a href="/blog/2012/11/29/asynchronous-grunt-tasks/">
+			
+				Asynchronous Grunt Tasks</a>
+		</h2>
+	</header>
+	<section class="post-excerpt">
+		<p><em>Update: Thanks to <a href="https://twitter.com/waynemoir">@waynemoir</a> for updating the example source to work with Grunt ~0.4.</em></p>
+
+<p>After my last post <a href="https://twitter.com/stevensacks">@stevensacks</a> tweeted at me that he was having issues getting node FileSystem commands to work in grunt. After a bit of poking around I noticed that there was no call to grunt&#8217;s <code>async</code> method, which was probably preventing the process from finishing properly. So today&#8217;s post is a primer on async grunt processes, and how to make sure your node and grunt syntax is setup correctly.</p>
+
+
+	</section>
+
+</article>
+
+
+    <article class="post">
+	
+	<header class="post-header">
 		<span class="post-meta">18 Nov 2012</span>
 		<h2 class="post-title">
 			
@@ -146,33 +168,11 @@
 
 </article>
 
-
-    <article class="post">
-	
-	<header class="post-header">
-		<span class="post-meta">16 Aug 2012</span>
-		<h2 class="post-title">
-			
-			<a href="/blog/2012/08/16/javascript-design-patterns-observer/">
-			
-				JavaScript Design Patterns: Observer</a>
-		</h2>
-	</header>
-	<section class="post-excerpt">
-		<h4><a href="http://robdodson.me/blog/2012/08/03/javascript-design-patterns/">Table of Contents</a></h4>
-
-<p>Observer is one of the most popular design patterns and chances are you&#8217;re probably already using it. If you&#8217;ve ever written an event listener with <code>addEventListener</code> or used one of jQuery&#8217;s many versions: <code>on</code>, <code>delegate</code>, <code>live</code>, <code>click</code>, etc&#8230; then you should already be comfortable with the concept. In a nutshell the Observer pattern allows a <strong>Subject</strong> to publish updates to a group of <strong>Observers</strong>. The Subject maintains a list of Observers and provides an interface for objects to register as Observers. Otherwise the Subject doesn&#8217;t care who or what is listening to it. In this way the Subject is decoupled from the Observers allowing easy replacement of one Observer for another or even one Subject for another so long as it maintains the same lexicon of events/notifications.</p>
-
-
-	</section>
-
-</article>
-
 <nav class="pagination" role="pagination">
     
         <a class="newer-posts" href="/blog/page/4/">← Newer Posts</a>
     
-    <span class="page-number">Page 5 of 16</span>
+    <span class="page-number">Page 5 of 17</span>
     
         <a class="older-posts" href="/blog/page/6/">Older Posts →</a>
     

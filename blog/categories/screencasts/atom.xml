@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Screencasts | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/screencasts/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-09-18T09:31:18-07:00</updated>
+  <updated>2014-09-19T09:32:38-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[YOLOmer!]]></title>
+    <link href="http://robdodson.me/blog/2014/09/19/yolomer/"/>
+    <updated>2014-09-19T09:30:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/09/19/yolomer</id>
+    <content type="html"><![CDATA[<p>'Allo!</p>
+
+<p>In this video I show you how to setup your first Polymer project using <a href="https://github.com/yeoman/generator-polymer">the new Yeoman generator</a>, how to create an element with a subgenerator, and how to run some Mocha tests. Let Yeoman do the heavy lifting, and make app building a breeze!</p>
+
+<p><div class="embed-video-container"><iframe src="http://www.youtube.com/embed/INH_OW4lFSs "></iframe></div></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting Up Bower and Polymer]]></title>

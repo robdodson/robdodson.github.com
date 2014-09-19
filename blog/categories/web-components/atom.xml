@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Web Components | Rob Dodson talks internets]]></title>
   <link href="http://robdodson.me/blog/categories/web-components/atom.xml" rel="self"/>
   <link href="http://robdodson.me/"/>
-  <updated>2014-09-18T09:31:18-07:00</updated>
+  <updated>2014-09-19T09:32:38-07:00</updated>
   <id>http://robdodson.me/</id>
   <author>
     <name><![CDATA[Rob Dodson]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[YOLOmer!]]></title>
+    <link href="http://robdodson.me/blog/2014/09/19/yolomer/"/>
+    <updated>2014-09-19T09:30:00-07:00</updated>
+    <id>http://robdodson.me/blog/2014/09/19/yolomer</id>
+    <content type="html"><![CDATA[<p>'Allo!</p>
+
+<p>In this video I show you how to setup your first Polymer project using <a href="https://github.com/yeoman/generator-polymer">the new Yeoman generator</a>, how to create an element with a subgenerator, and how to run some Mocha tests. Let Yeoman do the heavy lifting, and make app building a breeze!</p>
+
+<p><div class="embed-video-container"><iframe src="http://www.youtube.com/embed/INH_OW4lFSs "></iframe></div></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Shadow DOM CSS Cheat Sheet]]></title>
@@ -412,94 +425,6 @@ font-style: normal;
 
 <script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Repeating Templates in Polymer]]></title>
-    <link href="http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer/"/>
-    <updated>2013-11-12T15:14:00-08:00</updated>
-    <id>http://robdodson.me/blog/2013/11/12/repeating-templates-in-polymer</id>
-    <content type="html"><![CDATA[<p>I ran into a little issue this afternoon working with templates in Polymer and I wanted to quickly jot down my thoughts in case others bump up against this.</p>
-
-<!-- more -->
-
-
-<h2>Bindings</h2>
-
-<p>Bindings allow you to easily pipe some data into your markup from a JavaScript object of some kind. If you've worked with a library like Mustache or Handlebars before then they should feel familiar.</p>
-
-<p>In Polymer land, the <code>&lt;template&gt;</code> tag has been extended so it supports a few handy binding attributes. These include <code>bind</code>, <code>repeat</code>, <code>if</code>, and <code>ref</code>.</p>
-
-<h2>How Not to Do It</h2>
-
-<p>If you take a look at the Polymer docs on <a href="http://www.polymer-project.org/platform/template.html">template bindings</a> you'll notice that the binding attribute (<code>bind</code>, <code>repeat</code>, etc.) is always located on the first template. For instance:</p>
-
-<p><code>
-&lt;template repeat="&amp;#123;{ collection }}"&gt;
-  Creates an instance with  for every element in the array collection.
-&lt;/template&gt;
-</code></p>
-
-<p>This lead me to believe that I should write my element like this:</p>
-
-<p>```
-<polymer-element name="polymer-letters">
-  <template repeat="&#123;{ letter in letters }}"></p>
-
-<pre><code>&amp;#123;{ letter }}
-</code></pre>
-
-<p>  </template>
-  <script></p>
-
-<pre><code>Polymer('polymer-letters', {
-  letters: ['a', 'b', 'c']
-});
-</code></pre>
-
-<p>  </script>
-</polymer-element>
-```</p>
-
-<p>But unfortunately that does not work <span style="color: grey;">#sadtrombone.</span></p>
-
-<h2>The Right Way</h2>
-
-<p>Polymer uses the first <code>template</code> element to create Shadow DOM, so if you want to use a binding <strong>you'll need to nest it <em>inside</em> another template.</strong></p>
-
-<p>Our updated example would look like this:</p>
-
-<p>```
-<polymer-element name="polymer-letters">
-  <template></p>
-
-<pre><code>&lt;template repeat="&amp;#123;{ letter in letters }}"&gt;
-  &amp;#123;{ letter }}
-&lt;/template&gt;
-</code></pre>
-
-<p>  </template>
-  <script></p>
-
-<pre><code>Polymer('polymer-letters', {
-  letters: ['a', 'b', 'c']
-});
-</code></pre>
-
-<p>  </script>
-</polymer-element>
-```</p>
-
-<p>And here it is running on CodePen:</p>
-
-<p data-height="268" data-theme-id="0" data-slug-hash="wxrqf" data-user="robdodson" data-default-tab="html" class='codepen'>See the Pen <a href='http://codepen.io/robdodson/pen/wxrqf'>Polymer Template Bindings</a> by Rob Dodson (<a href='http://codepen.io/robdodson'>@robdodson</a>) on <a href='http://codepen.io'>CodePen</a></p>
-
-
-<script async src="http://robdodson.me//codepen.io/assets/embed/ei.js"></script>
-
-
-<p>I mentioned this to Eric Bidelman and he opened <a href="https://github.com/Polymer/docs/issues/191">a ticket to improve the docs</a>, so keep an eye out for that. Hope this helps some of you that may have been stuck :)</p>
 ]]></content>
   </entry>
   
